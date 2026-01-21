@@ -1,542 +1,181 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#000000" />
-  <title>CONSIA</title>
-  <style>
-    :root{
-      --bg:#000;
-      --card:rgba(255,255,255,.04);
-      --card2:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.10);
-      --line2:rgba(255,255,255,.14);
-      --txt:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.60);
-      --muted2:rgba(255,255,255,.42);
-      --ok:#6ef3c5;
-      --warn:#ffd479;
-      --bad:#ff7a7a;
-      --glow:rgba(255,255,255,.08);
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<title>CONSIA</title>
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      background: radial-gradient(60% 50% at 50% 40%, rgba(255,255,255,.06), rgba(0,0,0,1) 70%),
-                  radial-gradient(40% 30% at 50% 60%, rgba(255,255,255,.03), rgba(0,0,0,1) 65%),
-                  #000;
-      color:var(--txt);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
-      letter-spacing:.02em;
-    }
+<style>
+:root{
+  --bg:#000;
+  --line:rgba(255,255,255,.12);
+  --txt:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.6);
+  --ok:#6ef3c5;
+  --warn:#ffd479;
+  --bad:#ff7a7a;
+}
 
-    .wrap{
-      min-height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px 16px 40px;
-    }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:#000;color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto}
 
-    .panel{
-      width:min(980px, 100%);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:28px;
-      padding:28px 22px 18px;
-      box-shadow: 0 30px 80px rgba(0,0,0,.65);
-      backdrop-filter: blur(8px);
-      position:relative;
-      overflow:hidden;
-    }
+.wrap{
+  min-height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
 
-    .toprow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:18px;
-    }
+.panel{
+  width:min(960px,100%);
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:28px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
 
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.14em;
-    }
-    .dot{
-      width:8px;height:8px;border-radius:999px;background:var(--muted2);
-      box-shadow: 0 0 16px rgba(255,255,255,.1);
-    }
-    .dot.ok{background:var(--ok); box-shadow:0 0 18px rgba(110,243,197,.25)}
-    .dot.bad{background:var(--bad); box-shadow:0 0 18px rgba(255,122,122,.25)}
-    .dot.warn{background:var(--warn); box-shadow:0 0 18px rgba(255,212,121,.18)}
+.center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
 
-    .rightHint{
-      color:var(--muted2);
-      font-size:12px;
-      letter-spacing:.12em;
-      text-transform:lowercase;
-      user-select:none;
-    }
+.orb{
+  width:min(260px,70vw);
+  aspect-ratio:1/1;
+  border-radius:50%;
+  background:
+    radial-gradient(60% 60% at 40% 35%, rgba(255,255,255,.18), transparent 60%),
+    radial-gradient(70% 70% at 60% 60%, rgba(255,255,255,.08), transparent 65%);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow: inset 0 0 40px rgba(0,0,0,.7), 0 0 90px rgba(255,255,255,.05);
+}
 
-    .center{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:18px 0 6px;
-      text-align:center;
-    }
+h1{
+  margin:18px 0 4px;
+  font-weight:500;
+  letter-spacing:.28em;
+}
 
-    .orb{
-      width:min(280px, 60vw);
-      aspect-ratio:1/1;
-      border-radius:999px;
-      background:
-        radial-gradient(60% 60% at 35% 30%, rgba(255,255,255,.18), rgba(255,255,255,.06) 40%, rgba(0,0,0,.0) 70%),
-        radial-gradient(60% 60% at 60% 65%, rgba(255,255,255,.08), rgba(0,0,0,0) 65%),
-        radial-gradient(90% 90% at 50% 50%, rgba(255,255,255,.06), rgba(0,0,0,0) 60%),
-        rgba(255,255,255,.02);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow: inset 0 0 40px rgba(0,0,0,.7), 0 0 90px rgba(255,255,255,.06);
-      filter: saturate(0.9);
-    }
+.subtitle{
+  color:var(--muted);
+  font-size:15px;
+}
 
-    h1{
-      margin:18px 0 6px;
-      font-weight:500;
-      font-size:28px;
-      letter-spacing:.28em;
-      text-indent:.28em;
-    }
-    .subtitle{
-      margin:0;
-      color:var(--muted);
-      font-size:15px;
-      letter-spacing:.08em;
-    }
+.modeLine{
+  margin-top:14px;
+  letter-spacing:.18em;
+  font-size:13px;
+  color:var(--muted);
+}
 
-    .modeLine{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:13px;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
+.modePills{
+  display:flex;
+  gap:10px;
+  margin:14px 0;
+}
 
-    .modePills{
-      display:flex;
-      gap:10px;
-      margin:14px 0 10px;
-    }
+.mBtn{
+  width:46px;height:46px;border-radius:50%;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:var(--txt);
+  font-size:14px;
+  cursor:pointer;
+}
 
-    .mBtn{
-      width:46px;height:46px;border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:14px;
-      letter-spacing:.18em;
-      text-indent:.18em;
-      display:flex;align-items:center;justify-content:center;
-      user-select:none;
-      cursor:pointer;
-      transition: transform .12s ease, border-color .12s ease, background .12s ease;
-    }
-    .mBtn:active{transform: scale(.98)}
-    .mBtn.active{
-      border-color: rgba(255,255,255,.24);
-      background: rgba(255,255,255,.08);
-      color: var(--txt);
-      box-shadow: 0 0 24px rgba(255,255,255,.06);
-    }
-    .mBtn[disabled]{
-      opacity:.35;
-      cursor:not-allowed;
-    }
+.actions{
+  display:flex;
+  gap:12px;
+  margin-top:10px;
+}
 
-    .actions{
-      width:100%;
-      display:flex;
-      gap:14px;
-      justify-content:center;
-      margin:14px 0 6px;
-      flex-wrap:wrap;
-    }
+.btn{
+  padding:14px 22px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  color:var(--txt);
+  cursor:pointer;
+}
 
-    .btn{
-      min-width: 210px;
-      padding:14px 18px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.035);
-      color:var(--txt);
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      font-size:12px;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .12s ease, border-color .12s ease, background .12s ease;
-    }
-    .btn:active{transform: scale(.99)}
-    .btn.primary{
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
-    }
-
-    .helper{
-      margin:12px 0 0;
-      color:var(--muted2);
-      font-size:13px;
-      letter-spacing:.04em;
-    }
-    .helper b{color:var(--muted)}
-
-    .debug{
-      margin-top:18px;
-      width:min(860px, 100%);
-      border-radius:18px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.28);
-      overflow:hidden;
-    }
-    .debugTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px 12px;
-      border-bottom:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-    }
-    .debugTitle{
-      font-size:12px;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      color:var(--muted);
-    }
-    .debugBtns{
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
-    .chip{
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.02);
-      color:var(--muted);
-      font-size:12px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .chip:active{transform: scale(.99)}
-    pre{
-      margin:0;
-      padding:12px;
-      white-space:pre-wrap;
-      word-break:break-word;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size:12px;
-      line-height:1.45;
-      color: rgba(255,255,255,.86);
-      min-height:130px;
-    }
-
-    .links{
-      margin-top:10px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:center;
-      color:var(--muted2);
-      font-size:12px;
-    }
-    .links a{
-      color: rgba(255,255,255,.62);
-      text-decoration:none;
-      border-bottom:1px solid rgba(255,255,255,.16);
-      padding-bottom:2px;
-    }
-    .links a:active{opacity:.8}
-
-    @media (max-width:640px){
-      .btn{min-width: 160px}
-      h1{font-size:24px}
-      .panel{padding:22px 14px 14px}
-    }
-  </style>
+.debug{
+  margin-top:18px;
+  border-top:1px solid var(--line);
+  padding-top:14px;
+  font-family:ui-monospace,Menlo,monospace;
+  font-size:12px;
+  color:var(--muted);
+  white-space:pre-wrap;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="panel">
-      <div class="toprow">
-        <div class="pill" id="envPill">
-          <span class="dot" id="envDot"></span>
-          <span id="envText">ENV · CHECKING</span>
-        </div>
-        <div class="rightHint" id="apiHint">/api …</div>
+<div class="wrap">
+  <div class="panel">
+    <div class="center">
+      <div class="orb"></div>
+
+      <h1>CONSIA</h1>
+      <div class="subtitle">Estoy presente.</div>
+
+      <div class="modeLine" id="modeLine">—</div>
+
+      <div class="modePills">
+        <button class="mBtn" onclick="setMode('A')">A</button>
+        <button class="mBtn" onclick="setMode('B')">B</button>
+        <button class="mBtn" onclick="setMode('C')">C</button>
       </div>
 
-      <div class="center">
-        <div class="orb" aria-hidden="true"></div>
-
-        <h1>CONSIA</h1>
-        <p class="subtitle">Estoy presente.</p>
-
-        <div class="modeLine">
-          <span id="modeLabel">…</span>
-        </div>
-
-        <div class="modePills">
-          <button class="mBtn" id="btnA" onclick="setMode('A')">A</button>
-          <button class="mBtn" id="btnB" onclick="setMode('B')">B</button>
-          <button class="mBtn" id="btnC" onclick="setMode('C')">C</button>
-        </div>
-
-        <div class="actions">
-          <button class="btn" onclick="doWake()">WAKE</button>
-          <button class="btn primary" onclick="doActive()">ACTIVE</button>
-          <button class="btn" onclick="doPresence()">PRESENCE</button>
-        </div>
-
-        <p class="helper">
-          Si no responde, mirá el <b>DEBUG</b> abajo: te dice el error exacto (404, 500, etc.).
-        </p>
-
-        <div class="debug">
-          <div class="debugTop">
-            <div class="debugTitle">DEBUG</div>
-            <div class="debugBtns">
-              <div class="chip" onclick="runSelfTest()">Self-Test</div>
-              <div class="chip" onclick="clearLog()">Clear</div>
-              <div class="chip" onclick="copyLog()">Copy</div>
-            </div>
-          </div>
-          <pre id="log"></pre>
-        </div>
-
-        <div class="links">
-          <a href="/api/config" target="_blank" rel="noopener">/api/config</a>
-          <a href="/api/ping" target="_blank" rel="noopener">/api/ping</a>
-          <a href="/api/wake" target="_blank" rel="noopener">/api/wake</a>
-          <a href="/api/presence" target="_blank" rel="noopener">/api/presence</a>
-          <a href="/api/mode?set=A" target="_blank" rel="noopener">/api/mode?set=A</a>
-          <a href="/api/mode?set=B" target="_blank" rel="noopener">/api/mode?set=B</a>
-          <a href="/api/mode?set=C" target="_blank" rel="noopener">/api/mode?set=C</a>
-        </div>
+      <div class="actions">
+        <button class="btn" onclick="wake()">WAKE</button>
+        <button class="btn" onclick="presence()">PRESENCE</button>
+        <button class="btn" onclick="session()">ACTIVE</button>
       </div>
+
+      <div class="debug" id="debug">BOOTING…</div>
     </div>
   </div>
+</div>
 
 <script>
-  // ========= CONSIA CORE UI v1 (Pages + Functions) =========
-  // Endpoints esperados:
-  //  - GET /api/config     -> { ok:true, defaultMode:"A", allow:{A:true,B:true,C:true}, ts }
-  //  - GET /api/ping       -> { ok:true, ts }
-  //  - GET /api/wake       -> { ok:true, wake:"consia" } (o similar)
-  //  - GET /api/presence   -> { presence:"OK", ts } (o similar)
-  //  - GET /api/mode?set=X -> { ok:true, mode:"A|B|C", ts }
-  //  - (opcional) /api/session_start o /api/active -> se intenta si existe
+const dbg = (t)=>debug.textContent += "\n"+t;
+const debug = document.getElementById("debug");
+const modeLine = document.getElementById("modeLine");
 
-  const LOG = document.getElementById("log");
-  const envDot = document.getElementById("envDot");
-  const envText = document.getElementById("envText");
-  const apiHint = document.getElementById("apiHint");
-  const modeLabel = document.getElementById("modeLabel");
-
-  const LS_MODE_KEY = "CONSIA_MODE_LAST";
-  let CONFIG = null;
-  let CURRENT_MODE = null;
-
-  function now(){ return new Date().toISOString(); }
-
-  function log(msg){
-    const line = (typeof msg === "string") ? msg : JSON.stringify(msg, null, 2);
-    LOG.textContent += (LOG.textContent ? "\n" : "") + line;
-    LOG.scrollTop = LOG.scrollHeight;
+async function api(path){
+  try{
+    const r = await fetch(path);
+    const txt = await r.text();
+    dbg(`> GET ${path} (${r.status})`);
+    dbg(txt);
+    try{ return JSON.parse(txt); }catch{ return null; }
+  }catch(e){
+    dbg("ERROR "+e.message);
   }
+}
 
-  function clearLog(){ LOG.textContent = ""; }
-  async function copyLog(){
-    try{
-      await navigator.clipboard.writeText(LOG.textContent || "");
-      log("LOG copied ✓");
-    }catch(e){
-      log("Copy failed (iOS a veces bloquea). Seleccioná y copiá manual.");
-    }
-  }
+async function boot(){
+  debug.textContent="CONSIA boot…";
+  const m = await api("/api/mode?set=A");
+  if(m?.mode) modeLine.textContent=`A · ACTIVE`;
+}
 
-  function setEnvPill(state, text){
-    envDot.classList.remove("ok","bad","warn");
-    envText.textContent = text;
-    if(state === "ok") envDot.classList.add("ok");
-    else if(state === "bad") envDot.classList.add("bad");
-    else envDot.classList.add("warn");
-  }
+async function setMode(m){
+  const r = await api(`/api/mode?set=${m}`);
+  if(r?.mode) modeLine.textContent=`${r.mode} · ACTIVE`;
+}
 
-  async function safeFetch(path){
-    const url = path.startsWith("http") ? path : `${path}`;
-    apiHint.textContent = url;
-    const t0 = performance.now();
-    let r, bodyText, json;
-    try{
-      r = await fetch(url, { cache: "no-store" });
-      bodyText = await r.text();
-      try{ json = JSON.parse(bodyText); }catch(_){ json = null; }
-      const ms = Math.round(performance.now() - t0);
-      log(`> GET ${url}`);
-      log(`status: ${r.status} (${ms}ms)`);
-      if(json) log(`resp: ${JSON.stringify(json)}`);
-      else log(`resp(text): ${bodyText.slice(0, 4000)}`);
-      return { ok: r.ok, status: r.status, json, text: bodyText };
-    }catch(e){
-      log(`> GET ${url}`);
-      log(`FETCH ERROR: ${String(e)}`);
-      return { ok:false, status:0, json:null, text:"" };
-    }
-  }
+async function wake(){ await api("/api/wake"); }
+async function presence(){ await api("/api/presence"); }
+async function session(){ await api("/api/session_start"); }
 
-  function setModeUI(mode){
-    CURRENT_MODE = mode;
-    modeLabel.textContent = `${mode} · ACTIVE`;
-    ["A","B","C"].forEach(m => {
-      const el = document.getElementById(`btn${m}`);
-      if(el) el.classList.toggle("active", m === mode);
-    });
-  }
-
-  function getLastMode(){
-    const ls = (localStorage.getItem(LS_MODE_KEY) || "").toUpperCase().trim();
-    if(["A","B","C"].includes(ls)) return ls;
-    return null;
-  }
-
-  async function loadConfig(){
-    const r = await safeFetch("/api/config");
-    if(r.ok && r.json && r.json.ok){
-      CONFIG = r.json;
-
-      // habilitar/deshabilitar botones por allow
-      const allow = (CONFIG && CONFIG.allow) ? CONFIG.allow : {A:true,B:false,C:false};
-      ["A","B","C"].forEach(m => {
-        const el = document.getElementById(`btn${m}`);
-        if(el) el.disabled = (allow[m] === false);
-      });
-
-      setEnvPill("ok", "ENV · OK");
-      log("CONFIG cargada ✓");
-      return CONFIG;
-    }else{
-      setEnvPill("bad", "ENV · ERROR");
-      log("CONFIG error ✗ (revisá /api/config)");
-      return null;
-    }
-  }
-
-  async function setMode(mode){
-    mode = String(mode || "").toUpperCase();
-    if(!["A","B","C"].includes(mode)) return;
-
-    // si está bloqueado por allow, no hace nada
-    if(CONFIG && CONFIG.allow && CONFIG.allow[mode] === false){
-      log(`MODE ${mode} bloqueado por allow`);
-      return;
-    }
-
-    const r = await safeFetch(`/api/mode?set=${mode}`);
-    if(r.ok && r.json && r.json.ok){
-      localStorage.setItem(LS_MODE_KEY, r.json.mode);
-      setModeUI(r.json.mode);
-      log(`MODE ${r.json.mode} OK ✓`);
-    }else{
-      log("MODE ERROR ✗");
-    }
-  }
-
-  async function doWake(){
-    await safeFetch("/api/wake");
-  }
-
-  async function doPresence(){
-    await safeFetch("/api/presence");
-  }
-
-  async function doActive(){
-    // ACTIVE intenta endpoint "real" si existe; si no, hace presence como fallback.
-    // 1) session_start
-    let r = await safeFetch("/api/session_start");
-    if(r.ok) return;
-
-    // 2) active (por si existe)
-    r = await safeFetch("/api/active");
-    if(r.ok) return;
-
-    // 3) fallback presence
-    await safeFetch("/api/presence");
-  }
-
-  async function runSelfTest(){
-    clearLog();
-    log(`CONSIA Self-Test @ ${now()}`);
-
-    await loadConfig();
-
-    await safeFetch("/api/ping");
-    await safeFetch("/api/wake");
-    await safeFetch("/api/presence");
-
-    const preferred =
-      getLastMode()
-      || (CONFIG && CONFIG.defaultMode ? String(CONFIG.defaultMode).toUpperCase() : "A");
-
-    // si el preferido está bloqueado, cae a A
-    const allow = (CONFIG && CONFIG.allow) ? CONFIG.allow : {A:true,B:false,C:false};
-    const finalMode = (allow[preferred] === false) ? "A" : preferred;
-
-    setModeUI(finalMode);
-    await setMode(finalMode);
-
-    log("Self-Test DONE ✓");
-  }
-
-  // ===== Boot =====
-  (async function init(){
-    clearLog();
-    setEnvPill("warn", "ENV · CHECKING");
-    apiHint.textContent = "/api …";
-
-    log("CONSIA UI boot…");
-    await loadConfig();
-
-    // on boot: aplicar modo persistido o default del config
-    const preferred =
-      getLastMode()
-      || (CONFIG && CONFIG.defaultMode ? String(CONFIG.defaultMode).toUpperCase() : "A");
-
-    // set UI inmediatamente
-    setModeUI(preferred);
-
-    // set real mode via API
-    await setMode(preferred);
-
-    // presencia inicial
-    await doPresence();
-  })();
+boot();
 </script>
 </body>
 </html>
