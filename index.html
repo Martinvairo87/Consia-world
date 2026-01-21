@@ -1,83 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CONSIA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    * { box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
-    body{
-      margin:0; height:100vh; display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(circle at center, #0f172a 0%, #020617 70%);
-      color:#fff;
-    }
-    .card{
-      width:340px; padding:26px 22px; border-radius:16px; text-align:center;
-      background: rgba(15,23,42,.86);
-      box-shadow: 0 20px 60px rgba(0,0,0,.6);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-    h1{ margin:0; font-size:22px; letter-spacing:1px; }
-    p{ margin:10px 0 18px; font-size:13px; opacity:.8; }
-    .row{ display:flex; gap:10px; margin-top:10px; }
-    a.button, button.button{
-      appearance:none; border:0; cursor:pointer;
-      display:block; width:100%; padding:14px 0; border-radius:10px;
-      background: linear-gradient(135deg, #111827, #000000);
-      color:#fff; text-decoration:none; font-size:16px; font-weight:700;
-      transition: transform .08s ease, box-shadow .08s ease;
-      box-shadow: 0 8px 20px rgba(0,0,0,.35);
-    }
-    a.button:active, button.button:active{ transform:scale(.98); }
-    .mini{
-      font-size:12px; opacity:.75; margin-top:12px;
-      display:flex; align-items:center; justify-content:center; gap:8px;
-    }
-    .dot{
-      width:8px; height:8px; border-radius:999px; background:#64748b;
-      box-shadow: 0 0 0 3px rgba(100,116,139,.18);
-    }
-    .ok{ background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.18); }
-    .bad{ background:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.18); }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:24px;max-width:900px}
+    input,textarea,button{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:10px}
+    textarea{min-height:120px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    pre{background:#111;color:#0f0;padding:12px;border-radius:12px;overflow:auto}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid #ccc;border-radius:999px;margin:6px 0}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>CONSIA</h1>
-    <p>Sistema activo · Owner-Only</p>
+  <h1>CONSIA (Best World)</h1>
 
-    <a class="button" href="/core/operativo.html">Sistema operativo</a>
+  <label>API Base</label>
+  <input id="base" value="https://api.consia.world" />
 
-    <div class="row">
-      <button class="button" id="btnCheck" type="button">Check</button>
-      <a class="button" href="https://api.consia.world/api/health" target="_blank" rel="noopener">API</a>
+  <div class="row">
+    <div>
+      <div class="pill">PUBLIC</div>
+      <button onclick="ping()">Ping</button>
+      <button onclick="mode()">Mode</button>
+      <button onclick="config()">Config</button>
+      <button onclick="health()">Health</button>
     </div>
 
-    <div class="mini">
-      <span id="dot" class="dot"></span>
-      <span id="status">Estado: sin test</span>
+    <div>
+      <div class="pill">BOOTSTRAP (solo 1 vez)</div>
+      <input id="owner" placeholder="OWNER_KEY (solo vos, para crear sesión)" />
+      <input id="hmac" placeholder="HMAC_SECRET (solo vos, para crear sesión)" />
+      <button onclick="startSession()">Start Session</button>
+      <button onclick="endSession()">End Session</button>
+      <div class="pill">SESSION: <span id="sess">none</span></div>
     </div>
   </div>
 
-<script>
-  const dot = document.getElementById('dot');
-  const statusEl = document.getElementById('status');
+  <h2>Chat IA</h2>
+  <textarea id="prompt" placeholder="Escribí tu pedido..."></textarea>
+  <button onclick="chat()">Enviar</button>
 
-  async function check() {
-    dot.className = 'dot';
-    statusEl.textContent = 'Estado: chequeando...';
-    try{
-      const r = await fetch('/api/health', { cache:'no-store' });
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      const j = await r.json();
-      dot.className = 'dot ok';
-      statusEl.textContent = 'Estado: OK · ' + (j.edge || 'api');
-    }catch(e){
-      dot.className = 'dot bad';
-      statusEl.textContent = 'Estado: ERROR · ' + (e.message || e);
+  <h2>Vault (Versionado)</h2>
+  <div class="row">
+    <input id="vkey" placeholder="key ej: vault/nota-1" />
+    <input id="vval" placeholder='value ej: {"hola":1}' />
+  </div>
+  <button onclick="vput()">Vault Put (crea versión)</button>
+  <button onclick="vget()">Vault Get (latest)</button>
+  <button onclick="vlist()">Vault List (prefix)</button>
+  <button onclick="vdel()">Vault Delete (pointer o versión)</button>
+
+  <h2>Respuesta</h2>
+  <pre id="out"></pre>
+
+<script>
+  const $ = (id)=>document.getElementById(id);
+  const out = (x)=>$("out").textContent = typeof x==="string" ? x : JSON.stringify(x,null,2);
+
+  // persist session token
+  const loadSess = ()=> localStorage.getItem("CONSIA_SESSION") || "";
+  const saveSess = (t)=> { localStorage.setItem("CONSIA_SESSION", t||""); $("sess").textContent = t ? t.slice(0,18)+"…" : "none"; };
+  saveSess(loadSess());
+
+  async function req(path, {method="GET", body=null, session=true, bootstrap=false}={}){
+    const base = $("base").value.replace(/\/+$/,"");
+    const url = base + path;
+    const headers = {"content-type":"application/json"};
+
+    // session auth
+    if(session){
+      const t = loadSess();
+      if(t) headers["x-consia-session"] = t;
     }
+
+    // bootstrap auth: owner + hmac
+    if(bootstrap){
+      headers["x-owner-key"] = $("owner").value.trim();
+      const hs = $("hmac").value.trim();
+      const ts = Date.now().toString();
+      const nonce = crypto.randomUUID();
+      const m = method.toUpperCase();
+      const bodyStr = body ? JSON.stringify(body) : "";
+      const bodyHash = await sha256b64url(bodyStr || "");
+      const canonical = `${ts}.${nonce}.${m}.${path}.${bodyHash}`;
+      const sig = await hmacSha256b64url(hs, canonical);
+      headers["x-consia-ts"]=ts;
+      headers["x-consia-nonce"]=nonce;
+      headers["x-consia-sig"]=sig;
+    }
+
+    const r = await fetch(url, {method, headers, body: body ? JSON.stringify(body) : null});
+    const txt = await r.text();
+    try { return JSON.parse(txt); } catch { return {raw:txt, status:r.status}; }
   }
-  document.getElementById('btnCheck').addEventListener('click', check);
+
+  // public
+  async function ping(){ out(await req("/api/ping",{session:false})); }
+  async function mode(){ out(await req("/api/mode",{session:false})); }
+  async function config(){ out(await req("/api/config",{session:false})); }
+  async function health(){ out(await req("/health",{session:false})); }
+
+  // session
+  async function startSession(){
+    const r = await req("/api/session/start",{method:"POST", body:{}, session:false, bootstrap:true});
+    if(r?.ok && r?.session) saveSess(r.session);
+    out(r);
+  }
+  async function endSession(){
+    const r = await req("/api/session/end",{method:"POST", body:{}});
+    if(r?.ok) saveSess("");
+    out(r);
+  }
+
+  // features
+  async function chat(){
+    const prompt = $("prompt").value;
+    out(await req("/api/chat",{method:"POST", body:{prompt}}));
+  }
+  async function vput(){
+    const key = $("vkey").value.trim();
+    let value = $("vval").value;
+    try { value = JSON.parse(value); } catch {}
+    out(await req("/api/vault/put",{method:"POST", body:{key,value}}));
+  }
+  async function vget(){
+    const key = $("vkey").value.trim();
+    out(await req("/api/vault/get",{method:"POST", body:{key}}));
+  }
+  async function vlist(){
+    const prefix = $("vkey").value.trim();
+    out(await req("/api/vault/list",{method:"POST", body:{prefix}}));
+  }
+  async function vdel(){
+    const key = $("vkey").value.trim();
+    out(await req("/api/vault/delete",{method:"POST", body:{key}}));
+  }
+
+  async function sha256b64url(str){
+    const data = new TextEncoder().encode(str);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return b64url(new Uint8Array(hash));
+  }
+  async function hmacSha256b64url(secret, msg){
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), {name:"HMAC", hash:"SHA-256"}, false, ["sign"]);
+    const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(msg));
+    return b64url(new Uint8Array(mac));
+  }
+  function b64url(bytes){
+    let s=""; bytes.forEach(b=>s+=String.fromCharCode(b));
+    return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+  }
 </script>
 </body>
 </html>
