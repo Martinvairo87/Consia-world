@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CONSIA</title>
+
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="CONSIA – Core Active Interface" />
+
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --muted:#9a9a9a;
+    }
+
+    *{box-sizing:border-box}
+
+    html,body{
+      margin:0;
+      padding:0;
+      width:100%;
+      height:100%;
+      background:var(--bg);
+      color:var(--fg);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui;
+      overflow:hidden;
+    }
+
+    .app{
+      width:100%;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:22px;
+      text-align:center;
+    }
+
+    .orb{
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 30% 25%, #666, #1a1a1a 45%, #000 70%);
+      box-shadow:
+        0 0 60px rgba(255,255,255,.12),
+        inset 0 0 40px rgba(255,255,255,.08);
+      animation: breathe 4.2s ease-in-out infinite;
+    }
+
+    @keyframes breathe{
+      0%{transform:scale(1);opacity:.9}
+      50%{transform:scale(1.04);opacity:1}
+      100%{transform:scale(1);opacity:.9}
+    }
+
+    .title{
+      font-size:22px;
+      letter-spacing:2px;
+      opacity:.9;
+    }
+
+    .subtitle{
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .status{
+      font-size:13px;
+      opacity:.7;
+      margin-top:10px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <div class="orb" aria-hidden="true"></div>
+
+    <div class="title">CONSIA</div>
+    <div class="subtitle" id="subtitle">Inicializando núcleo…</div>
+    <div class="status" id="status">CORE · standby</div>
+  </main>
+
+  <script>
+    (async () => {
+      const subtitle = document.getElementById("subtitle");
+      const status = document.getElementById("status");
+
+      // Voz
+      function speak(text){
+        try{
+          const u = new SpeechSynthesisUtterance(text);
+          u.lang = "es-AR";
+          u.rate = 0.95;
+          u.pitch = 1;
+          speechSynthesis.cancel();
+          speechSynthesis.speak(u);
+        }catch(e){}
+      }
+
+      // Wake CONSIA
+      try{
+        await fetch("/functions/api/wake", { method:"GET" });
+        subtitle.textContent = "Estoy presente.";
+        status.textContent = "CORE · ACTIVE";
+        speak("Hola. Estoy acá. ¿Cómo querés que estemos hoy?");
+      }catch(e){
+        subtitle.textContent = "Modo local.";
+        status.textContent = "CORE · OFFLINE";
+      }
+
+      // Session start (opcional)
+      try{
+        await fetch("/functions/api/session/start", { method:"GET" });
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>
