@@ -2,180 +2,199 @@
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#000000" />
 <title>CONSIA</title>
 
 <style>
 :root{
   --bg:#000;
-  --line:rgba(255,255,255,.12);
+  --panel:rgba(255,255,255,.04);
+  --panel2:rgba(255,255,255,.08);
   --txt:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.6);
-  --ok:#6ef3c5;
-  --warn:#ffd479;
-  --bad:#ff7a7a;
+  --muted:rgba(255,255,255,.55);
+  --line:rgba(255,255,255,.12);
+  --glow:rgba(255,255,255,.18);
 }
 
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;background:#000;color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto}
+html,body{height:100%}
 
-.wrap{
-  min-height:100%;
+body{
+  margin:0;
+  background:
+    radial-gradient(50% 40% at 50% 40%, rgba(255,255,255,.06), transparent 65%),
+    #000;
+  color:var(--txt);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:.04em;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:24px;
 }
 
-.panel{
-  width:min(960px,100%);
+.card{
+  width:min(420px,92vw);
+  padding:36px 28px 28px;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
   border:1px solid var(--line);
-  border-radius:28px;
-  padding:28px;
-  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
-  box-shadow:0 30px 80px rgba(0,0,0,.6);
-}
-
-.center{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  border-radius:26px;
+  box-shadow:0 0 60px rgba(255,255,255,.06);
   text-align:center;
 }
 
 .orb{
-  width:min(260px,70vw);
-  aspect-ratio:1/1;
+  width:200px;
+  height:200px;
+  margin:0 auto 22px;
   border-radius:50%;
   background:
-    radial-gradient(60% 60% at 40% 35%, rgba(255,255,255,.18), transparent 60%),
-    radial-gradient(70% 70% at 60% 60%, rgba(255,255,255,.08), transparent 65%);
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow: inset 0 0 40px rgba(0,0,0,.7), 0 0 90px rgba(255,255,255,.05);
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), rgba(0,0,0,.9) 60%);
+  box-shadow:
+    inset 0 0 40px rgba(255,255,255,.15),
+    0 0 40px rgba(255,255,255,.05);
 }
 
 h1{
-  margin:18px 0 4px;
+  margin:0;
   font-weight:500;
-  letter-spacing:.28em;
+  font-size:28px;
 }
 
-.subtitle{
+.sub{
+  margin-top:6px;
   color:var(--muted);
-  font-size:15px;
-}
-
-.modeLine{
-  margin-top:14px;
-  letter-spacing:.18em;
   font-size:13px;
+}
+
+.state{
+  margin-top:10px;
+  font-size:12px;
+  letter-spacing:.3em;
   color:var(--muted);
 }
 
-.modePills{
+.modes{
   display:flex;
-  gap:10px;
-  margin:14px 0;
+  gap:12px;
+  justify-content:center;
+  margin:22px 0;
 }
 
-.mBtn{
-  width:46px;height:46px;border-radius:50%;
+.mode{
+  width:44px;
+  height:44px;
+  border-radius:50%;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.04);
+  background:transparent;
   color:var(--txt);
-  font-size:14px;
   cursor:pointer;
+}
+
+.mode.active{
+  background:var(--panel2);
+  box-shadow:0 0 18px var(--glow);
 }
 
 .actions{
   display:flex;
   gap:12px;
-  margin-top:10px;
+  justify-content:center;
+  margin-bottom:20px;
 }
 
 .btn{
-  padding:14px 22px;
-  border-radius:999px;
+  padding:10px 16px;
+  border-radius:22px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.05);
+  background:transparent;
   color:var(--txt);
+  font-size:11px;
   cursor:pointer;
 }
 
-.debug{
-  margin-top:18px;
-  border-top:1px solid var(--line);
+.log{
+  margin-top:16px;
   padding-top:14px;
-  font-family:ui-monospace,Menlo,monospace;
-  font-size:12px;
+  border-top:1px solid var(--line);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size:11px;
   color:var(--muted);
+  text-align:left;
   white-space:pre-wrap;
 }
 </style>
 </head>
 
 <body>
-<div class="wrap">
-  <div class="panel">
-    <div class="center">
-      <div class="orb"></div>
+<div class="card">
+  <div class="orb"></div>
 
-      <h1>CONSIA</h1>
-      <div class="subtitle">Estoy presente.</div>
+  <h1>CONSIA</h1>
+  <div class="sub">Estoy presente.</div>
+  <div class="state" id="state">—</div>
 
-      <div class="modeLine" id="modeLine">—</div>
-
-      <div class="modePills">
-        <button class="mBtn" onclick="setMode('A')">A</button>
-        <button class="mBtn" onclick="setMode('B')">B</button>
-        <button class="mBtn" onclick="setMode('C')">C</button>
-      </div>
-
-      <div class="actions">
-        <button class="btn" onclick="wake()">WAKE</button>
-        <button class="btn" onclick="presence()">PRESENCE</button>
-        <button class="btn" onclick="session()">ACTIVE</button>
-      </div>
-
-      <div class="debug" id="debug">BOOTING…</div>
-    </div>
+  <div class="modes">
+    <button class="mode" data-mode="A">A</button>
+    <button class="mode" data-mode="B">B</button>
+    <button class="mode" data-mode="C">C</button>
   </div>
+
+  <div class="actions">
+    <button class="btn" onclick="wake()">WAKE</button>
+    <button class="btn" onclick="presence()">PRESENCE</button>
+    <button class="btn" onclick="active()">ACTIVE</button>
+  </div>
+
+  <div class="log" id="log">CONSIA boot…</div>
 </div>
 
 <script>
-const dbg = (t)=>debug.textContent += "\n"+t;
-const debug = document.getElementById("debug");
-const modeLine = document.getElementById("modeLine");
+const logEl = document.getElementById("log");
+const stateEl = document.getElementById("state");
+const modes = document.querySelectorAll(".mode");
 
-async function api(path){
-  try{
-    const r = await fetch(path);
-    const txt = await r.text();
-    dbg(`> GET ${path} (${r.status})`);
-    dbg(txt);
-    try{ return JSON.parse(txt); }catch{ return null; }
-  }catch(e){
-    dbg("ERROR "+e.message);
-  }
+function log(txt){
+  logEl.textContent += "\n" + txt;
 }
 
-async function boot(){
-  debug.textContent="CONSIA boot…";
-  const m = await api("/api/mode?set=A");
-  if(m?.mode) modeLine.textContent=`A · ACTIVE`;
+async function api(path){
+  const r = await fetch(path);
+  const j = await r.json();
+  log(`> GET ${path} (${r.status})`);
+  log(JSON.stringify(j));
+  return j;
 }
 
 async function setMode(m){
-  const r = await api(`/api/mode?set=${m}`);
-  if(r?.mode) modeLine.textContent=`${r.mode} · ACTIVE`;
+  modes.forEach(b=>b.classList.remove("active"));
+  document.querySelector(`[data-mode="${m}"]`).classList.add("active");
+  stateEl.textContent = `${m} · ACTIVE`;
+  await api(`/api/mode?set=${m}`);
 }
 
-async function wake(){ await api("/api/wake"); }
-async function presence(){ await api("/api/presence"); }
-async function session(){ await api("/api/session_start"); }
+async function wake(){
+  await api("/api/wake");
+}
 
-boot();
+async function presence(){
+  await api("/api/presence");
+}
+
+async function active(){
+  await api("/api/session");
+}
+
+modes.forEach(b=>{
+  b.onclick=()=>setMode(b.dataset.mode);
+});
+
+// AUTO BOOT
+(async ()=>{
+  const init = await api("/api");
+  stateEl.textContent = "A · ACTIVE";
+  document.querySelector('[data-mode="A"]').classList.add("active");
+})();
 </script>
 </body>
 </html>
