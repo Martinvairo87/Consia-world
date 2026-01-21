@@ -2,121 +2,389 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
   <title>CONSIA</title>
-
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="CONSIA – Core Active Interface" />
-
   <style>
     :root{
-      --bg:#000;
-      --fg:#fff;
-      --muted:#9a9a9a;
+      --bg:#050608;
+      --fg:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.55);
+      --line:rgba(255,255,255,.12);
+      --glass:rgba(255,255,255,.06);
+      --glass2:rgba(0,0,0,.45);
+      --shadow:0 18px 70px rgba(0,0,0,.55);
+      --radius:18px;
+      --btnRadius:999px;
+      --pad:18px;
+      --safeTop: env(safe-area-inset-top, 0px);
+      --safeBottom: env(safe-area-inset-bottom, 0px);
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
-
     *{box-sizing:border-box}
-
-    html,body{
+    html,body{height:100%}
+    body{
       margin:0;
-      padding:0;
-      width:100%;
-      height:100%;
-      background:var(--bg);
+      font-family:var(--font);
+      background: radial-gradient(1200px 800px at 50% 45%, rgba(255,255,255,.06), transparent 60%),
+                  radial-gradient(900px 600px at 50% 55%, rgba(255,255,255,.04), transparent 65%),
+                  linear-gradient(#030407, #07090e);
       color:var(--fg);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui;
       overflow:hidden;
     }
-
-    .app{
-      width:100%;
+    .wrap{
       height:100%;
       display:flex;
-      flex-direction:column;
       align-items:center;
       justify-content:center;
-      gap:22px;
+      padding: calc(var(--pad) + var(--safeTop)) var(--pad) calc(var(--pad) + var(--safeBottom));
+    }
+    .card{
+      width:min(560px, 92vw);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.35);
+      box-shadow: var(--shadow);
+      padding: 26px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position:relative;
+    }
+    .orb{
+      width:190px; height:190px;
+      border-radius:50%;
+      margin: 12px auto 10px;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.20), rgba(255,255,255,.06) 35%, rgba(0,0,0,.35) 70%),
+        radial-gradient(circle at 60% 65%, rgba(255,255,255,.10), transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,.15), rgba(0,0,0,.6));
+      position:relative;
+      filter: saturate(1.05);
+    }
+    .orb:after{
+      content:"";
+      position:absolute; inset:-30px;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.05), transparent 55%);
+      filter: blur(10px);
+      opacity:.85;
+      border-radius:50%;
+    }
+    h1{
+      text-align:center;
+      font-weight:500;
+      letter-spacing:.22em;
+      margin: 8px 0 4px;
+      font-size: 22px;
+    }
+    .sub{
+      text-align:center;
+      color:var(--muted);
+      margin: 0 0 14px;
+      font-size: 14px;
+    }
+    .status{
+      text-align:center;
+      color:rgba(255,255,255,.65);
+      font-size: 12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-bottom: 18px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-top: 8px;
+    }
+
+    .btn{
+      appearance:none;
+      -webkit-appearance:none;
+      border:1px solid var(--line);
+      background: var(--glass);
+      color:var(--fg);
+      border-radius: var(--btnRadius);
+      padding: 12px 18px;
+      font-size: 12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease, opacity .2s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      min-width: 150px;
       text-align:center;
     }
-
-    .orb{
-      width:240px;
-      height:240px;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 30% 25%, #666, #1a1a1a 45%, #000 70%);
-      box-shadow:
-        0 0 60px rgba(255,255,255,.12),
-        inset 0 0 40px rgba(255,255,255,.08);
-      animation: breathe 4.2s ease-in-out infinite;
+    .btn:active{ transform: scale(.98); }
+    .btn.primary{
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
     }
-
-    @keyframes breathe{
-      0%{transform:scale(1);opacity:.9}
-      50%{transform:scale(1.04);opacity:1}
-      100%{transform:scale(1);opacity:.9}
+    .btn.ghost{
+      background: transparent;
     }
+    .btn[disabled]{ opacity:.45; cursor:not-allowed; }
 
-    .title{
-      font-size:22px;
-      letter-spacing:2px;
+    .modes{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin: 12px 0 2px;
+    }
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing:.16em;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      text-transform:uppercase;
       opacity:.9;
     }
-
-    .subtitle{
-      font-size:14px;
-      color:var(--muted);
+    .chip.active{
+      border-color: rgba(255,255,255,.24);
+      background: rgba(255,255,255,.10);
+      opacity:1;
+    }
+    .chip[aria-disabled="true"]{
+      opacity:.35;
+      cursor:not-allowed;
     }
 
-    .status{
-      font-size:13px;
-      opacity:.7;
-      margin-top:10px;
+    .hint{
+      text-align:center;
+      color:rgba(255,255,255,.45);
+      font-size:12px;
+      margin-top: 14px;
+      line-height: 1.35;
+    }
+
+    /* Debug console */
+    .debug{
+      margin-top: 18px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: var(--glass2);
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+      line-height: 1.35;
+      max-height: 28vh;
+      overflow:auto;
+      white-space: pre-wrap;
+    }
+    .topline{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .badge{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.70);
+      background: rgba(255,255,255,.04);
+    }
+    .small{
+      font-size:11px;
+      color: rgba(255,255,255,.55);
+      letter-spacing:.08em;
     }
   </style>
 </head>
 
 <body>
-  <main class="app">
-    <div class="orb" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="topline">
+        <div class="badge" id="badgeEnv">ENV · LOADING</div>
+        <div class="small" id="buildInfo">/api ready</div>
+      </div>
 
-    <div class="title">CONSIA</div>
-    <div class="subtitle" id="subtitle">Inicializando núcleo…</div>
-    <div class="status" id="status">CORE · standby</div>
-  </main>
+      <div class="orb" aria-hidden="true"></div>
+
+      <h1>CONSIA</h1>
+      <div class="sub" id="subtitle">Estoy presente.</div>
+      <div class="status" id="statusLine">CORE · INIT</div>
+
+      <div class="modes" id="modeChips">
+        <div class="chip active" data-mode="A">A</div>
+        <div class="chip" data-mode="B" aria-disabled="true">B</div>
+        <div class="chip" data-mode="C" aria-disabled="true">C</div>
+      </div>
+
+      <div class="row">
+        <button class="btn ghost" id="btnWake" type="button">WAKE</button>
+        <button class="btn primary" id="btnActive" type="button">ACTIVE</button>
+        <button class="btn" id="btnPresence" type="button">PRESENCE</button>
+      </div>
+
+      <div class="hint">
+        Si no responde, mirá el <b>DEBUG</b> abajo: te dice el error exacto (404, 500, etc).
+      </div>
+
+      <pre class="debug" id="debug">DEBUG listo…</pre>
+    </div>
+  </div>
 
   <script>
-    (async () => {
+    (function () {
+      const debugEl = document.getElementById("debug");
+      const statusEl = document.getElementById("statusLine");
+      const badgeEnv = document.getElementById("badgeEnv");
       const subtitle = document.getElementById("subtitle");
-      const status = document.getElementById("status");
+      const chipsWrap = document.getElementById("modeChips");
+      const chips = Array.from(chipsWrap.querySelectorAll(".chip"));
 
-      // Voz
-      function speak(text){
-        try{
-          const u = new SpeechSynthesisUtterance(text);
-          u.lang = "es-AR";
-          u.rate = 0.95;
-          u.pitch = 1;
-          speechSynthesis.cancel();
-          speechSynthesis.speak(u);
-        }catch(e){}
+      const btnWake = document.getElementById("btnWake");
+      const btnActive = document.getElementById("btnActive");
+      const btnPresence = document.getElementById("btnPresence");
+
+      const state = {
+        config: null,
+        mode: "A",
+        allowB: false,
+        allowC: false,
+      };
+
+      function log(line) {
+        debugEl.textContent += "\n" + line;
+        debugEl.scrollTop = debugEl.scrollHeight;
       }
 
-      // Wake CONSIA
-      try{
-        await fetch("/functions/api/wake", { method:"GET" });
-        subtitle.textContent = "Estoy presente.";
-        status.textContent = "CORE · ACTIVE";
-        speak("Hola. Estoy acá. ¿Cómo querés que estemos hoy?");
-      }catch(e){
-        subtitle.textContent = "Modo local.";
-        status.textContent = "CORE · OFFLINE";
+      function setStatus(text) {
+        statusEl.textContent = text;
       }
 
-      // Session start (opcional)
-      try{
-        await fetch("/functions/api/session/start", { method:"GET" });
-      }catch(e){}
+      function setChipAvailability() {
+        chips.forEach(ch => {
+          const m = ch.getAttribute("data-mode");
+          let allowed = (m === "A") || (m === "B" && state.allowB) || (m === "C" && state.allowC);
+          ch.setAttribute("aria-disabled", allowed ? "false" : "true");
+          ch.style.pointerEvents = allowed ? "auto" : "none";
+          ch.style.opacity = allowed ? "1" : ".35";
+        });
+      }
+
+      function setMode(mode) {
+        state.mode = mode;
+        chips.forEach(ch => ch.classList.toggle("active", ch.getAttribute("data-mode") === mode));
+        setStatus((mode || "A") + " · READY");
+      }
+
+      async function api(path, { method="GET", body=null } = {}) {
+        const opts = { method, headers: {} };
+        if (body !== null) {
+          opts.headers["content-type"] = "application/json";
+          opts.body = JSON.stringify(body);
+        }
+        const url = path.startsWith("/") ? path : ("/" + path);
+        log(`\n> ${method} ${url}`);
+        const res = await fetch(url, opts);
+        const text = await res.text();
+        log(`status: ${res.status}`);
+        log(`resp: ${text}`);
+        let json = null;
+        try { json = JSON.parse(text); } catch(e) {}
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status} en ${url}`);
+        }
+        return json ?? text;
+      }
+
+      // iOS Safari: asegurar touch + click
+      function bindPress(el, handler) {
+        el.addEventListener("touchstart", (e) => { e.preventDefault(); handler(); }, { passive: false });
+        el.addEventListener("click", (e) => { e.preventDefault(); handler(); });
+      }
+
+      async function loadConfig() {
+        try {
+          const cfg = await api("/api/config");
+          state.config = cfg || {};
+          state.allowB = !!(cfg && cfg.allow && cfg.allow.B);
+          state.allowC = !!(cfg && cfg.allow && cfg.allow.C);
+          const dm = (cfg && cfg.defaultMode) ? String(cfg.defaultMode).toUpperCase() : "A";
+          badgeEnv.textContent = `ENV · OK`;
+          setChipAvailability();
+          // si default es B/C pero no están permitidos, cae a A
+          const want = (dm === "B" && state.allowB) ? "B" : (dm === "C" && state.allowC) ? "C" : "A";
+          setMode(want);
+          log("\nCONFIG cargada ✔");
+        } catch (e) {
+          badgeEnv.textContent = `ENV · ERROR`;
+          setMode("A");
+          log(`\nCONFIG error: ${String(e)}`);
+          log("Revisá que exista: /functions/api/config.js y responda JSON.");
+        }
+      }
+
+      async function doWake() {
+        subtitle.textContent = "Despertando…";
+        try {
+          await api("/api/wakeword", { method: "POST", body: { wake: "consia", ts: Date.now() } });
+          subtitle.textContent = "Estoy presente.";
+        } catch (e) {
+          subtitle.textContent = "No pude despertar.";
+          log(`WAKE error: ${String(e)}`);
+        }
+      }
+
+      async function doActive() {
+        subtitle.textContent = "Iniciando sesión…";
+        try {
+          // Arranca sesión (lo que vos ya probaste que devuelve {"session":"STARTED"})
+          await api("/api/session_start", { method: "POST", body: { mode: state.mode, ts: Date.now(), source: "ui" } });
+          subtitle.textContent = "Sesión iniciada.";
+          setStatus(state.mode + " · ACTIVE");
+        } catch (e) {
+          subtitle.textContent = "No pude iniciar sesión.";
+          log(`ACTIVE error: ${String(e)}`);
+        }
+      }
+
+      async function doPresence() {
+        try {
+          const p = await api("/api/presence");
+          if (p && typeof p === "object") {
+            const mode = (p.mode || state.mode || "A");
+            setStatus(`${mode} · ${p.consia ? String(p.consia) : "ACTIVE"}`);
+          }
+        } catch (e) {
+          log(`PRESENCE error: ${String(e)}`);
+        }
+      }
+
+      // Chips A/B/C
+      chips.forEach(ch => {
+        bindPress(ch, () => {
+          const m = ch.getAttribute("data-mode");
+          // A siempre
+          if (m === "A") return setMode("A");
+          if (m === "B" && state.allowB) return setMode("B");
+          if (m === "C" && state.allowC) return setMode("C");
+        });
+      });
+
+      // Botones
+      bindPress(btnWake, doWake);
+      bindPress(btnActive, doActive);
+      bindPress(btnPresence, doPresence);
+
+      // Init
+      log("CONSIA UI boot…");
+      loadConfig().then(() => doPresence());
     })();
   </script>
 </body>
