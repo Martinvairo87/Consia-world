@@ -1,5 +1,6 @@
 export async function onRequest() {
-  return new Response(JSON.stringify({consia:"ACTIVE",mode:"CORE",ts:Date.now()}),{
-    headers:{'Content-Type':'application/json','Cache-Control':'no-store'}
+  return new Response(JSON.stringify({ ok: true, pong: true, ts: Date.now() }), {
+    headers: { "content-type": "application/json; charset=utf-8" },
+    status: 200,
   });
 }
