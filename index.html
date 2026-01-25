@@ -2,157 +2,166 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CONSIA – Sistema de IA Global</title>
+  <title>CONSIA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CONSIA es una plataforma de inteligencia artificial y automatización." />
 </head>
 
 <body>
+  <h1 id="title">CONSIA</h1>
+  <p id="subtitle">Plataforma de inteligencia artificial y automatización</p>
 
-  <!-- Selector de idioma -->
-  <label for="langSelect"><strong>Idioma:</strong></label>
-  <select id="langSelect">
-    <option value="es">Español</option>
-    <option value="en">English</option>
-    <option value="pt">Português</option>
-    <option value="fr">Français</option>
-    <option value="it">Italiano</option>
-  </select>
-
-  <hr />
-
-  <h1 id="title"></h1>
-  <p id="subtitle"></p>
-
-  <h2 id="what"></h2>
-  <p id="desc1"></p>
-  <p id="desc2"></p>
-
-  <h2 id="model"></h2>
-  <p id="modelDesc"></p>
-
-  <h2 id="pricing"></h2>
-  <ul>
-    <li><a href="/pricing.html" id="pricingLink"></a></li>
-  </ul>
-
-  <h2 id="legal"></h2>
-  <ul>
-    <li><a href="/terms.html" id="terms"></a></li>
-    <li><a href="/privacy.html" id="privacy"></a></li>
-    <li><a href="/refund.html" id="refund"></a></li>
-  </ul>
-
-  <h2 id="contact"></h2>
-  <p id="contactText"></p>
+  <nav>
+    <a href="/pricing.html" id="pricing">Precios</a> |
+    <a href="/privacy.html" id="privacy">Privacidad</a> |
+    <a href="/terms.html" id="terms">Términos</a> |
+    <a href="/refund.html" id="refund">Reembolsos</a>
+  </nav>
 
   <hr />
-  <p>© CONSIA. All rights reserved.</p>
 
-<script>
-const translations = {
-  es: {
-    title: "CONSIA",
-    subtitle: "Sistema de Inteligencia Artificial Global",
-    what: "¿Qué es CONSIA?",
-    desc1: "CONSIA es una plataforma SaaS basada en inteligencia artificial.",
-    desc2: "Proporciona servicios digitales, automatización y gestión inteligente de información.",
-    model: "Modelo de Suscripción",
-    modelDesc: "CONSIA se ofrece exclusivamente mediante suscripciones mensuales o anuales.",
-    pricing: "Planes y Precios",
-    pricingLink: "Ver precios",
-    legal: "Legal",
-    terms: "Términos del Servicio",
-    privacy: "Política de Privacidad",
-    refund: "Política de Reembolsos",
-    contact: "Contacto",
-    contactText: "Soporte: support@consia.world"
-  },
-  en: {
-    title: "CONSIA",
-    subtitle: "Global Artificial Intelligence System",
-    what: "What is CONSIA?",
-    desc1: "CONSIA is an AI-powered SaaS platform.",
-    desc2: "It provides digital services, automation and intelligent workflows.",
-    model: "Subscription Model",
-    modelDesc: "CONSIA is available via monthly or annual subscriptions.",
-    pricing: "Plans & Pricing",
-    pricingLink: "View pricing",
-    legal: "Legal",
-    terms: "Terms of Service",
-    privacy: "Privacy Policy",
-    refund: "Refund Policy",
-    contact: "Contact",
-    contactText: "Support: support@consia.world"
-  },
-  pt: {
-    title: "CONSIA",
-    subtitle: "Sistema Global de Inteligência Artificial",
-    what: "O que é CONSIA?",
-    desc1: "CONSIA é uma plataforma SaaS baseada em IA.",
-    desc2: "Fornece serviços digitais e automação inteligente.",
-    model: "Modelo de Assinatura",
-    modelDesc: "Disponível por assinatura mensal ou anual.",
-    pricing: "Planos e Preços",
-    pricingLink: "Ver preços",
-    legal: "Legal",
-    terms: "Termos de Serviço",
-    privacy: "Política de Privacidade",
-    refund: "Política de Reembolso",
-    contact: "Contato",
-    contactText: "Suporte: support@consia.world"
-  },
-  fr: {
-    title: "CONSIA",
-    subtitle: "Système d’Intelligence Artificielle Global",
-    what: "Qu’est-ce que CONSIA ?",
-    desc1: "CONSIA est une plateforme SaaS basée sur l’IA.",
-    desc2: "Elle fournit des services numériques et des automatisations intelligentes.",
-    model: "Modèle d’Abonnement",
-    modelDesc: "Disponible via abonnement mensuel ou annuel.",
-    pricing: "Tarifs",
-    pricingLink: "Voir les tarifs",
-    legal: "Mentions légales",
-    terms: "Conditions d’utilisation",
-    privacy: "Politique de confidentialité",
-    refund: "Politique de remboursement",
-    contact: "Contact",
-    contactText: "Support : support@consia.world"
-  },
-  it: {
-    title: "CONSIA",
-    subtitle: "Sistema Globale di Intelligenza Artificiale",
-    what: "Cos’è CONSIA?",
-    desc1: "CONSIA è una piattaforma SaaS basata su IA.",
-    desc2: "Offre servizi digitali e automazioni intelligenti.",
-    model: "Modello di Abbonamento",
-    modelDesc: "Disponibile con abbonamento mensile o annuale.",
-    pricing: "Prezzi",
-    pricingLink: "Vedi prezzi",
-    legal: "Legale",
-    terms: "Termini di Servizio",
-    privacy: "Privacy Policy",
-    refund: "Politica di Rimborso",
-    contact: "Contatto",
-    contactText: "Supporto: support@consia.world"
-  }
-};
+  <section>
+    <p id="description">
+      CONSIA ofrece soluciones basadas en inteligencia artificial, automatización y asistencia digital.
+    </p>
+    <p>
+      Contacto: <a href="mailto:support@consia.world">support@consia.world</a>
+    </p>
+  </section>
 
-function setLanguage(lang) {
-  const t = translations[lang] || translations.en;
-  for (const id in t) {
-    document.getElementById(id).innerText = t[id];
-  }
-}
+  <script>
+    const lang = navigator.language || navigator.userLanguage;
 
-const browserLang = navigator.language.slice(0,2);
-const select = document.getElementById("langSelect");
-select.value = translations[browserLang] ? browserLang : "en";
-setLanguage(select.value);
+    const translations = {
+      es: {
+        subtitle: "Plataforma de inteligencia artificial y automatización",
+        pricing: "Precios",
+        privacy: "Privacidad",
+        terms: "Términos",
+        refund: "Reembolsos",
+        description:
+          "CONSIA ofrece soluciones basadas en inteligencia artificial, automatización y asistencia digital."
+      },
+      en: {
+        subtitle: "Artificial intelligence and automation platform",
+        pricing: "
 
-select.addEventListener("change", () => {
-  setLanguage(select.value);
-});
-</script>
+Perfecto. Vamos **ordenados, sin vueltas y 100% ejecutable**.  
+Te dejo **(A)** el **index.html completo (copiar y pegar)** con **idioma automático**, y **(B)** el **paso a paso exacto para terminar Paddle (verificación incluida)**.
 
+---
+
+## A) `index.html` COMPLETO (copiá y pegá TAL CUAL)
+
+👉 Este archivo:
+- Detecta **idioma automático** (es / en por ahora, Paddle acepta esto)
+- Tiene **links visibles y claros** a Pricing, Terms, Privacy y Refund (Paddle los exige)
+- Es **válido para Cloudflare Pages**
+- Es **suficiente para que Paddle apruebe el sitio**
+
+📄 **Archivo:** `index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>CONSIA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CONSIA – Plataforma de inteligencia y automatización." />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #ffffff;
+      color: #111;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    nav {
+      margin-top: 40px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: #0066ff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    footer {
+      margin-top: 60px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 id="title">CONSIA</h1>
+    <p id="description">
+      Plataforma de inteligencia y automatización diseñada para personas, equipos y empresas.
+    </p>
+
+    <nav>
+      <a href="/pricing.html" id="pricing">Planes y precios</a>
+      <a href="/terms.html" id="terms">Términos de servicio</a>
+      <a href="/privacy.html" id="privacy">Política de privacidad</a>
+      <a href="/refund.html" id="refund">Política de reembolsos</a>
+    </nav>
+
+    <footer>
+      © <span id="year"></span> CONSIA — Todos los derechos reservados
+    </footer>
+  </div>
+
+  <script>
+    const lang = navigator.language.toLowerCase();
+
+    const content = {
+      es: {
+        title: "CONSIA",
+        description:
+          "Plataforma de inteligencia y automatización diseñada para personas, equipos y empresas.",
+        pricing: "Planes y precios",
+        terms: "Términos de servicio",
+        privacy: "Política de privacidad",
+        refund: "Política de reembolsos"
+      },
+      en: {
+        title: "CONSIA",
+        description:
+          "Intelligence and automation platform designed for individuals, teams, and businesses.",
+        pricing: "Pricing",
+        terms: "Terms of Service",
+        privacy: "Privacy Policy",
+        refund: "Refund Policy"
+      }
+    };
+
+    const t = lang.startsWith("es") ? content.es : content.en;
+
+    document.getElementById("title").innerText = t.title;
+    document.getElementById("description").innerText = t.description;
+    document.getElementById("pricing").innerText = t.pricing;
+    document.getElementById("terms").innerText = t.terms;
+    document.getElementById("privacy").innerText = t.privacy;
+    document.getElementById("refund").innerText = t.refund;
+    document.getElementById("year").innerText = new Date().getFullYear();
+  </script>
 </body>
 </html>
