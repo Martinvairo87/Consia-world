@@ -1,157 +1,158 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CONSIA</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:24px;max-width:900px}
-    input,textarea,button{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:10px}
-    textarea{min-height:120px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    pre{background:#111;color:#0f0;padding:12px;border-radius:12px;overflow:auto}
-    .pill{display:inline-block;padding:6px 10px;border:1px solid #ccc;border-radius:999px;margin:6px 0}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CONSIA – Sistema de IA Global</title>
 </head>
+
 <body>
-  <h1>CONSIA (Best World)</h1>
 
-  <label>API Base</label>
-  <input id="base" value="https://api.consia.world" />
+  <!-- Selector de idioma -->
+  <label for="langSelect"><strong>Idioma:</strong></label>
+  <select id="langSelect">
+    <option value="es">Español</option>
+    <option value="en">English</option>
+    <option value="pt">Português</option>
+    <option value="fr">Français</option>
+    <option value="it">Italiano</option>
+  </select>
 
-  <div class="row">
-    <div>
-      <div class="pill">PUBLIC</div>
-      <button onclick="ping()">Ping</button>
-      <button onclick="mode()">Mode</button>
-      <button onclick="config()">Config</button>
-      <button onclick="health()">Health</button>
-    </div>
+  <hr />
 
-    <div>
-      <div class="pill">BOOTSTRAP (solo 1 vez)</div>
-      <input id="owner" placeholder="OWNER_KEY (solo vos, para crear sesión)" />
-      <input id="hmac" placeholder="HMAC_SECRET (solo vos, para crear sesión)" />
-      <button onclick="startSession()">Start Session</button>
-      <button onclick="endSession()">End Session</button>
-      <div class="pill">SESSION: <span id="sess">none</span></div>
-    </div>
-  </div>
+  <h1 id="title"></h1>
+  <p id="subtitle"></p>
 
-  <h2>Chat IA</h2>
-  <textarea id="prompt" placeholder="Escribí tu pedido..."></textarea>
-  <button onclick="chat()">Enviar</button>
+  <h2 id="what"></h2>
+  <p id="desc1"></p>
+  <p id="desc2"></p>
 
-  <h2>Vault (Versionado)</h2>
-  <div class="row">
-    <input id="vkey" placeholder="key ej: vault/nota-1" />
-    <input id="vval" placeholder='value ej: {"hola":1}' />
-  </div>
-  <button onclick="vput()">Vault Put (crea versión)</button>
-  <button onclick="vget()">Vault Get (latest)</button>
-  <button onclick="vlist()">Vault List (prefix)</button>
-  <button onclick="vdel()">Vault Delete (pointer o versión)</button>
+  <h2 id="model"></h2>
+  <p id="modelDesc"></p>
 
-  <h2>Respuesta</h2>
-  <pre id="out"></pre>
+  <h2 id="pricing"></h2>
+  <ul>
+    <li><a href="/pricing.html" id="pricingLink"></a></li>
+  </ul>
+
+  <h2 id="legal"></h2>
+  <ul>
+    <li><a href="/terms.html" id="terms"></a></li>
+    <li><a href="/privacy.html" id="privacy"></a></li>
+    <li><a href="/refund.html" id="refund"></a></li>
+  </ul>
+
+  <h2 id="contact"></h2>
+  <p id="contactText"></p>
+
+  <hr />
+  <p>© CONSIA. All rights reserved.</p>
 
 <script>
-  const $ = (id)=>document.getElementById(id);
-  const out = (x)=>$("out").textContent = typeof x==="string" ? x : JSON.stringify(x,null,2);
+const translations = {
+  es: {
+    title: "CONSIA",
+    subtitle: "Sistema de Inteligencia Artificial Global",
+    what: "¿Qué es CONSIA?",
+    desc1: "CONSIA es una plataforma SaaS basada en inteligencia artificial.",
+    desc2: "Proporciona servicios digitales, automatización y gestión inteligente de información.",
+    model: "Modelo de Suscripción",
+    modelDesc: "CONSIA se ofrece exclusivamente mediante suscripciones mensuales o anuales.",
+    pricing: "Planes y Precios",
+    pricingLink: "Ver precios",
+    legal: "Legal",
+    terms: "Términos del Servicio",
+    privacy: "Política de Privacidad",
+    refund: "Política de Reembolsos",
+    contact: "Contacto",
+    contactText: "Soporte: support@consia.world"
+  },
+  en: {
+    title: "CONSIA",
+    subtitle: "Global Artificial Intelligence System",
+    what: "What is CONSIA?",
+    desc1: "CONSIA is an AI-powered SaaS platform.",
+    desc2: "It provides digital services, automation and intelligent workflows.",
+    model: "Subscription Model",
+    modelDesc: "CONSIA is available via monthly or annual subscriptions.",
+    pricing: "Plans & Pricing",
+    pricingLink: "View pricing",
+    legal: "Legal",
+    terms: "Terms of Service",
+    privacy: "Privacy Policy",
+    refund: "Refund Policy",
+    contact: "Contact",
+    contactText: "Support: support@consia.world"
+  },
+  pt: {
+    title: "CONSIA",
+    subtitle: "Sistema Global de Inteligência Artificial",
+    what: "O que é CONSIA?",
+    desc1: "CONSIA é uma plataforma SaaS baseada em IA.",
+    desc2: "Fornece serviços digitais e automação inteligente.",
+    model: "Modelo de Assinatura",
+    modelDesc: "Disponível por assinatura mensal ou anual.",
+    pricing: "Planos e Preços",
+    pricingLink: "Ver preços",
+    legal: "Legal",
+    terms: "Termos de Serviço",
+    privacy: "Política de Privacidade",
+    refund: "Política de Reembolso",
+    contact: "Contato",
+    contactText: "Suporte: support@consia.world"
+  },
+  fr: {
+    title: "CONSIA",
+    subtitle: "Système d’Intelligence Artificielle Global",
+    what: "Qu’est-ce que CONSIA ?",
+    desc1: "CONSIA est une plateforme SaaS basée sur l’IA.",
+    desc2: "Elle fournit des services numériques et des automatisations intelligentes.",
+    model: "Modèle d’Abonnement",
+    modelDesc: "Disponible via abonnement mensuel ou annuel.",
+    pricing: "Tarifs",
+    pricingLink: "Voir les tarifs",
+    legal: "Mentions légales",
+    terms: "Conditions d’utilisation",
+    privacy: "Politique de confidentialité",
+    refund: "Politique de remboursement",
+    contact: "Contact",
+    contactText: "Support : support@consia.world"
+  },
+  it: {
+    title: "CONSIA",
+    subtitle: "Sistema Globale di Intelligenza Artificiale",
+    what: "Cos’è CONSIA?",
+    desc1: "CONSIA è una piattaforma SaaS basata su IA.",
+    desc2: "Offre servizi digitali e automazioni intelligenti.",
+    model: "Modello di Abbonamento",
+    modelDesc: "Disponibile con abbonamento mensile o annuale.",
+    pricing: "Prezzi",
+    pricingLink: "Vedi prezzi",
+    legal: "Legale",
+    terms: "Termini di Servizio",
+    privacy: "Privacy Policy",
+    refund: "Politica di Rimborso",
+    contact: "Contatto",
+    contactText: "Supporto: support@consia.world"
+  }
+};
 
-  // persist session token
-  const loadSess = ()=> localStorage.getItem("CONSIA_SESSION") || "";
-  const saveSess = (t)=> { localStorage.setItem("CONSIA_SESSION", t||""); $("sess").textContent = t ? t.slice(0,18)+"…" : "none"; };
-  saveSess(loadSess());
+function setLanguage(lang) {
+  const t = translations[lang] || translations.en;
+  for (const id in t) {
+    document.getElementById(id).innerText = t[id];
+  }
+}
 
-  async function req(path, {method="GET", body=null, session=true, bootstrap=false}={}){
-    const base = $("base").value.replace(/\/+$/,"");
-    const url = base + path;
-    const headers = {"content-type":"application/json"};
+const browserLang = navigator.language.slice(0,2);
+const select = document.getElementById("langSelect");
+select.value = translations[browserLang] ? browserLang : "en";
+setLanguage(select.value);
 
-    // session auth
-    if(session){
-      const t = loadSess();
-      if(t) headers["x-consia-session"] = t;
-    }
-
-    // bootstrap auth: owner + hmac
-    if(bootstrap){
-      headers["x-owner-key"] = $("owner").value.trim();
-      const hs = $("hmac").value.trim();
-      const ts = Date.now().toString();
-      const nonce = crypto.randomUUID();
-      const m = method.toUpperCase();
-      const bodyStr = body ? JSON.stringify(body) : "";
-      const bodyHash = await sha256b64url(bodyStr || "");
-      const canonical = `${ts}.${nonce}.${m}.${path}.${bodyHash}`;
-      const sig = await hmacSha256b64url(hs, canonical);
-      headers["x-consia-ts"]=ts;
-      headers["x-consia-nonce"]=nonce;
-      headers["x-consia-sig"]=sig;
-    }
-
-    const r = await fetch(url, {method, headers, body: body ? JSON.stringify(body) : null});
-    const txt = await r.text();
-    try { return JSON.parse(txt); } catch { return {raw:txt, status:r.status}; }
-  }
-
-  // public
-  async function ping(){ out(await req("/api/ping",{session:false})); }
-  async function mode(){ out(await req("/api/mode",{session:false})); }
-  async function config(){ out(await req("/api/config",{session:false})); }
-  async function health(){ out(await req("/health",{session:false})); }
-
-  // session
-  async function startSession(){
-    const r = await req("/api/session/start",{method:"POST", body:{}, session:false, bootstrap:true});
-    if(r?.ok && r?.session) saveSess(r.session);
-    out(r);
-  }
-  async function endSession(){
-    const r = await req("/api/session/end",{method:"POST", body:{}});
-    if(r?.ok) saveSess("");
-    out(r);
-  }
-
-  // features
-  async function chat(){
-    const prompt = $("prompt").value;
-    out(await req("/api/chat",{method:"POST", body:{prompt}}));
-  }
-  async function vput(){
-    const key = $("vkey").value.trim();
-    let value = $("vval").value;
-    try { value = JSON.parse(value); } catch {}
-    out(await req("/api/vault/put",{method:"POST", body:{key,value}}));
-  }
-  async function vget(){
-    const key = $("vkey").value.trim();
-    out(await req("/api/vault/get",{method:"POST", body:{key}}));
-  }
-  async function vlist(){
-    const prefix = $("vkey").value.trim();
-    out(await req("/api/vault/list",{method:"POST", body:{prefix}}));
-  }
-  async function vdel(){
-    const key = $("vkey").value.trim();
-    out(await req("/api/vault/delete",{method:"POST", body:{key}}));
-  }
-
-  async function sha256b64url(str){
-    const data = new TextEncoder().encode(str);
-    const hash = await crypto.subtle.digest("SHA-256", data);
-    return b64url(new Uint8Array(hash));
-  }
-  async function hmacSha256b64url(secret, msg){
-    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), {name:"HMAC", hash:"SHA-256"}, false, ["sign"]);
-    const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(msg));
-    return b64url(new Uint8Array(mac));
-  }
-  function b64url(bytes){
-    let s=""; bytes.forEach(b=>s+=String.fromCharCode(b));
-    return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
-  }
+select.addEventListener("change", () => {
+  setLanguage(select.value);
+});
 </script>
+
 </body>
 </html>
