@@ -2,155 +2,208 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CONSIA | Global AI Platform</title>
-
-  <meta name="description" content="CONSIA es una plataforma global de inteligencia artificial para asistencia digital, automatización y gestión inteligente." />
-  <meta name="author" content="CONSIA WORLD" />
-  <meta name="robots" content="index, follow" />
-
-  <!-- Paddle verification helpers -->
-  <meta name="business-name" content="CONSIA WORLD" />
-  <meta name="business-type" content="Software as a Service (SaaS)" />
-  <meta name="contact-email" content="support@consia.world" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CONSIA</title>
+  <meta name="description" content="CONSIA · Sistema activo" />
+  <meta name="theme-color" content="#05070d" />
   <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
-      background: radial-gradient(circle at top, #1b245f, #05060a);
-      color: #ffffff;
-      line-height: 1.6;
+    :root{
+      --bg0:#020617;
+      --bg1:#0b1220;
+      --card:rgba(10,14,25,.72);
+      --stroke:rgba(255,255,255,.10);
+      --text:#e5e7eb;
+      --muted:rgba(229,231,235,.72);
+      --accent:#111827;
+      --btn:#0b1220;
+      --btn2:#0f172a;
+      --glow:rgba(255,255,255,.08);
+      --ring:rgba(255,255,255,.18);
     }
-
-    .container {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 80px 24px;
+    *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif}
+    body{
+      margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:
+        radial-gradient(1200px 600px at 50% 25%, rgba(255,255,255,.06), transparent 55%),
+        radial-gradient(900px 500px at 20% 70%, rgba(56,189,248,.10), transparent 60%),
+        radial-gradient(900px 500px at 80% 70%, rgba(99,102,241,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg0), #000 110%);
+      color:var(--text);
+      padding:22px;
     }
-
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-      text-align: center;
+    .wrap{width:min(980px,100%);display:grid;gap:18px;grid-template-columns:1.2fr .8fr}
+    @media(max-width:920px){.wrap{grid-template-columns:1fr}}
+    .card{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+      backdrop-filter: blur(14px);
+      border-radius:18px;
+      padding:22px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.55);
     }
-
-    .subtitle {
-      text-align: center;
-      font-size: 1.2rem;
-      opacity: 0.85;
-      margin-bottom: 20px;
+    .logo{
+      width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+      border:1px solid var(--stroke);
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.10), transparent 55%),
+                  linear-gradient(180deg, rgba(17,24,39,.88), rgba(2,6,23,.88));
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      margin-bottom:14px;
     }
-
-    .badge {
-      display: inline-block;
-      margin: 0 auto 60px;
-      padding: 8px 18px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      font-size: 0.9rem;
-      text-align: center;
+    .logo span{font-weight:800;letter-spacing:.10em}
+    h1{margin:0 0 8px;font-size:28px;letter-spacing:.04em}
+    p{margin:0 0 14px;color:var(--muted);line-height:1.45}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      border:1px solid var(--stroke);
+      padding:10px 12px;border-radius:999px;
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+      font-size:13px;
     }
-
-    section {
-      margin-bottom: 60px;
+    .pill b{color:var(--text);font-weight:650}
+    .btn{
+      appearance:none;border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      color:var(--text);
+      padding:14px 14px;border-radius:14px;
+      font-weight:700;font-size:15px;
+      display:inline-flex;gap:10px;align-items:center;justify-content:center;
+      cursor:pointer;user-select:none;text-decoration:none;
+      box-shadow: 0 12px 28px rgba(0,0,0,.35);
+      transition: transform .08s ease, border-color .08s ease, box-shadow .08s ease;
+      width: 100%;
     }
-
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 12px;
+    .btn:active{transform:scale(.985)}
+    .btn:hover{border-color:var(--ring); box-shadow: 0 16px 34px rgba(0,0,0,.45)}
+    .btn.primary{
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
     }
-
-    p {
-      opacity: 0.9;
-      max-width: 800px;
+    .mini{font-size:12px;color:var(--muted);margin-top:10px}
+    .grid2{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+    @media(max-width:520px){.grid2{grid-template-columns:1fr}}
+    select{
+      width:100%;padding:12px 12px;border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.28);
+      color:var(--text);
+      outline:none;
     }
-
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 30px;
-      font-size: 0.9rem;
-      opacity: 0.7;
-    }
-
-    footer a {
-      color: #8ea2ff;
-      text-decoration: none;
-      margin-right: 16px;
-    }
+    label{font-size:12px;color:var(--muted);display:block;margin:10px 0 6px}
+    .right h3{margin:0 0 10px;font-size:14px;letter-spacing:.08em;color:rgba(229,231,235,.82)}
+    .kpi{display:grid;gap:10px}
+    .kpi div{border:1px solid var(--stroke);border-radius:14px;padding:12px;background:rgba(0,0,0,.20)}
+    .kpi .t{font-size:12px;color:var(--muted)}
+    .kpi .v{margin-top:6px;font-size:15px;font-weight:700}
+    .sep{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
   </style>
 </head>
-
 <body>
-  <div class="container">
+  <div class="wrap">
+    <div class="card">
+      <div class="logo"><span>CS</span></div>
+      <h1 id="title">CONSIA</h1>
+      <p id="subtitle">Sistema activo · Owner-Only · Privacidad primero</p>
 
-    <h1 id="title">CONSIA</h1>
-    <div class="subtitle" id="subtitle">
-      Plataforma global de inteligencia artificial para asistencia digital, automatización y gestión inteligente.
+      <div class="row" style="margin-bottom:14px">
+        <span class="pill">🌐 <b id="pillLang">Idioma</b>: <span id="langNow">ES</span></span>
+        <span class="pill">🎛️ <b id="pillTone">Tono</b>: <span id="toneNow">Sereno</span></span>
+        <span class="pill">🛰️ <b>API</b>: <span id="apiNow">—</span></span>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <label id="lblLang" for="locale">Idioma</label>
+          <select id="locale">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
+            <option value="de">Deutsch</option>
+          </select>
+        </div>
+        <div>
+          <label id="lblTone" for="tone">Tono</label>
+          <select id="tone">
+            <option value="sereno">Sereno</option>
+            <option value="motivador">Motivador</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <a class="btn primary" id="btnOS" href="/core/index.html">⚫ Sistema operativo</a>
+      <div class="mini" id="hint">Si el botón no abre, el problema es deploy/cache: forzá recarga y probá con ?v=123</div>
     </div>
-    <div class="badge" id="badge">
-      Global · Digital · AI Platform
+
+    <div class="card right">
+      <h3 id="rightTitle">ESTADO</h3>
+      <div class="kpi">
+        <div><div class="t" id="k1t">Health</div><div class="v" id="k1v">—</div></div>
+        <div><div class="t" id="k2t">Config</div><div class="v" id="k2v">—</div></div>
+        <div><div class="t" id="k3t">CORS</div><div class="v" id="k3v">—</div></div>
+      </div>
+      <div class="sep"></div>
+      <a class="btn" id="btnTest" href="#" onclick="return false;">🔁 Test rápido</a>
+      <div class="mini" id="mini2">Esto solo valida que el front ve a la API.</div>
     </div>
-
-    <section>
-      <h2 id="whatTitle">¿Qué es CONSIA?</h2>
-      <p id="whatText">
-        CONSIA es una plataforma tecnológica global que integra inteligencia artificial avanzada para asistir a personas y empresas en procesos de decisión, automatización, organización de información y gestión digital inteligente.
-      </p>
-    </section>
-
-    <section>
-      <h2 id="useTitle">¿Para qué se utiliza?</h2>
-      <p id="useText">
-        CONSIA se utiliza como asistente digital inteligente, sistema de automatización, centro de control de información y apoyo en tareas personales, profesionales y empresariales.
-      </p>
-    </section>
-
-    <section>
-      <h2 id="businessTitle">Información comercial</h2>
-      <p id="businessText">
-        CONSIA WORLD opera como proveedor de software y servicios digitales basados en suscripción.
-        Ofrecemos planes gratuitos y pagos con funcionalidades avanzadas de inteligencia artificial.
-      </p>
-      <p>
-        Contacto oficial: <strong>support@consia.world</strong>
-      </p>
-    </section>
-
-    <footer>
-      <p>
-        Operated by: <strong>CONSIA WORLD</strong><br/>
-        Jurisdiction: Global
-      </p>
-      <p>
-        <a href="/terms.html">Terms of Service</a>
-        <a href="/privacy.html">Privacy Policy</a>
-        <a href="/refund.html">Refund Policy</a>
-      </p>
-    </footer>
-
   </div>
 
-  <!-- Multilingual auto-detection -->
-  <script>
-    const lang = navigator.language || navigator.userLanguage;
+<script>
+(function(){
+  const qs = new URLSearchParams(location.search);
+  const store = (k,v)=>localStorage.setItem(k,v);
+  const load = (k,d)=>localStorage.getItem(k)||d;
 
-    if (lang.startsWith("en")) {
-      document.getElementById("subtitle").innerText =
-        "Global artificial intelligence platform for digital assistance, automation and intelligent management.";
-      document.getElementById("badge").innerText =
-        "Global · Digital · AI Platform";
-      document.getElementById("whatTitle").innerText = "What is CONSIA?";
-      document.getElementById("whatText").innerText =
-        "CONSIA is a global technology platform that integrates advanced artificial intelligence to assist individuals and companies in decision-making, automation, information organization and intelligent digital management.";
-      document.getElementById("useTitle").innerText = "What is it used for?";
-      document.getElementById("useText").innerText =
-        "CONSIA is used as an intelligent digital assistant, automation system, information control center and support for personal, professional and business tasks.";
-      document.getElementById("businessTitle").innerText = "Business information";
-      document.getElementById("businessText").innerText =
-        "CONSIA WORLD operates as a subscription-based software and digital services provider. We offer free and paid plans with advanced AI features.";
+  const api = load("CONSIA_API","https://api.consia.world");
+  document.getElementById("apiNow").textContent = api.replace(/^https?:\\/\\//,"");
+
+  const localeSel = document.getElementById("locale");
+  const toneSel = document.getElementById("tone");
+
+  const guess = (navigator.language||"es").slice(0,2).toLowerCase();
+  const initLocale = qs.get("lang") || load("CONSIA_LOCALE", (["es","en","pt","fr","it","de"].includes(guess)?guess:"es"));
+  const initTone = qs.get("tone") || load("CONSIA_TONE","sereno");
+
+  localeSel.value = initLocale;
+  toneSel.value = initTone;
+  document.getElementById("langNow").textContent = initLocale.toUpperCase();
+  document.getElementById("toneNow").textContent = (initTone==="motivador"?"Motivador":"Sereno");
+
+  localeSel.addEventListener("change", ()=>{
+    store("CONSIA_LOCALE", localeSel.value);
+    document.getElementById("langNow").textContent = localeSel.value.toUpperCase();
+  });
+  toneSel.addEventListener("change", ()=>{
+    store("CONSIA_TONE", toneSel.value);
+    document.getElementById("toneNow").textContent = (toneSel.value==="motivador"?"Motivador":"Sereno");
+  });
+
+  // add cache-busting to OS link
+  const os = document.getElementById("btnOS");
+  os.href = "/core/index.html?v=" + Date.now();
+
+  async function ping(){
+    try{
+      const r = await fetch(api + "/api/health", {mode:"cors"});
+      const j = await r.json();
+      document.getElementById("k1v").textContent = j.ok ? "OK" : "FAIL";
+      document.getElementById("k2v").textContent = j.version || "—";
+      document.getElementById("k3v").textContent = r.headers.get("access-control-allow-origin") ? "OK" : "—";
+    }catch(e){
+      document.getElementById("k1v").textContent = "OFF";
+      document.getElementById("k2v").textContent = "—";
+      document.getElementById("k3v").textContent = "—";
     }
-  </script>
-
+  }
+  document.getElementById("btnTest").addEventListener("click", async ()=>{
+    await ping();
+    alert("Test OK (si Health=OK).");
+  });
+  ping();
+})();
+</script>
 </body>
 </html>
