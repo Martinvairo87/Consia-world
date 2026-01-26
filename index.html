@@ -1,209 +1,526 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CONSIA</title>
-  <meta name="description" content="CONSIA · Sistema activo" />
-  <meta name="theme-color" content="#05070d" />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <title>CONSIA — Conciencia Digital</title>
+  <meta name="description" content="CONSIA es una plataforma de conciencia digital y automatización inteligente. Privacidad, Owner-Only y control total. Demo y acceso por planes." />
+
+  <link rel="canonical" href="https://consia.world/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="CONSIA — Conciencia Digital" />
+  <meta property="og:description" content="Plataforma de conciencia digital y automatización inteligente. Privacidad, Owner-Only y control total." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://consia.world/" />
+
+  <!-- Basic styling (single-file) -->
   <style>
     :root{
-      --bg0:#020617;
-      --bg1:#0b1220;
-      --card:rgba(10,14,25,.72);
-      --stroke:rgba(255,255,255,.10);
-      --text:#e5e7eb;
-      --muted:rgba(229,231,235,.72);
-      --accent:#111827;
-      --btn:#0b1220;
-      --btn2:#0f172a;
-      --glow:rgba(255,255,255,.08);
-      --ring:rgba(255,255,255,.18);
+      --bg:#0b0f14;
+      --card:#101826;
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --muted2:rgba(255,255,255,.55);
+      --accent:#7c5cff;
+      --accent2:#00e5ff;
+      --good:#28d17c;
+      --warn:#ffcc00;
+      --bad:#ff4d4d;
+      --radius:16px;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --max:1100px;
     }
-    *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif}
+    *{box-sizing:border-box}
     body{
-      margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
-      background:
-        radial-gradient(1200px 600px at 50% 25%, rgba(255,255,255,.06), transparent 55%),
-        radial-gradient(900px 500px at 20% 70%, rgba(56,189,248,.10), transparent 60%),
-        radial-gradient(900px 500px at 80% 70%, rgba(99,102,241,.10), transparent 60%),
-        linear-gradient(180deg, var(--bg0), #000 110%);
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
-      padding:22px;
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(124,92,255,.22), transparent 55%),
+        radial-gradient(900px 500px at 80% 20%, rgba(0,229,255,.12), transparent 55%),
+        radial-gradient(900px 700px at 50% 90%, rgba(40,209,124,.10), transparent 60%),
+        var(--bg);
+      min-height:100vh;
     }
-    .wrap{width:min(980px,100%);display:grid;gap:18px;grid-template-columns:1.2fr .8fr}
-    @media(max-width:920px){.wrap{grid-template-columns:1fr}}
-    .card{
-      border:1px solid var(--stroke);
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
-      backdrop-filter: blur(14px);
-      border-radius:18px;
-      padding:22px;
-      box-shadow: 0 20px 70px rgba(0,0,0,.55);
+    a{color:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding:28px 18px 60px}
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:10px 0 22px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; text-decoration:none;
     }
     .logo{
-      width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
-      border:1px solid var(--stroke);
-      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.10), transparent 55%),
-                  linear-gradient(180deg, rgba(17,24,39,.88), rgba(2,6,23,.88));
-      box-shadow: 0 10px 30px rgba(0,0,0,.45);
-      margin-bottom:14px;
+      width:42px; height:42px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(0,229,255,.75));
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+      position:relative;
     }
-    .logo span{font-weight:800;letter-spacing:.10em}
-    h1{margin:0 0 8px;font-size:28px;letter-spacing:.04em}
-    p{margin:0 0 14px;color:var(--muted);line-height:1.45}
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .logo:after{
+      content:"C";
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; letter-spacing:.02em;
+      color:rgba(0,0,0,.65);
+    }
+    .brand h1{
+      font-size:15px; margin:0; letter-spacing:.12em; font-weight:800;
+      text-transform:uppercase;
+    }
     .pill{
-      display:inline-flex;gap:8px;align-items:center;
-      border:1px solid var(--stroke);
-      padding:10px 12px;border-radius:999px;
-      background:rgba(0,0,0,.22);
-      color:var(--muted);
-      font-size:13px;
+      display:inline-flex; gap:8px; align-items:center;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      padding:10px 12px;
+      border-radius:999px;
     }
-    .pill b{color:var(--text);font-weight:650}
-    .btn{
-      appearance:none;border:1px solid var(--stroke);
-      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      color:var(--text);
-      padding:14px 14px;border-radius:14px;
-      font-weight:700;font-size:15px;
-      display:inline-flex;gap:10px;align-items:center;justify-content:center;
-      cursor:pointer;user-select:none;text-decoration:none;
-      box-shadow: 0 12px 28px rgba(0,0,0,.35);
-      transition: transform .08s ease, border-color .08s ease, box-shadow .08s ease;
-      width: 100%;
-    }
-    .btn:active{transform:scale(.985)}
-    .btn:hover{border-color:var(--ring); box-shadow: 0 16px 34px rgba(0,0,0,.45)}
-    .btn.primary{
-      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-    }
-    .mini{font-size:12px;color:var(--muted);margin-top:10px}
-    .grid2{display:grid;gap:12px;grid-template-columns:1fr 1fr}
-    @media(max-width:520px){.grid2{grid-template-columns:1fr}}
     select{
-      width:100%;padding:12px 12px;border-radius:12px;
-      border:1px solid var(--stroke);
-      background:rgba(0,0,0,.28);
-      color:var(--text);
-      outline:none;
+      background:transparent; color:var(--text);
+      border:none; outline:none; font-size:14px;
+      appearance:none;
     }
-    label{font-size:12px;color:var(--muted);display:block;margin:10px 0 6px}
-    .right h3{margin:0 0 10px;font-size:14px;letter-spacing:.08em;color:rgba(229,231,235,.82)}
-    .kpi{display:grid;gap:10px}
-    .kpi div{border:1px solid var(--stroke);border-radius:14px;padding:12px;background:rgba(0,0,0,.20)}
-    .kpi .t{font-size:12px;color:var(--muted)}
-    .kpi .v{margin-top:6px;font-size:15px;font-weight:700}
-    .sep{height:1px;background:rgba(255,255,255,.08);margin:12px 0}
+    option{color:#111}
+    .hero{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr; }
+    }
+    .card{
+      border:1px solid var(--line);
+      background: rgba(16,24,38,.75);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:22px;
+    }
+    .kicker{color:var(--muted2); font-size:13px; letter-spacing:.14em; text-transform:uppercase}
+    .title{font-size:42px; line-height:1.05; margin:10px 0 12px; font-weight:900}
+    @media (max-width: 480px){ .title{font-size:34px;} }
+    .subtitle{color:var(--muted); font-size:16px; line-height:1.55; margin:0 0 16px}
+    .ctaRow{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 14px; border-radius:12px;
+      border:1px solid var(--line);
+      text-decoration:none; cursor:pointer;
+      font-weight:700; font-size:14px;
+      background: rgba(255,255,255,.05);
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07)}
+    .btnPrimary{
+      border-color: rgba(124,92,255,.55);
+      background: linear-gradient(135deg, rgba(124,92,255,.92), rgba(0,229,255,.55));
+      color: rgba(0,0,0,.78);
+    }
+    .btnPrimary:hover{background: linear-gradient(135deg, rgba(124,92,255,.98), rgba(0,229,255,.65))}
+    .btnGood{
+      border-color: rgba(40,209,124,.55);
+      background: rgba(40,209,124,.12);
+    }
+    .grid3{
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap:12px; margin-top:12px;
+    }
+    @media (max-width: 920px){ .grid3{grid-template-columns:1fr;} }
+    .mini{
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      padding:14px;
+    }
+    .mini b{display:block; margin-bottom:6px}
+    .mini p{margin:0; color:var(--muted); line-height:1.45; font-size:14px}
+    .sideTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom:10px
+    }
+    .badge{
+      font-size:12px; padding:7px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .statusDot{width:9px; height:9px; border-radius:999px; background: var(--good); box-shadow: 0 0 0 6px rgba(40,209,124,.12)}
+    .hr{height:1px; background: var(--line); margin:14px 0}
+    .list{margin:0; padding:0 0 0 18px; color:var(--muted); line-height:1.6}
+    footer{
+      margin-top:22px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding:16px 16px;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+    .footerLinks{display:flex; flex-wrap:wrap; gap:12px; margin-top:10px}
+    .footerLinks a{color:var(--muted); text-decoration:none; border-bottom:1px dotted rgba(255,255,255,.25)}
+    .footerLinks a:hover{color:var(--text)}
+    .small{font-size:12px; color:var(--muted2)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
   </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <div class="logo"><span>CS</span></div>
-      <h1 id="title">CONSIA</h1>
-      <p id="subtitle">Sistema activo · Owner-Only · Privacidad primero</p>
 
-      <div class="row" style="margin-bottom:14px">
-        <span class="pill">🌐 <b id="pillLang">Idioma</b>: <span id="langNow">ES</span></span>
-        <span class="pill">🎛️ <b id="pillTone">Tono</b>: <span id="toneNow">Sereno</span></span>
-        <span class="pill">🛰️ <b>API</b>: <span id="apiNow">—</span></span>
-      </div>
-
-      <div class="grid2">
-        <div>
-          <label id="lblLang" for="locale">Idioma</label>
-          <select id="locale">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-            <option value="pt">Português</option>
-            <option value="fr">Français</option>
-            <option value="it">Italiano</option>
-            <option value="de">Deutsch</option>
-          </select>
-        </div>
-        <div>
-          <label id="lblTone" for="tone">Tono</label>
-          <select id="tone">
-            <option value="sereno">Sereno</option>
-            <option value="motivador">Motivador</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="sep"></div>
-
-      <a class="btn primary" id="btnOS" href="/core/index.html">⚫ Sistema operativo</a>
-      <div class="mini" id="hint">Si el botón no abre, el problema es deploy/cache: forzá recarga y probá con ?v=123</div>
-    </div>
-
-    <div class="card right">
-      <h3 id="rightTitle">ESTADO</h3>
-      <div class="kpi">
-        <div><div class="t" id="k1t">Health</div><div class="v" id="k1v">—</div></div>
-        <div><div class="t" id="k2t">Config</div><div class="v" id="k2v">—</div></div>
-        <div><div class="t" id="k3t">CORS</div><div class="v" id="k3v">—</div></div>
-      </div>
-      <div class="sep"></div>
-      <a class="btn" id="btnTest" href="#" onclick="return false;">🔁 Test rápido</a>
-      <div class="mini" id="mini2">Esto solo valida que el front ve a la API.</div>
-    </div>
-  </div>
-
-<script>
-(function(){
-  const qs = new URLSearchParams(location.search);
-  const store = (k,v)=>localStorage.setItem(k,v);
-  const load = (k,d)=>localStorage.getItem(k)||d;
-
-  const api = load("CONSIA_API","https://api.consia.world");
-  document.getElementById("apiNow").textContent = api.replace(/^https?:\\/\\//,"");
-
-  const localeSel = document.getElementById("locale");
-  const toneSel = document.getElementById("tone");
-
-  const guess = (navigator.language||"es").slice(0,2).toLowerCase();
-  const initLocale = qs.get("lang") || load("CONSIA_LOCALE", (["es","en","pt","fr","it","de"].includes(guess)?guess:"es"));
-  const initTone = qs.get("tone") || load("CONSIA_TONE","sereno");
-
-  localeSel.value = initLocale;
-  toneSel.value = initTone;
-  document.getElementById("langNow").textContent = initLocale.toUpperCase();
-  document.getElementById("toneNow").textContent = (initTone==="motivador"?"Motivador":"Sereno");
-
-  localeSel.addEventListener("change", ()=>{
-    store("CONSIA_LOCALE", localeSel.value);
-    document.getElementById("langNow").textContent = localeSel.value.toUpperCase();
-  });
-  toneSel.addEventListener("change", ()=>{
-    store("CONSIA_TONE", toneSel.value);
-    document.getElementById("toneNow").textContent = (toneSel.value==="motivador"?"Motivador":"Sereno");
-  });
-
-  // add cache-busting to OS link
-  const os = document.getElementById("btnOS");
-  os.href = "/core/index.html?v=" + Date.now();
-
-  async function ping(){
-    try{
-      const r = await fetch(api + "/api/health", {mode:"cors"});
-      const j = await r.json();
-      document.getElementById("k1v").textContent = j.ok ? "OK" : "FAIL";
-      document.getElementById("k2v").textContent = j.version || "—";
-      document.getElementById("k3v").textContent = r.headers.get("access-control-allow-origin") ? "OK" : "—";
-    }catch(e){
-      document.getElementById("k1v").textContent = "OFF";
-      document.getElementById("k2v").textContent = "—";
-      document.getElementById("k3v").textContent = "—";
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"CONSIA",
+    "operatingSystem":"Web, iOS",
+    "applicationCategory":"BusinessApplication",
+    "url":"https://consia.world",
+    "offers":{
+      "@type":"Offer",
+      "price":"0",
+      "priceCurrency":"USD",
+      "category":"FREE"
     }
   }
-  document.getElementById("btnTest").addEventListener("click", async ()=>{
-    await ping();
-    alert("Test OK (si Health=OK).");
-  });
-  ping();
-})();
-</script>
+  </script>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="/" aria-label="CONSIA Home">
+        <div class="logo" aria-hidden="true"></div>
+        <h1>CONSIA</h1>
+      </a>
+
+      <div class="pill" aria-label="Language selector">
+        <span class="small" id="langLabel">Idioma</span>
+        <select id="langSelect" aria-label="Language">
+          <option value="es" selected>Español</option>
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="fr">Français</option>
+          <option value="it">Italiano</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="hero">
+      <!-- Main -->
+      <div class="card">
+        <div class="kicker" id="kicker">Conciencia digital · Owner-Only · Privacidad</div>
+        <div class="title" id="title">CONSIA</div>
+        <p class="subtitle" id="subtitle">
+          Plataforma de automatización inteligente con enfoque en privacidad, control Owner-Only y experiencia “gatillo mínimo”.
+          Demo activa y páginas legales completas para verificación.
+        </p>
+
+        <div class="ctaRow">
+          <a class="btn btnPrimary" id="btnDemo" href="https://api.consia.world/api/health" target="_blank" rel="noopener">
+            Ver Demo (API Health)
+          </a>
+          <a class="btn btnGood" id="btnPricing" href="/pricing.html">Planes y precios</a>
+          <a class="btn" id="btnDocs" href="https://api.consia.world/" target="_blank" rel="noopener">Endpoints</a>
+        </div>
+
+        <div class="grid3">
+          <div class="mini">
+            <b id="f1t">Owner-Only</b>
+            <p id="f1d">Acceso y cambios protegidos. Seguridad por defecto y control total del dueño.</p>
+          </div>
+          <div class="mini">
+            <b id="f2t">Modo Reunión</b>
+            <p id="f2d">Grabar → transcribir → resumir → acciones (con consentimiento).</p>
+          </div>
+          <div class="mini">
+            <b id="f3t">Multidioma</b>
+            <p id="f3d">Interfaz en el idioma que elija el usuario. Español por defecto.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side -->
+      <div class="card">
+        <div class="sideTop">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="statusDot" aria-hidden="true"></div>
+            <div>
+              <div style="font-weight:900" id="statusTitle">Estado</div>
+              <div class="small" id="statusSub">Online</div>
+            </div>
+          </div>
+          <div class="badge" id="badge">CORE v1.0</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div style="font-weight:900;margin-bottom:8px" id="quickTitle">Acceso rápido</div>
+        <ul class="list">
+          <li><a href="/pricing.html" id="lPricing">Planes</a></li>
+          <li><a href="/terms.html" id="lTerms">Términos</a></li>
+          <li><a href="/privacy.html" id="lPrivacy">Privacidad</a></li>
+          <li><a href="/refund.html" id="lRefund">Reembolsos</a></li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <div style="font-weight:900;margin-bottom:8px" id="verifyTitle">Verificación (Paddle)</div>
+        <div class="small" id="verifyText">
+          Sitio público, HTTPS, páginas legales, datos de contacto visibles y contenido coherente con el producto.
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="small">
+          <div><span class="mono">Website:</span> consia.world</div>
+          <div><span class="mono">API:</span> api.consia.world</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div id="footerLine1">
+        Operated by: <b>CONSIA</b> · Jurisdiction: <span class="mono">Owner-Only</span> · Contact: <a href="mailto:support@consia.world">support@consia.world</a>
+      </div>
+      <div class="footerLinks">
+        <a href="/pricing.html" id="ftPricing">Pricing</a>
+        <a href="/terms.html" id="ftTerms">Terms</a>
+        <a href="/privacy.html" id="ftPrivacy">Privacy</a>
+        <a href="/refund.html" id="ftRefund">Refund</a>
+      </div>
+      <div class="small" id="footerLine2" style="margin-top:10px">
+        © <span id="year"></span> CONSIA. All rights reserved.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ---- i18n (simple) ----
+    const I18N = {
+      es: {
+        langLabel: "Idioma",
+        kicker: "Conciencia digital · Owner-Only · Privacidad",
+        title: "CONSIA",
+        subtitle: "Plataforma de automatización inteligente con enfoque en privacidad, control Owner-Only y experiencia “gatillo mínimo”. Demo activa y páginas legales completas para verificación.",
+        btnDemo: "Ver Demo (API Health)",
+        btnPricing: "Planes y precios",
+        btnDocs: "Endpoints",
+        f1t: "Owner-Only",
+        f1d: "Acceso y cambios protegidos. Seguridad por defecto y control total del dueño.",
+        f2t: "Modo Reunión",
+        f2d: "Grabar → transcribir → resumir → acciones (con consentimiento).",
+        f3t: "Multidioma",
+        f3d: "Interfaz en el idioma que elija el usuario. Español por defecto.",
+        statusTitle: "Estado",
+        statusSub: "Online",
+        badge: "CORE v1.0",
+        quickTitle: "Acceso rápido",
+        lPricing: "Planes",
+        lTerms: "Términos",
+        lPrivacy: "Privacidad",
+        lRefund: "Reembolsos",
+        verifyTitle: "Verificación (Paddle)",
+        verifyText: "Sitio público, HTTPS, páginas legales, datos de contacto visibles y contenido coherente con el producto.",
+        footer1: "Operated by: <b>CONSIA</b> · Jurisdiction: <span class='mono'>Owner-Only</span> · Contact: <a href='mailto:support@consia.world'>support@consia.world</a>",
+        footer2: "© {year} CONSIA. Todos los derechos reservados."
+      },
+      en: {
+        langLabel: "Language",
+        kicker: "Digital consciousness · Owner-Only · Privacy",
+        title: "CONSIA",
+        subtitle: "An intelligent automation platform focused on privacy, Owner-Only control, and a “minimal trigger” experience. Live demo and full legal pages for verification.",
+        btnDemo: "View Demo (API Health)",
+        btnPricing: "Plans & pricing",
+        btnDocs: "Endpoints",
+        f1t: "Owner-Only",
+        f1d: "Protected access and changes. Secure-by-default with full owner control.",
+        f2t: "Meeting Mode",
+        f2d: "Record → transcribe → summarize → action items (with consent).",
+        f3t: "Multilingual",
+        f3d: "UI in the user’s chosen language. Spanish default.",
+        statusTitle: "Status",
+        statusSub: "Online",
+        badge: "CORE v1.0",
+        quickTitle: "Quick access",
+        lPricing: "Plans",
+        lTerms: "Terms",
+        lPrivacy: "Privacy",
+        lRefund: "Refunds",
+        verifyTitle: "Verification (Paddle)",
+        verifyText: "Public website, HTTPS, legal pages, visible contact details, and product-consistent content.",
+        footer1: "Operated by: <b>CONSIA</b> · Jurisdiction: <span class='mono'>Owner-Only</span> · Contact: <a href='mailto:support@consia.world'>support@consia.world</a>",
+        footer2: "© {year} CONSIA. All rights reserved."
+      },
+      pt: {
+        langLabel: "Idioma",
+        kicker: "Consciência digital · Owner-Only · Privacidade",
+        title: "CONSIA",
+        subtitle: "Plataforma de automação inteligente com foco em privacidade, controle Owner-Only e experiência de “gatilho mínimo”. Demo ativa e páginas legais completas para verificação.",
+        btnDemo: "Ver Demo (API Health)",
+        btnPricing: "Planos e preços",
+        btnDocs: "Endpoints",
+        f1t: "Owner-Only",
+        f1d: "Acesso e alterações protegidos. Segurança por padrão e controle total do dono.",
+        f2t: "Modo Reunião",
+        f2d: "Gravar → transcrever → resumir → ações (com consentimento).",
+        f3t: "Multilíngue",
+        f3d: "Interface no idioma escolhido pelo usuário. Espanhol padrão.",
+        statusTitle: "Status",
+        statusSub: "Online",
+        badge: "CORE v1.0",
+        quickTitle: "Acesso rápido",
+        lPricing: "Planos",
+        lTerms: "Termos",
+        lPrivacy: "Privacidade",
+        lRefund: "Reembolsos",
+        verifyTitle: "Verificação (Paddle)",
+        verifyText: "Site público, HTTPS, páginas legais, contato visível e conteúdo coerente com o produto.",
+        footer1: "Operated by: <b>CONSIA</b> · Jurisdiction: <span class='mono'>Owner-Only</span> · Contact: <a href='mailto:support@consia.world'>support@consia.world</a>",
+        footer2: "© {year} CONSIA. Todos os direitos reservados."
+      },
+      fr: {
+        langLabel: "Langue",
+        kicker: "Conscience numérique · Owner-Only · Confidentialité",
+        title: "CONSIA",
+        subtitle: "Plateforme d’automatisation intelligente axée sur la confidentialité, le contrôle Owner-Only et une expérience « déclencheur minimal ». Démo en ligne et pages légales complètes.",
+        btnDemo: "Voir la démo (API Health)",
+        btnPricing: "Plans & tarifs",
+        btnDocs: "Endpoints",
+        f1t: "Owner-Only",
+        f1d: "Accès et modifications protégés. Sécurité par défaut et contrôle total.",
+        f2t: "Mode Réunion",
+        f2d: "Enregistrer → transcrire → résumer → actions (avec consentement).",
+        f3t: "Multilingue",
+        f3d: "Interface dans la langue choisie. Espagnol par défaut.",
+        statusTitle: "Statut",
+        statusSub: "En ligne",
+        badge: "CORE v1.0",
+        quickTitle: "Accès rapide",
+        lPricing: "Plans",
+        lTerms: "Conditions",
+        lPrivacy: "Confidentialité",
+        lRefund: "Remboursements",
+        verifyTitle: "Vérification (Paddle)",
+        verifyText: "Site public, HTTPS, pages légales, contact visible et contenu cohérent.",
+        footer1: "Operated by: <b>CONSIA</b> · Jurisdiction: <span class='mono'>Owner-Only</span> · Contact: <a href='mailto:support@consia.world'>support@consia.world</a>",
+        footer2: "© {year} CONSIA. Tous droits réservés."
+      },
+      it: {
+        langLabel: "Lingua",
+        kicker: "Coscienza digitale · Owner-Only · Privacy",
+        title: "CONSIA",
+        subtitle: "Piattaforma di automazione intelligente con focus su privacy, controllo Owner-Only e “trigger minimo”. Demo online e pagine legali complete.",
+        btnDemo: "Vedi demo (API Health)",
+        btnPricing: "Piani e prezzi",
+        btnDocs: "Endpoints",
+        f1t: "Owner-Only",
+        f1d: "Accesso e modifiche protette. Sicurezza di default e controllo totale.",
+        f2t: "Modalità Riunione",
+        f2d: "Registra → trascrivi → riassumi → azioni (con consenso).",
+        f3t: "Multilingua",
+        f3d: "UI nella lingua scelta dall’utente. Spagnolo default.",
+        statusTitle: "Stato",
+        statusSub: "Online",
+        badge: "CORE v1.0",
+        quickTitle: "Accesso rapido",
+        lPricing: "Piani",
+        lTerms: "Termini",
+        lPrivacy: "Privacy",
+        lRefund: "Rimborsi",
+        verifyTitle: "Verifica (Paddle)",
+        verifyText: "Sito pubblico, HTTPS, pagine legali, contatti visibili e contenuti coerenti.",
+        footer1: "Operated by: <b>CONSIA</b> · Jurisdiction: <span class='mono'>Owner-Only</span> · Contact: <a href='mailto:support@consia.world'>support@consia.world</a>",
+        footer2: "© {year} CONSIA. Tutti i diritti riservati."
+      },
+      de: {
+        langLabel: "Sprache",
+        kicker: "Digitale Bewusstheit · Owner-Only · Datenschutz",
+        title: "CONSIA",
+        subtitle: "Intelligente Automationsplattform mit Fokus auf Datenschutz, Owner-Only Kontrolle und „Minimal-Trigger“. Live-Demo und vollständige Rechtstexte.",
+        btnDemo: "Demo ansehen (API Health)",
+        btnPricing: "Pläne & Preise",
+        btnDocs: "Endpoints",
+        f1t: "Owner-Only",
+        f1d: "Geschützter Zugriff und Änderungen. Standardmäßig sicher mit voller Kontrolle.",
+        f2t: "Meeting-Modus",
+        f2d: "Aufnehmen → transkribieren → zusammenfassen → Aufgaben (mit Zustimmung).",
+        f3t: "Mehrsprachig",
+        f3d: "UI in der gewählten Sprache. Standard: Spanisch.",
+        statusTitle: "Status",
+        statusSub: "Online",
+        badge: "CORE v1.0",
+        quickTitle: "Schnellzugriff",
+        lPricing: "Pläne",
+        lTerms: "Bedingungen",
+        lPrivacy: "Datenschutz",
+        lRefund: "Rückerstattung",
+        verifyTitle: "Verifizierung (Paddle)",
+        verifyText: "Öffentliche Website, HTTPS, Rechtstexte, sichtbare Kontaktdaten und konsistenter Inhalt.",
+        footer1: "Operated by: <b>CONSIA</b> · Jurisdiction: <span class='mono'>Owner-Only</span> · Contact: <a href='mailto:support@consia.world'>support@consia.world</a>",
+        footer2: "© {year} CONSIA. Alle Rechte vorbehalten."
+      }
+    };
+
+    function setText(id, val){ const el=document.getElementById(id); if(el) el.textContent = val; }
+    function setHTML(id, val){ const el=document.getElementById(id); if(el) el.innerHTML = val; }
+
+    function applyLang(lang){
+      const t = I18N[lang] || I18N.es;
+
+      setText("langLabel", t.langLabel);
+      setText("kicker", t.kicker);
+      setText("title", t.title);
+      setText("subtitle", t.subtitle);
+
+      setText("btnDemo", t.btnDemo);
+      setText("btnPricing", t.btnPricing);
+      setText("btnDocs", t.btnDocs);
+
+      setText("f1t", t.f1t); setText("f1d", t.f1d);
+      setText("f2t", t.f2t); setText("f2d", t.f2d);
+      setText("f3t", t.f3t); setText("f3d", t.f3d);
+
+      setText("statusTitle", t.statusTitle);
+      setText("statusSub", t.statusSub);
+      setText("badge", t.badge);
+
+      setText("quickTitle", t.quickTitle);
+      setText("lPricing", t.lPricing);
+      setText("lTerms", t.lTerms);
+      setText("lPrivacy", t.lPrivacy);
+      setText("lRefund", t.lRefund);
+
+      setText("verifyTitle", t.verifyTitle);
+      setText("verifyText", t.verifyText);
+
+      setHTML("footerLine1", t.footer1);
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+      setText("footerLine2", t.footer2.replace("{year}", new Date().getFullYear()));
+      document.documentElement.lang = lang;
+    }
+
+    // init language: saved > browser > es
+    const select = document.getElementById("langSelect");
+    const saved = localStorage.getItem("consia_lang");
+    const nav = (navigator.language || "es").slice(0,2).toLowerCase();
+    const start = saved || (I18N[nav] ? nav : "es");
+
+    select.value = start;
+    applyLang(start);
+
+    select.addEventListener("change", () => {
+      localStorage.setItem("consia_lang", select.value);
+      applyLang(select.value);
+    });
+  </script>
 </body>
 </html>
