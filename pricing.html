@@ -1,21 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>CONSIA Pricing</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>CONSIA — Planes</title>
+  <meta name="description" content="Planes CONSIA: FREE, PRO y OWNER (invite-only). Precios adaptados por región y moneda."/>
+  <style>
+    *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif}
+    body{margin:0;background:#020617;color:#e5e7eb}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 48px}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .brand{font-weight:800;letter-spacing:.12em}
+    .btn{display:inline-block;background:#fff;color:#020617;padding:10px 14px;border-radius:999px;font-weight:700}
+    .mut{color:#94a3b8}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid rgba(148,163,184,.18);border-radius:18px;padding:18px;background:rgba(15,23,42,.65)}
+    h1{margin:0 0 6px;font-size:28px}
+    h2{margin:0 0 10px;font-size:18px}
+    ul{margin:10px 0 0;padding-left:18px;color:#94a3b8;line-height:1.45;font-size:14px}
+    .price{font-size:26px;font-weight:900;margin:10px 0 6px}
+    .small{font-size:12px;color:#94a3b8}
+    .cta{margin-top:14px}
+    .ghost{display:inline-block;border:1px solid rgba(148,163,184,.18);padding:10px 14px;border-radius:999px}
+    .foot{margin-top:22px;border-top:1px solid rgba(148,163,184,.18);padding-top:12px;font-size:12px;color:#94a3b8;display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between}
+  </style>
 </head>
 <body>
-  <h1>CONSIA Pricing</h1>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><a href="index.html">CONSIA</a></div>
+      <a class="ghost" href="index.html#demo">Volver</a>
+    </div>
 
-  <h2>PRO</h2>
-  <p>$49 USD / month</p>
+    <h1>Planes</h1>
+    <div class="mut">Idioma y moneda se ajustan automáticamente. La memoria es opt-in.</div>
 
-  <h2>BUSINESS</h2>
-  <p>$149 USD / month</p>
+    <div class="grid" style="margin-top:14px">
+      <div class="card">
+        <h2>FREE · Demo Viva</h2>
+        <div class="price">0</div>
+        <div class="small">Para probar la experiencia</div>
+        <ul>
+          <li>Conversación limitada</li>
+          <li>Sin memoria profunda</li>
+          <li>Demo pública controlada</li>
+        </ul>
+        <div class="cta"><a class="btn" href="index.html#demo">Probar ahora</a></div>
+      </div>
 
-  <h2>Annual Plan</h2>
-  <p>2 months free</p>
+      <div class="card">
+        <h2>PRO · Experiencia completa</h2>
+        <div class="price">Auto</div>
+        <div class="small">Precio adaptado por región y moneda</div>
+        <ul>
+          <li>Memoria inteligente (opt-in)</li>
+          <li>Conversación infinita</li>
+          <li>Regionalidad avanzada</li>
+          <li>Prioridad de respuesta</li>
+        </ul>
+        <div class="cta">
+          <!-- Reemplazar con link de checkout Paddle cuando lo tengas -->
+          <a class="btn" href="#">Activar PRO</a>
+        </div>
+        <div class="small" style="margin-top:8px">Mensual + Anual (2 meses gratis).</div>
+      </div>
 
-  <p>Prices may vary by region.</p>
+      <div class="card" id="owner">
+        <h2>OWNER · Private (Invite-Only)</h2>
+        <div class="price">Invite</div>
+        <div class="small">Activación privada</div>
+        <ul>
+          <li>Panel Owner + métricas</li>
+          <li>Modo Reunión + vault</li>
+          <li>Control absoluto</li>
+        </ul>
+        <div class="cta"><a class="btn" href="mailto:owner@consia.world">Solicitar acceso</a></div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <div>© <script>document.write(new Date().getFullYear())</script> CONSIA</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="terms.html">Términos</a>
+        <a href="privacy.html">Privacidad</a>
+        <a href="refund.html">Refund</a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
