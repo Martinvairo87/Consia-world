@@ -1,345 +1,96 @@
 <!doctype html>
-<html lang="es" data-theme="dark">
+<html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <title>CONSIA — Pensá mejor. Decidí mejor.</title>
-  <meta name="description" content="CONSIA. Conversación infinita, regionalidad real y memoria inteligente (opt-in). Probá la demo en segundos."/>
-  <meta name="robots" content="index,follow"/>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CONSIA</title>
   <style>
-    :root{
-      --bg0:#020617; --bg1:#0b1220; --card:rgba(15,23,42,.82);
-      --txt:#e5e7eb; --mut:#94a3b8; --line:rgba(148,163,184,.18);
-      --btn:#111827; --btn2:#0f172a; --acc:#ffffff;
-      --shadow:0 22px 70px rgba(0,0,0,.55);
-      --radius:18px;
-    }
-    [data-theme="light"]{
-      --bg0:#f7f7fb; --bg1:#ffffff; --card:rgba(255,255,255,.85);
-      --txt:#0b1220; --mut:#475569; --line:rgba(2,6,23,.12);
-      --btn:#0b1220; --btn2:#111827; --acc:#ffffff;
-      --shadow:0 22px 70px rgba(2,6,23,.10);
-    }
-    *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,system-ui,sans-serif}
-    body{
-      margin:0;color:var(--txt);
-      background:
-        radial-gradient(1200px 700px at 50% 10%, rgba(99,102,241,.18), transparent 55%),
-        radial-gradient(900px 600px at 10% 40%, rgba(56,189,248,.14), transparent 60%),
-        radial-gradient(900px 600px at 90% 50%, rgba(236,72,153,.10), transparent 60%),
-        linear-gradient(180deg,var(--bg0),var(--bg1));
-      min-height:100vh;
-    }
-    a{color:inherit}
-    .wrap{max-width:1080px;margin:0 auto;padding:22px 18px 48px}
-    .nav{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 12px;border:1px solid var(--line);
-      border-radius:999px;background:rgba(2,6,23,.20);backdrop-filter:blur(14px);
-    }
-    [data-theme="light"] .nav{background:rgba(255,255,255,.55)}
-    .brand{display:flex;gap:10px;align-items:center;font-weight:700;letter-spacing:.12em}
-    .dot{width:10px;height:10px;border-radius:999px;background:var(--txt);opacity:.9}
-    .navlinks{display:flex;gap:16px;align-items:center}
-    .navlinks a{font-size:14px;opacity:.84;text-decoration:none}
-    .navlinks a:hover{opacity:1}
-    .cta{
-      display:flex;gap:10px;align-items:center
-    }
-    .btn{
-      border:1px solid var(--line); background:transparent; color:var(--txt);
-      border-radius:999px; padding:10px 14px; font-size:14px; cursor:pointer;
-    }
-    .btn:hover{border-color:rgba(148,163,184,.35)}
-    .btnPrimary{
-      background:var(--txt); color:var(--bg0); border:none;
-      padding:10px 16px; box-shadow:0 10px 24px rgba(255,255,255,.08);
-    }
-    [data-theme="light"] .btnPrimary{background:#0b1220;color:#fff;box-shadow:0 10px 24px rgba(2,6,23,.14)}
-    .hero{
-      margin-top:22px; padding:34px 18px;
-      display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:stretch;
-    }
-    @media (max-width:860px){.hero{grid-template-columns:1fr}}
-    .panel{
-      border:1px solid var(--line); border-radius:var(--radius);
-      background:rgba(2,6,23,.18); backdrop-filter:blur(14px);
-      box-shadow:var(--shadow);
-      padding:26px;
-    }
-    [data-theme="light"] .panel{background:rgba(255,255,255,.65)}
-    h1{margin:0 0 10px;font-size:44px;line-height:1.04;letter-spacing:-.02em}
-    .sub{margin:0 0 18px;color:var(--mut);font-size:16px;max-width:52ch}
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-    .pill{font-size:12px;border:1px solid var(--line);padding:7px 10px;border-radius:999px;color:var(--mut)}
-    .chatCard{
-      display:flex;flex-direction:column;gap:12px;height:100%;
-    }
-    .chatTop{display:flex;align-items:center;justify-content:space-between}
-    .toggle{display:flex;gap:8px;align-items:center}
-    .chip{
-      border:1px solid var(--line); background:transparent; color:var(--txt);
-      padding:8px 10px;border-radius:999px;font-size:13px;cursor:pointer;opacity:.86
-    }
-    .chip.active{opacity:1;background:rgba(148,163,184,.10)}
-    .chatBox{
-      border:1px solid var(--line); border-radius:14px;
-      background:rgba(2,6,23,.14); padding:12px; flex:1; min-height:250px;
-      display:flex;flex-direction:column;gap:10px;overflow:hidden;
-    }
-    [data-theme="light"] .chatBox{background:rgba(2,6,23,.04)}
-    .msg{display:flex;gap:10px;align-items:flex-start}
-    .ava{width:26px;height:26px;border-radius:999px;background:rgba(148,163,184,.22)}
-    .bubble{
-      border:1px solid var(--line); border-radius:14px;
-      padding:10px 12px; max-width:88%;
-      background:rgba(148,163,184,.08);
-      font-size:14px; line-height:1.35;
-    }
-    .bubble.user{margin-left:auto;background:rgba(148,163,184,.12)}
-    .inputRow{display:flex;gap:10px;margin-top:10px}
-    input{
-      flex:1;border:1px solid var(--line); background:transparent; color:var(--txt);
-      border-radius:999px; padding:12px 14px; font-size:14px; outline:none;
-    }
-    input::placeholder{color:rgba(148,163,184,.70)}
-    .send{
-      border-radius:999px;border:none;background:var(--txt);color:var(--bg0);
-      padding:12px 14px;font-size:14px;cursor:pointer
-    }
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
-    @media (max-width:860px){.grid3{grid-template-columns:1fr}}
-    .card{
-      border:1px solid var(--line); border-radius:16px; padding:16px;
-      background:rgba(2,6,23,.14);
-    }
-    [data-theme="light"] .card{background:rgba(2,6,23,.03)}
-    .card h3{margin:0 0 8px;font-size:15px}
-    .card p{margin:0;color:var(--mut);font-size:13px;line-height:1.35}
-    .section{margin-top:22px}
-    .section h2{margin:0 0 10px;font-size:22px;letter-spacing:-.01em}
-    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    @media (max-width:860px){.steps{grid-template-columns:1fr}}
-    .step{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(2,6,23,.12)}
-    [data-theme="light"] .step{background:rgba(2,6,23,.03)}
-    .step b{display:block;margin-bottom:6px}
-    .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
-    @media (max-width:860px){.plans{grid-template-columns:1fr}}
-    .plan{border:1px solid var(--line);border-radius:18px;padding:18px;background:rgba(2,6,23,.14)}
-    [data-theme="light"] .plan{background:rgba(2,6,23,.03)}
-    .plan .tag{font-size:12px;color:var(--mut)}
-    .plan h3{margin:6px 0 6px}
-    .ul{margin:10px 0 0;padding-left:18px;color:var(--mut);font-size:13px;line-height:1.45}
-    .plan .cta2{margin-top:14px}
-    .footer{
-      margin-top:26px;padding-top:14px;border-top:1px solid var(--line);
-      display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;color:var(--mut);font-size:12px
-    }
-    .footlinks{display:flex;gap:10px;flex-wrap:wrap}
-    .footlinks a{text-decoration:none;opacity:.85}
-    .footlinks a:hover{opacity:1}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Arial;background:#0b0f14;color:#eaf2ff;display:flex;min-height:100vh;align-items:center;justify-content:center}
+    .shell{width:min(760px,92vw);text-align:center}
+    .card{margin:0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:26px;box-shadow:0 20px 80px rgba(0,0,0,.55)}
+    h1{margin:0;font-size:26px;letter-spacing:.2px}
+    .sub{margin-top:6px;opacity:.85}
+    .btn{margin-top:18px;width:min(520px,100%);border:0;border-radius:14px;padding:16px;font-size:16px;font-weight:800;background:#3b82f6;color:#05101f;cursor:pointer}
+    .btn:active{transform:scale(.99)}
+    .row{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .chip{font-size:12px;opacity:.8;border:1px solid rgba(255,255,255,.12);padding:6px 10px;border-radius:999px}
+    .panel{margin-top:16px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px;text-align:left;white-space:pre-wrap}
+    .link{color:#93c5fd;text-decoration:none}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="shell">
+    <div class="card">
+      <h1>CONSIA</h1>
+      <div class="sub">Sistema activo · Owner Only</div>
 
-    <div class="nav">
-      <div class="brand"><span class="dot"></span><span>CONSIA</span></div>
-      <div class="navlinks">
-        <a href="#demo">Demo</a>
-        <a href="#como">Cómo funciona</a>
-        <a href="pricing.html">Planes</a>
+      <button class="btn" id="run">Sistema operativo</button>
+
+      <div class="row">
+        <div class="chip">API: https://api.consia.world/api/chat</div>
+        <div class="chip"><a class="link" href="https://api.consia.world/demo" target="_blank" rel="noreferrer">Demo pública</a></div>
+        <div class="chip" id="tokState">Token: no cargado</div>
       </div>
-      <div class="cta">
-        <button class="btn" id="themeBtn" type="button">Tema</button>
-        <a class="btn btnPrimary" href="#demo">Probar ahora</a>
-      </div>
+
+      <div class="panel" id="log">Listo.</div>
     </div>
-
-    <div class="hero" id="demo">
-      <div class="panel">
-        <h1>CONSIA.<br/>Pensá mejor. Decidí mejor.</h1>
-        <p class="sub">Una conversación que se adapta a vos: contexto fino, tono humano y memoria inteligente (opt-in). Probá la demo en segundos.</p>
-
-        <div class="row">
-          <span class="pill">Idioma y moneda automáticos</span>
-          <span class="pill">Sereno o Motivador</span>
-          <span class="pill">Demo pública controlada</span>
-        </div>
-
-        <div class="section">
-          <h2>Qué la hace distinta</h2>
-          <div class="grid3">
-            <div class="card">
-              <h3>Conversación infinita</h3>
-              <p>Respuestas cortas por defecto. Profundidad cuando la pedís. Sin fricción.</p>
-            </div>
-            <div class="card">
-              <h3>Regionalidad real</h3>
-              <p>Modismos, ritmo e intención por país/ciudad (sin configuraciones).</p>
-            </div>
-            <div class="card">
-              <h3>Memoria inteligente</h3>
-              <p>Recuerda lo importante, olvida lo irrelevante. Control total del usuario.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="panel chatCard">
-        <div class="chatTop">
-          <div style="font-weight:700;letter-spacing:.06em">DEMO</div>
-          <div class="toggle">
-            <button class="chip active" id="toneSereno" type="button">Sereno</button>
-            <button class="chip" id="toneMot" type="button">Motivador</button>
-          </div>
-        </div>
-
-        <div class="chatBox" id="chatBox">
-          <div class="msg">
-            <div class="ava"></div>
-            <div class="bubble">Hola. Estoy acá.<br><br>Decime qué necesitás pensar hoy.</div>
-          </div>
-        </div>
-
-        <div class="inputRow">
-          <input id="inp" placeholder="Escribí acá… (demo)" autocomplete="off"/>
-          <button class="send" id="sendBtn" type="button">Enviar</button>
-        </div>
-
-        <div style="color:var(--mut);font-size:12px;margin-top:6px">
-          Demo optimizada. Límites invisibles. Sin exponer el core.
-        </div>
-      </div>
-    </div>
-
-    <div class="panel section" id="como">
-      <h2>Cómo se usa</h2>
-      <div class="steps">
-        <div class="step"><b>1) Hablás o escribís</b><span style="color:var(--mut);font-size:13px">Sin menús. Sin tutorial.</span></div>
-        <div class="step"><b>2) CONSIA ordena</b><span style="color:var(--mut);font-size:13px">Pregunta lo justo y propone.</span></div>
-        <div class="step"><b>3) Elegís el tono</b><span style="color:var(--mut);font-size:13px">Sereno o Motivador. En un toque.</span></div>
-      </div>
-    </div>
-
-    <div class="panel section">
-      <h2>Planes</h2>
-      <div class="plans">
-        <div class="plan">
-          <div class="tag">FREE · Demo Viva</div>
-          <h3>Probar</h3>
-          <ul class="ul">
-            <li>Conversación limitada</li>
-            <li>Sin memoria profunda</li>
-            <li>Ideal para conocer CONSIA</li>
-          </ul>
-          <div class="cta2"><a class="btn btnPrimary" href="#demo">Iniciar demo</a></div>
-        </div>
-
-        <div class="plan">
-          <div class="tag">PRO · Experiencia completa</div>
-          <h3>Activar PRO</h3>
-          <ul class="ul">
-            <li>Memoria inteligente (opt-in)</li>
-            <li>Conversación infinita</li>
-            <li>Regionalidad avanzada</li>
-          </ul>
-          <div class="cta2"><a class="btn btnPrimary" href="pricing.html">Ver precios</a></div>
-        </div>
-
-        <div class="plan">
-          <div class="tag">PRIVATE / OWNER · Invite-Only</div>
-          <h3>Acceso privado</h3>
-          <ul class="ul">
-            <li>Panel Owner + métricas</li>
-            <li>Modo Reunión + vault</li>
-            <li>Control absoluto</li>
-          </ul>
-          <div class="cta2"><a class="btn btnPrimary" href="pricing.html#owner">Solicitar</a></div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px;color:var(--mut);font-size:12px">
-        Idioma y moneda se ajustan automáticamente. La memoria se activa solo si el usuario lo elige.
-      </div>
-    </div>
-
-    <div class="footer">
-      <div>© <span id="y"></span> CONSIA · privacy-first</div>
-      <div class="footlinks">
-        <a href="terms.html">Términos</a>
-        <a href="privacy.html">Privacidad</a>
-        <a href="refund.html">Refund</a>
-        <a href="pricing.html">Pricing</a>
-      </div>
-    </div>
-
   </div>
 
-  <script>
-    // year
-    document.getElementById('y').textContent = new Date().getFullYear();
+<script>
+const API = "https://api.consia.world/api/chat";
+const KEY = "CONSIA_OWNER_TOKEN_LOCAL";
+const log = (t)=> document.getElementById('log').textContent = t;
 
-    // theme toggle
-    const themeBtn = document.getElementById('themeBtn');
-    const root = document.documentElement;
-    const savedTheme = localStorage.getItem('consia_theme');
-    if(savedTheme) root.setAttribute('data-theme', savedTheme);
-    themeBtn.addEventListener('click', () => {
-      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      localStorage.setItem('consia_theme', next);
+function tokenLoaded(){
+  const t = localStorage.getItem(KEY);
+  document.getElementById('tokState').textContent = t ? "Token: cargado" : "Token: no cargado";
+  return t || "";
+}
+
+async function ensureToken(){
+  let t = tokenLoaded();
+  if(!t){
+    t = prompt("Pegá tu CONSIA Owner Token (x-consia-owner):","");
+    if(t && t.trim()){
+      localStorage.setItem(KEY, t.trim());
+      tokenLoaded();
+    }
+  }
+  return (localStorage.getItem(KEY) || "").trim();
+}
+
+document.getElementById('run').addEventListener('click', async ()=>{
+  const token = await ensureToken();
+  if(!token){ log("Sin token."); return; }
+
+  log("Conectando...");
+  try{
+    const r = await fetch(API, {
+      method:"POST",
+      headers:{
+        "content-type":"application/json",
+        "x-consia-owner": token
+      },
+      body: JSON.stringify({
+        input: "Estado del sistema",
+        mode: "CORE",
+        region: "auto",
+        conversation: true
+      })
     });
 
-    // tone toggle (demo feel)
-    const toneSereno = document.getElementById('toneSereno');
-    const toneMot = document.getElementById('toneMot');
-    let tone = 'sereno';
-    toneSereno.onclick = () => {tone='sereno'; toneSereno.classList.add('active'); toneMot.classList.remove('active');}
-    toneMot.onclick = () => {tone='motivador'; toneMot.classList.add('active'); toneSereno.classList.remove('active');}
+    const j = await r.json().catch(()=> ({}));
+    if(!r.ok){
+      log("HTTP "+r.status+"\n"+JSON.stringify(j,null,2));
+      return;
+    }
+    log(j.reply ? j.reply : JSON.stringify(j,null,2));
+  }catch(e){
+    log("Error: "+(e && e.message ? e.message : e));
+  }
+});
 
-    // demo chat (local-only)
-    const chatBox = document.getElementById('chatBox');
-    const inp = document.getElementById('inp');
-    const sendBtn = document.getElementById('sendBtn');
-
-    function addUser(text){
-      const row = document.createElement('div');
-      row.className='msg';
-      row.innerHTML = `<div class="bubble user">${escapeHtml(text)}</div>`;
-      chatBox.appendChild(row);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-    function addBot(text){
-      const row = document.createElement('div');
-      row.className='msg';
-      row.innerHTML = `<div class="ava"></div><div class="bubble">${text}</div>`;
-      chatBox.appendChild(row);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-    function escapeHtml(s){
-      return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
-    function botReply(userText){
-      const base = tone === 'sereno'
-        ? "Ok. Lo tomo. Decime: ¿qué parte te pesa más ahora?"
-        : "Dale. Vamos con todo. ¿Qué querés resolver primero, hoy?";
-      // limit hint
-      const hint = "<br><br><span style='opacity:.75'>Si querés que esto sea más profundo, se desbloquea con PRO.</span>";
-      addBot(base + hint);
-    }
-
-    function send(){
-      const t = inp.value.trim();
-      if(!t) return;
-      addUser(t);
-      inp.value='';
-      setTimeout(() => botReply(t), 350);
-    }
-    sendBtn.onclick = send;
-    inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter') send(); });
-  </script>
+tokenLoaded();
+</script>
 </body>
 </html>
