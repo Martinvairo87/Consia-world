@@ -1,96 +1,530 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>CONSIA</title>
+  <meta name="theme-color" content="#0b0f19" />
   <style>
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Arial;background:#0b0f14;color:#eaf2ff;display:flex;min-height:100vh;align-items:center;justify-content:center}
-    .shell{width:min(760px,92vw);text-align:center}
-    .card{margin:0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:26px;box-shadow:0 20px 80px rgba(0,0,0,.55)}
-    h1{margin:0;font-size:26px;letter-spacing:.2px}
-    .sub{margin-top:6px;opacity:.85}
-    .btn{margin-top:18px;width:min(520px,100%);border:0;border-radius:14px;padding:16px;font-size:16px;font-weight:800;background:#3b82f6;color:#05101f;cursor:pointer}
-    .btn:active{transform:scale(.99)}
-    .row{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-    .chip{font-size:12px;opacity:.8;border:1px solid rgba(255,255,255,.12);padding:6px 10px;border-radius:999px}
-    .panel{margin-top:16px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px;text-align:left;white-space:pre-wrap}
-    .link{color:#93c5fd;text-decoration:none}
+    :root{
+      --bg:#070a12;
+      --panel:rgba(20,26,38,.78);
+      --panel2:rgba(16,20,30,.72);
+      --border:rgba(255,255,255,.10);
+      --text:#e8eefc;
+      --muted:rgba(232,238,252,.70);
+      --muted2:rgba(232,238,252,.55);
+      --blue:#2f79ff;
+      --blue2:#1f5fe0;
+      --good:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 24px 70px rgba(0,0,0,.55);
+      --r:18px;
+      --r2:14px;
+      --pad:22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Inter, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1200px 700px at 50% 55%, rgba(79,113,255,.22), transparent 55%),
+        radial-gradient(900px 600px at 55% 40%, rgba(0,210,255,.12), transparent 60%),
+        radial-gradient(700px 700px at 30% 70%, rgba(255,255,255,.06), transparent 65%),
+        var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x:hidden;
+    }
+    .wrap{
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 36px 16px;
+    }
+    .card{
+      width:min(920px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      padding: calc(var(--pad) + 4px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .top{
+      text-align:center;
+      margin-bottom: 14px;
+    }
+    .title{
+      font-size: 34px;
+      letter-spacing: .12em;
+      margin: 0;
+      font-weight: 700;
+    }
+    .sub{
+      margin: 6px 0 0 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .bar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      margin: 18px 0 16px 0;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(10,14,22,.45);
+      font-size: 13px;
+      color: var(--muted);
+      user-select:none;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,.35);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.05);
+    }
+    .dot.good{background: var(--good); box-shadow: 0 0 0 3px rgba(34,197,94,.18)}
+    .dot.warn{background: var(--warn); box-shadow: 0 0 0 3px rgba(245,158,11,.18)}
+    .dot.bad{background: var(--bad); box-shadow: 0 0 0 3px rgba(239,68,68,.18)}
+    .btnRow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin: 8px 0 18px 0;
+    }
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 650;
+      color: white;
+      background: linear-gradient(180deg, var(--blue), var(--blue2));
+      box-shadow: 0 14px 26px rgba(47,121,255,.25);
+      min-width: 240px;
+      transition: transform .08s ease, filter .08s ease;
+    }
+    .btn:active{transform: translateY(1px); filter: brightness(.96)}
+    .btn2{
+      appearance:none;
+      border:1px solid var(--border);
+      cursor:pointer;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 650;
+      color: var(--text);
+      background: rgba(10,14,22,.35);
+      min-width: 170px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 6px;
+    }
+    .panel{
+      border:1px solid var(--border);
+      border-radius: var(--r2);
+      background: rgba(10,14,22,.35);
+      padding: 14px;
+    }
+    .label{
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    textarea{
+      width:100%;
+      resize: vertical;
+      min-height: 90px;
+      max-height: 240px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      padding: 12px 12px;
+      font-size: 15px;
+      line-height: 1.35;
+      outline: none;
+    }
+    textarea:focus{border-color: rgba(47,121,255,.55); box-shadow: 0 0 0 4px rgba(47,121,255,.18)}
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 10px;
+    }
+    .send{
+      min-width: 160px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(180deg, rgba(47,121,255,.92), rgba(31,95,224,.92));
+      color:white;
+      font-weight: 700;
+      cursor:pointer;
+    }
+    .send:disabled{opacity:.55; cursor:not-allowed}
+    .mini{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    pre{
+      margin:0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(232,238,252,.92);
+    }
+    .hint{
+      font-size: 12px;
+      color: rgba(232,238,252,.60);
+      margin-top: 10px;
+      text-align:center;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      background: rgba(10,14,22,.86);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+      font-size: 13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      max-width: min(720px, 90vw);
+    }
+    .toast.on{opacity:1; transform: translateX(-50%) translateY(-2px)}
+    .footerRow{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .linklike{
+      color: rgba(232,238,252,.78);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(232,238,252,.28);
+      padding-bottom:2px;
+      font-size: 12px;
+    }
+    @media (min-width: 880px){
+      .grid{grid-template-columns: 1fr 1fr}
+      textarea{min-height: 210px}
+    }
   </style>
 </head>
+
 <body>
-  <div class="shell">
-    <div class="card">
-      <h1>CONSIA</h1>
-      <div class="sub">Sistema activo · Owner Only</div>
-
-      <button class="btn" id="run">Sistema operativo</button>
-
-      <div class="row">
-        <div class="chip">API: https://api.consia.world/api/chat</div>
-        <div class="chip"><a class="link" href="https://api.consia.world/demo" target="_blank" rel="noreferrer">Demo pública</a></div>
-        <div class="chip" id="tokState">Token: no cargado</div>
+  <div class="wrap">
+    <div class="card" role="main">
+      <div class="top">
+        <h1 class="title">CONSIA</h1>
+        <p class="sub">Sistema activo · Owner Only</p>
       </div>
 
-      <div class="panel" id="log">Listo.</div>
+      <div class="btnRow">
+        <button id="btnSystem" class="btn" type="button">Sistema operativo</button>
+      </div>
+
+      <div class="bar" aria-label="estado">
+        <div class="pill" title="Endpoint actual">
+          <span class="dot" id="dotApi"></span>
+          <span>API:</span>
+          <span id="apiUrlText" style="font-family:var(--mono); font-size:12px;"></span>
+        </div>
+
+        <div class="pill" title="Modo demo (sin token)">
+          <span class="dot warn" id="dotDemo"></span>
+          <span>Demo:</span>
+          <span id="demoText">pública</span>
+        </div>
+
+        <div class="pill" title="Token owner cargado o no">
+          <span class="dot" id="dotToken"></span>
+          <span>Token:</span>
+          <span id="tokenText">no cargado</span>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="label">Entrada</div>
+          <textarea id="userInput" placeholder="Escribí tu comando para CONSIA… (Ej: 'Estado', 'Ping', 'Probá chat')"></textarea>
+          <div class="row">
+            <button id="btnSend" class="send" type="button">Enviar</button>
+            <div class="mini" id="miniStatus">Listo.</div>
+          </div>
+          <div class="footerRow">
+            <a href="#" class="linklike" id="btnLoadToken">Cargar / cambiar Owner Token</a>
+            <a href="#" class="linklike" id="btnClearToken">Borrar Token</a>
+            <a href="#" class="linklike" id="btnHealth">Test /api/health</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="label">Salida</div>
+          <pre id="output">Listo.</pre>
+          <div class="hint">Tip iPhone/iPad: Enter = nueva línea · Enviar = botón</div>
+        </div>
+      </div>
     </div>
   </div>
 
-<script>
-const API = "https://api.consia.world/api/chat";
-const KEY = "CONSIA_OWNER_TOKEN_LOCAL";
-const log = (t)=> document.getElementById('log').textContent = t;
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-function tokenLoaded(){
-  const t = localStorage.getItem(KEY);
-  document.getElementById('tokState').textContent = t ? "Token: cargado" : "Token: no cargado";
-  return t || "";
-}
+  <script>
+    (function(){
+      // ====== CONFIG ======
+      const API_BASE_DEFAULT = "https://api.consia.world";
+      const CHAT_PATH = "/api/chat";
+      const HEALTH_PATH = "/api/health";
+      const OWNER_HEADER = "x-consia-owner";
 
-async function ensureToken(){
-  let t = tokenLoaded();
-  if(!t){
-    t = prompt("Pegá tu CONSIA Owner Token (x-consia-owner):","");
-    if(t && t.trim()){
-      localStorage.setItem(KEY, t.trim());
-      tokenLoaded();
-    }
-  }
-  return (localStorage.getItem(KEY) || "").trim();
-}
+      // ====== STATE ======
+      const els = {
+        apiUrlText: document.getElementById("apiUrlText"),
+        demoText: document.getElementById("demoText"),
+        tokenText: document.getElementById("tokenText"),
+        dotApi: document.getElementById("dotApi"),
+        dotDemo: document.getElementById("dotDemo"),
+        dotToken: document.getElementById("dotToken"),
+        btnSystem: document.getElementById("btnSystem"),
+        btnSend: document.getElementById("btnSend"),
+        btnLoadToken: document.getElementById("btnLoadToken"),
+        btnClearToken: document.getElementById("btnClearToken"),
+        btnHealth: document.getElementById("btnHealth"),
+        userInput: document.getElementById("userInput"),
+        output: document.getElementById("output"),
+        miniStatus: document.getElementById("miniStatus"),
+        toast: document.getElementById("toast"),
+      };
 
-document.getElementById('run').addEventListener('click', async ()=>{
-  const token = await ensureToken();
-  if(!token){ log("Sin token."); return; }
+      function getToken(){
+        return (localStorage.getItem("CONSIA_OWNER_TOKEN") || "").trim();
+      }
+      function setToken(t){
+        if (!t) localStorage.removeItem("CONSIA_OWNER_TOKEN");
+        else localStorage.setItem("CONSIA_OWNER_TOKEN", t.trim());
+        refreshUI();
+      }
 
-  log("Conectando...");
-  try{
-    const r = await fetch(API, {
-      method:"POST",
-      headers:{
-        "content-type":"application/json",
-        "x-consia-owner": token
-      },
-      body: JSON.stringify({
-        input: "Estado del sistema",
-        mode: "CORE",
-        region: "auto",
-        conversation: true
-      })
-    });
+      function getApiBase(){
+        // permite override si algún día querés apuntar a otro host
+        return (localStorage.getItem("CONSIA_API_BASE") || API_BASE_DEFAULT).trim();
+      }
 
-    const j = await r.json().catch(()=> ({}));
-    if(!r.ok){
-      log("HTTP "+r.status+"\n"+JSON.stringify(j,null,2));
-      return;
-    }
-    log(j.reply ? j.reply : JSON.stringify(j,null,2));
-  }catch(e){
-    log("Error: "+(e && e.message ? e.message : e));
-  }
-});
+      function toast(msg){
+        els.toast.textContent = msg;
+        els.toast.classList.add("on");
+        clearTimeout(window.__t);
+        window.__t = setTimeout(()=>els.toast.classList.remove("on"), 1600);
+      }
 
-tokenLoaded();
-</script>
+      function setOut(text){
+        els.output.textContent = text;
+      }
+
+      function setMini(text){
+        els.miniStatus.textContent = text;
+      }
+
+      function setDot(dotEl, kind){
+        dotEl.classList.remove("good","warn","bad");
+        if (kind) dotEl.classList.add(kind);
+      }
+
+      function refreshUI(){
+        const apiBase = getApiBase();
+        const token = getToken();
+
+        els.apiUrlText.textContent = apiBase + CHAT_PATH;
+
+        if (token){
+          els.tokenText.textContent = "cargado";
+          setDot(els.dotToken, "good");
+          els.demoText.textContent = "owner";
+          setDot(els.dotDemo, "good");
+        } else {
+          els.tokenText.textContent = "no cargado";
+          setDot(els.dotToken, "warn");
+          els.demoText.textContent = "pública";
+          setDot(els.dotDemo, "warn");
+        }
+      }
+
+      async function callApi(path, body){
+        const apiBase = getApiBase();
+        const url = apiBase + path;
+
+        const token = getToken();
+        const headers = {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        };
+        if (token) headers[OWNER_HEADER] = token;
+
+        // iOS Safari: evitar cache raro
+        const res = await fetch(url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body || {}),
+          cache: "no-store",
+          credentials: "omit",
+        });
+
+        const text = await res.text();
+        let json = null;
+        try { json = JSON.parse(text); } catch(e){ /* ignore */ }
+
+        return { ok: res.ok, status: res.status, text, json };
+      }
+
+      async function pingHealth(){
+        const apiBase = getApiBase();
+        const url = apiBase + HEALTH_PATH;
+
+        setMini("Probando /api/health…");
+        setDot(els.dotApi, "warn");
+
+        try{
+          const res = await fetch(url, { method:"GET", cache:"no-store" });
+          const text = await res.text();
+          if (res.ok){
+            setDot(els.dotApi, "good");
+            setMini("API OK.");
+          } else {
+            setDot(els.dotApi, "bad");
+            setMini("API error (" + res.status + ").");
+          }
+          setOut(text);
+        }catch(err){
+          setDot(els.dotApi, "bad");
+          setMini("API sin respuesta.");
+          setOut("ERROR: " + (err && err.message ? err.message : String(err)));
+        }
+      }
+
+      async function sendChat(message){
+        const msg = (message || "").trim();
+        if (!msg){
+          toast("Escribí un mensaje.");
+          els.userInput.focus();
+          return;
+        }
+
+        els.btnSend.disabled = true;
+        els.btnSystem.disabled = true;
+        setMini("Enviando…");
+        setDot(els.dotApi, "warn");
+
+        // Payload compatible (simple)
+        const payload = {
+          message: msg,
+          // opcional para futuro:
+          // mode: "A",
+          // ts: Date.now()
+        };
+
+        try{
+          const r = await callApi(CHAT_PATH, payload);
+
+          if (r.ok){
+            setDot(els.dotApi, "good");
+            setMini("OK.");
+          } else {
+            setDot(els.dotApi, "bad");
+            setMini("Error (" + r.status + ").");
+          }
+
+          // Mostrar JSON si viene, si no el texto crudo
+          if (r.json) setOut(JSON.stringify(r.json, null, 2));
+          else setOut(r.text);
+
+        }catch(err){
+          setDot(els.dotApi, "bad");
+          setMini("Fallo de red.");
+          setOut("ERROR: " + (err && err.message ? err.message : String(err)));
+        }finally{
+          els.btnSend.disabled = false;
+          els.btnSystem.disabled = false;
+        }
+      }
+
+      function promptToken(){
+        // Safari iOS: prompt nativo funciona bien
+        const current = getToken();
+        const t = prompt("Pegá tu CONSIA Owner Token (x-consia-owner):", current || "");
+        if (t === null) return; // cancel
+        const trimmed = String(t || "").trim();
+        if (!trimmed){
+          setToken("");
+          toast("Token borrado.");
+          return;
+        }
+        setToken(trimmed);
+        toast("Token cargado.");
+      }
+
+      // ====== EVENTS ======
+      els.btnLoadToken.addEventListener("click", (e)=>{ e.preventDefault(); promptToken(); });
+      els.btnClearToken.addEventListener("click", (e)=>{ e.preventDefault(); setToken(""); toast("Token borrado."); });
+      els.btnHealth.addEventListener("click", (e)=>{ e.preventDefault(); pingHealth(); });
+
+      els.btnSend.addEventListener("click", ()=> sendChat(els.userInput.value));
+      els.btnSystem.addEventListener("click", ()=>{
+        // comportamiento: si no hay texto, manda "Estado"
+        const v = (els.userInput.value || "").trim();
+        sendChat(v || "Estado");
+      });
+
+      // UX: enfocar y permitir enviar desde teclado externo con Cmd+Enter
+      document.addEventListener("keydown", (e)=>{
+        // Cmd+Enter (iPad con teclado) o Ctrl+Enter
+        if ((e.metaKey || e.ctrlKey) && e.key === "Enter"){
+          e.preventDefault();
+          sendChat(els.userInput.value);
+        }
+      });
+
+      // ====== INIT ======
+      refreshUI();
+      setOut("Listo.");
+      setMini("Listo.");
+      // Autoping suave (no molesta si falla)
+      pingHealth().catch(()=>{});
+    })();
+  </script>
 </body>
 </html>
