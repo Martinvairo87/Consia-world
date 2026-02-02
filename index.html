@@ -2,338 +2,646 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>CONSIA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0c0f" />
+  <title>CONSIA — LIVE</title>
   <style>
     :root{
-      --bg:#05060a;
-      --fg:#e9ecff;
-      --mut:rgba(233,236,255,.70);
-      --glass:rgba(255,255,255,.06);
-      --bd:rgba(255,255,255,.12);
-      --acc:#7c5cff;
-      --shadow:0 22px 70px rgba(0,0,0,.55);
+      --bg:#07080b; --panel:#0b0c10; --card:#0f1117; --muted:#9aa3b2; --text:#eef2ff;
+      --line:rgba(255,255,255,.08);
+      --good:#46e6a3; --warn:#ffcc66; --bad:#ff4d6d; --accent:#7c5cff;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
       --r:18px;
     }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial}
-    #app{height:100%;display:flex;flex-direction:column}
-    header{
-      position:sticky;top:0;z-index:10;
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-      padding:14px 14px 12px;
-      background:linear-gradient(180deg, rgba(5,6,10,.92), rgba(5,6,10,.55));
-      border-bottom:1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(14px);
-    }
-    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.6px}
-    .dot{width:10px;height:10px;border-radius:99px;background:var(--acc);box-shadow:0 0 26px rgba(124,92,255,.9)}
-    .tabs{display:flex;gap:8px;align-items:center}
-    .tab{
-      padding:8px 10px;border-radius:999px;
-      border:1px solid var(--bd);
-      background:rgba(255,255,255,.04);
-      color:var(--mut);
-      font-size:12px;font-weight:800;
-      user-select:none;cursor:pointer;
-    }
-    .tab.on{border-color:rgba(124,92,255,.45);background:rgba(124,92,255,.18);color:rgba(233,236,255,.92)}
-    main{flex:1;display:grid;place-items:center;padding:14px}
-    .stage{
-      width:min(980px, 96vw);
-      aspect-ratio:16/9;
-      border-radius:22px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
-      background:#000;
-      box-shadow:var(--shadow);
-      position:relative;
-    }
-    @media (max-width: 980px){ .stage{aspect-ratio:9/16; width:min(520px, 96vw);} }
-    video{display:none}
-    canvas{position:absolute;inset:0;width:100%;height:100%}
-    .overlay{
-      position:absolute;inset:0;
-      display:flex;flex-direction:column;justify-content:flex-end;
-      padding:14px;
-      background:linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.52));
-      pointer-events:none;
-    }
-    .controls{
-      pointer-events:auto;
-      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
-      padding:12px;border-radius:18px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(14px);
-    }
-    .left,.right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .btn{
-      appearance:none;cursor:pointer;user-select:none;
-      padding:12px 14px;border-radius:16px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);
-      color:var(--fg);font-weight:900;
-      transition:.15s transform,.15s background,.15s border;
+    body{
+      margin:0; color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 30% 20%, rgba(124,92,255,.16), transparent 60%),
+        radial-gradient(900px 700px at 70% 30%, rgba(70,230,163,.12), transparent 55%),
+        radial-gradient(900px 700px at 60% 80%, rgba(255,77,109,.10), transparent 55%),
+        linear-gradient(180deg, #06070a, #05060a 40%, #04050a);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       letter-spacing:.2px;
     }
-    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.20)}
-    .btn.primary{background:rgba(124,92,255,.22);border-color:rgba(124,92,255,.45)}
-    .btn.primary:hover{background:rgba(124,92,255,.30)}
-    .btn.ghost{background:transparent}
-    .small{font-size:12px;font-weight:800;color:var(--mut)}
-    .pill{padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--mut);font-size:12px}
-    .toast{
-      position:fixed;left:14px;right:14px;bottom:14px;
-      padding:12px 14px;border-radius:16px;
-      background:rgba(0,0,0,.62);
-      border:1px solid rgba(255,255,255,.14);
+    a{color:inherit}
+    .wrap{max-width:1180px; margin:0 auto; padding:22px 18px 40px}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 14px; border:1px solid var(--line); border-radius:var(--r);
+      background:rgba(11,12,16,.58); backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(70,230,163,.75));
+      box-shadow: 0 10px 30px rgba(124,92,255,.22);
+      position:relative; overflow:hidden;
+    }
+    .logo:after{
+      content:""; position:absolute; inset:-30%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 50%);
+      transform: rotate(18deg);
+    }
+    .title{display:flex; flex-direction:column; gap:2px}
+    .title b{font-size:14px; letter-spacing:.5px}
+    .title span{font-size:12px; color:var(--muted)}
+    .pill{
+      padding:7px 10px; border-radius:999px; border:1px solid var(--line);
+      background: rgba(15,17,23,.65);
+      display:flex; align-items:center; gap:8px;
+      font-size:12px; color:var(--muted)
+    }
+    .dot{width:8px; height:8px; border-radius:50%; background:var(--warn); box-shadow:0 0 0 5px rgba(255,204,102,.12)}
+    .dot.ok{background:var(--good); box-shadow:0 0 0 5px rgba(70,230,163,.12)}
+    .dot.bad{background:var(--bad); box-shadow:0 0 0 5px rgba(255,77,109,.12)}
+    .grid{
+      display:grid; grid-template-columns: 1.4fr .6fr;
+      gap:16px; margin-top:16px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .panel{
+      border:1px solid var(--line); border-radius:var(--r);
+      background: rgba(11,12,16,.58); backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panel-h{
+      padding:14px 14px; border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .panel-h h2{margin:0; font-size:13px; letter-spacing:.6px; text-transform:uppercase; color:rgba(238,242,255,.9)}
+    .panel-h small{color:var(--muted); font-size:12px}
+    .panel-b{padding:14px}
+    .videoWrap{
+      position:relative; border-radius:16px; overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background: #05060a;
+      aspect-ratio: 16 / 9;
+      box-shadow: 0 22px 70px rgba(0,0,0,.55);
+    }
+    video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000}
+    .hud{
+      position:absolute; left:12px; top:12px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      z-index:3;
+    }
+    .tag{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(5,6,10,.55);
       backdrop-filter: blur(14px);
-      display:none;z-index:20;
-      box-shadow:var(--shadow);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      border-radius:999px;
+      padding:8px 10px;
       font-size:12px;
+      display:flex; align-items:center; gap:8px;
+      color:rgba(238,242,255,.92)
     }
-    .toast.show{display:block}
-    footer{
-      padding:10px 14px 14px;
-      color:rgba(233,236,255,.55);
-      font-size:12px;
-      text-align:center;
+    .tag .miniDot{width:7px; height:7px; border-radius:50%; background: var(--warn)}
+    .tag .miniDot.ok{background:var(--good)}
+    .tag .miniDot.bad{background:var(--bad)}
+    .tag .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; font-size:11px; color:rgba(238,242,255,.85)}
+    .controls{
+      display:grid; gap:10px; margin-top:12px;
+      grid-template-columns: 1fr 1fr;
     }
-    a{color:rgba(233,236,255,.70);text-decoration:none}
+    @media (max-width: 560px){ .controls{grid-template-columns:1fr} }
+    .btn{
+      appearance:none; border:1px solid rgba(255,255,255,.12);
+      background: rgba(15,17,23,.65);
+      color:var(--text);
+      padding:12px 12px;
+      border-radius:14px;
+      font-weight:600; letter-spacing:.3px;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      transition: transform .08s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(20,22,30,.75); border-color: rgba(255,255,255,.18)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(70,230,163,.78));
+      border-color: rgba(255,255,255,.14);
+      color:#07080b;
+      box-shadow: 0 16px 40px rgba(124,92,255,.22);
+    }
+    .btn.danger{border-color: rgba(255,77,109,.35); background: rgba(255,77,109,.10)}
+    .btn.small{padding:10px 10px; border-radius:12px; font-size:13px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+    .kv{display:grid; gap:10px}
+    .card{
+      padding:12px; border-radius:16px; border:1px solid rgba(255,255,255,.10);
+      background: rgba(15,17,23,.55);
+    }
+    .card h3{margin:0 0 8px; font-size:12px; color:rgba(238,242,255,.9); letter-spacing:.5px; text-transform:uppercase}
+    .muted{color:var(--muted); font-size:12px; line-height:1.45}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; font-size:12px}
+    input, select{
+      width:100%;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(5,6,10,.45);
+      color:var(--text);
+      border-radius:12px;
+      padding:11px 11px;
+      outline:none;
+      font-size:14px;
+    }
+    input::placeholder{color:rgba(154,163,178,.65)}
+    .sep{height:1px; background: rgba(255,255,255,.08); margin:10px 0}
+    .footer{
+      margin-top:14px; color:rgba(154,163,178,.82); font-size:12px;
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .kbd{border:1px solid rgba(255,255,255,.12); padding:2px 7px; border-radius:8px; background: rgba(15,17,23,.55); font-family: ui-monospace; font-size:11px}
+    .toast{
+      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+      background: rgba(15,17,23,.82); border:1px solid rgba(255,255,255,.14);
+      color:rgba(238,242,255,.95);
+      padding:10px 12px; border-radius:14px; box-shadow: var(--shadow);
+      display:none; align-items:center; gap:10px; z-index:99;
+      max-width:min(720px, calc(100vw - 24px));
+      backdrop-filter: blur(14px);
+    }
+    .toast.show{display:flex}
+    .toast .ok{color:var(--good); font-weight:700}
+    .toast .bad{color:var(--bad); font-weight:700}
   </style>
 </head>
+
 <body>
-<div id="app">
-  <header>
-    <div class="brand"><span class="dot"></span> CONSIA</div>
-    <div class="tabs" role="tablist" aria-label="modes">
-      <div class="tab on" id="tabSolo">SOLO</div>
-      <div class="tab" id="tabDuo">DÚO</div>
-      <div class="tab" id="tabMoment">MOMENTO</div>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <b>CONSIA — LIVE</b>
+          <span>cámara + audio + presencia · web-first · sin storage · modo soberano</span>
+        </div>
+      </div>
+      <div class="pill" title="Estado de API">
+        <span class="dot" id="apiDot"></span>
+        <span id="apiTxt">verificando api.consia.world…</span>
+      </div>
     </div>
-  </header>
 
-  <main>
-    <div class="stage" aria-label="consia live stage">
-      <video id="cam" playsinline muted autoplay></video>
-      <canvas id="out"></canvas>
+    <div class="grid">
+      <!-- VIDEO -->
+      <div class="panel">
+        <div class="panel-h">
+          <h2>Teletransportación</h2>
+          <small id="modeTxt">modo: standby</small>
+        </div>
+        <div class="panel-b">
+          <div class="videoWrap">
+            <video id="localVideo" autoplay playsinline muted></video>
+            <video id="remoteVideo" autoplay playsinline></video>
 
-      <div class="overlay">
-        <div class="controls">
-          <div class="left">
-            <button class="btn primary" id="btnEnter">Entrar a LIVE</button>
-            <button class="btn ghost" id="btnStop">Salir</button>
-            <span class="pill" id="status">Listo</span>
+            <div class="hud">
+              <div class="tag"><span class="miniDot" id="camDot"></span> Cámara</div>
+              <div class="tag"><span class="miniDot" id="micDot"></span> Mic</div>
+              <div class="tag"><span class="miniDot" id="liveDot"></span> <span id="liveLbl">LIVE: off</span></div>
+              <div class="tag"><span class="mono" id="roomLbl">room: —</span></div>
+            </div>
           </div>
-          <div class="right">
-            <button class="btn" id="scene1">Escena</button>
-            <button class="btn" id="scene2">Noche</button>
-            <button class="btn" id="scene3">Naturaleza</button>
-            <button class="btn" id="btnInvite" style="display:none">Invitar</button>
-            <span class="pill" id="timer" style="display:none">03:00</span>
+
+          <div class="controls">
+            <button class="btn primary" id="btnStartMedia">Activar cámara + audio</button>
+            <button class="btn" id="btnStopMedia">Apagar</button>
+
+            <button class="btn primary" id="btnStartHost">Iniciar LIVE (host)</button>
+            <button class="btn" id="btnJoin">Unirme por link</button>
+
+            <button class="btn" id="btnCopyInvite">Copiar link invitación</button>
+            <button class="btn danger" id="btnEnd">Finalizar LIVE</button>
+          </div>
+
+          <div class="footer">
+            <div>Atajo: <span class="kbd">.</span> abre acciones · <span class="kbd">Esc</span> corta live</div>
+            <div class="mono" id="hintTxt"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE -->
+      <div class="panel">
+        <div class="panel-h">
+          <h2>Control plane</h2>
+          <small>web → api.consia.world</small>
+        </div>
+        <div class="panel-b kv">
+          <div class="card">
+            <h3>Endpoint</h3>
+            <div class="muted">Se usa tu API ya montada en <span class="mono">api.consia.world</span></div>
+            <div class="sep"></div>
+            <div class="row" style="gap:10px; align-items:flex-end">
+              <div style="flex:1">
+                <label class="muted">API base</label>
+                <input id="apiBase" class="mono" value="https://api.consia.world" />
+              </div>
+              <button class="btn small" id="btnHealth">Health</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Modo</h3>
+            <div class="muted">1) Solo preview (sin compartir)<br>2) Live host (crea room)<br>3) Join (entra con link)</div>
+            <div class="sep"></div>
+            <label class="muted">Room ID (si querés fijarlo)</label>
+            <input id="roomInput" placeholder="ej: rw-7f3a9c (vacío = auto)" class="mono" />
+          </div>
+
+          <div class="card">
+            <h3>Estado</h3>
+            <div class="muted" id="statusTxt">Listo. Activá cámara + audio y después iniciá LIVE.</div>
+          </div>
+
+          <div class="card">
+            <h3>Privacidad</h3>
+            <div class="muted">
+              - Este front no guarda nada.<br>
+              - El LIVE usa WebRTC P2P.<br>
+              - Señalización por WebSocket al API (si está activo).<br>
+              - Si el WS no existe aún, igual tenés preview y health.
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </main>
 
-  <footer>
-    LIVE es efímero: sin historial, sin exportaciones.
-  </footer>
-</div>
+    <div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+  </div>
 
-<div id="toast" class="toast"></div>
+  <script>
+    // ==========================
+    // CONSIA LIVE — WEB FIRST
+    // ==========================
+    // Este index.html:
+    // - Preview cámara/mic (solo)
+    // - Live Host/Join (WebRTC) con señalización por WebSocket a tu API
+    // - No incluye secretos
+    //
+    // Señalización esperada (si querés que conecte 100%):
+    // WS: wss://api.consia.world/live/ws?room=ROOM&role=host|guest
+    // Mensajes JSON:
+    //   {type:"hello", room, role}
+    //   {type:"offer", sdp}
+    //   {type:"answer", sdp}
+    //   {type:"ice", candidate}
+    //
+    // Si tu worker usa otras rutas, luego lo adaptamos en 1 minuto.
 
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"></script>
-<script>
-  const $ = (id)=>document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
-  const cam = $("cam");
-  const out = $("out");
-  const ctx = out.getContext("2d");
-  const toastEl = $("toast");
-  const statusEl = $("status");
-  const timerEl = $("timer");
+    const apiDot = $("apiDot"), apiTxt = $("apiTxt");
+    const camDot = $("camDot"), micDot = $("micDot"), liveDot = $("liveDot");
+    const liveLbl = $("liveLbl"), roomLbl = $("roomLbl"), modeTxt = $("modeTxt");
+    const statusTxt = $("statusTxt"), hintTxt = $("hintTxt");
 
-  const tabSolo = $("tabSolo");
-  const tabDuo = $("tabDuo");
-  const tabMoment = $("tabMoment");
+    const localVideo = $("localVideo");
+    const remoteVideo = $("remoteVideo");
 
-  const btnEnter = $("btnEnter");
-  const btnStop = $("btnStop");
-  const btnInvite = $("btnInvite");
+    const apiBase = $("apiBase");
+    const roomInput = $("roomInput");
 
-  const toast = (m)=>{ toastEl.textContent=m; toastEl.classList.add("show"); setTimeout(()=>toastEl.classList.remove("show"), 1700); };
-  const setStatus = (m)=> statusEl.textContent = m;
+    const btnHealth = $("btnHealth");
+    const btnStartMedia = $("btnStartMedia");
+    const btnStopMedia = $("btnStopMedia");
+    const btnStartHost = $("btnStartHost");
+    const btnJoin = $("btnJoin");
+    const btnCopyInvite = $("btnCopyInvite");
+    const btnEnd = $("btnEnd");
 
-  // Scenes (puedes reemplazar por tus escenas premium luego)
-  const SCENES = [
-    "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=70",
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=70",
-    "https://images.unsplash.com/photo-1520975661595-6453be3f7070?auto=format&fit=crop&w=1600&q=70"
-  ];
-  let bgImg = new Image(), bgReady=false;
-  function setBg(url){
-    bgReady=false;
-    bgImg = new Image();
-    bgImg.crossOrigin = "anonymous";
-    bgImg.onload=()=>{ bgReady=true; toast("Escena aplicada"); };
-    bgImg.onerror=()=>toast("No pude cargar escena");
-    bgImg.src=url;
-  }
-  setBg(SCENES[0]);
+    const toast = $("toast"), toastMsg = $("toastMsg"), toastIcon = $("toastIcon");
 
-  // Resize
-  function resize(){
-    const r = out.getBoundingClientRect();
-    out.width = Math.floor(r.width * devicePixelRatio);
-    out.height= Math.floor(r.height* devicePixelRatio);
-  }
-  addEventListener("resize", resize);
+    let stream = null;
+    let pc = null;
+    let ws = null;
 
-  function drawCover(img){
-    const cw=out.width, ch=out.height;
-    const iw=img.width, ih=img.height;
-    const s=Math.max(cw/iw, ch/ih);
-    const nw=iw*s, nh=ih*s;
-    ctx.drawImage(img, (cw-nw)/2, (ch-nh)/2, nw, nh);
-  }
+    let currentRoom = null;
+    let role = null; // "host" | "guest"
+    let liveOn = false;
 
-  // MediaPipe segmentation (on-device)
-  const seg = new SelfieSegmentation({
-    locateFile: (f)=>`https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${f}`
-  });
-  seg.setOptions({ modelSelection: 1 });
-  seg.onResults(onResults);
+    const rtcConfig = {
+      iceServers: [
+        // STUN público (gratis). Si querés TOP absoluto luego lo pasamos a TURN.
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun.cloudflare.com:3478" }
+      ]
+    };
 
-  let stream=null, running=false;
-
-  function onResults(res){
-    if(!running) return;
-    ctx.clearRect(0,0,out.width,out.height);
-    if(bgReady) drawCover(bgImg); else { ctx.fillStyle="#000"; ctx.fillRect(0,0,out.width,out.height); }
-
-    ctx.save();
-    ctx.globalCompositeOperation="destination-in";
-    ctx.drawImage(res.segmentationMask, 0, 0, out.width, out.height);
-    ctx.restore();
-
-    ctx.save();
-    ctx.globalCompositeOperation="destination-over";
-    ctx.drawImage(res.image, 0, 0, out.width, out.height);
-    ctx.restore();
-  }
-
-  async function startLive(){
-    if(stream) return;
-    resize();
-    setStatus("Conectando…");
-    try{
-      stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:"user" }, audio:false });
-      cam.srcObject = stream;
-      await cam.play();
-      running=true;
-      setStatus("LIVE");
-      const loop = async ()=>{
-        if(!running) return;
-        await seg.send({ image: cam });
-        requestAnimationFrame(loop);
-      };
-      loop();
-      toast("LIVE activo");
-    } catch(e){
-      setStatus("Bloqueado");
-      toast("Permiso de cámara requerido");
+    function toastShow(msg, ok=true){
+      toastIcon.textContent = ok ? "✅" : "⛔";
+      toastMsg.innerHTML = (ok ? "<span class='ok'>OK</span> " : "<span class='bad'>ERR</span> ") + msg;
+      toast.classList.add("show");
+      setTimeout(()=>toast.classList.remove("show"), 2600);
     }
-  }
 
-  function stopLive(){
-    running=false;
-    if(stream) stream.getTracks().forEach(t=>t.stop());
-    stream=null;
-    ctx.clearRect(0,0,out.width,out.height);
-    setStatus("Listo");
-    timerEl.style.display="none";
-    toast("Sesión cerrada");
-  }
+    function setDot(el, state){
+      el.classList.remove("ok","bad");
+      if(state==="ok") el.classList.add("ok");
+      if(state==="bad") el.classList.add("bad");
+    }
 
-  // Modes
-  let mode="solo";
-  function setMode(m){
-    mode=m;
-    tabSolo.classList.toggle("on", m==="solo");
-    tabDuo.classList.toggle("on", m==="duo");
-    tabMoment.classList.toggle("on", m==="moment");
-    btnInvite.style.display = (m==="duo") ? "inline-block" : "none";
-    timerEl.style.display = (m==="moment") ? "inline-block" : "none";
-    if(m==="moment") timerEl.textContent="03:00";
-  }
-  tabSolo.onclick = ()=>setMode("solo");
-  tabDuo.onclick = ()=>setMode("duo");
-  tabMoment.onclick = ()=>setMode("moment");
+    function setMode(text){
+      modeTxt.textContent = "modo: " + text;
+    }
 
-  // Moment timer (3 minutes)
-  let momentT=null, left=0;
-  function startMoment(){
-    if(!running){ toast("Entrá a LIVE primero"); return; }
-    if(mode!=="moment"){ setMode("moment"); }
-    if(momentT) return;
-    left=180; timerEl.textContent="03:00";
-    toast("Momento: 3 minutos");
-    momentT=setInterval(()=>{
-      left--;
-      const m=String(Math.floor(left/60)).padStart(2,"0");
-      const s=String(left%60).padStart(2,"0");
-      timerEl.textContent=`${m}:${s}`;
-      if(left===120) setBg(SCENES[1]);
-      if(left===60)  setBg(SCENES[2]);
-      if(left<=0){
-        clearInterval(momentT); momentT=null;
-        stopLive();
+    function randomRoom(){
+      const a = Math.random().toString(16).slice(2,6);
+      const b = Math.random().toString(16).slice(2,6);
+      return `rw-${a}${b}`;
+    }
+
+    function setStatus(s){
+      statusTxt.textContent = s;
+    }
+
+    async function health(){
+      try{
+        const base = apiBase.value.replace(/\/+$/,"");
+        const res = await fetch(base + "/", { method:"GET" });
+        const txt = await res.text();
+        const ok = res.ok && txt.includes('"ok":true');
+        setDot(apiDot, ok ? "ok" : "bad");
+        apiTxt.textContent = ok ? "API OK (consia-live)" : "API respondió (ver)";
+        toastShow(ok ? "API viva" : "API respondió pero no ok=true", ok);
+      }catch(e){
+        setDot(apiDot, "bad");
+        apiTxt.textContent = "API unreachable";
+        toastShow("No pude llegar al API", false);
       }
-    },1000);
-  }
+    }
 
-  // Duo invite (backend call)
-  // IMPORTANTE: acá NO hardcodeamos API_KEY. Para usuario final luego usamos tokens efímeros.
-  // Para probar hoy: si querés, poné tu API_KEY en localStorage desde consola (Owner), no visible en UI.
-  async function createInvite(){
-    const key = localStorage.getItem("CONSIA_OWNER_API_KEY");
-    if(!key){ toast("Owner key no configurada"); return; }
-    const res = await fetch("https://api.consia.world/invite/create", {
-      method:"POST",
-      headers:{ "Authorization": "Bearer " + key }
+    async function startMedia(){
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } },
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        });
+        localVideo.srcObject = stream;
+        localVideo.muted = true;
+        remoteVideo.srcObject = null;
+
+        setDot(camDot, "ok");
+        setDot(micDot, "ok");
+        setStatus("Cámara + audio activos. Ahora podés iniciar LIVE (host) o unirte (guest).");
+        toastShow("Cámara + audio activos", true);
+      }catch(e){
+        setDot(camDot, "bad");
+        setDot(micDot, "bad");
+        setStatus("Permisos denegados o sin dispositivos.");
+        toastShow("No pude activar cámara/mic", false);
+      }
+    }
+
+    function stopMedia(){
+      if(stream){
+        stream.getTracks().forEach(t=>t.stop());
+      }
+      stream = null;
+      localVideo.srcObject = null;
+      setDot(camDot, "bad");
+      setDot(micDot, "bad");
+      toastShow("Media apagado", true);
+    }
+
+    function cleanupLive(){
+      liveOn = false;
+      setDot(liveDot, "bad");
+      liveLbl.textContent = "LIVE: off";
+      if(ws){ try{ ws.close(); }catch(_){} }
+      ws = null;
+      if(pc){ try{ pc.close(); }catch(_){} }
+      pc = null;
+      remoteVideo.srcObject = null;
+      role = null;
+      setMode("standby");
+      setStatus("LIVE finalizado.");
+      hintTxt.textContent = "";
+    }
+
+    function makeInviteURL(room){
+      const u = new URL(window.location.href);
+      u.searchParams.set("room", room);
+      u.searchParams.set("join", "1");
+      return u.toString();
+    }
+
+    async function copyInvite(){
+      if(!currentRoom){
+        toastShow("Primero iniciá LIVE (host) o fijá un room", false);
+        return;
+      }
+      const link = makeInviteURL(currentRoom);
+      try{
+        await navigator.clipboard.writeText(link);
+        toastShow("Link copiado", true);
+      }catch(e){
+        prompt("Copiá el link:", link);
+      }
+    }
+
+    async function ensurePeerConnection(){
+      if(pc) return;
+
+      pc = new RTCPeerConnection(rtcConfig);
+
+      pc.ontrack = (ev)=>{
+        const [remoteStream] = ev.streams;
+        remoteVideo.srcObject = remoteStream;
+      };
+
+      pc.onicecandidate = (ev)=>{
+        if(ev.candidate && ws && ws.readyState===1){
+          ws.send(JSON.stringify({ type:"ice", candidate: ev.candidate }));
+        }
+      };
+
+      pc.onconnectionstatechange = ()=>{
+        const st = pc.connectionState;
+        if(st==="connected"){
+          setStatus("Conectado: presencia en tiempo real (WebRTC).");
+          toastShow("LIVE conectado", true);
+        }
+        if(st==="failed" || st==="disconnected"){
+          setStatus("Conexión inestable o caída. Podés reiniciar LIVE.");
+        }
+      };
+
+      if(stream){
+        stream.getTracks().forEach(t=>pc.addTrack(t, stream));
+      }
+    }
+
+    function wsURL(base, room, role){
+      const clean = base.replace(/^http/,"ws").replace(/\/+$/,"");
+      return `${clean}/live/ws?room=${encodeURIComponent(room)}&role=${encodeURIComponent(role)}`;
+    }
+
+    async function startHost(){
+      if(!stream){
+        toastShow("Primero activá cámara + audio", false);
+        return;
+      }
+
+      currentRoom = (roomInput.value || "").trim() || randomRoom();
+      role = "host";
+      roomLbl.textContent = "room: " + currentRoom;
+
+      await ensurePeerConnection();
+
+      const base = apiBase.value.replace(/\/+$/,"");
+      const url = wsURL(base, currentRoom, role);
+
+      setMode("host");
+      setStatus("Abriendo señalización (WebSocket)...");
+      hintTxt.textContent = "Invitá con el botón: “Copiar link invitación”";
+
+      try{
+        ws = new WebSocket(url);
+      }catch(e){
+        toastShow("No pude abrir WebSocket (ver worker live)", false);
+        return;
+      }
+
+      ws.onopen = async ()=>{
+        ws.send(JSON.stringify({ type:"hello", room: currentRoom, role }));
+        // Crear offer
+        const offer = await pc.createOffer({ offerToReceiveAudio:true, offerToReceiveVideo:true });
+        await pc.setLocalDescription(offer);
+        ws.send(JSON.stringify({ type:"offer", sdp: offer.sdp }));
+
+        liveOn = true;
+        setDot(liveDot, "ok");
+        liveLbl.textContent = "LIVE: on";
+        toastShow("LIVE host iniciado", true);
+      };
+
+      ws.onmessage = async (ev)=>{
+        let msg;
+        try{ msg = JSON.parse(ev.data); }catch(_){ return; }
+
+        if(msg.type==="answer" && msg.sdp){
+          await pc.setRemoteDescription(new RTCSessionDescription({ type:"answer", sdp: msg.sdp }));
+        }
+
+        if(msg.type==="ice" && msg.candidate){
+          try{ await pc.addIceCandidate(new RTCIceCandidate(msg.candidate)); }catch(_){}
+        }
+      };
+
+      ws.onerror = ()=>{
+        setStatus("WebSocket error. Si tu API no tiene /live/ws, lo ajustamos.");
+      };
+      ws.onclose = ()=>{
+        if(liveOn){
+          setStatus("Señalización cerrada. Si se cortó, reiniciá LIVE.");
+        }
+      };
+    }
+
+    async function joinFromLink(){
+      const u = new URL(window.location.href);
+      const room = u.searchParams.get("room") || (roomInput.value || "").trim();
+      if(!room){
+        toastShow("Pegá un room o entrá con link", false);
+        return;
+      }
+      currentRoom = room;
+      role = "guest";
+      roomLbl.textContent = "room: " + currentRoom;
+
+      // Guest puede unirse sin cámara, pero lo hacemos pro: si ya activaste, mejor.
+      await ensurePeerConnection();
+
+      const base = apiBase.value.replace(/\/+$/,"");
+      const url = wsURL(base, currentRoom, role);
+
+      setMode("guest");
+      setStatus("Uniéndome al LIVE…");
+
+      try{
+        ws = new WebSocket(url);
+      }catch(e){
+        toastShow("No pude abrir WebSocket (ver worker live)", false);
+        return;
+      }
+
+      ws.onopen = ()=>{
+        ws.send(JSON.stringify({ type:"hello", room: currentRoom, role }));
+        liveOn = true;
+        setDot(liveDot, "ok");
+        liveLbl.textContent = "LIVE: on";
+        toastShow("Entraste al LIVE", true);
+      };
+
+      ws.onmessage = async (ev)=>{
+        let msg;
+        try{ msg = JSON.parse(ev.data); }catch(_){ return; }
+
+        if(msg.type==="offer" && msg.sdp){
+          await pc.setRemoteDescription(new RTCSessionDescription({ type:"offer", sdp: msg.sdp }));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          ws.send(JSON.stringify({ type:"answer", sdp: answer.sdp }));
+        }
+
+        if(msg.type==="ice" && msg.candidate){
+          try{ await pc.addIceCandidate(new RTCIceCandidate(msg.candidate)); }catch(_){}
+        }
+      };
+
+      ws.onerror = ()=>{
+        setStatus("WebSocket error. Si tu API no tiene /live/ws, lo ajustamos.");
+      };
+    }
+
+    // --- Shortcuts
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape"){
+        cleanupLive();
+      }
+      if(e.key === "."){
+        // acción rápida: si no hay media, prende; si hay media, host
+        if(!stream) startMedia();
+        else if(!liveOn) startHost();
+      }
     });
-    const data = await res.json();
-    if(!data.ok){ toast("No pude crear invite"); return; }
-    const link = location.origin + "/?invite=" + encodeURIComponent(data.invite);
-    try{ await navigator.clipboard.writeText(link); toast("Invite copiado"); }
-    catch{ toast("Invite: " + data.invite); }
-  }
 
-  // Scenes
-  $("scene1").onclick = ()=>setBg(SCENES[0]);
-  $("scene2").onclick = ()=>setBg(SCENES[1]);
-  $("scene3").onclick = ()=>setBg(SCENES[2]);
+    // --- Buttons
+    btnHealth.onclick = health;
+    btnStartMedia.onclick = startMedia;
+    btnStopMedia.onclick = ()=>{ cleanupLive(); stopMedia(); setStatus("Media apagado."); };
+    btnStartHost.onclick = startHost;
+    btnJoin.onclick = joinFromLink;
+    btnCopyInvite.onclick = copyInvite;
+    btnEnd.onclick = cleanupLive;
 
-  // Buttons
-  btnEnter.onclick = async ()=>{
-    await startLive();
-    if(mode==="moment") startMoment();
-  };
-  btnStop.onclick = stopLive;
-  btnInvite.onclick = createInvite;
+    // --- Autoload join (si viene con link)
+    (async function boot(){
+      await health();
 
-  // Autostart moment if selected
-  tabMoment.onclick = ()=>{ setMode("moment"); };
+      const u = new URL(window.location.href);
+      const autoJoin = u.searchParams.get("join")==="1";
+      const room = u.searchParams.get("room");
+      if(room){
+        roomInput.value = room;
+        currentRoom = room;
+        roomLbl.textContent = "room: " + currentRoom;
+      }
 
-  // Privacy: if tab hidden, close session (web-best-effort)
-  document.addEventListener("visibilitychange", ()=>{ if(document.hidden) stopLive(); });
+      setDot(camDot, "bad");
+      setDot(micDot, "bad");
+      setDot(liveDot, "bad");
 
-  // Default
-  setMode("solo");
-</script>
+      if(autoJoin){
+        setStatus("Link detectado. Podés activar cámara + audio o unirte directo.");
+        toastShow("Link de LIVE detectado", true);
+      }else{
+        setStatus("Activá cámara + audio. Luego iniciá LIVE (host).");
+      }
+    })();
+  </script>
 </body>
 </html>
