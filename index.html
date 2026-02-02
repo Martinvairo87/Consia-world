@@ -1,647 +1,359 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0c0f" />
-  <title>CONSIA — LIVE</title>
-  <style>
-    :root{
-      --bg:#07080b; --panel:#0b0c10; --card:#0f1117; --muted:#9aa3b2; --text:#eef2ff;
-      --line:rgba(255,255,255,.08);
-      --good:#46e6a3; --warn:#ffcc66; --bad:#ff4d6d; --accent:#7c5cff;
-      --shadow: 0 18px 60px rgba(0,0,0,.55);
-      --r:18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 30% 20%, rgba(124,92,255,.16), transparent 60%),
-        radial-gradient(900px 700px at 70% 30%, rgba(70,230,163,.12), transparent 55%),
-        radial-gradient(900px 700px at 60% 80%, rgba(255,77,109,.10), transparent 55%),
-        linear-gradient(180deg, #06070a, #05060a 40%, #04050a);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      letter-spacing:.2px;
-    }
-    a{color:inherit}
-    .wrap{max-width:1180px; margin:0 auto; padding:22px 18px 40px}
-    .top{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:14px 14px; border:1px solid var(--line); border-radius:var(--r);
-      background:rgba(11,12,16,.58); backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-    }
-    .brand{display:flex; align-items:center; gap:12px}
-    .logo{
-      width:38px; height:38px; border-radius:12px;
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(70,230,163,.75));
-      box-shadow: 0 10px 30px rgba(124,92,255,.22);
-      position:relative; overflow:hidden;
-    }
-    .logo:after{
-      content:""; position:absolute; inset:-30%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 50%);
-      transform: rotate(18deg);
-    }
-    .title{display:flex; flex-direction:column; gap:2px}
-    .title b{font-size:14px; letter-spacing:.5px}
-    .title span{font-size:12px; color:var(--muted)}
-    .pill{
-      padding:7px 10px; border-radius:999px; border:1px solid var(--line);
-      background: rgba(15,17,23,.65);
-      display:flex; align-items:center; gap:8px;
-      font-size:12px; color:var(--muted)
-    }
-    .dot{width:8px; height:8px; border-radius:50%; background:var(--warn); box-shadow:0 0 0 5px rgba(255,204,102,.12)}
-    .dot.ok{background:var(--good); box-shadow:0 0 0 5px rgba(70,230,163,.12)}
-    .dot.bad{background:var(--bad); box-shadow:0 0 0 5px rgba(255,77,109,.12)}
-    .grid{
-      display:grid; grid-template-columns: 1.4fr .6fr;
-      gap:16px; margin-top:16px;
-    }
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
-    .panel{
-      border:1px solid var(--line); border-radius:var(--r);
-      background: rgba(11,12,16,.58); backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .panel-h{
-      padding:14px 14px; border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .panel-h h2{margin:0; font-size:13px; letter-spacing:.6px; text-transform:uppercase; color:rgba(238,242,255,.9)}
-    .panel-h small{color:var(--muted); font-size:12px}
-    .panel-b{padding:14px}
-    .videoWrap{
-      position:relative; border-radius:16px; overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background: #05060a;
-      aspect-ratio: 16 / 9;
-      box-shadow: 0 22px 70px rgba(0,0,0,.55);
-    }
-    video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000}
-    .hud{
-      position:absolute; left:12px; top:12px;
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-      z-index:3;
-    }
-    .tag{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(5,6,10,.55);
-      backdrop-filter: blur(14px);
-      border-radius:999px;
-      padding:8px 10px;
-      font-size:12px;
-      display:flex; align-items:center; gap:8px;
-      color:rgba(238,242,255,.92)
-    }
-    .tag .miniDot{width:7px; height:7px; border-radius:50%; background: var(--warn)}
-    .tag .miniDot.ok{background:var(--good)}
-    .tag .miniDot.bad{background:var(--bad)}
-    .tag .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; font-size:11px; color:rgba(238,242,255,.85)}
-    .controls{
-      display:grid; gap:10px; margin-top:12px;
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 560px){ .controls{grid-template-columns:1fr} }
-    .btn{
-      appearance:none; border:1px solid rgba(255,255,255,.12);
-      background: rgba(15,17,23,.65);
-      color:var(--text);
-      padding:12px 12px;
-      border-radius:14px;
-      font-weight:600; letter-spacing:.3px;
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      transition: transform .08s ease, background .12s ease, border-color .12s ease;
-      user-select:none;
-    }
-    .btn:hover{background: rgba(20,22,30,.75); border-color: rgba(255,255,255,.18)}
-    .btn:active{transform: translateY(1px)}
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(70,230,163,.78));
-      border-color: rgba(255,255,255,.14);
-      color:#07080b;
-      box-shadow: 0 16px 40px rgba(124,92,255,.22);
-    }
-    .btn.danger{border-color: rgba(255,77,109,.35); background: rgba(255,77,109,.10)}
-    .btn.small{padding:10px 10px; border-radius:12px; font-size:13px}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
-    .kv{display:grid; gap:10px}
-    .card{
-      padding:12px; border-radius:16px; border:1px solid rgba(255,255,255,.10);
-      background: rgba(15,17,23,.55);
-    }
-    .card h3{margin:0 0 8px; font-size:12px; color:rgba(238,242,255,.9); letter-spacing:.5px; text-transform:uppercase}
-    .muted{color:var(--muted); font-size:12px; line-height:1.45}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; font-size:12px}
-    input, select{
-      width:100%;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(5,6,10,.45);
-      color:var(--text);
-      border-radius:12px;
-      padding:11px 11px;
-      outline:none;
-      font-size:14px;
-    }
-    input::placeholder{color:rgba(154,163,178,.65)}
-    .sep{height:1px; background: rgba(255,255,255,.08); margin:10px 0}
-    .footer{
-      margin-top:14px; color:rgba(154,163,178,.82); font-size:12px;
-      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
-    }
-    .kbd{border:1px solid rgba(255,255,255,.12); padding:2px 7px; border-radius:8px; background: rgba(15,17,23,.55); font-family: ui-monospace; font-size:11px}
-    .toast{
-      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
-      background: rgba(15,17,23,.82); border:1px solid rgba(255,255,255,.14);
-      color:rgba(238,242,255,.95);
-      padding:10px 12px; border-radius:14px; box-shadow: var(--shadow);
-      display:none; align-items:center; gap:10px; z-index:99;
-      max-width:min(720px, calc(100vw - 24px));
-      backdrop-filter: blur(14px);
-    }
-    .toast.show{display:flex}
-    .toast .ok{color:var(--good); font-weight:700}
-    .toast .bad{color:var(--bad); font-weight:700}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>CONSIA LIVE</title>
+
+<style>
+/* ===================== THEME ===================== */
+:root{
+  --bg:#000;
+  --panel:#0b0b0b;
+  --glass:rgba(10,10,10,.78);
+  --line:rgba(255,255,255,.14);
+  --text:#fff;
+  --muted:rgba(255,255,255,.75);
+  --muted2:rgba(255,255,255,.55);
+  --good:#3ddc84;
+  --warn:#ffcc00;
+  --bad:#ff4d4d;
+  --shadow:0 18px 44px rgba(0,0,0,.55);
+  --r:16px;
+  --r2:22px;
+}
+
+/* ===================== RESET ===================== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
+  overflow:hidden;
+}
+
+/* ===================== TOP BAR ===================== */
+#topbar{
+  position:fixed; inset:0 0 auto 0; height:64px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:10px 14px;
+  background:linear-gradient(180deg, rgba(0,0,0,.9), rgba(0,0,0,.35));
+  border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  z-index:50;
+}
+#brand{display:flex; flex-direction:column}
+#brand .t{font-weight:800; letter-spacing:.4px}
+#brand .s{font-size:12px; color:var(--muted)}
+#status{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.pill{
+  display:inline-flex; gap:8px; align-items:center;
+  padding:8px 10px; border-radius:999px;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  font-size:12px; color:var(--muted);
+}
+.dot{width:8px;height:8px;border-radius:50%}
+.good{background:var(--good)}
+.warn{background:var(--warn)}
+.bad{background:var(--bad)}
+
+/* ===================== STAGE ===================== */
+#stage{position:absolute; inset:64px 0 0 0}
+#remoteVideo{
+  width:100%; height:100%; object-fit:cover; background:#000;
+}
+
+/* ===================== WAITING OVERLAY ===================== */
+#overlay{
+  position:absolute; inset:64px 0 0 0;
+  display:flex; align-items:center; justify-content:center;
+  padding:22px; pointer-events:none; z-index:10;
+}
+#overlayCard{
+  width:min(520px,92vw);
+  background:var(--glass);
+  border:1px solid var(--line);
+  border-radius:var(--r2);
+  padding:18px;
+  box-shadow:var(--shadow);
+  backdrop-filter: blur(14px);
+}
+#overlayCard h3{margin:0 0 6px 0}
+#overlayCard p{margin:0; font-size:13px; color:var(--muted); line-height:1.35}
+#overlayBadge{
+  margin-top:12px; display:inline-flex; gap:8px; align-items:center;
+  padding:8px 10px; border-radius:999px;
+  background:rgba(255,255,255,.06); border:1px solid var(--line);
+  font-size:12px; color:var(--muted);
+}
+
+/* ===================== PIP (SELF VIEW) ===================== */
+#pip{
+  position:absolute; right:16px; bottom:16px;
+  width:160px; height:220px;
+  border-radius:var(--r);
+  background:#111; border:1px solid var(--line);
+  box-shadow:0 12px 30px rgba(0,0,0,.6);
+  overflow:hidden; z-index:20;
+}
+#localVideo{
+  width:100%; height:100%; object-fit:cover;
+  transform:scaleX(-1); background:#0a0a0a;
+}
+#pipBadges{
+  position:absolute; left:10px; bottom:10px;
+  display:flex; gap:8px; align-items:center;
+  padding:6px 8px; border-radius:999px;
+  background:rgba(0,0,0,.55); border:1px solid var(--line);
+  font-size:12px;
+}
+
+/* ===================== CONTROLS ===================== */
+#controls{
+  position:fixed; left:12px; right:12px; bottom:12px;
+  display:flex; gap:8px; flex-wrap:wrap; justify-content:center; z-index:60;
+}
+.btn{
+  border:none; cursor:pointer; border-radius:999px;
+  padding:12px 14px; font-weight:700; font-size:13px; color:#fff;
+  background:rgba(255,255,255,.08); border:1px solid var(--line);
+  backdrop-filter: blur(10px);
+}
+.btn.primary{background:rgba(61,220,132,.16); border-color:rgba(61,220,132,.35)}
+.btn.danger{background:rgba(255,77,77,.16); border-color:rgba(255,77,77,.35)}
+.btn.ghost{background:rgba(255,255,255,.06)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+
+/* ===================== CHAT ===================== */
+#chat{
+  position:fixed; top:76px; right:12px;
+  width:min(360px,calc(100vw - 24px));
+  height:min(62vh,520px);
+  background:var(--glass); border:1px solid var(--line);
+  border-radius:18px; box-shadow:var(--shadow);
+  backdrop-filter: blur(14px);
+  display:none; z-index:55; overflow:hidden;
+}
+#chat header{
+  padding:12px; border-bottom:1px solid rgba(255,255,255,.10);
+  display:flex; justify-content:space-between; align-items:center;
+}
+#chat header .t{font-weight:800}
+#chat header .s{font-size:12px; color:var(--muted)}
+#chat main{padding:12px; height:calc(100% - 122px); overflow:auto}
+.msg{
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10);
+  border-radius:14px; padding:10px; margin-bottom:10px;
+}
+.msg .o{font-size:11px; color:var(--muted2)}
+.msg .t{margin-top:6px; font-size:13px}
+.msg .tr{margin-top:6px; font-size:12px; color:rgba(255,255,255,.8)}
+#chat footer{padding:10px; border-top:1px solid rgba(255,255,255,.10)}
+#chat input{
+  width:100%; padding:10px; border-radius:14px;
+  background:rgba(0,0,0,.35); border:1px solid var(--line); color:#fff;
+}
+
+/* ===================== CAPTIONS ===================== */
+#captions{
+  position:fixed; left:12px; right:12px; bottom:78px;
+  display:none; justify-content:center; z-index:40; pointer-events:none;
+}
+#captionsBox{
+  width:min(860px,96vw); padding:10px 12px;
+  background:rgba(0,0,0,.62); border:1px solid var(--line);
+  border-radius:16px; text-align:center; box-shadow:var(--shadow);
+}
+
+/* ===================== AVATAR GUIDE ===================== */
+#avatar{
+  position:fixed; left:14px; bottom:14px;
+  display:flex; align-items:center; gap:10px; z-index:70;
+}
+#avatarBtn{
+  width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,.08); border:1px solid var(--line);
+  box-shadow:var(--shadow); cursor:pointer;
+}
+#avatarCard{
+  display:none; max-width:320px;
+  background:var(--glass); border:1px solid var(--line);
+  border-radius:16px; padding:12px;
+  box-shadow:var(--shadow); backdrop-filter: blur(14px);
+}
+#avatarCard p{margin:0; font-size:13px; color:var(--muted); line-height:1.35}
+
+/* ===================== SMALL ===================== */
+@media(max-width:420px){
+  #pip{width:132px;height:184px; right:12px; bottom:12px}
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div class="title">
-          <b>CONSIA — LIVE</b>
-          <span>cámara + audio + presencia · web-first · sin storage · modo soberano</span>
-        </div>
-      </div>
-      <div class="pill" title="Estado de API">
-        <span class="dot" id="apiDot"></span>
-        <span id="apiTxt">verificando api.consia.world…</span>
-      </div>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div id="brand">
+    <div class="t">CONSIA — LIVE</div>
+    <div class="s">Presencia real · Sin grabaciones</div>
+  </div>
+  <div id="status">
+    <div class="pill"><span class="dot warn" id="dotLive"></span><span id="txtLive">LIVE: off</span></div>
+    <div class="pill"><span class="dot warn" id="dotMedia"></span><span id="txtMedia">MEDIA: standby</span></div>
+    <div class="pill"><span class="dot warn" id="dotPeer"></span><span id="txtPeer">PEER: esperando</span></div>
+  </div>
+</div>
+
+<!-- STAGE -->
+<div id="stage">
+  <video id="remoteVideo" autoplay playsinline></video>
+
+  <div id="overlay">
+    <div id="overlayCard">
+      <h3>Estamos preparando el LIVE</h3>
+      <p>El host aún no inició la sesión. Tu cámara y micrófono están apagados.</p>
+      <div id="overlayBadge">🔒 Modo soberano activo — nada se graba, nada se guarda.</div>
     </div>
-
-    <div class="grid">
-      <!-- VIDEO -->
-      <div class="panel">
-        <div class="panel-h">
-          <h2>Teletransportación</h2>
-          <small id="modeTxt">modo: standby</small>
-        </div>
-        <div class="panel-b">
-          <div class="videoWrap">
-            <video id="localVideo" autoplay playsinline muted></video>
-            <video id="remoteVideo" autoplay playsinline></video>
-
-            <div class="hud">
-              <div class="tag"><span class="miniDot" id="camDot"></span> Cámara</div>
-              <div class="tag"><span class="miniDot" id="micDot"></span> Mic</div>
-              <div class="tag"><span class="miniDot" id="liveDot"></span> <span id="liveLbl">LIVE: off</span></div>
-              <div class="tag"><span class="mono" id="roomLbl">room: —</span></div>
-            </div>
-          </div>
-
-          <div class="controls">
-            <button class="btn primary" id="btnStartMedia">Activar cámara + audio</button>
-            <button class="btn" id="btnStopMedia">Apagar</button>
-
-            <button class="btn primary" id="btnStartHost">Iniciar LIVE (host)</button>
-            <button class="btn" id="btnJoin">Unirme por link</button>
-
-            <button class="btn" id="btnCopyInvite">Copiar link invitación</button>
-            <button class="btn danger" id="btnEnd">Finalizar LIVE</button>
-          </div>
-
-          <div class="footer">
-            <div>Atajo: <span class="kbd">.</span> abre acciones · <span class="kbd">Esc</span> corta live</div>
-            <div class="mono" id="hintTxt"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SIDE -->
-      <div class="panel">
-        <div class="panel-h">
-          <h2>Control plane</h2>
-          <small>web → api.consia.world</small>
-        </div>
-        <div class="panel-b kv">
-          <div class="card">
-            <h3>Endpoint</h3>
-            <div class="muted">Se usa tu API ya montada en <span class="mono">api.consia.world</span></div>
-            <div class="sep"></div>
-            <div class="row" style="gap:10px; align-items:flex-end">
-              <div style="flex:1">
-                <label class="muted">API base</label>
-                <input id="apiBase" class="mono" value="https://api.consia.world" />
-              </div>
-              <button class="btn small" id="btnHealth">Health</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3>Modo</h3>
-            <div class="muted">1) Solo preview (sin compartir)<br>2) Live host (crea room)<br>3) Join (entra con link)</div>
-            <div class="sep"></div>
-            <label class="muted">Room ID (si querés fijarlo)</label>
-            <input id="roomInput" placeholder="ej: rw-7f3a9c (vacío = auto)" class="mono" />
-          </div>
-
-          <div class="card">
-            <h3>Estado</h3>
-            <div class="muted" id="statusTxt">Listo. Activá cámara + audio y después iniciá LIVE.</div>
-          </div>
-
-          <div class="card">
-            <h3>Privacidad</h3>
-            <div class="muted">
-              - Este front no guarda nada.<br>
-              - El LIVE usa WebRTC P2P.<br>
-              - Señalización por WebSocket al API (si está activo).<br>
-              - Si el WS no existe aún, igual tenés preview y health.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
   </div>
 
-  <script>
-    // ==========================
-    // CONSIA LIVE — WEB FIRST
-    // ==========================
-    // Este index.html:
-    // - Preview cámara/mic (solo)
-    // - Live Host/Join (WebRTC) con señalización por WebSocket a tu API
-    // - No incluye secretos
-    //
-    // Señalización esperada (si querés que conecte 100%):
-    // WS: wss://api.consia.world/live/ws?room=ROOM&role=host|guest
-    // Mensajes JSON:
-    //   {type:"hello", room, role}
-    //   {type:"offer", sdp}
-    //   {type:"answer", sdp}
-    //   {type:"ice", candidate}
-    //
-    // Si tu worker usa otras rutas, luego lo adaptamos en 1 minuto.
+  <div id="pip">
+    <video id="localVideo" autoplay playsinline muted></video>
+    <div id="pipBadges">
+      <span id="bCam">🎥 OFF</span>
+      <span id="bMic">🎙️ OFF</span>
+    </div>
+  </div>
+</div>
 
-    const $ = (id) => document.getElementById(id);
+<!-- CONTROLS -->
+<div id="controls">
+  <button class="btn" id="btnMedia">Activar cámara + audio</button>
+  <button class="btn primary" id="btnStart">Iniciar LIVE (host)</button>
+  <button class="btn ghost" id="btnChat">Chat</button>
+  <button class="btn ghost" id="btnTrans">Traducción</button>
+  <button class="btn danger" id="btnEnd">Finalizar LIVE</button>
+</div>
 
-    const apiDot = $("apiDot"), apiTxt = $("apiTxt");
-    const camDot = $("camDot"), micDot = $("micDot"), liveDot = $("liveDot");
-    const liveLbl = $("liveLbl"), roomLbl = $("roomLbl"), modeTxt = $("modeTxt");
-    const statusTxt = $("statusTxt"), hintTxt = $("hintTxt");
+<!-- CHAT -->
+<section id="chat">
+  <header>
+    <div>
+      <div class="t">Chat en vivo</div>
+      <div class="s">Efímero · no se guarda</div>
+    </div>
+    <button class="btn ghost" onclick="toggleChat(false)">✕</button>
+  </header>
+  <main id="chatBody"></main>
+  <footer>
+    <input id="chatInput" placeholder="Escribí algo relevante para este momento…"/>
+  </footer>
+</section>
 
-    const localVideo = $("localVideo");
-    const remoteVideo = $("remoteVideo");
+<!-- CAPTIONS -->
+<div id="captions"><div id="captionsBox">Subtítulos en tiempo real · efímeros</div></div>
 
-    const apiBase = $("apiBase");
-    const roomInput = $("roomInput");
+<!-- AVATAR -->
+<div id="avatar">
+  <button id="avatarBtn">🤖</button>
+  <div id="avatarCard"><p id="avatarTxt"></p></div>
+</div>
 
-    const btnHealth = $("btnHealth");
-    const btnStartMedia = $("btnStartMedia");
-    const btnStopMedia = $("btnStopMedia");
-    const btnStartHost = $("btnStartHost");
-    const btnJoin = $("btnJoin");
-    const btnCopyInvite = $("btnCopyInvite");
-    const btnEnd = $("btnEnd");
+<script>
+/* ===================== STATE ===================== */
+let localStream=null, liveOn=false, peerOn=false, transOn=false;
+const $=id=>document.getElementById(id);
 
-    const toast = $("toast"), toastMsg = $("toastMsg"), toastIcon = $("toastIcon");
+/* ===================== HELPERS ===================== */
+function setDot(id,cls){$(id).className='dot '+cls}
+function show(el, v){el.style.display=v?'':'none'}
+function updateBadges(){
+  const camOn = localStream?.getVideoTracks()?.some(t=>t.enabled);
+  const micOn = localStream?.getAudioTracks()?.some(t=>t.enabled);
+  $('bCam').textContent = camOn?'🎥 ON':'🎥 OFF';
+  $('bMic').textContent = micOn?'🎙️ ON':'🎙️ OFF';
+  setDot('dotMedia', camOn||micOn?'good':'warn');
+  $('txtMedia').textContent = camOn||micOn?'MEDIA: on':'MEDIA: standby';
+}
+function avatarSay(txt,autoHide=true){
+  $('avatarTxt').textContent=txt;
+  show($('avatarCard'),true);
+  if(autoHide) setTimeout(()=>show($('avatarCard'),false),4000);
+}
 
-    let stream = null;
-    let pc = null;
-    let ws = null;
+/* ===================== MEDIA ===================== */
+async function startMedia(){
+  if(localStream) return;
+  localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+  $('localVideo').srcObject = localStream;
+  updateBadges();
+  avatarSay("Activá el LIVE cuando estés listo. Nada se graba.");
+}
 
-    let currentRoom = null;
-    let role = null; // "host" | "guest"
-    let liveOn = false;
+/* ===================== LIVE ===================== */
+function startLive(){
+  liveOn=true; peerOn=true;
+  setDot('dotLive','good'); $('txtLive').textContent='LIVE: on';
+  setDot('dotPeer','good'); $('txtPeer').textContent='PEER: conectado';
+  show($('overlay'),false);
+  avatarSay("El invitado te verá cuando inicies el LIVE.");
+}
+function endLive(){
+  liveOn=false; peerOn=false;
+  setDot('dotLive','warn'); $('txtLive').textContent='LIVE: off';
+  setDot('dotPeer','warn'); $('txtPeer').textContent='PEER: esperando';
+  show($('overlay'),true);
+  // hard stop
+  localStream?.getTracks().forEach(t=>t.stop());
+  localStream=null;
+  $('localVideo').srcObject=null;
+  updateBadges();
+  show($('captions'),false);
+  avatarSay("LIVE finalizado. Todo se apagó automáticamente.");
+}
 
-    const rtcConfig = {
-      iceServers: [
-        // STUN público (gratis). Si querés TOP absoluto luego lo pasamos a TURN.
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun.cloudflare.com:3478" }
-      ]
-    };
+/* ===================== CHAT ===================== */
+function toggleChat(v){show($('chat'),v)}
+$('chatInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter' && liveOn){
+    const d=document.createElement('div');
+    d.className='msg';
+    d.innerHTML=`<div class="o">vos · ahora</div><div class="t">${e.target.value}</div>`+
+                (transOn?`<div class="tr">[traducción]</div>`:'');
+    $('chatBody').appendChild(d);
+    e.target.value='';
+    $('chatBody').scrollTop=1e9;
+  }
+});
 
-    function toastShow(msg, ok=true){
-      toastIcon.textContent = ok ? "✅" : "⛔";
-      toastMsg.innerHTML = (ok ? "<span class='ok'>OK</span> " : "<span class='bad'>ERR</span> ") + msg;
-      toast.classList.add("show");
-      setTimeout(()=>toast.classList.remove("show"), 2600);
-    }
+/* ===================== TRANSLATION (UI ONLY) ===================== */
+function toggleTrans(){
+  transOn=!transOn;
+  show($('captions'),transOn && liveOn);
+  avatarSay(transOn?
+    "Traducción activada. Subtítulos efímeros en tiempo real.":
+    "Traducción desactivada."
+  );
+}
 
-    function setDot(el, state){
-      el.classList.remove("ok","bad");
-      if(state==="ok") el.classList.add("ok");
-      if(state==="bad") el.classList.add("bad");
-    }
+/* ===================== EVENTS ===================== */
+$('btnMedia').onclick=startMedia;
+$('btnStart').onclick=startLive;
+$('btnEnd').onclick=endLive;
+$('btnChat').onclick=()=>toggleChat(true);
+$('btnTrans').onclick=toggleTrans;
+$('avatarBtn').onclick=()=>toggleChat(false)||show($('avatarCard'),!$('avatarCard').style.display);
 
-    function setMode(text){
-      modeTxt.textContent = "modo: " + text;
-    }
+/* Safety: close tab */
+window.addEventListener('pagehide',()=>liveOn&&endLive());
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden && liveOn) avatarSay("Estás en segundo plano. Al cerrar, todo se apaga.",false);
+});
 
-    function randomRoom(){
-      const a = Math.random().toString(16).slice(2,6);
-      const b = Math.random().toString(16).slice(2,6);
-      return `rw-${a}${b}`;
-    }
+/* First time onboarding */
+setTimeout(()=>avatarSay("Bienvenido. Activá tu cámara cuando quieras. Esto no se guarda."),800);
+</script>
 
-    function setStatus(s){
-      statusTxt.textContent = s;
-    }
-
-    async function health(){
-      try{
-        const base = apiBase.value.replace(/\/+$/,"");
-        const res = await fetch(base + "/", { method:"GET" });
-        const txt = await res.text();
-        const ok = res.ok && txt.includes('"ok":true');
-        setDot(apiDot, ok ? "ok" : "bad");
-        apiTxt.textContent = ok ? "API OK (consia-live)" : "API respondió (ver)";
-        toastShow(ok ? "API viva" : "API respondió pero no ok=true", ok);
-      }catch(e){
-        setDot(apiDot, "bad");
-        apiTxt.textContent = "API unreachable";
-        toastShow("No pude llegar al API", false);
-      }
-    }
-
-    async function startMedia(){
-      try{
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 60, max: 60 } },
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-        });
-        localVideo.srcObject = stream;
-        localVideo.muted = true;
-        remoteVideo.srcObject = null;
-
-        setDot(camDot, "ok");
-        setDot(micDot, "ok");
-        setStatus("Cámara + audio activos. Ahora podés iniciar LIVE (host) o unirte (guest).");
-        toastShow("Cámara + audio activos", true);
-      }catch(e){
-        setDot(camDot, "bad");
-        setDot(micDot, "bad");
-        setStatus("Permisos denegados o sin dispositivos.");
-        toastShow("No pude activar cámara/mic", false);
-      }
-    }
-
-    function stopMedia(){
-      if(stream){
-        stream.getTracks().forEach(t=>t.stop());
-      }
-      stream = null;
-      localVideo.srcObject = null;
-      setDot(camDot, "bad");
-      setDot(micDot, "bad");
-      toastShow("Media apagado", true);
-    }
-
-    function cleanupLive(){
-      liveOn = false;
-      setDot(liveDot, "bad");
-      liveLbl.textContent = "LIVE: off";
-      if(ws){ try{ ws.close(); }catch(_){} }
-      ws = null;
-      if(pc){ try{ pc.close(); }catch(_){} }
-      pc = null;
-      remoteVideo.srcObject = null;
-      role = null;
-      setMode("standby");
-      setStatus("LIVE finalizado.");
-      hintTxt.textContent = "";
-    }
-
-    function makeInviteURL(room){
-      const u = new URL(window.location.href);
-      u.searchParams.set("room", room);
-      u.searchParams.set("join", "1");
-      return u.toString();
-    }
-
-    async function copyInvite(){
-      if(!currentRoom){
-        toastShow("Primero iniciá LIVE (host) o fijá un room", false);
-        return;
-      }
-      const link = makeInviteURL(currentRoom);
-      try{
-        await navigator.clipboard.writeText(link);
-        toastShow("Link copiado", true);
-      }catch(e){
-        prompt("Copiá el link:", link);
-      }
-    }
-
-    async function ensurePeerConnection(){
-      if(pc) return;
-
-      pc = new RTCPeerConnection(rtcConfig);
-
-      pc.ontrack = (ev)=>{
-        const [remoteStream] = ev.streams;
-        remoteVideo.srcObject = remoteStream;
-      };
-
-      pc.onicecandidate = (ev)=>{
-        if(ev.candidate && ws && ws.readyState===1){
-          ws.send(JSON.stringify({ type:"ice", candidate: ev.candidate }));
-        }
-      };
-
-      pc.onconnectionstatechange = ()=>{
-        const st = pc.connectionState;
-        if(st==="connected"){
-          setStatus("Conectado: presencia en tiempo real (WebRTC).");
-          toastShow("LIVE conectado", true);
-        }
-        if(st==="failed" || st==="disconnected"){
-          setStatus("Conexión inestable o caída. Podés reiniciar LIVE.");
-        }
-      };
-
-      if(stream){
-        stream.getTracks().forEach(t=>pc.addTrack(t, stream));
-      }
-    }
-
-    function wsURL(base, room, role){
-      const clean = base.replace(/^http/,"ws").replace(/\/+$/,"");
-      return `${clean}/live/ws?room=${encodeURIComponent(room)}&role=${encodeURIComponent(role)}`;
-    }
-
-    async function startHost(){
-      if(!stream){
-        toastShow("Primero activá cámara + audio", false);
-        return;
-      }
-
-      currentRoom = (roomInput.value || "").trim() || randomRoom();
-      role = "host";
-      roomLbl.textContent = "room: " + currentRoom;
-
-      await ensurePeerConnection();
-
-      const base = apiBase.value.replace(/\/+$/,"");
-      const url = wsURL(base, currentRoom, role);
-
-      setMode("host");
-      setStatus("Abriendo señalización (WebSocket)...");
-      hintTxt.textContent = "Invitá con el botón: “Copiar link invitación”";
-
-      try{
-        ws = new WebSocket(url);
-      }catch(e){
-        toastShow("No pude abrir WebSocket (ver worker live)", false);
-        return;
-      }
-
-      ws.onopen = async ()=>{
-        ws.send(JSON.stringify({ type:"hello", room: currentRoom, role }));
-        // Crear offer
-        const offer = await pc.createOffer({ offerToReceiveAudio:true, offerToReceiveVideo:true });
-        await pc.setLocalDescription(offer);
-        ws.send(JSON.stringify({ type:"offer", sdp: offer.sdp }));
-
-        liveOn = true;
-        setDot(liveDot, "ok");
-        liveLbl.textContent = "LIVE: on";
-        toastShow("LIVE host iniciado", true);
-      };
-
-      ws.onmessage = async (ev)=>{
-        let msg;
-        try{ msg = JSON.parse(ev.data); }catch(_){ return; }
-
-        if(msg.type==="answer" && msg.sdp){
-          await pc.setRemoteDescription(new RTCSessionDescription({ type:"answer", sdp: msg.sdp }));
-        }
-
-        if(msg.type==="ice" && msg.candidate){
-          try{ await pc.addIceCandidate(new RTCIceCandidate(msg.candidate)); }catch(_){}
-        }
-      };
-
-      ws.onerror = ()=>{
-        setStatus("WebSocket error. Si tu API no tiene /live/ws, lo ajustamos.");
-      };
-      ws.onclose = ()=>{
-        if(liveOn){
-          setStatus("Señalización cerrada. Si se cortó, reiniciá LIVE.");
-        }
-      };
-    }
-
-    async function joinFromLink(){
-      const u = new URL(window.location.href);
-      const room = u.searchParams.get("room") || (roomInput.value || "").trim();
-      if(!room){
-        toastShow("Pegá un room o entrá con link", false);
-        return;
-      }
-      currentRoom = room;
-      role = "guest";
-      roomLbl.textContent = "room: " + currentRoom;
-
-      // Guest puede unirse sin cámara, pero lo hacemos pro: si ya activaste, mejor.
-      await ensurePeerConnection();
-
-      const base = apiBase.value.replace(/\/+$/,"");
-      const url = wsURL(base, currentRoom, role);
-
-      setMode("guest");
-      setStatus("Uniéndome al LIVE…");
-
-      try{
-        ws = new WebSocket(url);
-      }catch(e){
-        toastShow("No pude abrir WebSocket (ver worker live)", false);
-        return;
-      }
-
-      ws.onopen = ()=>{
-        ws.send(JSON.stringify({ type:"hello", room: currentRoom, role }));
-        liveOn = true;
-        setDot(liveDot, "ok");
-        liveLbl.textContent = "LIVE: on";
-        toastShow("Entraste al LIVE", true);
-      };
-
-      ws.onmessage = async (ev)=>{
-        let msg;
-        try{ msg = JSON.parse(ev.data); }catch(_){ return; }
-
-        if(msg.type==="offer" && msg.sdp){
-          await pc.setRemoteDescription(new RTCSessionDescription({ type:"offer", sdp: msg.sdp }));
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-          ws.send(JSON.stringify({ type:"answer", sdp: answer.sdp }));
-        }
-
-        if(msg.type==="ice" && msg.candidate){
-          try{ await pc.addIceCandidate(new RTCIceCandidate(msg.candidate)); }catch(_){}
-        }
-      };
-
-      ws.onerror = ()=>{
-        setStatus("WebSocket error. Si tu API no tiene /live/ws, lo ajustamos.");
-      };
-    }
-
-    // --- Shortcuts
-    window.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape"){
-        cleanupLive();
-      }
-      if(e.key === "."){
-        // acción rápida: si no hay media, prende; si hay media, host
-        if(!stream) startMedia();
-        else if(!liveOn) startHost();
-      }
-    });
-
-    // --- Buttons
-    btnHealth.onclick = health;
-    btnStartMedia.onclick = startMedia;
-    btnStopMedia.onclick = ()=>{ cleanupLive(); stopMedia(); setStatus("Media apagado."); };
-    btnStartHost.onclick = startHost;
-    btnJoin.onclick = joinFromLink;
-    btnCopyInvite.onclick = copyInvite;
-    btnEnd.onclick = cleanupLive;
-
-    // --- Autoload join (si viene con link)
-    (async function boot(){
-      await health();
-
-      const u = new URL(window.location.href);
-      const autoJoin = u.searchParams.get("join")==="1";
-      const room = u.searchParams.get("room");
-      if(room){
-        roomInput.value = room;
-        currentRoom = room;
-        roomLbl.textContent = "room: " + currentRoom;
-      }
-
-      setDot(camDot, "bad");
-      setDot(micDot, "bad");
-      setDot(liveDot, "bad");
-
-      if(autoJoin){
-        setStatus("Link detectado. Podés activar cámara + audio o unirte directo.");
-        toastShow("Link de LIVE detectado", true);
-      }else{
-        setStatus("Activá cámara + audio. Luego iniciá LIVE (host).");
-      }
-    })();
-  </script>
 </body>
 </html>
