@@ -6,10 +6,8 @@
 <title>CONSIA LIVE</title>
 
 <style>
-/* ===================== THEME ===================== */
 :root{
   --bg:#000;
-  --panel:#0b0b0b;
   --glass:rgba(10,10,10,.78);
   --line:rgba(255,255,255,.14);
   --text:#fff;
@@ -22,8 +20,6 @@
   --r:16px;
   --r2:22px;
 }
-
-/* ===================== RESET ===================== */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -31,8 +27,6 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
   overflow:hidden;
 }
-
-/* ===================== TOP BAR ===================== */
 #topbar{
   position:fixed; inset:0 0 auto 0; height:64px;
   display:flex; align-items:center; justify-content:space-between; gap:12px;
@@ -58,13 +52,9 @@ body{
 .warn{background:var(--warn)}
 .bad{background:var(--bad)}
 
-/* ===================== STAGE ===================== */
 #stage{position:absolute; inset:64px 0 0 0}
-#remoteVideo{
-  width:100%; height:100%; object-fit:cover; background:#000;
-}
+#remoteVideo{width:100%; height:100%; object-fit:cover; background:#000}
 
-/* ===================== WAITING OVERLAY ===================== */
 #overlay{
   position:absolute; inset:64px 0 0 0;
   display:flex; align-items:center; justify-content:center;
@@ -88,7 +78,6 @@ body{
   font-size:12px; color:var(--muted);
 }
 
-/* ===================== PIP (SELF VIEW) ===================== */
 #pip{
   position:absolute; right:16px; bottom:16px;
   width:160px; height:220px;
@@ -109,14 +98,13 @@ body{
   font-size:12px;
 }
 
-/* ===================== CONTROLS ===================== */
 #controls{
   position:fixed; left:12px; right:12px; bottom:12px;
   display:flex; gap:8px; flex-wrap:wrap; justify-content:center; z-index:60;
 }
 .btn{
   border:none; cursor:pointer; border-radius:999px;
-  padding:12px 14px; font-weight:700; font-size:13px; color:#fff;
+  padding:12px 14px; font-weight:800; font-size:13px; color:#fff;
   background:rgba(255,255,255,.08); border:1px solid var(--line);
   backdrop-filter: blur(10px);
 }
@@ -125,7 +113,6 @@ body{
 .btn.ghost{background:rgba(255,255,255,.06)}
 .btn:disabled{opacity:.45; cursor:not-allowed}
 
-/* ===================== CHAT ===================== */
 #chat{
   position:fixed; top:76px; right:12px;
   width:min(360px,calc(100vw - 24px));
@@ -139,7 +126,7 @@ body{
   padding:12px; border-bottom:1px solid rgba(255,255,255,.10);
   display:flex; justify-content:space-between; align-items:center;
 }
-#chat header .t{font-weight:800}
+#chat header .t{font-weight:900}
 #chat header .s{font-size:12px; color:var(--muted)}
 #chat main{padding:12px; height:calc(100% - 122px); overflow:auto}
 .msg{
@@ -147,15 +134,15 @@ body{
   border-radius:14px; padding:10px; margin-bottom:10px;
 }
 .msg .o{font-size:11px; color:var(--muted2)}
-.msg .t{margin-top:6px; font-size:13px}
-.msg .tr{margin-top:6px; font-size:12px; color:rgba(255,255,255,.8)}
+.msg .t{margin-top:6px; font-size:13px; white-space:pre-wrap; word-break:break-word;}
+.msg .tr{margin-top:6px; font-size:12px; color:rgba(255,255,255,.8); white-space:pre-wrap; word-break:break-word;}
 #chat footer{padding:10px; border-top:1px solid rgba(255,255,255,.10)}
 #chat input{
   width:100%; padding:10px; border-radius:14px;
   background:rgba(0,0,0,.35); border:1px solid var(--line); color:#fff;
+  outline:none;
 }
 
-/* ===================== CAPTIONS ===================== */
 #captions{
   position:fixed; left:12px; right:12px; bottom:78px;
   display:none; justify-content:center; z-index:40; pointer-events:none;
@@ -166,7 +153,6 @@ body{
   border-radius:16px; text-align:center; box-shadow:var(--shadow);
 }
 
-/* ===================== AVATAR GUIDE ===================== */
 #avatar{
   position:fixed; left:14px; bottom:14px;
   display:flex; align-items:center; gap:10px; z-index:70;
@@ -184,7 +170,6 @@ body{
 }
 #avatarCard p{margin:0; font-size:13px; color:var(--muted); line-height:1.35}
 
-/* ===================== SMALL ===================== */
 @media(max-width:420px){
   #pip{width:132px;height:184px; right:12px; bottom:12px}
 }
@@ -193,7 +178,6 @@ body{
 
 <body>
 
-<!-- TOP BAR -->
 <div id="topbar">
   <div id="brand">
     <div class="t">CONSIA — LIVE</div>
@@ -206,14 +190,13 @@ body{
   </div>
 </div>
 
-<!-- STAGE -->
 <div id="stage">
   <video id="remoteVideo" autoplay playsinline></video>
 
   <div id="overlay">
     <div id="overlayCard">
-      <h3>Estamos preparando el LIVE</h3>
-      <p>El host aún no inició la sesión. Tu cámara y micrófono están apagados.</p>
+      <h3 id="overlayTitle">Estamos preparando el LIVE</h3>
+      <p id="overlayText">El host aún no inició la sesión. Tu cámara y micrófono están apagados.</p>
       <div id="overlayBadge">🔒 Modo soberano activo — nada se graba, nada se guarda.</div>
     </div>
   </div>
@@ -227,23 +210,22 @@ body{
   </div>
 </div>
 
-<!-- CONTROLS -->
 <div id="controls">
   <button class="btn" id="btnMedia">Activar cámara + audio</button>
   <button class="btn primary" id="btnStart">Iniciar LIVE (host)</button>
+  <button class="btn ghost" id="btnCopy">Copiar link</button>
   <button class="btn ghost" id="btnChat">Chat</button>
   <button class="btn ghost" id="btnTrans">Traducción</button>
   <button class="btn danger" id="btnEnd">Finalizar LIVE</button>
 </div>
 
-<!-- CHAT -->
 <section id="chat">
   <header>
     <div>
       <div class="t">Chat en vivo</div>
       <div class="s">Efímero · no se guarda</div>
     </div>
-    <button class="btn ghost" onclick="toggleChat(false)">✕</button>
+    <button class="btn ghost" id="btnChatClose">✕</button>
   </header>
   <main id="chatBody"></main>
   <footer>
@@ -251,109 +233,328 @@ body{
   </footer>
 </section>
 
-<!-- CAPTIONS -->
-<div id="captions"><div id="captionsBox">Subtítulos en tiempo real · efímeros</div></div>
+<div id="captions">
+  <div id="captionsBox">Subtítulos en tiempo real · efímeros</div>
+</div>
 
-<!-- AVATAR -->
 <div id="avatar">
   <button id="avatarBtn">🤖</button>
   <div id="avatarCard"><p id="avatarTxt"></p></div>
 </div>
 
 <script>
-/* ===================== STATE ===================== */
-let localStream=null, liveOn=false, peerOn=false, transOn=false;
-const $=id=>document.getElementById(id);
+/* ===================== CONFIG ===================== */
+const API_BASE = "https://api.consia.world";   // tu Worker en api.consia.world
+const OWNER_TOKEN = ""; // SOLO SI VAS A HOSTEAR EN LOCAL. En producción, dejalo vacío y usá /live/create desde backend protegido.
 
-/* ===================== HELPERS ===================== */
-function setDot(id,cls){$(id).className='dot '+cls}
-function show(el, v){el.style.display=v?'':'none'}
-function updateBadges(){
-  const camOn = localStream?.getVideoTracks()?.some(t=>t.enabled);
-  const micOn = localStream?.getAudioTracks()?.some(t=>t.enabled);
-  $('bCam').textContent = camOn?'🎥 ON':'🎥 OFF';
-  $('bMic').textContent = micOn?'🎙️ ON':'🎙️ OFF';
-  setDot('dotMedia', camOn||micOn?'good':'warn');
-  $('txtMedia').textContent = camOn||micOn?'MEDIA: on':'MEDIA: standby';
+/* ===================== STATE ===================== */
+let role = "guest"; // host|guest
+let room = "";
+let sig = "";
+let joinUrl = "";
+
+let ws = null;
+let pc = null;
+let localStream = null;
+let liveOn = false;
+
+let transOn = false;
+
+/* ===================== UI HELPERS ===================== */
+const $ = (id)=>document.getElementById(id);
+function setDot(id, cls){ $(id).className = "dot " + cls; }
+function show(el, v){ el.style.display = v ? "" : "none"; }
+function avatarSay(txt, autoHide=true){
+  $("avatarTxt").textContent = txt;
+  show($("avatarCard"), true);
+  if(autoHide) setTimeout(()=>show($("avatarCard"), false), 4200);
 }
-function avatarSay(txt,autoHide=true){
-  $('avatarTxt').textContent=txt;
-  show($('avatarCard'),true);
-  if(autoHide) setTimeout(()=>show($('avatarCard'),false),4000);
+function setOverlay(title, text){
+  $("overlayTitle").textContent = title;
+  $("overlayText").textContent = text;
+  show($("overlay"), true);
+}
+function hideOverlay(){ show($("overlay"), false); }
+
+function updateBadges(){
+  const camOn = localStream?.getVideoTracks()?.some(t=>t.enabled && t.readyState==="live");
+  const micOn = localStream?.getAudioTracks()?.some(t=>t.enabled && t.readyState==="live");
+
+  $("bCam").textContent = camOn ? "🎥 ON" : "🎥 OFF";
+  $("bMic").textContent = micOn ? "🎙️ ON" : "🎙️ OFF";
+
+  if(camOn || micOn){
+    setDot("dotMedia","good");
+    $("txtMedia").textContent = "MEDIA: on";
+  } else {
+    setDot("dotMedia","warn");
+    $("txtMedia").textContent = "MEDIA: standby";
+  }
+}
+
+function setLiveUI(on){
+  liveOn = on;
+  if(on){
+    setDot("dotLive","good"); $("txtLive").textContent = "LIVE: on";
+    setDot("dotPeer","good"); $("txtPeer").textContent = "PEER: conectado";
+    hideOverlay();
+    if(transOn) show($("captions"), true);
+  } else {
+    setDot("dotLive","warn"); $("txtLive").textContent = "LIVE: off";
+    setDot("dotPeer","warn"); $("txtPeer").textContent = "PEER: esperando";
+    show($("captions"), false);
+  }
+}
+
+function setGuestWaiting(){
+  setDot("dotPeer","warn");
+  $("txtPeer").textContent = "PEER: esperando";
+  setOverlay("Estamos preparando el LIVE", "El host aún no inició la sesión. Tu cámara y micrófono están apagados.");
+}
+
+function attachRemoteStream(stream){
+  $("remoteVideo").srcObject = stream;
+}
+
+/* ===================== URL PARAMS ===================== */
+function parseParams(){
+  const p = new URLSearchParams(location.search);
+  room = p.get("room") || "";
+  sig  = p.get("sig")  || "";
+  role = (p.get("role")==="host") ? "host" : (p.get("role")==="guest") ? "guest" : (room && sig ? "guest" : "host");
 }
 
 /* ===================== MEDIA ===================== */
 async function startMedia(){
   if(localStream) return;
   localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-  $('localVideo').srcObject = localStream;
+  $("localVideo").srcObject = localStream;
   updateBadges();
   avatarSay("Activá el LIVE cuando estés listo. Nada se graba.");
 }
 
-/* ===================== LIVE ===================== */
-function startLive(){
-  liveOn=true; peerOn=true;
-  setDot('dotLive','good'); $('txtLive').textContent='LIVE: on';
-  setDot('dotPeer','good'); $('txtPeer').textContent='PEER: conectado';
-  show($('overlay'),false);
-  avatarSay("El invitado te verá cuando inicies el LIVE.");
+/* ===================== WEBRTC ===================== */
+function makePC(){
+  // STUN público (gratuito). Para “top mundial” real, luego sumamos TURN.
+  const cfg = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+  pc = new RTCPeerConnection(cfg);
+
+  pc.onicecandidate = (ev)=>{
+    if(ev.candidate) wsSend({type:"ice", candidate: ev.candidate});
+  };
+
+  pc.ontrack = (ev)=>{
+    const [stream] = ev.streams;
+    if(stream) attachRemoteStream(stream);
+  };
+
+  pc.onconnectionstatechange = ()=>{
+    // opcional: estados para UX
+  };
 }
-function endLive(){
-  liveOn=false; peerOn=false;
-  setDot('dotLive','warn'); $('txtLive').textContent='LIVE: off';
-  setDot('dotPeer','warn'); $('txtPeer').textContent='PEER: esperando';
-  show($('overlay'),true);
-  // hard stop
-  localStream?.getTracks().forEach(t=>t.stop());
-  localStream=null;
-  $('localVideo').srcObject=null;
-  updateBadges();
-  show($('captions'),false);
-  avatarSay("LIVE finalizado. Todo se apagó automáticamente.");
+
+/* ===================== WS SIGNALING ===================== */
+function wsUrl(){
+  const u = new URL(API_BASE.replace("https://","wss://") + "/live/ws");
+  u.searchParams.set("room", room);
+  u.searchParams.set("role", role);
+  if(role==="guest") u.searchParams.set("sig", sig);
+  return u.toString();
+}
+
+function wsConnect(){
+  return new Promise((resolve,reject)=>{
+    ws = new WebSocket(wsUrl());
+    ws.onopen = ()=>resolve();
+    ws.onerror = (e)=>reject(e);
+    ws.onmessage = (ev)=>onSignal(JSON.parse(ev.data));
+    ws.onclose = ()=>{ /* nada */ };
+  });
+}
+
+function wsSend(obj){
+  if(ws && ws.readyState===1) ws.send(JSON.stringify(obj));
+}
+
+async function onSignal(msg){
+  if(msg.type==="ready"){
+    // server confirma room + roles
+    if(role==="guest"){
+      setGuestWaiting();
+      avatarSay("Estás en sala segura. Vas a ver al host cuando inicie el LIVE.");
+    }
+    return;
+  }
+  if(msg.type==="host_connected"){
+    if(role==="guest"){
+      setOverlay("Host conectado", "El host está por iniciar el LIVE…");
+    }
+    return;
+  }
+  if(msg.type==="host_disconnected"){
+    // host se fue -> corta todo del lado guest
+    await hardStop("LIVE finalizado. Este momento ya no existe.");
+    return;
+  }
+  if(msg.type==="end"){
+    await hardStop("LIVE finalizado. Este momento ya no existe.");
+    return;
+  }
+
+  // Offer/Answer/ICE
+  if(msg.type==="offer" && role==="guest"){
+    if(!pc) makePC();
+
+    await pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+    // Si el guest quiere verse en miniatura, puede activar su media (opcional).
+    // Para no pedir permisos de golpe, lo dejamos a decisión del usuario.
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    wsSend({type:"answer", sdp: pc.localDescription});
+
+    setLiveUI(true);
+    avatarSay("LIVE iniciado. Al cerrar, todo se apaga automáticamente.");
+    return;
+  }
+
+  if(msg.type==="answer" && role==="host"){
+    if(pc) await pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+    setLiveUI(true);
+    avatarSay("LIVE iniciado. Tu invitado ya está conectado.");
+    return;
+  }
+
+  if(msg.type==="ice" && pc){
+    try { await pc.addIceCandidate(msg.candidate); } catch(_) {}
+    return;
+  }
+
+  // Chat
+  if(msg.type==="chat"){
+    renderChat(msg);
+    return;
+  }
+}
+
+/* ===================== ROOM CREATE (HOST) ===================== */
+async function createRoom(){
+  const res = await fetch(API_BASE + "/live/create", {
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json",
+      ...(OWNER_TOKEN ? {"Authorization":"Bearer " + OWNER_TOKEN} : {})
+    },
+    body: JSON.stringify({ ttlSeconds: 180 })
+  });
+  if(!res.ok){
+    const t = await res.text();
+    throw new Error("create failed: " + t);
+  }
+  const data = await res.json();
+  room = data.room;
+  sig = data.sig;
+  joinUrl = data.joinUrl;
+}
+
+/* ===================== START LIVE (HOST) ===================== */
+async function startLiveHost(){
+  // gating: el host solo publica cuando toca iniciar
+  if(!localStream){
+    avatarSay("Primero activá tu cámara y audio.");
+    return;
+  }
+  // Create room (server signed link)
+  await createRoom();
+
+  // Connect WS as host
+  await wsConnect();
+  wsSend({type:"host_announce"});
+
+  // Create peer + add tracks
+  makePC();
+  localStream.getTracks().forEach(t=>pc.addTrack(t, localStream));
+
+  // Create offer
+  const offer = await pc.createOffer({offerToReceiveAudio:true, offerToReceiveVideo:true});
+  await pc.setLocalDescription(offer);
+  wsSend({type:"offer", sdp: pc.localDescription});
+
+  // UI
+  $("btnCopy").disabled = false;
+  setOverlay("Compartí el link", "Tu invitado verá el LIVE cuando acepte el link.");
+  avatarSay("Copiá el link y compartilo. El invitado te verá al iniciar.");
+}
+
+/* ===================== JOIN AS GUEST ===================== */
+async function joinGuest(){
+  if(!room || !sig){
+    setOverlay("Falta el link", "Necesitás un link de invitación válido.");
+    avatarSay("Pedí al host el link de invitación.");
+    return;
+  }
+  await wsConnect();
+  wsSend({type:"guest_announce"});
+  setGuestWaiting();
 }
 
 /* ===================== CHAT ===================== */
-function toggleChat(v){show($('chat'),v)}
-$('chatInput').addEventListener('keydown',e=>{
-  if(e.key==='Enter' && liveOn){
-    const d=document.createElement('div');
-    d.className='msg';
-    d.innerHTML=`<div class="o">vos · ahora</div><div class="t">${e.target.value}</div>`+
-                (transOn?`<div class="tr">[traducción]</div>`:'');
-    $('chatBody').appendChild(d);
-    e.target.value='';
-    $('chatBody').scrollTop=1e9;
-  }
-});
+function toggleChat(v){ show($("chat"), v); }
+function renderChat(m){
+  const d = document.createElement("div");
+  d.className = "msg";
+  const who = (m.from===role) ? "vos" : "otra persona";
+  const original = (m.text||"").toString();
 
-/* ===================== TRANSLATION (UI ONLY) ===================== */
+  d.innerHTML =
+    `<div class="o">${who} · ahora</div>`+
+    `<div class="t">${escapeHtml(original)}</div>`+
+    (transOn ? `<div class="tr">[traducción en tiempo real]</div>` : ``);
+
+  $("chatBody").appendChild(d);
+  $("chatBody").scrollTop = 1e9;
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, (c)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
+}
+
+function sendChat(text){
+  if(!liveOn){
+    avatarSay("El chat se activa cuando el host inicia el LIVE.");
+    return;
+  }
+  const payload = {type:"chat", text, from: role};
+  wsSend(payload);
+  // optimista local:
+  renderChat(payload);
+}
+
+/* ===================== TRANSLATION (LIVE-ONLY UI) ===================== */
 function toggleTrans(){
-  transOn=!transOn;
-  show($('captions'),transOn && liveOn);
-  avatarSay(transOn?
-    "Traducción activada. Subtítulos efímeros en tiempo real.":
-    "Traducción desactivada."
+  transOn = !transOn;
+  show($("captions"), transOn && liveOn);
+  avatarSay(transOn
+    ? "Traducción activada. Subtítulos efímeros en tiempo real."
+    : "Traducción desactivada."
   );
 }
 
-/* ===================== EVENTS ===================== */
-$('btnMedia').onclick=startMedia;
-$('btnStart').onclick=startLive;
-$('btnEnd').onclick=endLive;
-$('btnChat').onclick=()=>toggleChat(true);
-$('btnTrans').onclick=toggleTrans;
-$('avatarBtn').onclick=()=>toggleChat(false)||show($('avatarCard'),!$('avatarCard').style.display);
+/* ===================== HARD STOP ===================== */
+async function hardStop(message){
+  // notify peer
+  try{ wsSend({type:"end"}); }catch(_){}
 
-/* Safety: close tab */
-window.addEventListener('pagehide',()=>liveOn&&endLive());
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden && liveOn) avatarSay("Estás en segundo plano. Al cerrar, todo se apaga.",false);
-});
+  // close webrtc
+  try{ pc && pc.close(); }catch(_){}
+  pc = null;
 
-/* First time onboarding */
-setTimeout(()=>avatarSay("Bienvenido. Activá tu cámara cuando quieras. Esto no se guarda."),800);
-</script>
+  // close ws
+  try{ ws && ws.close(); }catch(_){}
+  ws = null;
 
-</body>
-</html>
+  // stop media
+  try{
+    if(localStream){
+      localStream.getTracks().forEach(t=>t.stop());
+      localStream = null;
+      $("local
