@@ -5,296 +5,237 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
   <title>CONSIA — Legal Center</title>
-
   <style>
     :root{
-      --bg:#070709;
-      --panel: rgba(255,255,255,.05);
-      --panel2: rgba(255,255,255,.07);
-      --border: rgba(255,255,255,.10);
-      --text:#ffffff;
-      --muted: rgba(255,255,255,.70);
-      --muted2: rgba(255,255,255,.55);
-      --shadow: 0 30px 80px rgba(0,0,0,.55);
-      --radius: 18px;
+      --bg:#070709; --panel:rgba(255,255,255,.04); --border:rgba(255,255,255,.10);
+      --txt:#fff; --muted:rgba(255,255,255,.65);
+      --a:#55ccff; --b:#00a3ff;
+      --radius:18px;
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
-      margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(1200px 700px at 50% 30%, rgba(255,255,255,.08), transparent 55%),
-        radial-gradient(900px 500px at 20% 80%, rgba(255,255,255,.06), transparent 60%),
-        linear-gradient(180deg, #050506 0%, #0a0a0d 100%);
-      color:var(--text);
-      overflow-x:hidden;
+      min-height:100vh; background: radial-gradient(1200px 700px at 30% 10%, rgba(0,163,255,.20), transparent 60%),
+                 radial-gradient(900px 600px at 80% 40%, rgba(85,204,255,.12), transparent 55%),
+                 #070709;
+      color:var(--txt);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
     }
-    .wrap{
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 64px 20px 60px;
-      text-align:center;
-    }
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      align-items:center;
-    }
-    h1{
-      margin:0;
-      font-size: 54px;
-      letter-spacing: 6px;
-      font-weight: 800;
-      line-height:1.05;
-    }
-    .sub{
-      margin:0;
-      color: var(--muted);
-      letter-spacing: .8px;
-      font-size: 15px;
-    }
+    .container{max-width:980px;margin:0 auto;padding:64px 18px 40px;text-align:center}
+    .brand{display:flex;flex-direction:column;gap:10px;align-items:center;margin-bottom:24px}
+    h1{font-size:52px;letter-spacing:6px;font-weight:900}
+    .sub{color:var(--muted);letter-spacing:.6px;font-size:15px;line-height:1.5}
     .topbar{
-      margin-top: 22px;
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
+      display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+      margin:22px auto 34px;
+      padding:10px 12px;border:1px solid var(--border);
+      border-radius:14px;background:rgba(255,255,255,.03);
+      backdrop-filter:blur(10px);
+      max-width:520px;
     }
-    .lang{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      backdrop-filter: blur(10px);
-    }
-    .lang label{
-      font-size: 12px;
-      color: var(--muted2);
-      letter-spacing:.6px;
-      text-transform:uppercase;
-    }
-    select{
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 14px;
+    select,button{
+      border-radius:12px;border:1px solid var(--border);
+      background:rgba(0,0,0,.35); color:var(--txt);
+      padding:10px 12px; font-size:14px;
       outline:none;
     }
-    .chips{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:center;
-      margin: 28px 0 0;
-    }
-    .chip{
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      font-size: 13px;
-      cursor:pointer;
-      user-select:none;
-    }
-    .chip:hover{ background: rgba(255,255,255,.07); color: var(--text); }
-
+    button{cursor:pointer}
+    button:hover{border-color:rgba(255,255,255,.22)}
     .grid{
-      margin-top: 28px;
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      margin-top:10px;
     }
-    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
-
-    a.card{
-      text-decoration:none;
-      color: var(--text);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
-      padding: 22px 18px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      min-height: 86px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 20px;
-      font-weight: 650;
-      letter-spacing:.3px;
-      position:relative;
-      overflow:hidden;
+    .card{
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px; text-align:left;
+      backdrop-filter: blur(12px);
+      transition:.18s transform ease,.18s border-color ease;
     }
-    a.card:before{
-      content:"";
-      position:absolute;
-      inset:-120px;
-      background: radial-gradient(circle at 50% 30%, rgba(255,255,255,.14), transparent 55%);
-      opacity:.35;
-      transform: translateY(40px);
-      transition: .25s ease;
+    .card:hover{transform:translateY(-2px);border-color:rgba(85,204,255,.35)}
+    .card h3{font-size:16px;letter-spacing:.3px;margin-bottom:6px}
+    .card p{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:12px}
+    .card a{
+      display:inline-flex;gap:8px;align-items:center;text-decoration:none;
+      color:#000;background:linear-gradient(90deg,var(--a),var(--b));
+      padding:10px 12px;border-radius:12px;font-weight:800;
     }
-    a.card:hover:before{ transform: translateY(0px); opacity:.55; }
-    a.card span{ position:relative; z-index:2; }
-
-    footer{
-      margin-top: 34px;
-      color: rgba(255,255,255,.45);
-      font-size: 12px;
-      letter-spacing:.3px;
-    }
-    .tiny{
-      margin-top: 6px;
-      color: rgba(255,255,255,.35);
-      font-size: 12px;
-    }
-    .restore{
-      display:none;
-      margin-top: 14px;
-      color: rgba(255,255,255,.55);
-      font-size: 12px;
-      cursor:pointer;
-      text-decoration: underline;
-    }
+    .footer{margin-top:34px;color:rgba(255,255,255,.35);font-size:12px;line-height:1.6}
   </style>
 </head>
-
 <body>
-  <div class="wrap">
+
+  <div class="container">
     <div class="brand">
       <h1 id="t_title">CONSIA LEGAL CENTER</h1>
-      <p class="sub" id="t_sub">Global AI Infrastructure · Compliance Framework · User Protection</p>
+      <div class="sub" id="t_sub">Global AI Infrastructure · Compliance Framework · User Protection</div>
     </div>
 
     <div class="topbar">
-      <div class="lang">
-        <label id="t_lang">Language</label>
-        <select id="langSelect">
-          <option value="auto">Auto</option>
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="pt">Português</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-          <option value="it">Italiano</option>
-          <option value="zh">中文</option>
-          <option value="ja">日本語</option>
-          <option value="ko">한국어</option>
-          <option value="ar">العربية</option>
-          <option value="hi">हिन्दी</option>
-          <option value="ru">Русский</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="chips">
-      <div class="chip" data-go="terms.html" id="c_terms">Terms</div>
-      <div class="chip" data-go="privacy.html" id="c_privacy">Privacy</div>
-      <div class="chip" data-go="refund.html" id="c_refund">Refunds</div>
-      <div class="chip" data-go="billing-support.html" id="c_billing">Billing</div>
-      <div class="chip" data-go="privacy-requests.html" id="c_requests">Privacy Requests</div>
-      <div class="chip" data-go="legal-contact.html" id="c_contact">Legal Contact</div>
+      <select id="lang">
+        <option value="auto">Auto</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="pt">Português</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="it">Italiano</option>
+        <option value="zh">中文</option>
+        <option value="ja">日本語</option>
+        <option value="ar">العربية</option>
+      </select>
+      <button id="apply">Apply</button>
     </div>
 
     <div class="grid">
-      <a class="card" id="b_terms" href="terms.html"><span>Terms of Service</span></a>
-      <a class="card" id="b_privacy" href="privacy.html"><span>Privacy Policy</span></a>
-      <a class="card" id="b_refund" href="refund.html"><span>Refund Policy</span></a>
+      <div class="card">
+        <h3 id="t_terms_h">Terms of Service</h3>
+        <p id="t_terms_p">Rules for using CONSIA services, accounts, and acceptable use.</p>
+        <a id="t_terms_a" href="/terms.html">Open</a>
+      </div>
 
-      <a class="card" id="b_legal" href="legal-contact.html"><span>Legal Contact</span></a>
-      <a class="card" id="b_requests" href="privacy-requests.html"><span>Privacy Requests</span></a>
-      <a class="card" id="b_billing" href="billing-support.html"><span>Billing Support</span></a>
+      <div class="card">
+        <h3 id="t_priv_h">Privacy Policy</h3>
+        <p id="t_priv_p">How we collect, use, and protect data. Global privacy rights.</p>
+        <a id="t_priv_a" href="/privacy.html">Open</a>
+      </div>
+
+      <div class="card">
+        <h3 id="t_ref_h">Refund Policy</h3>
+        <p id="t_ref_p">Refunds, cancellations, chargebacks and subscription rules.</p>
+        <a id="t_ref_a" href="/refund.html">Open</a>
+      </div>
+
+      <div class="card">
+        <h3 id="t_legal_h">Legal Contact</h3>
+        <p id="t_legal_p">Contact our legal team for notices and formal requests.</p>
+        <a id="t_legal_a" href="mailto:legal@consia.world">Email</a>
+      </div>
+
+      <div class="card">
+        <h3 id="t_privreq_h">Privacy Requests</h3>
+        <p id="t_privreq_p">Access, delete, export, correct, or object to processing.</p>
+        <a id="t_privreq_a" href="mailto:privacy@consia.world">Email</a>
+      </div>
+
+      <div class="card">
+        <h3 id="t_bill_h">Billing Support</h3>
+        <p id="t_bill_p">Invoices, payment issues, and refunds support.</p>
+        <a id="t_bill_a" href="mailto:refunds@consia.world">Email</a>
+      </div>
     </div>
 
-    <footer>
-      <div id="t_footer">© 2026 CONSIA WORLD — All Rights Reserved</div>
-      <div class="tiny" id="t_footer2">AI · Cloud · Identity · Conscious Infrastructure</div>
-      <div class="restore" id="restoreWidget">Show CONSIA Assistant</div>
-    </footer>
+    <div class="footer">
+      <div>© 2026 CONSIA WORLD — All Rights Reserved</div>
+      <div>AI · Cloud · Identity · Conscious Infrastructure</div>
+    </div>
   </div>
 
-  <script src="assets/legal-i18n.js"></script>
-  <script src="assets/consia-widget.js"></script>
+  <script src="/assets/consia-widget.js"></script>
+
   <script>
-    (function(){
-      const qs = new URLSearchParams(location.search);
-      const stored = localStorage.getItem("consia_lang") || "auto";
-      const initial = qs.get("lang") || stored;
-      const sel = document.getElementById("langSelect");
-      sel.value = initial;
-
-      function getAutoLang(){
-        const nav = (navigator.language || "en").toLowerCase();
-        return nav.split("-")[0] || "en";
+    const dict = {
+      en: {
+        title:"CONSIA LEGAL CENTER",
+        sub:"Global AI Infrastructure · Compliance Framework · User Protection",
+        terms_h:"Terms of Service", terms_p:"Rules for using CONSIA services, accounts, and acceptable use.", open:"Open",
+        priv_h:"Privacy Policy", priv_p:"How we collect, use, and protect data. Global privacy rights.",
+        ref_h:"Refund Policy", ref_p:"Refunds, cancellations, chargebacks and subscription rules.",
+        legal_h:"Legal Contact", legal_p:"Contact our legal team for notices and formal requests.", email:"Email",
+        privreq_h:"Privacy Requests", privreq_p:"Access, delete, export, correct, or object to processing.",
+        bill_h:"Billing Support", bill_p:"Invoices, payment issues, and refunds support."
+      },
+      es: {
+        title:"CENTRO LEGAL CONSIA",
+        sub:"Infraestructura Global de IA · Marco de Cumplimiento · Protección del Usuario",
+        terms_h:"Términos del Servicio", terms_p:"Reglas de uso de CONSIA, cuentas y uso aceptable.", open:"Abrir",
+        priv_h:"Política de Privacidad", priv_p:"Cómo recopilamos, usamos y protegemos datos. Derechos globales.",
+        ref_h:"Política de Reembolsos", ref_p:"Reembolsos, cancelaciones, contracargos y suscripciones.",
+        legal_h:"Contacto Legal", legal_p:"Contacto para notificaciones y solicitudes formales.", email:"Email",
+        privreq_h:"Solicitudes de Privacidad", privreq_p:"Acceso, eliminación, exportación, corrección u oposición.",
+        bill_h:"Soporte de Pagos", bill_p:"Facturas, problemas de pago y soporte de reembolsos."
+      },
+      pt: {
+        title:"CENTRO JURÍDICO CONSIA",
+        sub:"Infraestrutura Global de IA · Conformidade · Proteção do Usuário",
+        terms_h:"Termos de Serviço", terms_p:"Regras de uso, contas e uso aceitável.", open:"Abrir",
+        priv_h:"Política de Privacidade", priv_p:"Como coletamos, usamos e protegemos dados.",
+        ref_h:"Política de Reembolso", ref_p:"Reembolsos, cancelamentos, chargebacks e assinaturas.",
+        legal_h:"Contato Jurídico", legal_p:"Contato para notificações e solicitações formais.", email:"Email",
+        privreq_h:"Pedidos de Privacidade", privreq_p:"Acesso, exclusão, exportação, correção ou objeção.",
+        bill_h:"Suporte de Cobrança", bill_p:"Faturas, pagamentos e suporte a reembolsos."
+      },
+      fr: {
+        title:"CENTRE JURIDIQUE CONSIA",
+        sub:"Infrastructure IA mondiale · Conformité · Protection utilisateur",
+        terms_h:"Conditions d’utilisation", terms_p:"Règles d’utilisation, comptes et usage acceptable.", open:"Ouvrir",
+        priv_h:"Politique de confidentialité", priv_p:"Collecte, usage et protection des données.",
+        ref_h:"Politique de remboursement", ref_p:"Remboursements, annulations, litiges et abonnements.",
+        legal_h:"Contact juridique", legal_p:"Contact pour notifications et demandes formelles.", email:"Email",
+        privreq_h:"Demandes confidentialité", privreq_p:"Accès, suppression, export, correction ou opposition.",
+        bill_h:"Support facturation", bill_p:"Factures, paiements et support remboursements."
+      },
+      de: {
+        title:"CONSIA RECHTSZENTRUM",
+        sub:"Globale KI-Infrastruktur · Compliance · Nutzerschutz",
+        terms_h:"Nutzungsbedingungen", terms_p:"Regeln zur Nutzung, Konten und akzeptable Nutzung.", open:"Öffnen",
+        priv_h:"Datenschutzrichtlinie", priv_p:"Wie wir Daten erheben, nutzen und schützen.",
+        ref_h:"Rückerstattungsrichtlinie", ref_p:"Rückerstattungen, Kündigungen, Chargebacks und Abos.",
+        legal_h:"Rechtskontakt", legal_p:"Kontakt für Hinweise und formelle Anfragen.", email:"Email",
+        privreq_h:"Datenschutzanfragen", privreq_p:"Zugriff, Löschung, Export, Korrektur oder Widerspruch.",
+        bill_h:"Abrechnungssupport", bill_p:"Rechnungen, Zahlungsprobleme und Rückerstattungen."
       }
-      function getLang(){
-        const v = sel.value;
-        return v === "auto" ? getAutoLang() : v;
-      }
+    };
 
-      function applyLang(){
-        const lang = getLang();
-        localStorage.setItem("consia_lang", sel.value);
+    function autoLang(){
+      const nav = (navigator.language || "en").slice(0,2).toLowerCase();
+      return dict[nav] ? nav : "en";
+    }
 
-        const t = window.CONSIA_I18N?.[lang] || window.CONSIA_I18N?.en;
+    function applyLang(code){
+      const L = dict[code] || dict.en;
+      document.getElementById("t_title").textContent = L.title;
+      document.getElementById("t_sub").textContent = L.sub;
 
-        document.getElementById("t_title").textContent = t.title;
-        document.getElementById("t_sub").textContent = t.sub;
-        document.getElementById("t_lang").textContent = t.language;
+      document.getElementById("t_terms_h").textContent = L.terms_h;
+      document.getElementById("t_terms_p").textContent = L.terms_p;
+      document.getElementById("t_terms_a").textContent = L.open;
 
-        document.getElementById("c_terms").textContent = t.terms;
-        document.getElementById("c_privacy").textContent = t.privacy;
-        document.getElementById("c_refund").textContent = t.refunds;
-        document.getElementById("c_billing").textContent = t.billing;
-        document.getElementById("c_requests").textContent = t.privacyRequests;
-        document.getElementById("c_contact").textContent = t.legalContact;
+      document.getElementById("t_priv_h").textContent = L.priv_h;
+      document.getElementById("t_priv_p").textContent = L.priv_p;
+      document.getElementById("t_priv_a").textContent = L.open;
 
-        document.getElementById("b_terms").querySelector("span").textContent = t.termsFull;
-        document.getElementById("b_privacy").querySelector("span").textContent = t.privacyFull;
-        document.getElementById("b_refund").querySelector("span").textContent = t.refundsFull;
-        document.getElementById("b_legal").querySelector("span").textContent = t.legalContactFull;
-        document.getElementById("b_requests").querySelector("span").textContent = t.privacyRequestsFull;
-        document.getElementById("b_billing").querySelector("span").textContent = t.billingFull;
+      document.getElementById("t_ref_h").textContent = L.ref_h;
+      document.getElementById("t_ref_p").textContent = L.ref_p;
+      document.getElementById("t_ref_a").textContent = L.open;
 
-        document.getElementById("t_footer").textContent = t.footer;
-        document.getElementById("t_footer2").textContent = t.footer2;
+      document.getElementById("t_legal_h").textContent = L.legal_h;
+      document.getElementById("t_legal_p").textContent = L.legal_p;
+      document.getElementById("t_legal_a").textContent = L.email;
 
-        // append lang param to all links
-        document.querySelectorAll("a.card").forEach(a=>{
-          const url = new URL(a.getAttribute("href"), location.origin + location.pathname);
-          url.searchParams.set("lang", sel.value);
-          a.setAttribute("href", url.pathname + "?" + url.searchParams.toString());
-        });
-      }
+      document.getElementById("t_privreq_h").textContent = L.privreq_h;
+      document.getElementById("t_privreq_p").textContent = L.privreq_p;
+      document.getElementById("t_privreq_a").textContent = L.email;
 
-      sel.addEventListener("change", applyLang);
+      document.getElementById("t_bill_h").textContent = L.bill_h;
+      document.getElementById("t_bill_p").textContent = L.bill_p;
+      document.getElementById("t_bill_a").textContent = L.email;
+    }
 
-      // chip navigation (chat-first feel)
-      document.querySelectorAll(".chip").forEach(ch=>{
-        ch.addEventListener("click", ()=>{
-          const lang = sel.value;
-          location.href = ch.dataset.go + "?lang=" + encodeURIComponent(lang);
-        });
-      });
+    // persist language
+    const saved = localStorage.getItem("consia_lang");
+    const selector = document.getElementById("lang");
+    selector.value = saved || "auto";
 
-      applyLang();
+    function resolveLang(){
+      const v = selector.value;
+      const lang = (v === "auto") ? autoLang() : v;
+      localStorage.setItem("consia_lang", v);
+      applyLang(lang);
+    }
 
-      // restore widget link
-      const restore = document.getElementById("restoreWidget");
-      if (window.CONSIA_WIDGET?.isHidden?.()){
-        restore.style.display = "inline-block";
-        restore.onclick = ()=> window.CONSIA_WIDGET.showNow();
-      }
-    })();
+    document.getElementById("apply").onclick = resolveLang;
+    resolveLang();
   </script>
+
 </body>
 </html>
