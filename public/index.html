@@ -1,277 +1,41 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#000000" />
-  <title>CONSIA</title>
-
-  <style>
-    :root{
-      --bg:#000;
-      --card:rgba(255,255,255,.04);
-      --card2:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.10);
-      --line2:rgba(255,255,255,.14);
-      --txt:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.60);
-      --muted2:rgba(255,255,255,.42);
-      --ok:#6ef3c5;
-      --warn:#ffd479;
-      --bad:#ff7a7a;
-      --glow:rgba(255,255,255,.08);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      background:
-        radial-gradient(60% 50% at 50% 40%, rgba(255,255,255,.06), rgba(0,0,0,1) 70%),
-        radial-gradient(40% 30% at 50% 60%, rgba(255,255,255,.03), rgba(0,0,0,1) 65%),
-        #000;
-      color:var(--txt);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
-      letter-spacing:.02em;
-    }
-    .wrap{
-      min-height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px 16px 40px;
-    }
-    .panel{
-      width:min(980px,100%);
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:28px;
-      padding:28px 22px 18px;
-      box-shadow:0 30px 80px rgba(0,0,0,.65);
-      backdrop-filter:blur(8px);
-      position:relative;
-      overflow:hidden;
-    }
-    .toprow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:18px;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:12px;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-    }
-    .dot{width:8px;height:8px;border-radius:999px;background:var(--muted2)}
-    .dot.ok{background:var(--ok);box-shadow:0 0 18px rgba(110,243,197,.25)}
-    .dot.bad{background:var(--bad);box-shadow:0 0 18px rgba(255,122,122,.25)}
-    .rightHint{font-size:12px;color:var(--muted2);letter-spacing:.12em;text-transform:lowercase}
-
-    .center{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:18px 6px;
-    }
-    .orb{
-      width:min(280px,60vw);
-      aspect-ratio:1/1;
-      border-radius:999px;
-      background:
-        radial-gradient(60% 60% at 35% 30%, rgba(255,255,255,.18), rgba(255,255,255,.06) 40%, rgba(0,0,0,0) 70%),
-        radial-gradient(60% 60% at 60% 65%, rgba(255,255,255,.08), rgba(0,0,0,0) 65%),
-        radial-gradient(90% 90% at 50% 50%, rgba(255,255,255,.06), rgba(0,0,0,0) 60%),
-        rgba(255,255,255,.02);
-      border:1px solid rgba(255,255,255,.08);
-      box-shadow: inset 0 0 40px rgba(0,0,0,.7), 0 0 90px rgba(255,255,255,.06);
-      filter:saturate(.9);
-    }
-    h1{
-      margin:18px 0 6px;
-      font-weight:500;
-      font-size:28px;
-      letter-spacing:.28em;
-      text-indent:.28em;
-    }
-    .subtitle{
-      margin:0;
-      color:var(--muted);
-      font-size:15px;
-      letter-spacing:.08em;
-    }
-    .modeLine{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:13px;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .modePills{
-      display:flex;
-      gap:10px;
-      margin:14px 0 10px;
-    }
-    .mBtn{
-      width:46px;height:46px;border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--txt);
-      cursor:pointer;
-    }
-    .mBtn.active{
-      border-color:var(--line2);
-      box-shadow:0 0 24px var(--glow);
-    }
-    .actions{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      justify-content:center;
-      margin:14px 0 8px;
-    }
-    .btn{
-      min-width:180px;
-      padding:14px 18px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--txt);
-      cursor:pointer;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-    }
-    .hint{
-      margin-top:8px;
-      color:var(--muted2);
-      font-size:13px;
-    }
-    .debug{
-      margin-top:18px;
-      background:rgba(0,0,0,.35);
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:12px;
-      color:var(--muted);
-      max-height:280px;
-      overflow:auto;
-    }
-    .dbgActions{
-      display:flex;
-      gap:10px;
-      justify-content:flex-end;
-      margin-bottom:8px;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <div class="panel">
-      <div class="toprow">
-        <div class="pill"><span id="envDot" class="dot"></span><span id="envTxt">ENV</span></div>
-        <div class="rightHint">/api ready</div>
-      </div>
-
-      <div class="center">
-        <div class="orb"></div>
-        <h1>CONSIA</h1>
-        <p class="subtitle">Estoy presente.</p>
-
-        <div class="modeLine">
-          <span id="modeLabel">A · ACTIVE</span>
-        </div>
-
-        <div class="modePills">
-          <button class="mBtn" id="mA" onclick="setMode('A')">A</button>
-          <button class="mBtn" id="mB" onclick="setMode('B')">B</button>
-          <button class="mBtn" id="mC" onclick="setMode('C')">C</button>
-        </div>
-
-        <div class="actions">
-          <button class="btn" onclick="wake()">WAKE</button>
-          <button class="btn" onclick="session()">ACTIVE</button>
-          <button class="btn" onclick="presence()">PRESENCE</button>
-        </div>
-
-        <div class="hint">Si no responde, mirá el DEBUG abajo (404, 500, etc).</div>
-      </div>
-
-      <div class="debug">
-        <div class="dbgActions">
-          <button class="btn" style="min-width:auto" onclick="selfTest()">Self-Test</button>
-          <button class="btn" style="min-width:auto" onclick="clearLog()">Clear</button>
-        </div>
-        <pre id="log"></pre>
-      </div>
-    </div>
-  </div>
-
+<!-- CONSIA GLOBAL LANGUAGE SYSTEM -->
 <script>
-const logEl = document.getElementById('log');
-function log(t){ logEl.textContent += t + "\\n"; logEl.scrollTop = logEl.scrollHeight; }
+const userLang = navigator.language || navigator.userLanguage;
 
-async function call(path){
-  log('> GET ' + path);
-  const r = await fetch(path);
-  const txt = await r.text();
-  log('status: ' + r.status);
-  log('resp: ' + txt);
-  try{ return JSON.parse(txt); }catch{ return txt; }
-}
+async function translatePage(targetLang) {
 
-async function loadConfig(){
-  const d = await call('/api/config');
-  if(d && d.ok){
-    document.getElementById('envDot').className='dot ok';
-    document.getElementById('envTxt').textContent='ENV · OK';
-    setMode(d.defaultMode || 'A', true);
-  }else{
-    document.getElementById('envDot').className='dot bad';
-    document.getElementById('envTxt').textContent='ENV · ERROR';
+  const textNodes = [];
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+
+  while (walker.nextNode()) {
+    textNodes.push(walker.currentNode);
+  }
+
+  for (const node of textNodes) {
+    if (node.nodeValue.trim().length > 3) {
+
+      const res = await fetch("https://api.consia.world/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          text: node.nodeValue,
+          target: targetLang
+        })
+      });
+
+      const data = await res.json();
+      node.nodeValue = data.translation;
+    }
   }
 }
 
-async function setMode(m, silent){
-  const d = await call('/api/mode?set=' + m);
-  if(d && d.ok){
-    ['A','B','C'].forEach(x=>{
-      document.getElementById('m'+x).classList.toggle('active', x===m);
-    });
-    document.getElementById('modeLabel').textContent = m + ' · ACTIVE';
-  }
-}
-
-async function wake(){ await call('/api/wake'); }
-async function presence(){ await call('/api/presence'); }
-async function session(){ await call('/api/session_start'); }
-
-async function selfTest(){
-  await loadConfig();
-  await call('/api/mode?set=A');
-  await call('/api/presence');
-  await call('/api/session_start');
-}
-
-function clearLog(){ logEl.textContent=''; }
-
-log('CONSIA UI boot…');
-loadConfig().then(()=>presence());
+// Auto detect language
+translatePage(userLang);
 </script>
-</body>
-</html>
