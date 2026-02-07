@@ -1,748 +1,400 @@
-/* CONSIA Widget v1.0 — “One Tap Magic”
-   - 1 gesto: tocar el avatar (orb) => abre CONSIA
-   - Multilenguaje: auto-detect por navegador + respuestas desde API en el idioma del usuario
-   - Casi sin botones: Avatar / Mic / Enviar
-   - Minimizar avatar: 1 toque en “–”
-   - No expone secretos (solo llama a tu API)
+/* CONSIA Widget v1.0 — Apple++ (single-input, guided, minimal UI)
+   - Magic mode default (.)
+   - Avatar always on, minimizable
+   - Chat + Voice (Web Speech) + Live placeholder
+   - Auto-language + manual override via "idioma: xx"
+   - No external deps
 */
 
-(function () {
+(() => {
   "use strict";
 
-  // ======= Config =======
-  const DEFAULT_API_URL = "https://api.consia.world/ask"; // tu Worker /ask
-  const DEFAULT_BRAND = "CONSIA";
-  const STORAGE_KEY = "consia_widget_state_v1";
-  const SESSION_KEY = "consia_session_id_v1";
-  const DEVICE_KEY = "consia_device_id_v1";
+  const CFG = Object.assign(
+    {
+      apiUrl: "https://api.consia.world/ask",
+      modeDefault: "magic", // magic | chat | voice | live
+      showAvatar: true,
+      avatarCanMinimize: true,
+      allowChat: true,
+      allowVoice: true,
+      allowLive: true,
+      i18n: "auto", // auto | 'es' | 'en' | ...
+      brand: "CONSIA",
+      placeholder: 'Decime qué querés. (o escribí ".")',
+      theme: "dark",
+      hotkey: ".", // magic trigger
+      maxChips: 3,
+      tts: true,
+      stt: true,
+    },
+    window.CONSIA_WIDGET_CONFIG || {}
+  );
 
-  const cfg = window.CONSIA_WIDGET_CONFIG || {};
-  const API_URL = cfg.apiUrl || DEFAULT_API_URL;
-  const BRAND = cfg.brand || DEFAULT_BRAND;
-
-  // ======= Helpers =======
+  // ---------- Utils ----------
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const nowISO = () => new Date().toISOString();
+  const safeJson = async (res) => {
+    const ct = res.headers.get("content-type") || "";
+    if (ct.includes("application/json")) return res.json();
+    const txt = await res.text();
+    try { return JSON.parse(txt); } catch { return { ok: false, raw: txt }; }
+  };
 
-  function uid() {
-    return (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + "-" + Math.random()))
-      .toString()
-      .replace(/[^a-z0-9]/gi, "")
-      .slice(0, 24);
-  }
+  // language detection
+  const detectLang = () => {
+    if (CFG.i18n && CFG.i18n !== "auto") return CFG.i18n;
+    const nav = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
+    if (!nav) return "es";
+    return nav.toLowerCase().split("-")[0] || "es";
+  };
 
-  function getOrCreate(key, prefix) {
-    try {
-      let v = localStorage.getItem(key);
-      if (!v) {
-        v = (prefix || "") + uid();
-        localStorage.setItem(key, v);
-      }
-      return v;
-    } catch {
-      return (prefix || "") + uid();
-    }
-  }
-
-  function loadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  }
-
-  function saveState(s) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(s || {}));
-    } catch {}
-  }
-
-  function detectLang() {
-    // idioma del mundo: usamos preferencia del navegador
-    // la API responde en ese idioma (por tu /ask).
-    const lang =
-      (navigator.languages && navigator.languages[0]) ||
-      navigator.language ||
-      "en";
-    return (lang || "en").toLowerCase();
-  }
-
-  function clamp(n, a, b) {
-    return Math.max(a, Math.min(b, n));
-  }
-
-  function haptic() {
-    try {
-      if (navigator.vibrate) navigator.vibrate(12);
-    } catch {}
-  }
-
-  // ======= UI Strings (mínimos, casi sin texto) =======
-  // Minimalismo: iconos + microcopy ultra corto. Fallback: sin texto.
   const I18N = {
     es: {
-      placeholder: "Decime qué querés. (o escribí “.”)",
-      hint: "Tocá el avatar. Todo se hace solo.",
-      mic: "Hablar",
+      title: "CONSIA",
+      hint: "Decime qué querés. Yo me encargo.",
+      placeholder: 'Decime qué querés. (o escribí ".")',
       send: "Enviar",
       close: "Cerrar",
-      mini: "Minimizar",
-      open: "Abrir CONSIA",
+      minimize: "Minimizar",
+      expand: "Abrir",
+      voice: "Voz",
+      live: "LIVE",
+      chat: "Chat",
+      magic: "Magia",
       thinking: "Procesando…",
-      error: "Error. Reintentar.",
-      quick1: "Activar modo rápido",
-      quick2: "Iniciar reunión",
-      quick3: "Resumen y solución",
+      error: "Hubo un error. Reintentá.",
+      chips: ["Resolver esto", "Hacerlo automático", "Explicación mínima"],
+      liveSoon: "LIVE (en vivo) listo para activar en la fase WebRTC. Sin storage.",
+      langSet: (l) => `Idioma: ${l}`,
     },
     en: {
-      placeholder: "Tell me what you want. (or type “.”)",
-      hint: "Tap the avatar. Everything runs itself.",
-      mic: "Speak",
+      title: "CONSIA",
+      hint: "Tell me what you want. I’ll handle it.",
+      placeholder: 'Tell me what you want. (or type ".")',
       send: "Send",
       close: "Close",
-      mini: "Minimize",
-      open: "Open CONSIA",
+      minimize: "Minimize",
+      expand: "Open",
+      voice: "Voice",
+      live: "LIVE",
+      chat: "Chat",
+      magic: "Magic",
       thinking: "Processing…",
-      error: "Error. Retry.",
-      quick1: "Fast mode",
-      quick2: "Start meeting",
-      quick3: "Summarize & solve",
+      error: "Something went wrong. Try again.",
+      chips: ["Solve this", "Make it automatic", "Minimal explanation"],
+      liveSoon: "LIVE (real-time) ready for WebRTC phase. No storage.",
+      langSet: (l) => `Language: ${l}`,
     },
     pt: {
-      placeholder: "Me diga o que você quer. (ou “.”)",
-      hint: "Toque no avatar. Tudo acontece sozinho.",
-      mic: "Falar",
+      title: "CONSIA",
+      hint: "Diz o que você quer. Eu resolvo.",
+      placeholder: 'Diz o que você quer. (ou escreva ".")',
       send: "Enviar",
       close: "Fechar",
-      mini: "Minimizar",
-      open: "Abrir CONSIA",
+      minimize: "Minimizar",
+      expand: "Abrir",
+      voice: "Voz",
+      live: "LIVE",
+      chat: "Chat",
+      magic: "Magia",
       thinking: "Processando…",
-      error: "Erro. Tentar de novo.",
-      quick1: "Modo rápido",
-      quick2: "Iniciar reunião",
-      quick3: "Resumir e resolver",
+      error: "Deu erro. Tenta de novo.",
+      chips: ["Resolver", "Automatizar", "Explicação mínima"],
+      liveSoon: "LIVE (tempo real) pronto para fase WebRTC. Sem storage.",
+      langSet: (l) => `Idioma: ${l}`,
     },
   };
 
-  function t(key) {
-    const lang = detectLang();
-    const base = lang.split("-")[0];
-    const pack = I18N[base] || I18N.en;
-    return pack[key] || "";
-  }
+  let lang = detectLang();
+  const T = () => I18N[lang] || I18N.es;
 
-  // ======= Build UI =======
-  const state = loadState();
-  const sessionId = getOrCreate(SESSION_KEY, "s_");
-  const deviceId = getOrCreate(DEVICE_KEY, "d_");
-  const startMinimized = !!state.minimized;
+  // parse manual language switch
+  const maybeSetLang = (text) => {
+    const m = text.trim().match(/^idioma\s*:\s*([a-zA-Z-]{2,10})\s*$/i);
+    if (!m) return false;
+    lang = m[1].toLowerCase().split("-")[0];
+    renderLang();
+    pushSystem(T().langSet(lang));
+    return true;
+  };
 
+  // ---------- Styles ----------
+  const css = `
+:root { --c-bg:#06090c; --c-panel: rgba(255,255,255,.06); --c-panel2: rgba(255,255,255,.09);
+--c-border: rgba(255,255,255,.12); --c-text:#fff; --c-muted: rgba(255,255,255,.72);
+--c-muted2: rgba(255,255,255,.5); --c-a:#55ccff; --c-b:#00a3ff; --r:18px; --shadow: 0 30px 90px rgba(0,0,0,.6); }
+#consia-root { position: fixed; inset: 0; pointer-events: none; z-index: 999999; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial; }
+#consia-bubble { pointer-events:auto; position: fixed; right: 18px; bottom: 18px; width: 62px; height: 62px;
+border-radius: 999px; border: 1px solid var(--c-border); background: radial-gradient(120% 120% at 30% 20%, rgba(85,204,255,.35), transparent 60%),
+radial-gradient(100% 100% at 70% 60%, rgba(0,163,255,.25), transparent 60%), rgba(10,15,20,.75);
+backdrop-filter: blur(10px); box-shadow: var(--shadow); display:flex; align-items:center; justify-content:center; cursor:pointer;
+transition: transform .18s ease, opacity .18s ease; }
+#consia-bubble:hover { transform: scale(1.04); }
+#consia-bubble .dot { width: 10px; height: 10px; border-radius: 99px; background: var(--c-a); filter: drop-shadow(0 0 10px rgba(85,204,255,.6)); }
+#consia-bubble .mark { position:absolute; top:10px; left:10px; font-size:10px; letter-spacing:4px; color: rgba(255,255,255,.85); opacity:.9; }
+#consia-shell { pointer-events:auto; position: fixed; right: 18px; bottom: 94px; width: min(520px, calc(100vw - 36px));
+height: min(680px, calc(100vh - 140px)); border-radius: 22px; overflow: hidden; border: 1px solid var(--c-border);
+background: radial-gradient(1200px 700px at 30% 10%, rgba(0,163,255,.20), transparent 55%),
+radial-gradient(900px 600px at 80% 40%, rgba(85,204,255,.12), transparent 55%), #070709;
+box-shadow: var(--shadow); backdrop-filter: blur(14px); display:none; }
+#consia-top { display:flex; align-items:center; justify-content:space-between; padding: 14px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
+#consia-brand { display:flex; gap:10px; align-items:center; }
+#consia-brand b { letter-spacing: 6px; font-size: 12px; }
+#consia-brand .pulse { width:10px; height:10px; border-radius:99px; background: var(--c-a); box-shadow: 0 0 18px rgba(85,204,255,.65); opacity:.95; }
+#consia-actions { display:flex; gap:8px; align-items:center; }
+.consia-btn { border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color: var(--c-text);
+padding: 8px 10px; border-radius: 12px; font-size: 12px; cursor:pointer; }
+.consia-btn:active { transform: translateY(1px); }
+.consia-btn.primary { border-color: rgba(85,204,255,.35); background: rgba(0,163,255,.10); }
+.consia-btn.ghost { background: transparent; }
+#consia-body { height: calc(100% - 56px); display:flex; flex-direction:column; }
+#consia-log { flex:1; overflow:auto; padding: 14px; display:flex; flex-direction:column; gap:10px; }
+.msg { max-width: 92%; padding: 10px 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06);
+color: var(--c-text); font-size: 13px; line-height: 1.45; }
+.msg.me { align-self:flex-end; background: rgba(0,163,255,.10); border-color: rgba(0,163,255,.20); }
+.msg.sys { align-self:center; color: var(--c-muted); background: rgba(255,255,255,.04); }
+.msg .meta { display:block; margin-top: 6px; font-size: 10px; color: var(--c-muted2); }
+#consia-chips { display:flex; flex-wrap:wrap; gap:8px; padding: 0 14px 10px; }
+.chip { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05); color: var(--c-text);
+padding: 7px 10px; border-radius: 999px; font-size: 12px; cursor:pointer; }
+.chip:hover { border-color: rgba(85,204,255,.35); }
+#consia-inputbar { padding: 12px; border-top: 1px solid rgba(255,255,255,.08); display:flex; gap:10px; align-items:center; }
+#consia-in { flex:1; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+border-radius: 16px; padding: 12px 12px; color: var(--c-text); outline:none; font-size: 14px; }
+#consia-in::placeholder { color: rgba(255,255,255,.45); }
+#consia-send { width: 48px; height: 44px; border-radius: 14px; border:1px solid rgba(0,163,255,.25);
+background: rgba(0,163,255,.12); cursor:pointer; display:flex; align-items:center; justify-content:center; }
+#consia-send svg { opacity:.95 }
+#consia-mini { position: fixed; right: 18px; bottom: 94px; display:none; pointer-events:auto; }
+#consia-mini .miniRow { display:flex; gap:8px; align-items:center; padding:10px 12px; border-radius: 999px;
+border: 1px solid rgba(255,255,255,.14); background: rgba(10,15,20,.70); backdrop-filter: blur(10px); box-shadow: var(--shadow); }
+#consia-mini input { width: min(360px, calc(100vw - 150px)); background: transparent; border:none; outline:none; color: var(--c-text); font-size: 13px; }
+#consia-mini input::placeholder { color: rgba(255,255,255,.45); }
+#consia-mini button { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color: var(--c-text);
+padding: 8px 10px; border-radius: 999px; font-size: 12px; cursor:pointer; }
+@media (max-width: 520px) {
+  #consia-shell { right: 10px; bottom: 84px; width: calc(100vw - 20px); height: calc(100vh - 120px); }
+  #consia-bubble { right: 12px; bottom: 12px; }
+  #consia-mini { right: 12px; bottom: 84px; }
+}
+  `.trim();
+
+  const styleEl = document.createElement("style");
+  styleEl.textContent = css;
+  document.head.appendChild(styleEl);
+
+  // ---------- UI ----------
   const root = document.createElement("div");
-  root.id = "consia-widget-root";
+  root.id = "consia-root";
   root.innerHTML = `
-    <style>
-      :root{
-        --cw-bg: rgba(7,7,9,.78);
-        --cw-panel: rgba(255,255,255,.06);
-        --cw-panel2: rgba(255,255,255,.09);
-        --cw-border: rgba(255,255,255,.13);
-        --cw-text: rgba(255,255,255,.92);
-        --cw-muted: rgba(255,255,255,.64);
-        --cw-shadow: 0 30px 90px rgba(0,0,0,.55);
-        --cw-radius: 20px;
-        --cw-a: rgba(0,163,255,.95);
-        --cw-b: rgba(85,204,255,.95);
-      }
-
-      #consia-widget-root{
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        z-index: 2147483000;
-        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      }
-
-      /* ---- Avatar (ORB) ---- */
-      .cw-orb-wrap{
-        position: fixed;
-        right: 18px;
-        bottom: 18px;
-        width: 74px;
-        height: 74px;
-        pointer-events: auto;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .cw-orb{
-        width: 74px;
-        height: 74px;
-        border-radius: 999px;
-        background:
-          radial-gradient(34px 34px at 30% 28%, rgba(255,255,255,.30), transparent 55%),
-          radial-gradient(42px 42px at 60% 68%, rgba(0,163,255,.26), transparent 60%),
-          radial-gradient(80px 80px at 50% 50%, rgba(0,0,0,.55), rgba(0,0,0,.80));
-        border: 1px solid rgba(255,255,255,.14);
-        box-shadow: 0 18px 50px rgba(0,0,0,.55);
-        position: relative;
-        overflow: hidden;
-        transform: translateZ(0);
-      }
-
-      .cw-orb::before{
-        content:"";
-        position:absolute;
-        inset:-30%;
-        background: conic-gradient(from 240deg, rgba(0,163,255,.0), rgba(0,163,255,.25), rgba(255,255,255,.10), rgba(85,204,255,.22), rgba(0,163,255,.0));
-        filter: blur(18px);
-        animation: cwSpin 2.9s linear infinite;
-      }
-
-      .cw-orb::after{
-        content:"";
-        position:absolute;
-        inset: 0;
-        background:
-          radial-gradient(22px 22px at 35% 30%, rgba(255,255,255,.40), transparent 60%),
-          radial-gradient(18px 18px at 62% 72%, rgba(85,204,255,.22), transparent 70%);
-        mix-blend-mode: screen;
-        opacity: .85;
-      }
-
-      @keyframes cwSpin{ to{ transform: rotate(360deg);} }
-
-      .cw-orb-pulse{
-        position:absolute;
-        inset:-8px;
-        border-radius: 999px;
-        border: 1px solid rgba(0,163,255,.22);
-        animation: cwPulse 2.2s ease-in-out infinite;
-        pointer-events:none;
-      }
-      @keyframes cwPulse{
-        0%,100% { transform: scale(1); opacity: .25; }
-        50% { transform: scale(1.08); opacity: .55; }
-      }
-
-      .cw-mini{
-        position:absolute;
-        top:-6px;
-        left:-6px;
-        width: 26px;
-        height: 26px;
-        border-radius: 999px;
-        background: rgba(255,255,255,.10);
-        border: 1px solid rgba(255,255,255,.16);
-        backdrop-filter: blur(12px);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        color: rgba(255,255,255,.82);
-        font-weight: 800;
-        font-size: 14px;
-        line-height: 1;
-      }
-
-      .cw-orb-badge{
-        position:absolute;
-        right:-2px;
-        top:-2px;
-        width: 12px;
-        height: 12px;
-        border-radius: 999px;
-        background: rgba(0,163,255,.95);
-        box-shadow: 0 0 0 2px rgba(7,7,9,.8);
-        opacity: .9;
-      }
-
-      /* ---- Panel ---- */
-      .cw-panel{
-        position: fixed;
-        inset: 0;
-        pointer-events: auto;
-        display: none;
-        background: radial-gradient(1200px 700px at 30% 10%, rgba(0,163,255,.18), transparent 55%),
-                    radial-gradient(900px 600px at 80% 40%, rgba(85,204,255,.12), transparent 55%),
-                    rgba(7,7,9,.76);
-        backdrop-filter: blur(14px);
-      }
-      .cw-panel.open{ display:block; }
-
-      .cw-shell{
-        position:absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%,-50%);
-        width: min(960px, calc(100vw - 24px));
-        height: min(720px, calc(100vh - 24px));
-        border-radius: var(--cw-radius);
-        border: 1px solid var(--cw-border);
-        background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-        box-shadow: var(--cw-shadow);
-        overflow:hidden;
-      }
-
-      .cw-top{
-        height: 60px;
-        display:flex;
-        align-items:center;
-        justify-content: space-between;
-        padding: 0 14px 0 18px;
-        border-bottom: 1px solid rgba(255,255,255,.10);
-        background: rgba(0,0,0,.18);
-      }
-      .cw-brand{
-        display:flex;
-        align-items:center;
-        gap: 10px;
-        color: var(--cw-text);
-        letter-spacing: 4px;
-        font-weight: 900;
-        font-size: 14px;
-      }
-      .cw-dot{
-        width: 10px;
-        height: 10px;
-        border-radius: 999px;
-        background: rgba(0,163,255,.95);
-        box-shadow: 0 0 20px rgba(0,163,255,.35);
-      }
-
-      .cw-actions{
-        display:flex;
-        align-items:center;
-        gap: 10px;
-      }
-      .cw-iconbtn{
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-        border: 1px solid rgba(255,255,255,.12);
-        background: rgba(255,255,255,.06);
-        color: rgba(255,255,255,.88);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        cursor:pointer;
-        -webkit-tap-highlight-color: transparent;
-      }
-      .cw-iconbtn:active{ transform: scale(.98); }
-
-      .cw-body{
-        display:flex;
-        height: calc(100% - 60px);
-      }
-
-      .cw-left{
-        width: 290px;
-        border-right: 1px solid rgba(255,255,255,.10);
-        padding: 16px;
-        display:flex;
-        flex-direction: column;
-        gap: 12px;
-        background: rgba(0,0,0,.10);
-      }
-      .cw-hint{
-        color: var(--cw-muted);
-        font-size: 13px;
-        line-height: 1.35;
-        padding: 12px;
-        border: 1px solid rgba(255,255,255,.10);
-        border-radius: 16px;
-        background: rgba(255,255,255,.05);
-      }
-      .cw-quick{
-        display:flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-      .cw-q{
-        display:flex;
-        align-items:center;
-        gap: 10px;
-        padding: 12px 12px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,.10);
-        background: rgba(255,255,255,.06);
-        color: rgba(255,255,255,.90);
-        cursor:pointer;
-        font-weight: 700;
-        font-size: 13px;
-      }
-      .cw-q small{
-        color: rgba(255,255,255,.55);
-        font-weight: 600;
-      }
-      .cw-q:active{ transform: scale(.995); }
-
-      .cw-right{
-        flex: 1;
-        display:flex;
-        flex-direction: column;
-        height: 100%;
-      }
-
-      .cw-chat{
-        flex: 1;
-        padding: 16px;
-        overflow:auto;
-      }
-      .cw-msg{
-        max-width: 780px;
-        margin: 0 auto 12px auto;
-        padding: 12px 14px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,.10);
-        background: rgba(255,255,255,.06);
-        color: rgba(255,255,255,.92);
-        white-space: pre-wrap;
-        line-height: 1.45;
-        font-size: 14px;
-      }
-      .cw-msg.user{
-        background: rgba(0,163,255,.10);
-        border-color: rgba(0,163,255,.20);
-      }
-      .cw-meta{
-        max-width: 780px;
-        margin: 0 auto 10px auto;
-        color: rgba(255,255,255,.55);
-        font-size: 12px;
-        display:flex;
-        justify-content: space-between;
-      }
-
-      .cw-inputbar{
-        border-top: 1px solid rgba(255,255,255,.10);
-        background: rgba(0,0,0,.18);
-        padding: 12px;
-        display:flex;
-        gap: 10px;
-        align-items: center;
-      }
-      .cw-input{
-        flex: 1;
-        height: 46px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.06);
-        color: rgba(255,255,255,.92);
-        outline: none;
-        padding: 0 14px;
-        font-size: 14px;
-      }
-      .cw-input::placeholder{ color: rgba(255,255,255,.45); }
-
-      .cw-send{
-        width: 52px;
-        height: 46px;
-        border-radius: 16px;
-        border: 1px solid rgba(0,163,255,.28);
-        background: rgba(0,163,255,.16);
-        color: rgba(255,255,255,.92);
-        cursor:pointer;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      }
-      .cw-send:active{ transform: scale(.98); }
-
-      .cw-mic{
-        width: 52px;
-        height: 46px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.06);
-        color: rgba(255,255,255,.92);
-        cursor:pointer;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      }
-      .cw-mic.on{
-        border-color: rgba(0,163,255,.35);
-        background: rgba(0,163,255,.14);
-      }
-
-      /* Mobile */
-      @media (max-width: 860px){
-        .cw-shell{ height: calc(100vh - 18px); width: calc(100vw - 18px); }
-        .cw-left{ display:none; }
-      }
-
-      /* minimized orb */
-      .cw-orb-wrap.minimized{
-        width: 58px; height: 58px;
-      }
-      .cw-orb-wrap.minimized .cw-orb{ width:58px; height:58px; }
-      .cw-orb-wrap.minimized .cw-orb-pulse{ inset:-6px; }
-      .cw-orb-wrap.minimized .cw-mini{ display:none; }
-    </style>
-
-    <div class="cw-orb-wrap ${startMinimized ? "minimized" : ""}" aria-label="${t("open")}">
-      <div class="cw-orb" role="button" tabindex="0"></div>
-      <div class="cw-orb-pulse"></div>
-      <div class="cw-mini" title="${t("mini")}" aria-label="${t("mini")}">–</div>
-      <div class="cw-orb-badge"></div>
+    <div id="consia-bubble" aria-label="CONSIA">
+      <div class="mark">CONSIA</div>
+      <div class="dot"></div>
     </div>
 
-    <div class="cw-panel" aria-hidden="true">
-      <div class="cw-shell" role="dialog" aria-modal="true">
-        <div class="cw-top">
-          <div class="cw-brand">
-            <span class="cw-dot"></span>
-            <span>${BRAND}</span>
-          </div>
-          <div class="cw-actions">
-            <div class="cw-iconbtn cw-close" title="${t("close")}" aria-label="${t("close")}">✕</div>
-          </div>
+    <div id="consia-mini" aria-hidden="true">
+      <div class="miniRow">
+        <input id="consia-mini-in" autocomplete="off" spellcheck="false" />
+        <button id="consia-mini-send">↵</button>
+      </div>
+    </div>
+
+    <div id="consia-shell" role="dialog" aria-modal="false" aria-label="CONSIA">
+      <div id="consia-top">
+        <div id="consia-brand">
+          <span class="pulse"></span>
+          <b>${CFG.brand}</b>
         </div>
+        <div id="consia-actions">
+          ${CFG.allowChat ? `<button class="consia-btn ghost" data-mode="chat">${T().chat}</button>` : ""}
+          ${CFG.allowVoice ? `<button class="consia-btn ghost" data-mode="voice">${T().voice}</button>` : ""}
+          ${CFG.allowLive ? `<button class="consia-btn ghost" data-mode="live">${T().live}</button>` : ""}
+          ${CFG.avatarCanMinimize ? `<button class="consia-btn" id="consia-min">${T().minimize}</button>` : ""}
+          <button class="consia-btn primary" id="consia-close">${T().close}</button>
+        </div>
+      </div>
 
-        <div class="cw-body">
-          <div class="cw-left">
-            <div class="cw-hint">${t("hint")}</div>
-            <div class="cw-quick">
-              <div class="cw-q" data-q=".">
-                <div>⚡</div>
-                <div><div>${t("quick1")}</div><small>“.”</small></div>
-              </div>
-              <div class="cw-q" data-q="Reunión. Iniciar y guiar automático.">
-                <div>🎙️</div>
-                <div><div>${t("quick2")}</div><small>“Reunión”</small></div>
-              </div>
-              <div class="cw-q" data-q="Resumí, resolvé y decime el siguiente paso mínimo.">
-                <div>🧠</div>
-                <div><div>${t("quick3")}</div><small>1 paso</small></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="cw-right">
-            <div class="cw-chat"></div>
-            <div class="cw-inputbar">
-              <button class="cw-mic" type="button" title="${t("mic")}" aria-label="${t("mic")}">🎤</button>
-              <input class="cw-input" type="text" spellcheck="false" autocomplete="off" placeholder="${t("placeholder")}" />
-              <button class="cw-send" type="button" title="${t("send")}" aria-label="${t("send")}">➤</button>
-            </div>
-          </div>
+      <div id="consia-body">
+        <div id="consia-log"></div>
+        <div id="consia-chips"></div>
+        <div id="consia-inputbar">
+          <input id="consia-in" autocomplete="off" spellcheck="false" />
+          <button id="consia-send" aria-label="${T().send}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M4 12L20 4L13 20L11 13L4 12Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
   `;
+  document.body.appendChild(root);
 
-  document.documentElement.appendChild(root);
+  const bubble = $("#consia-bubble", root);
+  const shell = $("#consia-shell", root);
+  const log = $("#consia-log", root);
+  const inEl = $("#consia-in", root);
+  const sendBtn = $("#consia-send", root);
+  const closeBtn = $("#consia-close", root);
+  const minBtn = $("#consia-min", root);
+  const chipsWrap = $("#consia-chips", root);
 
-  const orbWrap = $(".cw-orb-wrap", root);
-  const orb = $(".cw-orb", root);
-  const miniBtn = $(".cw-mini", root);
-  const panel = $(".cw-panel", root);
-  const closeBtn = $(".cw-close", root);
-  const chat = $(".cw-chat", root);
-  const input = $(".cw-input", root);
-  const sendBtn = $(".cw-send", root);
-  const micBtn = $(".cw-mic", root);
-  const quicks = $$(".cw-q", root);
+  const mini = $("#consia-mini", root);
+  const miniIn = $("#consia-mini-in", root);
+  const miniSend = $("#consia-mini-send", root);
 
-  function openPanel() {
-    panel.classList.add("open");
-    panel.setAttribute("aria-hidden", "false");
-    haptic();
-    setTimeout(() => input.focus(), 30);
-  }
+  // ---------- State ----------
+  let opened = false;
+  let minimized = false;
+  let mode = CFG.modeDefault || "magic";
+  let busy = false;
 
-  function closePanel() {
-    panel.classList.remove("open");
-    panel.setAttribute("aria-hidden", "true");
-    haptic();
-  }
+  // ---------- Messages ----------
+  const push = (text, who = "consia") => {
+    const el = document.createElement("div");
+    el.className = `msg ${who === "me" ? "me" : who === "sys" ? "sys" : ""}`;
+    el.textContent = text;
+    const meta = document.createElement("span");
+    meta.className = "meta";
+    meta.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    el.appendChild(meta);
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+  };
 
-  function toggleMinimize() {
-    const minimized = !orbWrap.classList.contains("minimized");
-    orbWrap.classList.toggle("minimized", minimized);
-    state.minimized = minimized;
-    saveState(state);
-    haptic();
-  }
+  const pushSystem = (text) => push(text, "sys");
 
-  function addMsg(role, text) {
-    const meta = document.createElement("div");
-    meta.className = "cw-meta";
-    meta.innerHTML = `<span>${role === "user" ? "YOU" : BRAND}</span><span>${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>`;
+  const ensureWelcome = () => {
+    if (log.childElementCount) return;
+    push(T().hint, "consia");
+    renderChips();
+  };
 
-    const m = document.createElement("div");
-    m.className = "cw-msg " + (role === "user" ? "user" : "ai");
-    m.textContent = text || "";
-
-    chat.appendChild(meta);
-    chat.appendChild(m);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  function setThinking(on) {
-    micBtn.disabled = on;
-    sendBtn.disabled = on;
-    input.disabled = on;
-    if (on) {
-      addMsg("ai", t("thinking"));
-    }
-  }
-
-  async function ask(message) {
-    const lang = detectLang();
-    const headers = {
-      "content-type": "application/json",
-      "x-consia-session": sessionId,
-      "x-consia-device": deviceId,
-      "x-consia-lang": lang,
-      // AUTH: si tu UI usa USER_TOKEN, podés setearlo en window.CONSIA_WIDGET_CONFIG.userToken
-    };
-    if (cfg.userToken) headers["authorization"] = "Bearer " + cfg.userToken;
-
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ message }),
+  const renderChips = () => {
+    chipsWrap.innerHTML = "";
+    const chips = (T().chips || []).slice(0, CFG.maxChips || 3);
+    chips.forEach((c) => {
+      const b = document.createElement("button");
+      b.className = "chip";
+      b.textContent = c;
+      b.onclick = () => {
+        inEl.value = c;
+        submitFrom(inEl.value);
+      };
+      chipsWrap.appendChild(b);
     });
+  };
 
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      throw new Error("api_error_" + res.status + " " + txt.slice(0, 200));
-    }
-    return res.json();
-  }
+  const renderLang = () => {
+    // update placeholders + buttons text quickly
+    inEl.placeholder = T().placeholder;
+    miniIn.placeholder = T().placeholder;
+    const btnChat = shell.querySelector('[data-mode="chat"]');
+    const btnVoice = shell.querySelector('[data-mode="voice"]');
+    const btnLive = shell.querySelector('[data-mode="live"]');
+    if (btnChat) btnChat.textContent = T().chat;
+    if (btnVoice) btnVoice.textContent = T().voice;
+    if (btnLive) btnLive.textContent = T().live;
+    if (minBtn) minBtn.textContent = T().minimize;
+    closeBtn.textContent = T().close;
+    renderChips();
+  };
 
-  async function send(textToSend) {
-    const msg = (textToSend != null ? textToSend : input.value || "").toString().trim();
-    if (!msg) return;
+  // ---------- Open / Close / Minimize ----------
+  const open = () => {
+    opened = true;
+    minimized = false;
+    shell.style.display = "block";
+    mini.style.display = "none";
+    ensureWelcome();
+    inEl.focus();
+  };
 
-    input.value = "";
-    addMsg("user", msg);
+  const close = () => {
+    opened = false;
+    minimized = false;
+    shell.style.display = "none";
+    mini.style.display = "none";
+  };
 
-    setThinking(true);
-    try {
-      const data = await ask(msg);
-      // remove thinking bubble (last ai msg) and replace with real
-      // simplest: just add real response; leaving thinking is ok, but we keep it clean:
-      // find last "Procesando…" and remove if exists
-      const nodes = $$(".cw-msg", chat);
-      for (let i = nodes.length - 1; i >= 0; i--) {
-        if (nodes[i].textContent === t("thinking")) {
-          const metaNode = nodes[i].previousSibling;
-          if (metaNode && metaNode.classList && metaNode.classList.contains("cw-meta")) metaNode.remove();
-          nodes[i].remove();
-          break;
-        }
-      }
-      addMsg("ai", (data && (data.answer || data.output || data.text)) || "");
-    } catch (e) {
-      // remove thinking if exists
-      const nodes = $$(".cw-msg", chat);
-      for (let i = nodes.length - 1; i >= 0; i--) {
-        if (nodes[i].textContent === t("thinking")) {
-          const metaNode = nodes[i].previousSibling;
-          if (metaNode && metaNode.classList && metaNode.classList.contains("cw-meta")) metaNode.remove();
-          nodes[i].remove();
-          break;
-        }
-      }
-      addMsg("ai", t("error"));
-      console.error(e);
-    } finally {
-      micBtn.disabled = false;
-      sendBtn.disabled = false;
-      input.disabled = false;
-      input.focus();
-    }
-  }
+  const minimize = () => {
+    if (!CFG.avatarCanMinimize) return;
+    minimized = true;
+    shell.style.display = "none";
+    mini.style.display = "block";
+    miniIn.value = "";
+    miniIn.focus();
+  };
 
-  // ======= Speech (best-effort) =======
+  // Bubble click toggles
+  bubble.onclick = () => {
+    if (!opened) return open();
+    if (minimized) return open();
+    return minimize();
+  };
+
+  closeBtn.onclick = close;
+  if (minBtn) minBtn.onclick = minimize;
+
+  // ---------- Mode buttons ----------
+  $$('#consia-actions [data-mode="chat"]', root).forEach((b) => b.addEventListener("click", () => setMode("chat")));
+  $$('#consia-actions [data-mode="voice"]', root).forEach((b) => b.addEventListener("click", () => setMode("voice")));
+  $$('#consia-actions [data-mode="live"]', root).forEach((b) => b.addEventListener("click", () => setMode("live")));
+
+  const setMode = (m) => {
+    mode = m;
+    if (m === "live") pushSystem(T().liveSoon);
+    if (m === "voice") startVoice();
+    if (m === "chat") inEl.focus();
+  };
+
+  // ---------- Voice (STT/TTS) ----------
   let rec = null;
-  let recOn = false;
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const canSTT = !!SpeechRecognition && CFG.stt;
+  const canTTS = "speechSynthesis" in window && CFG.tts;
 
-  function initSpeech() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return null;
-    const r = new SR();
-    r.lang = detectLang();
-    r.interimResults = false;
-    r.continuous = false;
-    r.onresult = (ev) => {
-      const t = ev.results?.[0]?.[0]?.transcript || "";
-      if (t.trim()) send(t.trim());
-    };
-    r.onend = () => {
-      recOn = false;
-      micBtn.classList.remove("on");
-    };
-    r.onerror = () => {
-      recOn = false;
-      micBtn.classList.remove("on");
-    };
-    return r;
-  }
+  const speak = (text) => {
+    try {
+      if (!canTTS) return;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      u.rate = 1.0;
+      u.pitch = 1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch {}
+  };
 
-  // ======= Events =======
-  orb.addEventListener("click", () => openPanel());
-  orb.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") openPanel();
-  });
-
-  miniBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    toggleMinimize();
-  });
-
-  closeBtn.addEventListener("click", closePanel);
-  panel.addEventListener("click", (e) => {
-    // click outside shell closes
-    if (e.target === panel) closePanel();
-  });
-
-  sendBtn.addEventListener("click", () => send());
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") send();
-    if (e.key === "Escape") closePanel();
-  });
-
-  quicks.forEach((q) => {
-    q.addEventListener("click", () => {
-      const v = q.getAttribute("data-q") || "";
-      send(v);
-    });
-  });
-
-  micBtn.addEventListener("click", () => {
-    if (!rec) rec = initSpeech();
-    if (!rec) return;
-
-    if (recOn) {
-      try { rec.stop(); } catch {}
-      recOn = false;
-      micBtn.classList.remove("on");
+  const startVoice = () => {
+    if (!canSTT) {
+      pushSystem("Voz no disponible en este navegador.");
       return;
     }
-    recOn = true;
-    micBtn.classList.add("on");
-    try { rec.start(); } catch {
-      recOn = false;
-      micBtn.classList.remove("on");
-    }
-  });
+    try {
+      rec && rec.abort();
+      rec = new SpeechRecognition();
+      rec.lang = lang;
+      rec.interimResults = true;
+      rec.continuous = false;
 
-  // ======= First impression: “ganas de usar” desde el primer click =======
-  // Auto abrir la primera vez (solo 1 vez)
-  try {
-    const bootKey = "consia_first_open_v1";
-    if (!localStorage.getItem(bootKey)) {
-      localStorage.setItem(bootKey, "1");
-      setTimeout(openPanel, 350);
-      setTimeout(() => {
-        addMsg("ai", "Decime qué querés. Yo me encargo.");
-      }, 650);
-    }
-  } catch {}
+      let finalText = "";
+      pushSystem("🎙️ Escuchando… (hablá y soltá)");
+      rec.onresult = (e) => {
+        let transcript = "";
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          transcript += e.results[i][0].transcript;
+          if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
+        }
+        // show interim in input
+        inEl.value = finalText || transcript;
+      };
+      rec.onerror = () => pushSystem(T().error);
+      rec.onend = () => {
+        const txt = (inEl.value || "").trim();
+        if (txt) submitFrom(txt);
+      };
 
-})();
+      rec.start
