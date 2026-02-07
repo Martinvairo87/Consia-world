@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>CONSIA — Inbox Autopilot</title>
+  <style>
+    :root{
+      --bg:#070709;--panel:rgba(255,255,255,.06);--panel2:rgba(255,255,255,.09);
+      --border:rgba(255,255,255,.12);--text:#fff;--muted:rgba(255,255,255,.70);
+      --shadow:0 24px 80px rgba(0,0,0,.55);--radius:18px;
+      --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;font-family:var(--font);color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 30% 10%, rgba(0,163,255,.20), transparent 55%),
+        radial-gradient(900px 650px at 80% 40%, rgba(85,204,255,.12), transparent 60%),
+        var(--bg);
+      padding:20px 14px 90px;
+    }
+    .wrap{max-width:1100px;margin:0 auto}
+    a{color:rgba(255,255,255,.85);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.25)}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+    h1{margin:0;font-size:28px;letter-spacing:1px;font-weight:900}
+    .sub{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid var(--border);border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow);padding:16px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    button{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:#fff;border-radius:14px;padding:10px 12px;cursor:pointer;
+      font-weight:800;letter-spacing:.4px;
+    }
+    button.primary{
+      border-color:rgba(0,163,255,.35);
+      background:linear-gradient(135deg, rgba(85,204,255,.18), rgba(0,163,255,.18));
+    }
+    button:disabled{opacity:.45;cursor:not-allowed}
+    select,input,textarea{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);
+      color:#fff;border-radius:14px;padding:10px 12px;outline:none;
+    }
+    textarea{width:100%;min-height:160px;resize:vertical}
+    .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+    .kpi .box{border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px;background:rgba(255,255,255,.04)}
+    .kpi .n{font-weight:900;font-size:16px}
+    .kpi .l{color:var(--muted);font-size:12px;margin-top:4px}
+    .list{margin-top:12px;display:grid;gap:10px}
+    .item{border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;background:rgba(255,255,255,.04)}
+    .item b{display:block}
+    .item .m{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.5}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;color:rgba(255,255,255,.85)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div><a href="index.html">← Home</a></div>
+        <h1>INBOX AUTOPILOT</h1>
+        <div class="sub">Filters → summarizes → drafts → can auto-reply when enabled (Owner rules). No humans.</div>
+      </div>
+      <div class="row">
+        <select id="lang">
+          <option value="auto">Auto</option>
+          <option value="en">EN</option>
+          <option value="es" selected>ES</option>
+          <option value="pt">PT</option>
+        </select>
+        <button id="btnConnect" class="primary">Connect Gmail</button>
+        <button id="btnSync">Sync</button>
+        <button id="btnAutopilot">Autopilot: OFF</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="row">
+          <button id="btnSummarize" class="primary">Summarize inbox</button>
+          <button id="btnSolve" class="primary">Solve + Draft replies</button>
+          <button id="btnSend">Send approved drafts</button>
+        </div>
+        <div class="kpi">
+          <div class="box"><div class="n" id="kNew">—</div><div class="l">New</div></div>
+          <div class="box"><div class="n" id="kNeed">—</div><div class="l">Needs action</div></div>
+          <div class="box"><div class="n" id="kDone">—</div><div class="l">Auto solved</div></div>
+        </div>
+        <div class="sub" style="margin-top:10px">
+          Owner rule: CONSIA auto-replies only if autopilot ON and policy allows. Otherwise it drafts.
+        </div>
+        <div class="mono" id="status" style="margin-top:10px">Status: idle</div>
+      </div>
+
+      <div class="card">
+        <b>Autopilot Rules (editable)</b>
+        <div class="sub">Short, strict, profitable: prioritize money, reduce back-and-forth, close fast.</div>
+        <textarea id="rules"></textarea>
+        <div class="row" style="margin-top:10px">
+          <button id="btnSaveRules" class="primary">Save rules</button>
+          <button id="btnLoadRules">Load rules</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <b>Messages</b>
+      <div class="sub">Top priority threads shown first.</div>
+      <div class="list" id="list"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <b>Drafts</b>
+      <div class="sub">CONSIA generates answers. If autopilot ON, it can send automatically.</div>
+      <div class="list" id="drafts"></div>
+    </div>
+  </div>
+
+  <script src="assets/inbox.js"></script>
+</body>
+</html>
