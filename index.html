@@ -2,170 +2,299 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
   <title>CONSIA — Legal Center</title>
+
   <style>
     :root{
-      --bg:#0a0a0a; --fg:#fff; --muted:rgba(255,255,255,.65);
-      --card:rgba(255,255,255,.06); --border:rgba(255,255,255,.12);
-      --glow:rgba(255,255,255,.08);
+      --bg:#070709;
+      --panel: rgba(255,255,255,.05);
+      --panel2: rgba(255,255,255,.07);
+      --border: rgba(255,255,255,.10);
+      --text:#ffffff;
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+      --shadow: 0 30px 80px rgba(0,0,0,.55);
+      --radius: 18px;
     }
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
-      margin:0; min-height:100vh; color:var(--fg);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background:
-        radial-gradient(1200px 800px at 20% 10%, rgba(255,255,255,.08), transparent 55%),
-        radial-gradient(900px 600px at 80% 20%, rgba(255,255,255,.06), transparent 55%),
-        linear-gradient(180deg, #050505 0%, #0a0a0a 40%, #070707 100%);
+        radial-gradient(1200px 700px at 50% 30%, rgba(255,255,255,.08), transparent 55%),
+        radial-gradient(900px 500px at 20% 80%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(180deg, #050506 0%, #0a0a0d 100%);
+      color:var(--text);
+      overflow-x:hidden;
     }
-    .wrap{max-width:980px;margin:0 auto;padding:64px 18px 40px}
-    .brand{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
-    h1{margin:0;font-size:52px;letter-spacing:6px;font-weight:900}
-    .sub{margin:0;color:var(--muted);letter-spacing:.6px;font-size:15px}
+    .wrap{
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 64px 20px 60px;
+      text-align:center;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    h1{
+      margin:0;
+      font-size: 54px;
+      letter-spacing: 6px;
+      font-weight: 800;
+      line-height:1.05;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      letter-spacing: .8px;
+      font-size: 15px;
+    }
     .topbar{
-      margin:26px auto 26px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
-      padding:10px 12px; border:1px solid var(--border); border-radius:14px;
-      background:rgba(255,255,255,.03); backdrop-filter: blur(10px);
-      max-width:820px;
+      margin-top: 22px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
     }
-    select,input{
-      background:rgba(255,255,255,.06); color:var(--fg);
-      border:1px solid var(--border); border-radius:12px;
-      padding:10px 12px; font-size:14px; outline:none;
+    .lang{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(10px);
     }
-    input{min-width:220px}
-    .hint{color:var(--muted);font-size:12px;max-width:820px;margin:10px auto 0;text-align:center}
+    .lang label{
+      font-size: 12px;
+      color: var(--muted2);
+      letter-spacing:.6px;
+      text-transform:uppercase;
+    }
+    select{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline:none;
+    }
+    .chips{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin: 28px 0 0;
+    }
+    .chip{
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip:hover{ background: rgba(255,255,255,.07); color: var(--text); }
+
     .grid{
-      display:grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap:16px; margin-top:28px;
+      margin-top: 28px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
-    @media (max-width:860px){ .grid{grid-template-columns:1fr} h1{font-size:40px} }
-    .btn{
-      display:flex; align-items:center; justify-content:center; text-align:center;
-      padding:18px 14px; border-radius:18px; border:1px solid var(--border);
-      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.10);
-      cursor:pointer; user-select:none; text-decoration:none; color:var(--fg);
-      font-weight:700; font-size:18px;
-      transition: transform .08s ease, border-color .15s ease, box-shadow .15s ease;
+    @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+
+    a.card{
+      text-decoration:none;
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      min-height: 86px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 20px;
+      font-weight: 650;
+      letter-spacing:.3px;
+      position:relative;
+      overflow:hidden;
     }
-    .btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(255,255,255,.22);
-      box-shadow: 0 14px 36px rgba(0,0,0,.45), 0 0 0 1px var(--glow) inset;
+    a.card:before{
+      content:"";
+      position:absolute;
+      inset:-120px;
+      background: radial-gradient(circle at 50% 30%, rgba(255,255,255,.14), transparent 55%);
+      opacity:.35;
+      transform: translateY(40px);
+      transition: .25s ease;
     }
-    footer{margin-top:34px;text-align:center;color:rgba(255,255,255,.40);font-size:12px;letter-spacing:.4px}
-    .mini{margin-top:8px}
+    a.card:hover:before{ transform: translateY(0px); opacity:.55; }
+    a.card span{ position:relative; z-index:2; }
+
+    footer{
+      margin-top: 34px;
+      color: rgba(255,255,255,.45);
+      font-size: 12px;
+      letter-spacing:.3px;
+    }
+    .tiny{
+      margin-top: 6px;
+      color: rgba(255,255,255,.35);
+      font-size: 12px;
+    }
+    .restore{
+      display:none;
+      margin-top: 14px;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      cursor:pointer;
+      text-decoration: underline;
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="brand">
-      <h1>CONSIA LEGAL CENTER</h1>
-      <p class="sub" id="tagline">Global AI Infrastructure · Compliance Framework · User Protection</p>
+      <h1 id="t_title">CONSIA LEGAL CENTER</h1>
+      <p class="sub" id="t_sub">Global AI Infrastructure · Compliance Framework · User Protection</p>
     </div>
 
-    <div class="topbar" role="region" aria-label="Language selection">
-      <select id="langSelect" aria-label="Language"></select>
-      <input id="langAny" placeholder="Or type any locale (e.g., ar, hi, zh-CN, ja, fr, de...)" />
-      <select id="tone" aria-label="Translation style">
-        <option value="legal">Legal</option>
-        <option value="plain">Plain</option>
-      </select>
+    <div class="topbar">
+      <div class="lang">
+        <label id="t_lang">Language</label>
+        <select id="langSelect">
+          <option value="auto">Auto</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="pt">Português</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="ar">العربية</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ru">Русский</option>
+        </select>
+      </div>
     </div>
-    <div class="hint" id="hint">Auto-detects your browser language. You can override it above. Works for any language in the world via AI translation + cache.</div>
+
+    <div class="chips">
+      <div class="chip" data-go="terms.html" id="c_terms">Terms</div>
+      <div class="chip" data-go="privacy.html" id="c_privacy">Privacy</div>
+      <div class="chip" data-go="refund.html" id="c_refund">Refunds</div>
+      <div class="chip" data-go="billing-support.html" id="c_billing">Billing</div>
+      <div class="chip" data-go="privacy-requests.html" id="c_requests">Privacy Requests</div>
+      <div class="chip" data-go="legal-contact.html" id="c_contact">Legal Contact</div>
+    </div>
 
     <div class="grid">
-      <a class="btn" id="tos" href="#">Terms of Service</a>
-      <a class="btn" id="privacy" href="#">Privacy Policy</a>
-      <a class="btn" id="refund" href="#">Refund Policy</a>
-      <a class="btn" id="legalContact" href="#">Legal Contact</a>
-      <a class="btn" id="privacyReq" href="#">Privacy Requests</a>
-      <a class="btn" id="billing" href="#">Billing Support</a>
+      <a class="card" id="b_terms" href="terms.html"><span>Terms of Service</span></a>
+      <a class="card" id="b_privacy" href="privacy.html"><span>Privacy Policy</span></a>
+      <a class="card" id="b_refund" href="refund.html"><span>Refund Policy</span></a>
+
+      <a class="card" id="b_legal" href="legal-contact.html"><span>Legal Contact</span></a>
+      <a class="card" id="b_requests" href="privacy-requests.html"><span>Privacy Requests</span></a>
+      <a class="card" id="b_billing" href="billing-support.html"><span>Billing Support</span></a>
     </div>
 
     <footer>
-      © <span id="y"></span> CONSIA WORLD — All Rights Reserved
-      <div class="mini">AI · Cloud · Identity · Conscious Infrastructure</div>
+      <div id="t_footer">© 2026 CONSIA WORLD — All Rights Reserved</div>
+      <div class="tiny" id="t_footer2">AI · Cloud · Identity · Conscious Infrastructure</div>
+      <div class="restore" id="restoreWidget">Show CONSIA Assistant</div>
     </footer>
   </div>
 
-<script>
-  // --- TOP-1 i18n strategy: any BCP-47 locale allowed + browser detect + manual override
-  const $ = (id)=>document.getElementById(id);
-  const year = new Date().getFullYear();
-  $("y").textContent = year;
+  <script src="assets/legal-i18n.js"></script>
+  <script src="assets/consia-widget.js"></script>
+  <script>
+    (function(){
+      const qs = new URLSearchParams(location.search);
+      const stored = localStorage.getItem("consia_lang") || "auto";
+      const initial = qs.get("lang") || stored;
+      const sel = document.getElementById("langSelect");
+      sel.value = initial;
 
-  const defaultLang = (navigator.language || "en").trim();
-  const supportedQuick = [
-    "en","es","pt","fr","de","it","nl","sv","no","da","fi","pl","cs","sk","hu","ro",
-    "el","tr","uk","ru","ar","he","fa","hi","bn","ur","id","ms","th","vi","ko","ja",
-    "zh-CN","zh-TW"
-  ];
+      function getAutoLang(){
+        const nav = (navigator.language || "en").toLowerCase();
+        return nav.split("-")[0] || "en";
+      }
+      function getLang(){
+        const v = sel.value;
+        return v === "auto" ? getAutoLang() : v;
+      }
 
-  function normalizeLocale(l){
-    if(!l) return "en";
-    l = (""+l).trim();
-    // allow ar, hi, zh-CN, pt-BR etc
-    return l.replace("_","-");
-  }
+      function applyLang(){
+        const lang = getLang();
+        localStorage.setItem("consia_lang", sel.value);
 
-  function langLabel(code){
-    try{
-      const dn = new Intl.DisplayNames([normalizeLocale(defaultLang)], {type:"language"});
-      const base = code.split("-")[0];
-      return dn.of(base) ? `${dn.of(base)} (${code})` : code;
-    }catch(e){
-      return code;
-    }
-  }
+        const t = window.CONSIA_I18N?.[lang] || window.CONSIA_I18N?.en;
 
-  function setLinks(){
-    const lang = normalizeLocale($("langSelect").value || defaultLang);
-    const tone = $("tone").value || "legal";
-    // All buttons go to a single doc viewer that fetches translated HTML from /api/legal
-    const base = `/legal/doc.html?lang=${encodeURIComponent(lang)}&tone=${encodeURIComponent(tone)}`;
+        document.getElementById("t_title").textContent = t.title;
+        document.getElementById("t_sub").textContent = t.sub;
+        document.getElementById("t_lang").textContent = t.language;
 
-    $("tos").href = `${base}&doc=terms`;
-    $("privacy").href = `${base}&doc=privacy`;
-    $("refund").href = `${base}&doc=refund`;
+        document.getElementById("c_terms").textContent = t.terms;
+        document.getElementById("c_privacy").textContent = t.privacy;
+        document.getElementById("c_refund").textContent = t.refunds;
+        document.getElementById("c_billing").textContent = t.billing;
+        document.getElementById("c_requests").textContent = t.privacyRequests;
+        document.getElementById("c_contact").textContent = t.legalContact;
 
-    // contacts (mail-to) use the lang for subject hint
-    $("legalContact").href = `mailto:legal@consia.world?subject=${encodeURIComponent("CONSIA Legal Contact ("+lang+")")}`;
-    $("privacyReq").href = `mailto:privacy@consia.world?subject=${encodeURIComponent("CONSIA Privacy Request ("+lang+")")}`;
-    $("billing").href = `mailto:refunds@consia.world?subject=${encodeURIComponent("CONSIA Billing / Refunds ("+lang+")")}`;
-  }
+        document.getElementById("b_terms").querySelector("span").textContent = t.termsFull;
+        document.getElementById("b_privacy").querySelector("span").textContent = t.privacyFull;
+        document.getElementById("b_refund").querySelector("span").textContent = t.refundsFull;
+        document.getElementById("b_legal").querySelector("span").textContent = t.legalContactFull;
+        document.getElementById("b_requests").querySelector("span").textContent = t.privacyRequestsFull;
+        document.getElementById("b_billing").querySelector("span").textContent = t.billingFull;
 
-  // populate select
-  const sel = $("langSelect");
-  const uniq = Array.from(new Set([defaultLang, ...supportedQuick.map(normalizeLocale)]));
-  uniq.forEach(code=>{
-    const opt=document.createElement("option");
-    opt.value = code;
-    opt.textContent = langLabel(code);
-    sel.appendChild(opt);
-  });
-  sel.value = normalizeLocale(defaultLang);
+        document.getElementById("t_footer").textContent = t.footer;
+        document.getElementById("t_footer2").textContent = t.footer2;
 
-  $("langAny").addEventListener("change", ()=>{
-    const v = normalizeLocale($("langAny").value);
-    if(!v) return;
-    // If not present, add it
-    if(!Array.from(sel.options).some(o=>o.value===v)){
-      const opt=document.createElement("option");
-      opt.value=v; opt.textContent=langLabel(v);
-      sel.appendChild(opt);
-    }
-    sel.value=v;
-    setLinks();
-  });
+        // append lang param to all links
+        document.querySelectorAll("a.card").forEach(a=>{
+          const url = new URL(a.getAttribute("href"), location.origin + location.pathname);
+          url.searchParams.set("lang", sel.value);
+          a.setAttribute("href", url.pathname + "?" + url.searchParams.toString());
+        });
+      }
 
-  sel.addEventListener("change", setLinks);
-  $("tone").addEventListener("change", setLinks);
+      sel.addEventListener("change", applyLang);
 
-  setLinks();
-</script>
+      // chip navigation (chat-first feel)
+      document.querySelectorAll(".chip").forEach(ch=>{
+        ch.addEventListener("click", ()=>{
+          const lang = sel.value;
+          location.href = ch.dataset.go + "?lang=" + encodeURIComponent(lang);
+        });
+      });
+
+      applyLang();
+
+      // restore widget link
+      const restore = document.getElementById("restoreWidget");
+      if (window.CONSIA_WIDGET?.isHidden?.()){
+        restore.style.display = "inline-block";
+        restore.onclick = ()=> window.CONSIA_WIDGET.showNow();
+      }
+    })();
+  </script>
 </body>
 </html>
