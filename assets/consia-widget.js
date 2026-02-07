@@ -1,318 +1,748 @@
-/* CONSIA Widget v1.0 — Multilang + Avatar + Chat + Minimize
-   - No keys in client
-   - Optional AI translation fallback via /api/translate
-   - LocalStorage caching for translations
+/* CONSIA Widget v1.0 — “One Tap Magic”
+   - 1 gesto: tocar el avatar (orb) => abre CONSIA
+   - Multilenguaje: auto-detect por navegador + respuestas desde API en el idioma del usuario
+   - Casi sin botones: Avatar / Mic / Enviar
+   - Minimizar avatar: 1 toque en “–”
+   - No expone secretos (solo llama a tu API)
 */
+
 (function () {
-  const DEFAULTS = {
-    apiBase: "/api",
-    position: "right", // right | left
-    theme: "dark",
-    defaultLang: "auto", // auto | en | es | pt
-    avatarMode: "floating", // floating | minimized
-    showAvatar: true,
-    allowMinimize: true,
-    brand: "CONSIA",
-    product: "CONSIA WORLD",
-    legal: false,
-  };
+  "use strict";
 
-  const I18N = {
-    en: {
-      open: "Open",
-      close: "Close",
-      minimize: "Minimize",
-      expand: "Expand",
-      title: "CONSIA Assistant",
-      subtitle: "Global, private, secure guidance",
-      placeholder: "Type your message…",
-      send: "Send",
-      thinking: "Thinking…",
-      language: "Language",
-      auto: "Auto",
-      privacy: "Privacy",
-      privacyLine: "No passwords. No secret keys. Sensitive actions require your consent.",
-      tips: "Tip: type “.” to ask fast.",
-      error: "Connection error. Try again.",
-      welcome: "Hi. I’m CONSIA. Tell me what you want to do.",
-    },
-    es: {
-      open: "Abrir",
-      close: "Cerrar",
-      minimize: "Minimizar",
-      expand: "Expandir",
-      title: "Asistente CONSIA",
-      subtitle: "Guía global, privada y segura",
-      placeholder: "Escribí tu mensaje…",
-      send: "Enviar",
-      thinking: "Pensando…",
-      language: "Idioma",
-      auto: "Auto",
-      privacy: "Privacidad",
-      privacyLine: "Sin contraseñas. Sin llaves secretas. Acciones sensibles solo con tu consentimiento.",
-      tips: "Tip: escribí “.” para pedir rápido.",
-      error: "Error de conexión. Probá de nuevo.",
-      welcome: "Hola. Soy CONSIA. Decime qué querés hacer.",
-    },
-    pt: {
-      open: "Abrir",
-      close: "Fechar",
-      minimize: "Minimizar",
-      expand: "Expandir",
-      title: "Assistente CONSIA",
-      subtitle: "Guia global, privado e seguro",
-      placeholder: "Digite sua mensagem…",
-      send: "Enviar",
-      thinking: "Pensando…",
-      language: "Idioma",
-      auto: "Auto",
-      privacy: "Privacidade",
-      privacyLine: "Sem senhas. Sem chaves secretas. Ações sensíveis exigem seu consentimento.",
-      tips: "Dica: digite “.” para pedir rápido.",
-      error: "Erro de conexão. Tente novamente.",
-      welcome: "Olá. Eu sou CONSIA. Diga o que você quer fazer.",
-    },
-  };
+  // ======= Config =======
+  const DEFAULT_API_URL = "https://api.consia.world/ask"; // tu Worker /ask
+  const DEFAULT_BRAND = "CONSIA";
+  const STORAGE_KEY = "consia_widget_state_v1";
+  const SESSION_KEY = "consia_session_id_v1";
+  const DEVICE_KEY = "consia_device_id_v1";
 
-  function normLang(l) {
-    if (!l) return "en";
-    l = String(l).toLowerCase();
-    if (l === "auto") return "auto";
-    if (l.startsWith("es")) return "es";
-    if (l.startsWith("pt")) return "pt";
-    return "en";
+  const cfg = window.CONSIA_WIDGET_CONFIG || {};
+  const API_URL = cfg.apiUrl || DEFAULT_API_URL;
+  const BRAND = cfg.brand || DEFAULT_BRAND;
+
+  // ======= Helpers =======
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function uid() {
+    return (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + "-" + Math.random()))
+      .toString()
+      .replace(/[^a-z0-9]/gi, "")
+      .slice(0, 24);
+  }
+
+  function getOrCreate(key, prefix) {
+    try {
+      let v = localStorage.getItem(key);
+      if (!v) {
+        v = (prefix || "") + uid();
+        localStorage.setItem(key, v);
+      }
+      return v;
+    } catch {
+      return (prefix || "") + uid();
+    }
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveState(s) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(s || {}));
+    } catch {}
   }
 
   function detectLang() {
-    const saved = localStorage.getItem("consia_lang");
-    if (saved) return normLang(saved);
-    const nav = (navigator.language || "en").toLowerCase();
-    return normLang(nav);
+    // idioma del mundo: usamos preferencia del navegador
+    // la API responde en ese idioma (por tu /ask).
+    const lang =
+      (navigator.languages && navigator.languages[0]) ||
+      navigator.language ||
+      "en";
+    return (lang || "en").toLowerCase();
   }
 
-  function cssEscape(s) {
-    return (s || "").replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]));
+  function clamp(n, a, b) {
+    return Math.max(a, Math.min(b, n));
   }
 
-  async function postJson(url, body, timeoutMs = 15000) {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  function haptic() {
     try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
-        signal: ctrl.signal,
-      });
-      clearTimeout(t);
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return await res.json();
-    } finally {
-      clearTimeout(t);
-    }
+      if (navigator.vibrate) navigator.vibrate(12);
+    } catch {}
   }
 
-  async function translateFallback(apiBase, text, targetLang) {
-    // Cache by (lang + hash of text)
-    const key = "consia_tr_" + targetLang + "_" + btoa(unescape(encodeURIComponent(text))).slice(0, 180);
-    const hit = localStorage.getItem(key);
-    if (hit) return hit;
-
-    try {
-      const data = await postJson(apiBase + "/translate", {
-        text,
-        target: targetLang,
-        source: "en",
-        kind: "ui",
-      });
-      const out = (data && (data.translation || data.text || data.result)) || text;
-      localStorage.setItem(key, out);
-      return out;
-    } catch (_) {
-      return text;
-    }
-  }
-
-  function makeEl(tag, attrs = {}, html = "") {
-    const el = document.createElement(tag);
-    Object.keys(attrs).forEach((k) => {
-      if (k === "class") el.className = attrs[k];
-      else if (k === "style") el.setAttribute("style", attrs[k]);
-      else el.setAttribute(k, attrs[k]);
-    });
-    if (html) el.innerHTML = html;
-    return el;
-  }
-
-  function mountWidget(opts) {
-    const o = Object.assign({}, DEFAULTS, opts || {});
-    const baseLang = o.defaultLang === "auto" ? detectLang() : normLang(o.defaultLang);
-    let lang = baseLang === "auto" ? detectLang() : baseLang;
-
-    const rootId = "consia-widget-root";
-    if (document.getElementById(rootId)) return;
-
-    const style = makeEl(
-      "style",
-      {},
-      `
-:root{--cw-bg:#070709;--cw-panel:rgba(255,255,255,.06);--cw-border:rgba(255,255,255,.12);--cw-txt:#fff;--cw-muted:rgba(255,255,255,.72);--cw-shadow:0 30px 100px rgba(0,0,0,.55);--cw-radius:18px;--cw-a:#55ccff;--cw-b:#00a3ff;}
-#consia-widget-root{position:fixed;z-index:999999;bottom:18px;${o.position === "left" ? "left:18px" : "right:18px"};font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--cw-txt);}
-.cw-btn{width:62px;height:62px;border-radius:999px;border:1px solid var(--cw-border);background:radial-gradient(1200px 700px at 30% 10%,rgba(0,163,255,.25),transparent 55%),radial-gradient(900px 600px at 80% 40%,rgba(85,204,255,.18),transparent 55%),rgba(10,10,10,.85);backdrop-filter:blur(12px);box-shadow:var(--cw-shadow);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
-.cw-dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--cw-a),var(--cw-b));box-shadow:0 0 20px rgba(0,163,255,.35)}
-.cw-panel{position:absolute;bottom:78px;${o.position === "left" ? "left:0" : "right:0"};width:min(420px,calc(100vw - 36px));max-height:min(70vh,620px);border:1px solid var(--cw-border);border-radius:var(--cw-radius);background:rgba(7,7,9,.82);backdrop-filter:blur(16px);box-shadow:var(--cw-shadow);overflow:hidden;display:none}
-.cw-panel.open{display:block}
-.cw-head{padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.cw-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.cw-title{font-weight:800;letter-spacing:1px}
-.cw-sub{font-size:12px;color:var(--cw-muted);margin-top:4px}
-.cw-actions{display:flex;gap:8px}
-.cw-ico{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:#fff;border-radius:12px;padding:7px 10px;font-size:12px;cursor:pointer}
-.cw-ico:active{transform:scale(.98)}
-.cw-body{padding:12px;display:flex;flex-direction:column;gap:10px}
-.cw-msgs{flex:1;overflow:auto;max-height:min(46vh,420px);padding-right:4px}
-.cw-bubble{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.05);border-radius:14px;padding:10px 10px;margin:0 0 10px}
-.cw-bubble.me{background:rgba(0,163,255,.12);border-color:rgba(0,163,255,.18)}
-.cw-meta{font-size:11px;color:var(--cw-muted);margin:8px 0 0}
-.cw-foot{display:flex;gap:8px;align-items:center;border-top:1px solid rgba(255,255,255,.08);padding:10px}
-.cw-input{flex:1;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.25);color:#fff;border-radius:14px;padding:10px 12px;outline:none}
-.cw-send{border:1px solid rgba(0,163,255,.35);background:linear-gradient(135deg,rgba(85,204,255,.22),rgba(0,163,255,.22));color:#fff;border-radius:14px;padding:10px 12px;cursor:pointer}
-.cw-topline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
-.cw-chip{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer}
-.cw-select{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;border-radius:12px;padding:7px 10px;font-size:12px;outline:none}
-      `
-    );
-
-    const root = makeEl("div", { id: rootId });
-    const btn = makeEl("div", { class: "cw-btn", title: "CONSIA" }, `<div class="cw-dot"></div>`);
-    const panel = makeEl("div", { class: "cw-panel" });
-
-    const t = (k) => (I18N[lang] && I18N[lang][k]) || (I18N.en && I18N.en[k]) || k;
-
-    const head = makeEl(
-      "div",
-      { class: "cw-head" },
-      `
-      <div class="cw-row">
-        <div>
-          <div class="cw-title">${cssEscape(t("title"))}</div>
-          <div class="cw-sub">${cssEscape(t("subtitle"))}</div>
-        </div>
-        <div class="cw-actions">
-          <button class="cw-ico" data-act="min">${cssEscape(t("minimize"))}</button>
-          <button class="cw-ico" data-act="close">${cssEscape(t("close"))}</button>
-        </div>
-      </div>
-      <div class="cw-topline">
-        <span class="cw-meta">${cssEscape(t("language"))}:</span>
-        <select class="cw-select" id="cw-lang">
-          <option value="auto">${cssEscape(t("auto"))}</option>
-          <option value="en">EN</option>
-          <option value="es">ES</option>
-          <option value="pt">PT</option>
-        </select>
-        <span class="cw-meta">${cssEscape(t("tips"))}</span>
-      </div>
-      `
-    );
-
-    const body = makeEl("div", { class: "cw-body" });
-    const msgs = makeEl("div", { class: "cw-msgs" });
-    const foot = makeEl(
-      "div",
-      { class: "cw-foot" },
-      `
-        <input class="cw-input" id="cw-in" autocomplete="off" placeholder="${cssEscape(t("placeholder"))}" />
-        <button class="cw-send" id="cw-send">${cssEscape(t("send"))}</button>
-      `
-    );
-
-    function addMsg(text, who = "bot") {
-      const b = makeEl(
-        "div",
-        { class: "cw-bubble " + (who === "me" ? "me" : "") },
-        `<div>${cssEscape(text)}</div>`
-      );
-      msgs.appendChild(b);
-      msgs.scrollTop = msgs.scrollHeight;
-    }
-
-    addMsg(t("welcome"), "bot");
-    addMsg(t("privacyLine"), "bot");
-
-    body.appendChild(msgs);
-    panel.appendChild(head);
-    panel.appendChild(body);
-    panel.appendChild(foot);
-
-    btn.onclick = () => {
-      panel.classList.toggle("open");
-    };
-
-    panel.addEventListener("click", (e) => {
-      const act = e.target && e.target.getAttribute && e.target.getAttribute("data-act");
-      if (act === "close") panel.classList.remove("open");
-      if (act === "min") panel.classList.remove("open");
-    });
-
-    // Language switch
-    panel.querySelector("#cw-lang").value = localStorage.getItem("consia_lang") || (o.defaultLang === "auto" ? "auto" : lang);
-    panel.querySelector("#cw-lang").addEventListener("change", async (e) => {
-      const v = e.target.value;
-      localStorage.setItem("consia_lang", v);
-      lang = v === "auto" ? detectLang() : normLang(v);
-
-      // Refresh key UI strings quickly (minimal)
-      head.querySelector(".cw-title").textContent = t("title");
-      head.querySelector(".cw-sub").textContent = t("subtitle");
-      head.querySelector('[data-act="min"]').textContent = t("minimize");
-      head.querySelector('[data-act="close"]').textContent = t("close");
-      foot.querySelector("#cw-in").setAttribute("placeholder", t("placeholder"));
-      foot.querySelector("#cw-send").textContent = t("send");
-    });
-
-    async function send() {
-      const input = panel.querySelector("#cw-in");
-      const text = (input.value || "").trim();
-      if (!text) return;
-      input.value = "";
-      addMsg(text, "me");
-
-      const thinking = t("thinking");
-      addMsg(thinking, "bot");
-      const bubbles = msgs.querySelectorAll(".cw-bubble");
-      const last = bubbles[bubbles.length - 1];
-
-      try {
-        const payload = {
-          message: text,
-          lang,
-          ui: true,
-          source: "widget",
-        };
-        const data = await postJson(o.apiBase + "/ask", payload, 30000);
-        const answer = (data && (data.reply || data.answer || data.text)) || "";
-        last.innerHTML = `<div>${cssEscape(answer || t("error"))}</div>`;
-      } catch (err) {
-        last.innerHTML = `<div>${cssEscape(t("error"))}</div>`;
-      }
-      msgs.scrollTop = msgs.scrollHeight;
-    }
-
-    panel.querySelector("#cw-send").onclick = send;
-    panel.querySelector("#cw-in").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") send();
-    });
-
-    document.head.appendChild(style);
-    root.appendChild(btn);
-    root.appendChild(panel);
-    document.body.appendChild(root);
-  }
-
-  window.ConsiaWidget = {
-    init: function (opts) {
-      mountWidget(opts || {});
+  // ======= UI Strings (mínimos, casi sin texto) =======
+  // Minimalismo: iconos + microcopy ultra corto. Fallback: sin texto.
+  const I18N = {
+    es: {
+      placeholder: "Decime qué querés. (o escribí “.”)",
+      hint: "Tocá el avatar. Todo se hace solo.",
+      mic: "Hablar",
+      send: "Enviar",
+      close: "Cerrar",
+      mini: "Minimizar",
+      open: "Abrir CONSIA",
+      thinking: "Procesando…",
+      error: "Error. Reintentar.",
+      quick1: "Activar modo rápido",
+      quick2: "Iniciar reunión",
+      quick3: "Resumen y solución",
+    },
+    en: {
+      placeholder: "Tell me what you want. (or type “.”)",
+      hint: "Tap the avatar. Everything runs itself.",
+      mic: "Speak",
+      send: "Send",
+      close: "Close",
+      mini: "Minimize",
+      open: "Open CONSIA",
+      thinking: "Processing…",
+      error: "Error. Retry.",
+      quick1: "Fast mode",
+      quick2: "Start meeting",
+      quick3: "Summarize & solve",
+    },
+    pt: {
+      placeholder: "Me diga o que você quer. (ou “.”)",
+      hint: "Toque no avatar. Tudo acontece sozinho.",
+      mic: "Falar",
+      send: "Enviar",
+      close: "Fechar",
+      mini: "Minimizar",
+      open: "Abrir CONSIA",
+      thinking: "Processando…",
+      error: "Erro. Tentar de novo.",
+      quick1: "Modo rápido",
+      quick2: "Iniciar reunião",
+      quick3: "Resumir e resolver",
     },
   };
+
+  function t(key) {
+    const lang = detectLang();
+    const base = lang.split("-")[0];
+    const pack = I18N[base] || I18N.en;
+    return pack[key] || "";
+  }
+
+  // ======= Build UI =======
+  const state = loadState();
+  const sessionId = getOrCreate(SESSION_KEY, "s_");
+  const deviceId = getOrCreate(DEVICE_KEY, "d_");
+  const startMinimized = !!state.minimized;
+
+  const root = document.createElement("div");
+  root.id = "consia-widget-root";
+  root.innerHTML = `
+    <style>
+      :root{
+        --cw-bg: rgba(7,7,9,.78);
+        --cw-panel: rgba(255,255,255,.06);
+        --cw-panel2: rgba(255,255,255,.09);
+        --cw-border: rgba(255,255,255,.13);
+        --cw-text: rgba(255,255,255,.92);
+        --cw-muted: rgba(255,255,255,.64);
+        --cw-shadow: 0 30px 90px rgba(0,0,0,.55);
+        --cw-radius: 20px;
+        --cw-a: rgba(0,163,255,.95);
+        --cw-b: rgba(85,204,255,.95);
+      }
+
+      #consia-widget-root{
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2147483000;
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      }
+
+      /* ---- Avatar (ORB) ---- */
+      .cw-orb-wrap{
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        width: 74px;
+        height: 74px;
+        pointer-events: auto;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .cw-orb{
+        width: 74px;
+        height: 74px;
+        border-radius: 999px;
+        background:
+          radial-gradient(34px 34px at 30% 28%, rgba(255,255,255,.30), transparent 55%),
+          radial-gradient(42px 42px at 60% 68%, rgba(0,163,255,.26), transparent 60%),
+          radial-gradient(80px 80px at 50% 50%, rgba(0,0,0,.55), rgba(0,0,0,.80));
+        border: 1px solid rgba(255,255,255,.14);
+        box-shadow: 0 18px 50px rgba(0,0,0,.55);
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(0);
+      }
+
+      .cw-orb::before{
+        content:"";
+        position:absolute;
+        inset:-30%;
+        background: conic-gradient(from 240deg, rgba(0,163,255,.0), rgba(0,163,255,.25), rgba(255,255,255,.10), rgba(85,204,255,.22), rgba(0,163,255,.0));
+        filter: blur(18px);
+        animation: cwSpin 2.9s linear infinite;
+      }
+
+      .cw-orb::after{
+        content:"";
+        position:absolute;
+        inset: 0;
+        background:
+          radial-gradient(22px 22px at 35% 30%, rgba(255,255,255,.40), transparent 60%),
+          radial-gradient(18px 18px at 62% 72%, rgba(85,204,255,.22), transparent 70%);
+        mix-blend-mode: screen;
+        opacity: .85;
+      }
+
+      @keyframes cwSpin{ to{ transform: rotate(360deg);} }
+
+      .cw-orb-pulse{
+        position:absolute;
+        inset:-8px;
+        border-radius: 999px;
+        border: 1px solid rgba(0,163,255,.22);
+        animation: cwPulse 2.2s ease-in-out infinite;
+        pointer-events:none;
+      }
+      @keyframes cwPulse{
+        0%,100% { transform: scale(1); opacity: .25; }
+        50% { transform: scale(1.08); opacity: .55; }
+      }
+
+      .cw-mini{
+        position:absolute;
+        top:-6px;
+        left:-6px;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.16);
+        backdrop-filter: blur(12px);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color: rgba(255,255,255,.82);
+        font-weight: 800;
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      .cw-orb-badge{
+        position:absolute;
+        right:-2px;
+        top:-2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(0,163,255,.95);
+        box-shadow: 0 0 0 2px rgba(7,7,9,.8);
+        opacity: .9;
+      }
+
+      /* ---- Panel ---- */
+      .cw-panel{
+        position: fixed;
+        inset: 0;
+        pointer-events: auto;
+        display: none;
+        background: radial-gradient(1200px 700px at 30% 10%, rgba(0,163,255,.18), transparent 55%),
+                    radial-gradient(900px 600px at 80% 40%, rgba(85,204,255,.12), transparent 55%),
+                    rgba(7,7,9,.76);
+        backdrop-filter: blur(14px);
+      }
+      .cw-panel.open{ display:block; }
+
+      .cw-shell{
+        position:absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        width: min(960px, calc(100vw - 24px));
+        height: min(720px, calc(100vh - 24px));
+        border-radius: var(--cw-radius);
+        border: 1px solid var(--cw-border);
+        background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+        box-shadow: var(--cw-shadow);
+        overflow:hidden;
+      }
+
+      .cw-top{
+        height: 60px;
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        padding: 0 14px 0 18px;
+        border-bottom: 1px solid rgba(255,255,255,.10);
+        background: rgba(0,0,0,.18);
+      }
+      .cw-brand{
+        display:flex;
+        align-items:center;
+        gap: 10px;
+        color: var(--cw-text);
+        letter-spacing: 4px;
+        font-weight: 900;
+        font-size: 14px;
+      }
+      .cw-dot{
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(0,163,255,.95);
+        box-shadow: 0 0 20px rgba(0,163,255,.35);
+      }
+
+      .cw-actions{
+        display:flex;
+        align-items:center;
+        gap: 10px;
+      }
+      .cw-iconbtn{
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,.12);
+        background: rgba(255,255,255,.06);
+        color: rgba(255,255,255,.88);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .cw-iconbtn:active{ transform: scale(.98); }
+
+      .cw-body{
+        display:flex;
+        height: calc(100% - 60px);
+      }
+
+      .cw-left{
+        width: 290px;
+        border-right: 1px solid rgba(255,255,255,.10);
+        padding: 16px;
+        display:flex;
+        flex-direction: column;
+        gap: 12px;
+        background: rgba(0,0,0,.10);
+      }
+      .cw-hint{
+        color: var(--cw-muted);
+        font-size: 13px;
+        line-height: 1.35;
+        padding: 12px;
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 16px;
+        background: rgba(255,255,255,.05);
+      }
+      .cw-quick{
+        display:flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .cw-q{
+        display:flex;
+        align-items:center;
+        gap: 10px;
+        padding: 12px 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(255,255,255,.06);
+        color: rgba(255,255,255,.90);
+        cursor:pointer;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .cw-q small{
+        color: rgba(255,255,255,.55);
+        font-weight: 600;
+      }
+      .cw-q:active{ transform: scale(.995); }
+
+      .cw-right{
+        flex: 1;
+        display:flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .cw-chat{
+        flex: 1;
+        padding: 16px;
+        overflow:auto;
+      }
+      .cw-msg{
+        max-width: 780px;
+        margin: 0 auto 12px auto;
+        padding: 12px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(255,255,255,.06);
+        color: rgba(255,255,255,.92);
+        white-space: pre-wrap;
+        line-height: 1.45;
+        font-size: 14px;
+      }
+      .cw-msg.user{
+        background: rgba(0,163,255,.10);
+        border-color: rgba(0,163,255,.20);
+      }
+      .cw-meta{
+        max-width: 780px;
+        margin: 0 auto 10px auto;
+        color: rgba(255,255,255,.55);
+        font-size: 12px;
+        display:flex;
+        justify-content: space-between;
+      }
+
+      .cw-inputbar{
+        border-top: 1px solid rgba(255,255,255,.10);
+        background: rgba(0,0,0,.18);
+        padding: 12px;
+        display:flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .cw-input{
+        flex: 1;
+        height: 46px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,.14);
+        background: rgba(255,255,255,.06);
+        color: rgba(255,255,255,.92);
+        outline: none;
+        padding: 0 14px;
+        font-size: 14px;
+      }
+      .cw-input::placeholder{ color: rgba(255,255,255,.45); }
+
+      .cw-send{
+        width: 52px;
+        height: 46px;
+        border-radius: 16px;
+        border: 1px solid rgba(0,163,255,.28);
+        background: rgba(0,163,255,.16);
+        color: rgba(255,255,255,.92);
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+      .cw-send:active{ transform: scale(.98); }
+
+      .cw-mic{
+        width: 52px;
+        height: 46px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,.14);
+        background: rgba(255,255,255,.06);
+        color: rgba(255,255,255,.92);
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+      .cw-mic.on{
+        border-color: rgba(0,163,255,.35);
+        background: rgba(0,163,255,.14);
+      }
+
+      /* Mobile */
+      @media (max-width: 860px){
+        .cw-shell{ height: calc(100vh - 18px); width: calc(100vw - 18px); }
+        .cw-left{ display:none; }
+      }
+
+      /* minimized orb */
+      .cw-orb-wrap.minimized{
+        width: 58px; height: 58px;
+      }
+      .cw-orb-wrap.minimized .cw-orb{ width:58px; height:58px; }
+      .cw-orb-wrap.minimized .cw-orb-pulse{ inset:-6px; }
+      .cw-orb-wrap.minimized .cw-mini{ display:none; }
+    </style>
+
+    <div class="cw-orb-wrap ${startMinimized ? "minimized" : ""}" aria-label="${t("open")}">
+      <div class="cw-orb" role="button" tabindex="0"></div>
+      <div class="cw-orb-pulse"></div>
+      <div class="cw-mini" title="${t("mini")}" aria-label="${t("mini")}">–</div>
+      <div class="cw-orb-badge"></div>
+    </div>
+
+    <div class="cw-panel" aria-hidden="true">
+      <div class="cw-shell" role="dialog" aria-modal="true">
+        <div class="cw-top">
+          <div class="cw-brand">
+            <span class="cw-dot"></span>
+            <span>${BRAND}</span>
+          </div>
+          <div class="cw-actions">
+            <div class="cw-iconbtn cw-close" title="${t("close")}" aria-label="${t("close")}">✕</div>
+          </div>
+        </div>
+
+        <div class="cw-body">
+          <div class="cw-left">
+            <div class="cw-hint">${t("hint")}</div>
+            <div class="cw-quick">
+              <div class="cw-q" data-q=".">
+                <div>⚡</div>
+                <div><div>${t("quick1")}</div><small>“.”</small></div>
+              </div>
+              <div class="cw-q" data-q="Reunión. Iniciar y guiar automático.">
+                <div>🎙️</div>
+                <div><div>${t("quick2")}</div><small>“Reunión”</small></div>
+              </div>
+              <div class="cw-q" data-q="Resumí, resolvé y decime el siguiente paso mínimo.">
+                <div>🧠</div>
+                <div><div>${t("quick3")}</div><small>1 paso</small></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cw-right">
+            <div class="cw-chat"></div>
+            <div class="cw-inputbar">
+              <button class="cw-mic" type="button" title="${t("mic")}" aria-label="${t("mic")}">🎤</button>
+              <input class="cw-input" type="text" spellcheck="false" autocomplete="off" placeholder="${t("placeholder")}" />
+              <button class="cw-send" type="button" title="${t("send")}" aria-label="${t("send")}">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.documentElement.appendChild(root);
+
+  const orbWrap = $(".cw-orb-wrap", root);
+  const orb = $(".cw-orb", root);
+  const miniBtn = $(".cw-mini", root);
+  const panel = $(".cw-panel", root);
+  const closeBtn = $(".cw-close", root);
+  const chat = $(".cw-chat", root);
+  const input = $(".cw-input", root);
+  const sendBtn = $(".cw-send", root);
+  const micBtn = $(".cw-mic", root);
+  const quicks = $$(".cw-q", root);
+
+  function openPanel() {
+    panel.classList.add("open");
+    panel.setAttribute("aria-hidden", "false");
+    haptic();
+    setTimeout(() => input.focus(), 30);
+  }
+
+  function closePanel() {
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden", "true");
+    haptic();
+  }
+
+  function toggleMinimize() {
+    const minimized = !orbWrap.classList.contains("minimized");
+    orbWrap.classList.toggle("minimized", minimized);
+    state.minimized = minimized;
+    saveState(state);
+    haptic();
+  }
+
+  function addMsg(role, text) {
+    const meta = document.createElement("div");
+    meta.className = "cw-meta";
+    meta.innerHTML = `<span>${role === "user" ? "YOU" : BRAND}</span><span>${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>`;
+
+    const m = document.createElement("div");
+    m.className = "cw-msg " + (role === "user" ? "user" : "ai");
+    m.textContent = text || "";
+
+    chat.appendChild(meta);
+    chat.appendChild(m);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function setThinking(on) {
+    micBtn.disabled = on;
+    sendBtn.disabled = on;
+    input.disabled = on;
+    if (on) {
+      addMsg("ai", t("thinking"));
+    }
+  }
+
+  async function ask(message) {
+    const lang = detectLang();
+    const headers = {
+      "content-type": "application/json",
+      "x-consia-session": sessionId,
+      "x-consia-device": deviceId,
+      "x-consia-lang": lang,
+      // AUTH: si tu UI usa USER_TOKEN, podés setearlo en window.CONSIA_WIDGET_CONFIG.userToken
+    };
+    if (cfg.userToken) headers["authorization"] = "Bearer " + cfg.userToken;
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ message }),
+    });
+
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      throw new Error("api_error_" + res.status + " " + txt.slice(0, 200));
+    }
+    return res.json();
+  }
+
+  async function send(textToSend) {
+    const msg = (textToSend != null ? textToSend : input.value || "").toString().trim();
+    if (!msg) return;
+
+    input.value = "";
+    addMsg("user", msg);
+
+    setThinking(true);
+    try {
+      const data = await ask(msg);
+      // remove thinking bubble (last ai msg) and replace with real
+      // simplest: just add real response; leaving thinking is ok, but we keep it clean:
+      // find last "Procesando…" and remove if exists
+      const nodes = $$(".cw-msg", chat);
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        if (nodes[i].textContent === t("thinking")) {
+          const metaNode = nodes[i].previousSibling;
+          if (metaNode && metaNode.classList && metaNode.classList.contains("cw-meta")) metaNode.remove();
+          nodes[i].remove();
+          break;
+        }
+      }
+      addMsg("ai", (data && (data.answer || data.output || data.text)) || "");
+    } catch (e) {
+      // remove thinking if exists
+      const nodes = $$(".cw-msg", chat);
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        if (nodes[i].textContent === t("thinking")) {
+          const metaNode = nodes[i].previousSibling;
+          if (metaNode && metaNode.classList && metaNode.classList.contains("cw-meta")) metaNode.remove();
+          nodes[i].remove();
+          break;
+        }
+      }
+      addMsg("ai", t("error"));
+      console.error(e);
+    } finally {
+      micBtn.disabled = false;
+      sendBtn.disabled = false;
+      input.disabled = false;
+      input.focus();
+    }
+  }
+
+  // ======= Speech (best-effort) =======
+  let rec = null;
+  let recOn = false;
+
+  function initSpeech() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return null;
+    const r = new SR();
+    r.lang = detectLang();
+    r.interimResults = false;
+    r.continuous = false;
+    r.onresult = (ev) => {
+      const t = ev.results?.[0]?.[0]?.transcript || "";
+      if (t.trim()) send(t.trim());
+    };
+    r.onend = () => {
+      recOn = false;
+      micBtn.classList.remove("on");
+    };
+    r.onerror = () => {
+      recOn = false;
+      micBtn.classList.remove("on");
+    };
+    return r;
+  }
+
+  // ======= Events =======
+  orb.addEventListener("click", () => openPanel());
+  orb.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") openPanel();
+  });
+
+  miniBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMinimize();
+  });
+
+  closeBtn.addEventListener("click", closePanel);
+  panel.addEventListener("click", (e) => {
+    // click outside shell closes
+    if (e.target === panel) closePanel();
+  });
+
+  sendBtn.addEventListener("click", () => send());
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") send();
+    if (e.key === "Escape") closePanel();
+  });
+
+  quicks.forEach((q) => {
+    q.addEventListener("click", () => {
+      const v = q.getAttribute("data-q") || "";
+      send(v);
+    });
+  });
+
+  micBtn.addEventListener("click", () => {
+    if (!rec) rec = initSpeech();
+    if (!rec) return;
+
+    if (recOn) {
+      try { rec.stop(); } catch {}
+      recOn = false;
+      micBtn.classList.remove("on");
+      return;
+    }
+    recOn = true;
+    micBtn.classList.add("on");
+    try { rec.start(); } catch {
+      recOn = false;
+      micBtn.classList.remove("on");
+    }
+  });
+
+  // ======= First impression: “ganas de usar” desde el primer click =======
+  // Auto abrir la primera vez (solo 1 vez)
+  try {
+    const bootKey = "consia_first_open_v1";
+    if (!localStorage.getItem(bootKey)) {
+      localStorage.setItem(bootKey, "1");
+      setTimeout(openPanel, 350);
+      setTimeout(() => {
+        addMsg("ai", "Decime qué querés. Yo me encargo.");
+      }, 650);
+    }
+  } catch {}
+
 })();
