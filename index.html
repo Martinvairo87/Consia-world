@@ -2,401 +2,224 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#05070b" />
-  <title>CONSIA ∞</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CONSIA Realtime</title>
   <style>
-    :root{
-      --bg:#05070b;
-      --panel:#0b1018;
-      --panel2:#0f1622;
-      --text:#e8eef8;
-      --muted:#9aa6b2;
-      --line:rgba(255,255,255,.10);
-      --ok:#19d37d;
-      --warn:#ffcc00;
-      --bad:#ff4d4d;
-      --pill:#0c1a2a;
-      --btn:#0e223a;
-      --btn2:#123055;
-      --shadow:0 10px 40px rgba(0,0,0,.45);
-      --radius:18px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, Segoe UI, Roboto, Helvetica, Arial;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      background:radial-gradient(1200px 800px at 20% 10%, #0b1220 0%, var(--bg) 55%);
-      color:var(--text);
-      font-family:var(--sans);
-      overflow:hidden;
-    }
-    /* iOS viewport fix */
-    .app{height:100dvh; height:100vh; display:flex; flex-direction:column;}
-    .topbar{
-      padding:14px 14px 10px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      font-weight:700; letter-spacing:.5px;
-    }
-    .dot{
-      width:10px; height:10px; border-radius:50%;
-      background:var(--warn);
-      box-shadow:0 0 20px rgba(255,204,0,.25);
-    }
-    .status{
-      display:flex; align-items:center; gap:8px;
-      padding:8px 12px;
-      border:1px solid var(--line);
-      background:rgba(15,22,34,.55);
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .status b{color:var(--text); font-weight:700}
-    .content{
-      flex:1;
-      padding:0 14px 10px;
-      display:flex;
-      gap:12px;
-      min-height:0;
-    }
-    .panel{
-      flex:1;
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(15,22,34,.70), rgba(10,14,22,.55));
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      min-height:0;
-    }
-    .panelhead{
-      padding:12px 12px 10px;
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border-bottom:1px solid var(--line);
-      background:rgba(10,16,26,.55);
-    }
-    .panelhead .hint{color:var(--muted); font-size:12px}
-    .chips{
-      padding:10px 12px;
-      display:flex; flex-wrap:wrap; gap:8px;
-      border-bottom:1px solid var(--line);
-      background:rgba(8,12,18,.35);
-    }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 12px;
-      border:1px solid var(--line);
-      background:rgba(12,26,42,.45);
-      color:var(--text);
-      border-radius:999px;
-      font-size:13px;
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .chip:active{transform:translateY(1px)}
-    .log{
-      flex:1;
-      padding:14px 12px;
-      overflow:auto;
-      scroll-behavior:smooth;
-      min-height:0;
-    }
-    .msg{
-      max-width:860px;
-      margin:0 auto 10px;
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .role{
-      width:34px; height:34px; border-radius:10px;
-      display:grid; place-items:center;
-      border:1px solid var(--line);
-      background:rgba(12,26,42,.35);
-      font-weight:800;
-      font-size:12px;
-      color:var(--muted);
-      flex:0 0 auto;
-    }
-    .bubble{
-      flex:1;
-      border:1px solid var(--line);
-      background:rgba(10,16,26,.55);
-      border-radius:16px;
-      padding:12px 12px;
-      line-height:1.35;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-    .bubble small{color:var(--muted)}
-    .me .role{color:#a7c7ff}
-    .me .bubble{background:rgba(14,34,58,.45)}
-    .ai .role{color:#86f3c0}
-    .ai .bubble{background:rgba(12,22,24,.45)}
-    .sys .role{color:#ffd56a}
-    .sys .bubble{background:rgba(30,24,12,.35)}
-    .bottombar{
-      padding:10px 14px 14px;
-    }
-    .composer{
-      border:1px solid var(--line);
-      background:rgba(10,16,26,.70);
-      border-radius:22px;
-      box-shadow:var(--shadow);
-      display:flex;
-      gap:10px;
-      align-items:flex-end;
-      padding:10px;
-    }
-    textarea{
-      flex:1;
-      resize:none;
-      border:0;
-      outline:none;
-      background:transparent;
-      color:var(--text);
-      font-size:15px;
-      line-height:1.35;
-      min-height:44px;
-      max-height:160px;
-      padding:10px 10px 10px 12px;
-      font-family:var(--sans);
-    }
-    .btn{
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(18,48,85,.95), rgba(14,34,58,.92));
-      color:var(--text);
-      font-weight:800;
-      letter-spacing:.2px;
-      border-radius:16px;
-      padding:12px 14px;
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color:transparent;
-      display:flex; align-items:center; gap:8px;
-    }
-    .btn:active{transform:translateY(1px)}
-    .kbd{font-family:var(--mono); font-size:12px; color:var(--muted)}
-    .footerline{
-      margin-top:8px;
-      display:flex; justify-content:space-between; align-items:center;
-      color:var(--muted);
-      font-size:12px;
-      padding:0 4px;
-    }
-    .pill{
-      padding:6px 10px;
-      border:1px solid var(--line);
-      background:rgba(12,26,42,.35);
-      border-radius:999px;
-      display:inline-flex; gap:8px; align-items:center;
-    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:20px;max-width:980px}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    button,input{padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:14px}
+    button{cursor:pointer}
+    #log{white-space:pre-wrap;background:#0b0b0b;color:#eaeaea;padding:12px;border-radius:12px;min-height:220px}
+    #avatar{width:360px;max-width:100%;border-radius:16px;border:1px solid #ddd}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px;font-size:12px}
   </style>
 </head>
-
 <body>
-  <div class="app">
-    <div class="topbar">
-      <div class="brand">
-        <div class="dot" id="dot"></div>
-        <div>CONSIA <span style="opacity:.7">∞</span></div>
-      </div>
-      <div class="status" id="statusPill">
-        <span id="net">CONNECTING</span> · <b id="wsState">WS</b>
-      </div>
-    </div>
+  <h2>CONSIA Realtime (Mic + WS + Avatar Sync + iOS Bridge)</h2>
 
-    <div class="content">
-      <div class="panel">
-        <div class="panelhead">
-          <div class="hint">Escribí abajo. Si no hay IA, igual responde (fallback) y deja logs.</div>
-          <div class="hint" id="apiHint">api.consia.world</div>
-        </div>
-
-        <div class="chips">
-          <div class="chip" data-prompt="Guiame con 3 opciones cortas y claras.">🧭 Guiame (3 opciones)</div>
-          <div class="chip" data-prompt="¿Qué puede hacer CONSIA? Resumilo en 6 bullets cortos y dame 3 opciones.">🧠 ¿Qué puede hacer?</div>
-          <div class="chip" data-prompt="Hiperrealismo: dame 3 opciones (imagen, video, avatar) y pedime lo mínimo.">🖼️ Hiperrealismo</div>
-          <div class="chip" data-prompt="Voz: explicá en 2 líneas cómo usar voz aquí y dame 3 comandos ejemplo.">🎙️ Voz</div>
-          <div class="chip" data-prompt="FaceTime: cuál es la mejor forma de conectar llamada y qué necesito mínimo.">📞 FaceTime</div>
-          <div class="chip" data-prompt="Modo CONSIA ∞: activá español, 3 opciones, cero vueltas.">⚡ ASCEND</div>
-        </div>
-
-        <div class="log" id="log"></div>
-      </div>
-    </div>
-
-    <div class="bottombar">
-      <div class="composer">
-        <textarea id="input" placeholder='Decí lo que querés (o escribí ".")'></textarea>
-        <div class="btn" id="sendBtn">Enviar <span class="kbd">⏎</span></div>
-      </div>
-      <div class="footerline">
-        <div class="pill">Idioma: <b>ES</b></div>
-        <div class="pill" id="rtPill">Realtime: <b id="rt">auto</b></div>
-      </div>
-    </div>
+  <div class="row">
+    <span class="pill" id="status">WS: OFF</span>
+    <span class="pill" id="micStatus">MIC: OFF</span>
   </div>
 
-  <script>
-    // ====== CONFIG ======
-    const API_BASE = "https://api.consia.world";
-    const ASK_URL  = API_BASE + "/ask";
-    const WS_URL   = API_BASE.replace("https://","wss://") + "/realtime";
+  <div class="row" style="margin-top:12px">
+    <input id="wsUrl" style="min-width:420px" value="wss://api.consia.world/ws?room=global&t=TU_TOKEN" />
+    <button id="btnConnect">Conectar WS</button>
+    <button id="btnDisconnect">Desconectar</button>
+  </div>
 
-    // ====== UI helpers ======
-    const $ = (id)=>document.getElementById(id);
-    const logEl = $("log");
-    const dot = $("dot");
-    const net = $("net");
-    const wsState = $("wsState");
-    const rt = $("rt");
+  <div class="row" style="margin-top:12px">
+    <button id="btnMicOn">Mic ON</button>
+    <button id="btnMicOff">Mic OFF</button>
+    <button id="btnPing">Ping Avatar Sync</button>
+  </div>
 
-    function addMsg(role, text){
-      const wrap = document.createElement("div");
-      wrap.className = "msg " + role;
-      const r = document.createElement("div");
-      r.className = "role";
-      r.textContent = role === "me" ? "YO" : role === "ai" ? "AI" : "SYS";
-      const b = document.createElement("div");
-      b.className = "bubble";
-      b.textContent = text;
-      wrap.appendChild(r);
-      wrap.appendChild(b);
-      logEl.appendChild(wrap);
-      logEl.scrollTop = logEl.scrollHeight;
+  <div class="row" style="margin-top:12px">
+    <img id="avatar" src="avatar.mp4" alt="avatar" />
+  </div>
+
+  <h3>Log</h3>
+  <div id="log"></div>
+
+<script>
+(() => {
+  const logEl = document.getElementById("log");
+  const statusEl = document.getElementById("status");
+  const micStatusEl = document.getElementById("micStatus");
+  const wsUrlEl = document.getElementById("wsUrl");
+  const avatarEl = document.getElementById("avatar");
+
+  let ws = null;
+
+  // MIC
+  let audioCtx = null;
+  let micStream = null;
+  let analyser = null;
+  let micRAF = null;
+
+  const IOS_BRIDGE = {
+    // iOS Native Bridge (WKWebView)
+    post(type, payload) {
+      try {
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.consia) {
+          window.webkit.messageHandlers.consia.postMessage({ type, payload });
+          return true;
+        }
+      } catch {}
+      return false;
     }
+  };
 
-    function setStatus(ok, label){
-      if(ok){
-        dot.style.background = "var(--ok)";
-        dot.style.boxShadow = "0 0 20px rgba(25,211,125,.25)";
-        net.textContent = label || "ONLINE";
-      } else {
-        dot.style.background = "var(--bad)";
-        dot.style.boxShadow = "0 0 20px rgba(255,77,77,.20)";
-        net.textContent = label || "OFFLINE";
+  function log(...args) {
+    const line = args.map(a => (typeof a === "string" ? a : JSON.stringify(a))).join(" ");
+    logEl.textContent += line + "\n";
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function setWS(on) { statusEl.textContent = "WS: " + (on ? "ON" : "OFF"); }
+  function setMIC(on) { micStatusEl.textContent = "MIC: " + (on ? "ON" : "OFF"); }
+
+  function sendWS(obj) {
+    if (!ws || ws.readyState !== 1) return;
+    ws.send(JSON.stringify(obj));
+  }
+
+  // ---- WS Connect ----
+  document.getElementById("btnConnect").onclick = () => {
+    const url = wsUrlEl.value.trim();
+    if (!url.startsWith("wss://")) { log("❌ wsUrl debe empezar con wss://"); return; }
+
+    ws = new WebSocket(url);
+    setWS(false);
+
+    ws.onopen = () => {
+      setWS(true);
+      log("✅ WS conectado:", url);
+      IOS_BRIDGE.post("ws_open", { url });
+
+      // Sync init
+      sendWS({ type: "client_hello", ts: Date.now(), ua: navigator.userAgent });
+    };
+
+    ws.onmessage = (ev) => {
+      let data = ev.data;
+      try { data = JSON.parse(ev.data); } catch {}
+      log("⬅️", data);
+
+      // Avatar sync event example
+      if (data && data.type === "avatar_sync" && data.state) {
+        // ej: state = { frame: 123, cue: "blink" }
+        IOS_BRIDGE.post("avatar_sync", data);
       }
+    };
+
+    ws.onclose = () => {
+      setWS(false);
+      log("⚠️ WS cerrado");
+      IOS_BRIDGE.post("ws_close", {});
+    };
+
+    ws.onerror = () => {
+      log("❌ WS error");
+      IOS_BRIDGE.post("ws_error", {});
+    };
+  };
+
+  document.getElementById("btnDisconnect").onclick = () => {
+    try { ws && ws.close(); } catch {}
+    ws = null;
+    setWS(false);
+  };
+
+  // ---- MIC ----
+  async function micOn() {
+    if (micStream) return;
+
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = audioCtx.createMediaStreamSource(micStream);
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    src.connect(analyser);
+
+    setMIC(true);
+    log("🎤 Mic ON");
+
+    IOS_BRIDGE.post("mic_on", {});
+
+    // Nivel de audio (para realtime/UX)
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+    function tick() {
+      analyser.getByteFrequencyData(buf);
+      let sum = 0;
+      for (let i=0;i<buf.length;i++) sum += buf[i];
+      const level = sum / buf.length; // 0..255 aprox
+
+      // Enviar nivel por WS como evento (ultra liviano)
+      sendWS({ type: "mic_level", level: Math.round(level), ts: Date.now() });
+
+      // iOS bridge
+      IOS_BRIDGE.post("mic_level", { level: Math.round(level) });
+
+      micRAF = requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  function micOff() {
+    if (micRAF) cancelAnimationFrame(micRAF);
+    micRAF = null;
+
+    if (micStream) {
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
     }
 
-    // ====== WebSocket realtime (auto, pero no bloquea chat) ======
-    let ws;
-    let wsReady = false;
-    let wsRetry = 0;
+    try { audioCtx && audioCtx.close(); } catch {}
+    audioCtx = null;
+    analyser = null;
 
-    function wsConnect(){
-      try{
-        ws = new WebSocket(WS_URL);
-        wsState.textContent = "WS";
-        rt.textContent = "auto";
-        ws.onopen = ()=>{
-          wsReady = true;
-          wsRetry = 0;
-          wsState.textContent = "ON";
-          setStatus(true,"ONLINE");
-          addMsg("sys","Realtime conectado.");
-        };
-        ws.onmessage = (ev)=>{
-          // Si el backend manda eventos, los mostramos como SYS
-          addMsg("sys", String(ev.data));
-        };
-        ws.onerror = ()=>{
-          wsState.textContent = "ERR";
-        };
-        ws.onclose = ()=>{
-          wsReady = false;
-          wsState.textContent = "OFF";
-          setStatus(false,"OFFLINE");
-          // Reintento suave
-          const wait = Math.min(8000, 600 + (wsRetry*700));
-          wsRetry++;
-          setTimeout(wsConnect, wait);
-        };
-      }catch(e){
-        wsReady = false;
-        wsState.textContent = "OFF";
-        setStatus(false,"OFFLINE");
-      }
+    setMIC(false);
+    log("🎤 Mic OFF");
+    IOS_BRIDGE.post("mic_off", {});
+  }
+
+  document.getElementById("btnMicOn").onclick = () => micOn().catch(e => log("❌ micOn:", e.message));
+  document.getElementById("btnMicOff").onclick = () => micOff();
+
+  // ---- Avatar Sync (demo) ----
+  document.getElementById("btnPing").onclick = () => {
+    // evento ejemplo (vos después lo conectás con tu pipeline real)
+    const payload = { type: "avatar_sync", state: { cue: "blink", ts: Date.now() } };
+    sendWS(payload);
+    log("➡️ avatar_sync:", payload);
+    IOS_BRIDGE.post("avatar_sync", payload);
+  };
+
+  // ---- Avatar playback helper ----
+  // Si tu avatar es mp4, en HTML no se muestra con <img>. Usá <video>.
+  // Dejo auto-fix: si termina en .mp4, lo cambia a <video> en runtime.
+  (function fixAvatar() {
+    const src = avatarEl.getAttribute("src") || "";
+    if (src.toLowerCase().endsWith(".mp4")) {
+      const v = document.createElement("video");
+      v.id = "avatar";
+      v.src = src;
+      v.autoplay = true;
+      v.muted = true;
+      v.loop = true;
+      v.playsInline = true;
+      v.style.width = avatarEl.style.width || "360px";
+      v.style.maxWidth = "100%";
+      v.style.borderRadius = "16px";
+      v.style.border = "1px solid #ddd";
+      avatarEl.replaceWith(v);
+      log("🎬 Avatar: usando <video> para", src);
     }
+  })();
 
-    // ====== Ask (HTTP) ======
-    async function ask(message){
-      const payload = { message, lang:"es", mode:"CONSIA_ASCEND" };
-      const res = await fetch(ASK_URL, {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify(payload)
-      }).catch(()=>null);
-
-      if(!res){
-        return "Sin conexión al backend. Revisá que api.consia.world responda /ask.";
-      }
-      let data;
-      try{ data = await res.json(); }catch(e){ data = null; }
-      if(!data) return "Respuesta inválida del backend.";
-      // Soporta múltiples formatos posibles
-      return data.text || data.answer || data.message || JSON.stringify(data);
-    }
-
-    // ====== UX ======
-    function normalizePrompt(s){
-      const t = (s||"").trim();
-      if(!t) return "";
-      if(t === ".") return "Guiame con 3 opciones cortas y claras.";
-      return t;
-    }
-
-    async function send(){
-      const input = $("input");
-      const raw = input.value;
-      const msg = normalizePrompt(raw);
-      if(!msg) return;
-      input.value = "";
-      addMsg("me", msg);
-
-      // Siempre responde por HTTP (garantiza que haya respuesta)
-      addMsg("sys","Procesando…");
-      const text = await ask(msg);
-      // reemplaza el último SYS "Procesando…"
-      const last = logEl.lastElementChild;
-      if(last && last.classList.contains("sys")){
-        last.querySelector(".bubble").textContent = text;
-        last.className = "msg ai";
-        last.querySelector(".role").textContent = "AI";
-      }else{
-        addMsg("ai", text);
-      }
-      setStatus(true,"ONLINE");
-    }
-
-    $("sendBtn").addEventListener("click", send);
-    $("input").addEventListener("keydown", (e)=>{
-      if(e.key === "Enter" && !e.shiftKey){
-        e.preventDefault();
-        send();
-      }
-    });
-
-    document.querySelectorAll(".chip").forEach(ch=>{
-      ch.addEventListener("click", ()=>{
-        $("input").value = ch.getAttribute("data-prompt") || "";
-        $("input").focus();
-      });
-    });
-
-    // BOOT
-    addMsg("sys","CONSIA UI HOTFIX activo. Input siempre visible. Idioma ES.");
-    setStatus(false,"CONNECTING");
-    wsConnect();
-  </script>
+})();
+</script>
 </body>
 </html>
