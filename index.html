@@ -3,223 +3,140 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CONSIA Realtime</title>
+  <title>CONSIA Realtime Test</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:20px;max-width:980px}
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    button,input{padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:14px}
-    button{cursor:pointer}
-    #log{white-space:pre-wrap;background:#0b0b0b;color:#eaeaea;padding:12px;border-radius:12px;min-height:220px}
-    #avatar{width:360px;max-width:100%;border-radius:16px;border:1px solid #ddd}
-    .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px;font-size:12px}
+    body { font-family: -apple-system, system-ui, Arial; margin: 20px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0; }
+    input, button, textarea { font-size: 16px; padding: 10px; }
+    input { width: 420px; max-width: 100%; }
+    textarea { width: 100%; height: 120px; }
+    pre { background:#111; color:#0f0; padding:12px; border-radius:10px; overflow:auto; }
+    .pill { display:inline-block; padding:6px 10px; border-radius:999px; background:#eee; }
+    .ok { background:#d1fae5; }
+    .bad { background:#fee2e2; }
   </style>
 </head>
 <body>
-  <h2>CONSIA Realtime (Mic + WS + Avatar Sync + iOS Bridge)</h2>
+  <h2>CONSIA Realtime Test</h2>
 
   <div class="row">
-    <span class="pill" id="status">WS: OFF</span>
-    <span class="pill" id="micStatus">MIC: OFF</span>
+    <span id="status" class="pill bad">DISCONNECTED</span>
   </div>
 
-  <div class="row" style="margin-top:12px">
-    <input id="wsUrl" style="min-width:420px" value="wss://api.consia.world/ws?room=global&t=TU_TOKEN" />
-    <button id="btnConnect">Conectar WS</button>
-    <button id="btnDisconnect">Desconectar</button>
+  <div class="row">
+    <input id="wsUrl" placeholder="wss://api.consia.world/ws?t=TU_DEVICE_TOKEN"
+           value="wss://api.consia.world/ws?t=TU_DEVICE_TOKEN" />
   </div>
 
-  <div class="row" style="margin-top:12px">
-    <button id="btnMicOn">Mic ON</button>
-    <button id="btnMicOff">Mic OFF</button>
-    <button id="btnPing">Ping Avatar Sync</button>
+  <div class="row">
+    <button id="connectBtn">Conectar WS</button>
+    <button id="closeBtn">Cerrar WS</button>
   </div>
 
-  <div class="row" style="margin-top:12px">
-    <img id="avatar" src="avatar.mp4" alt="avatar" />
+  <h3>Enviar</h3>
+  <div class="row">
+    <input id="msg" placeholder='{"type":"ping"} o texto simple' />
+    <button id="sendBtn">Enviar</button>
+  </div>
+
+  <h3>Mic (prueba local)</h3>
+  <div class="row">
+    <button id="micBtn">Activar Mic</button>
+    <span id="micStatus" class="pill bad">MIC OFF</span>
+  </div>
+  <div class="row">
+    <progress id="vu" value="0" max="100" style="width:420px;max-width:100%"></progress>
   </div>
 
   <h3>Log</h3>
-  <div id="log"></div>
+  <pre id="log"></pre>
 
 <script>
-(() => {
+  let ws = null;
   const logEl = document.getElementById("log");
   const statusEl = document.getElementById("status");
-  const micStatusEl = document.getElementById("micStatus");
-  const wsUrlEl = document.getElementById("wsUrl");
-  const avatarEl = document.getElementById("avatar");
 
-  let ws = null;
+  function log(...a){
+    const line = a.map(x => typeof x === "string" ? x : JSON.stringify(x)).join(" ");
+    logEl.textContent = (line + "\n" + logEl.textContent).slice(0, 8000);
+  }
 
-  // MIC
-  let audioCtx = null;
-  let micStream = null;
-  let analyser = null;
-  let micRAF = null;
+  function setStatus(ok, text){
+    statusEl.textContent = text;
+    statusEl.className = "pill " + (ok ? "ok" : "bad");
+  }
 
-  const IOS_BRIDGE = {
-    // iOS Native Bridge (WKWebView)
-    post(type, payload) {
-      try {
-        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.consia) {
-          window.webkit.messageHandlers.consia.postMessage({ type, payload });
-          return true;
+  document.getElementById("connectBtn").onclick = () => {
+    try {
+      const url = document.getElementById("wsUrl").value.trim();
+      ws = new WebSocket(url);
+
+      ws.onopen = () => { setStatus(true, "CONNECTED"); log("WS open"); };
+      ws.onmessage = (e) => { log("WS msg:", e.data); };
+      ws.onerror = (e) => { log("WS error"); };
+      ws.onclose = () => { setStatus(false, "DISCONNECTED"); log("WS close"); ws = null; };
+
+    } catch (err) {
+      log("Connect error:", String(err));
+    }
+  };
+
+  document.getElementById("closeBtn").onclick = () => {
+    if (ws) ws.close();
+  };
+
+  document.getElementById("sendBtn").onclick = () => {
+    if (!ws || ws.readyState !== 1) return log("WS not connected");
+    const m = document.getElementById("msg").value.trim();
+    if (!m) return;
+
+    // si parece JSON, lo mandamos igual como string (tu worker parsea si puede)
+    ws.send(m);
+    log("WS sent:", m);
+  };
+
+  // MIC: prueba local (VU meter). No streamea aún.
+  let audioCtx, analyser, micStream, raf;
+  const micBtn = document.getElementById("micBtn");
+  const micStatus = document.getElementById("micStatus");
+  const vu = document.getElementById("vu");
+
+  micBtn.onclick = async () => {
+    try {
+      if (micStream) return;
+
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const src = audioCtx.createMediaStreamSource(micStream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      src.connect(analyser);
+
+      micStatus.textContent = "MIC ON";
+      micStatus.className = "pill ok";
+
+      const data = new Uint8Array(analyser.fftSize);
+      const tick = () => {
+        analyser.getByteTimeDomainData(data);
+        // RMS simple
+        let sum = 0;
+        for (let i=0;i<data.length;i++){
+          const v = (data[i]-128)/128;
+          sum += v*v;
         }
-      } catch {}
-      return false;
+        const rms = Math.sqrt(sum/data.length);
+        vu.value = Math.min(100, Math.round(rms*200));
+        raf = requestAnimationFrame(tick);
+      };
+      tick();
+
+      log("MIC ready (local test)");
+    } catch (e) {
+      log("MIC error:", String(e));
+      micStatus.textContent = "MIC OFF";
+      micStatus.className = "pill bad";
     }
   };
-
-  function log(...args) {
-    const line = args.map(a => (typeof a === "string" ? a : JSON.stringify(a))).join(" ");
-    logEl.textContent += line + "\n";
-    logEl.scrollTop = logEl.scrollHeight;
-  }
-
-  function setWS(on) { statusEl.textContent = "WS: " + (on ? "ON" : "OFF"); }
-  function setMIC(on) { micStatusEl.textContent = "MIC: " + (on ? "ON" : "OFF"); }
-
-  function sendWS(obj) {
-    if (!ws || ws.readyState !== 1) return;
-    ws.send(JSON.stringify(obj));
-  }
-
-  // ---- WS Connect ----
-  document.getElementById("btnConnect").onclick = () => {
-    const url = wsUrlEl.value.trim();
-    if (!url.startsWith("wss://")) { log("❌ wsUrl debe empezar con wss://"); return; }
-
-    ws = new WebSocket(url);
-    setWS(false);
-
-    ws.onopen = () => {
-      setWS(true);
-      log("✅ WS conectado:", url);
-      IOS_BRIDGE.post("ws_open", { url });
-
-      // Sync init
-      sendWS({ type: "client_hello", ts: Date.now(), ua: navigator.userAgent });
-    };
-
-    ws.onmessage = (ev) => {
-      let data = ev.data;
-      try { data = JSON.parse(ev.data); } catch {}
-      log("⬅️", data);
-
-      // Avatar sync event example
-      if (data && data.type === "avatar_sync" && data.state) {
-        // ej: state = { frame: 123, cue: "blink" }
-        IOS_BRIDGE.post("avatar_sync", data);
-      }
-    };
-
-    ws.onclose = () => {
-      setWS(false);
-      log("⚠️ WS cerrado");
-      IOS_BRIDGE.post("ws_close", {});
-    };
-
-    ws.onerror = () => {
-      log("❌ WS error");
-      IOS_BRIDGE.post("ws_error", {});
-    };
-  };
-
-  document.getElementById("btnDisconnect").onclick = () => {
-    try { ws && ws.close(); } catch {}
-    ws = null;
-    setWS(false);
-  };
-
-  // ---- MIC ----
-  async function micOn() {
-    if (micStream) return;
-
-    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const src = audioCtx.createMediaStreamSource(micStream);
-
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 2048;
-    src.connect(analyser);
-
-    setMIC(true);
-    log("🎤 Mic ON");
-
-    IOS_BRIDGE.post("mic_on", {});
-
-    // Nivel de audio (para realtime/UX)
-    const buf = new Uint8Array(analyser.frequencyBinCount);
-    function tick() {
-      analyser.getByteFrequencyData(buf);
-      let sum = 0;
-      for (let i=0;i<buf.length;i++) sum += buf[i];
-      const level = sum / buf.length; // 0..255 aprox
-
-      // Enviar nivel por WS como evento (ultra liviano)
-      sendWS({ type: "mic_level", level: Math.round(level), ts: Date.now() });
-
-      // iOS bridge
-      IOS_BRIDGE.post("mic_level", { level: Math.round(level) });
-
-      micRAF = requestAnimationFrame(tick);
-    }
-    tick();
-  }
-
-  function micOff() {
-    if (micRAF) cancelAnimationFrame(micRAF);
-    micRAF = null;
-
-    if (micStream) {
-      micStream.getTracks().forEach(t => t.stop());
-      micStream = null;
-    }
-
-    try { audioCtx && audioCtx.close(); } catch {}
-    audioCtx = null;
-    analyser = null;
-
-    setMIC(false);
-    log("🎤 Mic OFF");
-    IOS_BRIDGE.post("mic_off", {});
-  }
-
-  document.getElementById("btnMicOn").onclick = () => micOn().catch(e => log("❌ micOn:", e.message));
-  document.getElementById("btnMicOff").onclick = () => micOff();
-
-  // ---- Avatar Sync (demo) ----
-  document.getElementById("btnPing").onclick = () => {
-    // evento ejemplo (vos después lo conectás con tu pipeline real)
-    const payload = { type: "avatar_sync", state: { cue: "blink", ts: Date.now() } };
-    sendWS(payload);
-    log("➡️ avatar_sync:", payload);
-    IOS_BRIDGE.post("avatar_sync", payload);
-  };
-
-  // ---- Avatar playback helper ----
-  // Si tu avatar es mp4, en HTML no se muestra con <img>. Usá <video>.
-  // Dejo auto-fix: si termina en .mp4, lo cambia a <video> en runtime.
-  (function fixAvatar() {
-    const src = avatarEl.getAttribute("src") || "";
-    if (src.toLowerCase().endsWith(".mp4")) {
-      const v = document.createElement("video");
-      v.id = "avatar";
-      v.src = src;
-      v.autoplay = true;
-      v.muted = true;
-      v.loop = true;
-      v.playsInline = true;
-      v.style.width = avatarEl.style.width || "360px";
-      v.style.maxWidth = "100%";
-      v.style.borderRadius = "16px";
-      v.style.border = "1px solid #ddd";
-      avatarEl.replaceWith(v);
-      log("🎬 Avatar: usando <video> para", src);
-    }
-  })();
-
-})();
 </script>
 </body>
 </html>
