@@ -1,142 +1,390 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CONSIA Realtime Test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CONSIA Realtime (Mic + WS + STT + AI + Avatar)</title>
   <style>
-    body { font-family: -apple-system, system-ui, Arial; margin: 20px; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0; }
-    input, button, textarea { font-size: 16px; padding: 10px; }
-    input { width: 420px; max-width: 100%; }
-    textarea { width: 100%; height: 120px; }
-    pre { background:#111; color:#0f0; padding:12px; border-radius:10px; overflow:auto; }
-    .pill { display:inline-block; padding:6px 10px; border-radius:999px; background:#eee; }
-    .ok { background:#d1fae5; }
-    .bad { background:#fee2e2; }
+    :root { color-scheme: light; }
+    body { font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; margin: 18px; }
+    h1 { margin: 0 0 10px; font-size: 22px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill { padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid #ddd; background:#f7f7f7; }
+    .pill.ok { background:#e9fff1; border-color:#bde8c9; }
+    .pill.bad { background:#ffecec; border-color:#f2bcbc; }
+    input, button, textarea { font-size: 15px; }
+    input[type="text"] { width: min(980px, 100%); padding: 10px 12px; border:1px solid #ddd; border-radius:10px; }
+    button { padding: 10px 14px; border:1px solid #ddd; border-radius:12px; background:#fff; cursor:pointer; }
+    button:active { transform: translateY(1px); }
+    .card { border:1px solid #e5e5e5; border-radius:16px; padding:14px; margin-top:12px; background:#fff; }
+    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media (min-width: 980px){ .grid { grid-template-columns: 1.1fr 0.9fr; } }
+    textarea { width: 100%; min-height: 120px; padding: 12px; border-radius: 12px; border:1px solid #ddd; resize: vertical; }
+    pre { margin:0; padding:12px; border-radius:16px; background:#0b0b0b; color:#3CFF66; overflow:auto; min-height: 220px; }
+    .muted { color:#666; font-size:13px; }
+    .avatarWrap { position:relative; width:100%; aspect-ratio: 16/9; border-radius:16px; overflow:hidden; background:#000; }
+    video { width:100%; height:100%; object-fit:cover; display:block; }
+    .pulse {
+      position:absolute; inset:0;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity 120ms ease;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.18), rgba(255,255,255,0) 55%);
+      mix-blend-mode: screen;
+    }
+    .pulse.on { opacity:1; }
+    .btnOn { background:#e9fff1; border-color:#bde8c9; }
+    .btnOff { background:#ffecec; border-color:#f2bcbc; }
   </style>
 </head>
+
 <body>
-  <h2>CONSIA Realtime Test</h2>
+  <h1>CONSIA Realtime (Mic + WS + STT + AI + Avatar)</h1>
 
-  <div class="row">
-    <span id="status" class="pill bad">DISCONNECTED</span>
+  <div class="row" style="margin-bottom:10px">
+    <span id="wsPill" class="pill bad">WS: OFF</span>
+    <span id="micPill" class="pill bad">MIC: OFF</span>
+    <span class="pill">Ping loop: ON</span>
   </div>
 
   <div class="row">
-    <input id="wsUrl" placeholder="wss://api.consia.world/ws?t=TU_DEVICE_TOKEN"
-           value="wss://api.consia.world/ws?t=TU_DEVICE_TOKEN" />
+    <input id="wsUrl" type="text" value="wss://api.consia.world/ws?room=global&t=abc123" />
+    <button id="btnConnect">Conectar WS</button>
+    <button id="btnDisconnect">Desconectar</button>
+    <button id="btnPing">Ping</button>
   </div>
 
-  <div class="row">
-    <button id="connectBtn">Conectar WS</button>
-    <button id="closeBtn">Cerrar WS</button>
+  <div class="grid">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <strong>Mic → WS (audio_chunk)</strong>
+        <span class="muted" id="micNote">MediaRecorder requerido</span>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button id="btnMicOn" class="btnOn">Mic ON</button>
+        <button id="btnMicOff" class="btnOff">Mic OFF</button>
+        <button id="btnClear">Clear Log</button>
+      </div>
+
+      <div style="margin-top:12px" class="muted">
+        • En iPhone/iPad: primero tocá <b>Mic ON</b> (Safari pide permiso).<br/>
+        • Envia “chunks” cada ~1s para STT → AI → lipsync.
+      </div>
+
+      <hr style="border:none;border-top:1px solid #eee;margin:14px 0"/>
+
+      <strong>Texto → AI</strong>
+      <div class="row" style="margin-top:10px">
+        <input id="txtInput" type="text" placeholder="Escribí algo..." />
+        <button id="btnSendText">Enviar</button>
+      </div>
+
+      <div style="margin-top:10px">
+        <textarea id="aiOut" placeholder="Respuesta AI / STT aparece acá..." readonly></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <strong>Avatar (video + lipsync trigger)</strong>
+      <div class="avatarWrap" style="margin-top:10px">
+        <video id="avatar" src="avatar.mp4" playsinline autoplay muted loop></video>
+        <div id="pulse" class="pulse"></div>
+      </div>
+      <div class="muted" style="margin-top:10px">
+        Si no ves video: asegurate de tener <code>avatar.mp4</code> en el mismo directorio que este HTML.
+      </div>
+    </div>
   </div>
 
-  <h3>Enviar</h3>
-  <div class="row">
-    <input id="msg" placeholder='{"type":"ping"} o texto simple' />
-    <button id="sendBtn">Enviar</button>
+  <div class="card">
+    <strong>Log</strong>
+    <pre id="log"></pre>
   </div>
-
-  <h3>Mic (prueba local)</h3>
-  <div class="row">
-    <button id="micBtn">Activar Mic</button>
-    <span id="micStatus" class="pill bad">MIC OFF</span>
-  </div>
-  <div class="row">
-    <progress id="vu" value="0" max="100" style="width:420px;max-width:100%"></progress>
-  </div>
-
-  <h3>Log</h3>
-  <pre id="log"></pre>
 
 <script>
-  let ws = null;
+(() => {
+  // ---------- DOM
+  const wsPill = document.getElementById("wsPill");
+  const micPill = document.getElementById("micPill");
+  const wsUrlEl = document.getElementById("wsUrl");
+  const btnConnect = document.getElementById("btnConnect");
+  const btnDisconnect = document.getElementById("btnDisconnect");
+  const btnPing = document.getElementById("btnPing");
+  const btnMicOn = document.getElementById("btnMicOn");
+  const btnMicOff = document.getElementById("btnMicOff");
+  const btnSendText = document.getElementById("btnSendText");
+  const txtInput = document.getElementById("txtInput");
+  const aiOut = document.getElementById("aiOut");
   const logEl = document.getElementById("log");
-  const statusEl = document.getElementById("status");
+  const btnClear = document.getElementById("btnClear");
+  const pulse = document.getElementById("pulse");
+  const micNote = document.getElementById("micNote");
 
-  function log(...a){
-    const line = a.map(x => typeof x === "string" ? x : JSON.stringify(x)).join(" ");
-    logEl.textContent = (line + "\n" + logEl.textContent).slice(0, 8000);
+  // ---------- State
+  let ws = null;
+  let pingTimer = null;
+
+  let micStream = null;
+  let mediaRecorder = null;
+
+  // ---------- Utils
+  function log(line) {
+    const t = new Date().toLocaleTimeString();
+    logEl.textContent = `[${t}] ${line}\n` + logEl.textContent;
   }
 
-  function setStatus(ok, text){
-    statusEl.textContent = text;
-    statusEl.className = "pill " + (ok ? "ok" : "bad");
+  function setWs(on) {
+    wsPill.textContent = on ? "WS: ON" : "WS: OFF";
+    wsPill.className = "pill " + (on ? "ok" : "bad");
   }
 
-  document.getElementById("connectBtn").onclick = () => {
+  function setMic(on) {
+    micPill.textContent = on ? "MIC: ON" : "MIC: OFF";
+    micPill.className = "pill " + (on ? "ok" : "bad");
+  }
+
+  function safeSend(obj) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      log("WS not connected");
+      return false;
+    }
+    ws.send(JSON.stringify(obj));
+    return true;
+  }
+
+  function b64FromArrayBuffer(buf) {
+    const bytes = new Uint8Array(buf);
+    let bin = "";
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+
+  function pulseOn(ms = 140) {
+    pulse.classList.add("on");
+    setTimeout(() => pulse.classList.remove("on"), ms);
+  }
+
+  // ---------- WS
+  function startPingLoop() {
+    stopPingLoop();
+    pingTimer = setInterval(() => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "ping", ts: Date.now() }));
+      }
+    }, 15000);
+  }
+
+  function stopPingLoop() {
+    if (pingTimer) clearInterval(pingTimer);
+    pingTimer = null;
+  }
+
+  function connectWS() {
     try {
-      const url = document.getElementById("wsUrl").value.trim();
+      const url = wsUrlEl.value.trim();
+      if (!url.startsWith("wss://")) {
+        log("⚠️ URL debe empezar con wss://");
+        return;
+      }
+
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        log("WS ya está conectado/conectando");
+        return;
+      }
+
       ws = new WebSocket(url);
 
-      ws.onopen = () => { setStatus(true, "CONNECTED"); log("WS open"); };
-      ws.onmessage = (e) => { log("WS msg:", e.data); };
-      ws.onerror = (e) => { log("WS error"); };
-      ws.onclose = () => { setStatus(false, "DISCONNECTED"); log("WS close"); ws = null; };
-
-    } catch (err) {
-      log("Connect error:", String(err));
-    }
-  };
-
-  document.getElementById("closeBtn").onclick = () => {
-    if (ws) ws.close();
-  };
-
-  document.getElementById("sendBtn").onclick = () => {
-    if (!ws || ws.readyState !== 1) return log("WS not connected");
-    const m = document.getElementById("msg").value.trim();
-    if (!m) return;
-
-    // si parece JSON, lo mandamos igual como string (tu worker parsea si puede)
-    ws.send(m);
-    log("WS sent:", m);
-  };
-
-  // MIC: prueba local (VU meter). No streamea aún.
-  let audioCtx, analyser, micStream, raf;
-  const micBtn = document.getElementById("micBtn");
-  const micStatus = document.getElementById("micStatus");
-  const vu = document.getElementById("vu");
-
-  micBtn.onclick = async () => {
-    try {
-      if (micStream) return;
-
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const src = audioCtx.createMediaStreamSource(micStream);
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 2048;
-      src.connect(analyser);
-
-      micStatus.textContent = "MIC ON";
-      micStatus.className = "pill ok";
-
-      const data = new Uint8Array(analyser.fftSize);
-      const tick = () => {
-        analyser.getByteTimeDomainData(data);
-        // RMS simple
-        let sum = 0;
-        for (let i=0;i<data.length;i++){
-          const v = (data[i]-128)/128;
-          sum += v*v;
-        }
-        const rms = Math.sqrt(sum/data.length);
-        vu.value = Math.min(100, Math.round(rms*200));
-        raf = requestAnimationFrame(tick);
+      ws.onopen = () => {
+        setWs(true);
+        log("WS open");
+        startPingLoop();
       };
-      tick();
 
-      log("MIC ready (local test)");
+      ws.onclose = () => {
+        setWs(false);
+        log("WS close");
+        stopPingLoop();
+      };
+
+      ws.onerror = () => {
+        setWs(false);
+        log("WS error");
+      };
+
+      ws.onmessage = (ev) => {
+        let msg;
+        try { msg = JSON.parse(ev.data); }
+        catch { msg = { type: "raw", data: ev.data }; }
+
+        // Display
+        if (msg.type === "stt_final") {
+          aiOut.value = `STT: ${msg.text}\n\n` + aiOut.value;
+        } else if (msg.type === "ai_response") {
+          aiOut.value = `AI: ${msg.text}\n\n` + aiOut.value;
+        }
+
+        if (msg.type === "avatar_lipsync") {
+          pulseOn(180);
+        }
+
+        // Lightweight log
+        if (msg.type === "pong") return;
+        if (msg.type === "ping") return;
+
+        log(`WS msg: ${JSON.stringify(msg)}`);
+      };
     } catch (e) {
-      log("MIC error:", String(e));
-      micStatus.textContent = "MIC OFF";
-      micStatus.className = "pill bad";
+      log("Connect exception: " + String(e?.message || e));
     }
+  }
+
+  function disconnectWS() {
+    try {
+      stopPingLoop();
+      if (ws) ws.close(1000, "client close");
+      ws = null;
+      setWs(false);
+      log("WS disconnected (client)");
+    } catch (e) {
+      log("Disconnect exception: " + String(e?.message || e));
+    }
+  }
+
+  // ---------- MIC → WS audio_chunk
+  async function micOn() {
+    if (!("MediaRecorder" in window)) {
+      micNote.textContent = "❌ MediaRecorder no soportado en este navegador";
+      log("❌ MediaRecorder no soportado. Probá Safari iOS actualizado o Chrome desktop.");
+      return;
+    }
+
+    try {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        log("Mic ya está activo");
+        return;
+      }
+
+      micStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+
+      // Choose a safe mime
+      const preferred = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4",
+        "audio/aac"
+      ];
+      let mimeType = "";
+      for (const m of preferred) {
+        if (MediaRecorder.isTypeSupported(m)) { mimeType = m; break; }
+      }
+
+      mediaRecorder = new MediaRecorder(micStream, mimeType ? { mimeType } : undefined);
+
+      mediaRecorder.onstart = () => {
+        setMic(true);
+        micNote.textContent = "MIC ready (sending chunks)";
+        log("MIC start");
+      };
+
+      mediaRecorder.onstop = () => {
+        setMic(false);
+        micNote.textContent = "MIC OFF";
+        log("MIC stop");
+      };
+
+      mediaRecorder.onerror = (e) => {
+        log("MIC error: " + (e?.error?.message || "unknown"));
+      };
+
+      mediaRecorder.ondataavailable = async (e) => {
+        try {
+          if (!e.data || e.data.size === 0) return;
+
+          // If WS not open, skip sending but keep recording
+          if (!ws || ws.readyState !== WebSocket.OPEN) {
+            log("WS not connected (audio chunk skipped)");
+            return;
+          }
+
+          const buf = await e.data.arrayBuffer();
+          const b64 = b64FromArrayBuffer(buf);
+
+          const usedMime = e.data.type || mimeType || "audio/webm";
+          const ext = usedMime.includes("mp4") ? "mp4" : (usedMime.includes("aac") ? "aac" : "webm");
+          const filename = `chunk.${ext}`;
+
+          safeSend({
+            type: "audio_chunk",
+            audio_b64: b64,
+            mime: usedMime,
+            filename
+          });
+        } catch (err) {
+          log("chunk error: " + String(err?.message || err));
+        }
+      };
+
+      // Start recorder with timeslice = 1000ms (chunk every 1s)
+      mediaRecorder.start(1000);
+    } catch (e) {
+      log("MicOn exception: " + String(e?.message || e));
+      setMic(false);
+    }
+  }
+
+  function micOff() {
+    try {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+      if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+      }
+      micStream = null;
+      mediaRecorder = null;
+      setMic(false);
+      micNote.textContent = "MIC OFF";
+    } catch (e) {
+      log("MicOff exception: " + String(e?.message || e));
+    }
+  }
+
+  // ---------- UI actions
+  btnConnect.onclick = connectWS;
+  btnDisconnect.onclick = disconnectWS;
+  btnPing.onclick = () => safeSend({ type: "ping", ts: Date.now() });
+
+  btnMicOn.onclick = micOn;
+  btnMicOff.onclick = micOff;
+
+  btnSendText.onclick = () => {
+    const t = txtInput.value.trim();
+    if (!t) return;
+    txtInput.value = "";
+    safeSend({ type: "text", text: t });
   };
+
+  txtInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") btnSendText.click();
+  });
+
+  btnClear.onclick = () => { logEl.textContent = ""; };
+
+  // Auto-try connect (optional)
+  // connectWS();
+
+  // Initial
+  setWs(false);
+  setMic(false);
+  log("UI ready");
+})();
 </script>
 </body>
 </html>
