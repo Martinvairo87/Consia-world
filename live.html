@@ -1,58 +1,77 @@
-<!doctype html>
-<html lang="es">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CONSIA LIVE</title>
-  <style>
-    :root { color-scheme: dark; }
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:16px;background:#0a0a0a;color:#fff}
-    h1{letter-spacing:.18em;font-weight:700;margin:0 0 12px 0}
-    .box{border:1px solid #222;border-radius:14px;padding:14px;background:#0f0f0f}
-    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
-    input,button,select{font-size:16px;padding:10px 12px;border-radius:12px;border:1px solid #222;background:#111;color:#fff}
-    button{cursor:pointer}
-    button:disabled{opacity:.5;cursor:not-allowed}
-    .pill{display:inline-block;padding:6px 10px;border:1px solid #222;border-radius:999px}
-    #log{white-space:pre-wrap;border:1px solid #222;padding:12px;border-radius:12px;min-height:260px;background:#0b0b0b}
-    small{opacity:.7}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CONSIA LIVE</title>
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+
+#topbar{
+  padding:10px;
+  background:#0a0a0a;
+  border-bottom:1px solid #222;
+  display:flex;
+  gap:10px;
+}
+
+input,button{
+  padding:8px;
+  border:none;
+  outline:none;
+}
+
+button{
+  background:#111;
+  color:#fff;
+  cursor:pointer;
+}
+
+#video{
+  flex:1;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+video{
+  max-width:100%;
+  max-height:100%;
+}
+
+#audioMeter{
+  height:6px;
+  background:#0f0;
+  width:0%;
+}
+</style>
 </head>
 
 <body>
-  <h1>CONSIA LIVE</h1>
 
-  <div class="box">
-    <div class="row">
-      <label>Room</label>
-      <input id="room" value="test" />
-      <label>Channel</label>
-      <select id="channel">
-        <option value="default">default</option>
-        <option value="avatar">avatar</option>
-        <option value="voice">voice</option>
-      </select>
-    </div>
+<div id="topbar">
+  <input id="room" value="live"/>
+  <button onclick="connect()">CONNECT</button>
+  <button onclick="startVoice()">VOICE</button>
+  <button onclick="record()">RECORD</button>
+</div>
 
-    <div class="row">
-      <label>Owner token (opcional)</label>
-      <input id="owner" placeholder="(si REQUIRE_OWNER_FOR_WS=1)" style="min-width:320px" />
-      <button id="connect">Conectar</button>
-      <button id="disconnect" disabled>Desconectar</button>
-      <span class="pill" id="state">OFF</span>
-    </div>
+<div id="video">
+  <video id="avatarVideo" autoplay playsinline></video>
+</div>
 
-    <div class="row">
-      <input id="msg" placeholder="mensaje..." style="flex:1;min-width:240px" />
-      <button id="send" disabled>Enviar</button>
-      <button id="clear">Limpiar</button>
-    </div>
+<div id="audioMeter"></div>
 
-    <div id="log"></div>
-    <small>WS: <span id="wsurl"></span></small>
-  </div>
-
-  <!-- IMPORTANTE: este es el link correcto al JS -->
-  <script src="live.js"></script>
+<script src="live.js"></script>
 </body>
 </html>
