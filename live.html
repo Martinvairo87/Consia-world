@@ -1,124 +1,52 @@
-(() => {
-  "use strict";
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CONSIA LIVE — Demo</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:16px}
+    input,button,select{font-size:16px;padding:10px;margin:6px 6px 6px 0}
+    .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
+    #log{white-space:pre-wrap;border:1px solid #ddd;padding:12px;border-radius:10px;min-height:240px}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px}
+    .ok{border-color:#2ecc71}
+    .bad{border-color:#e74c3c}
+    small{opacity:.7}
+  </style>
+</head>
+<body>
+  <h2>CONSIA LIVE — Demo</h2>
 
-  const API_BASE = "https://api.consia.world";
+  <div class="row">
+    <label>Room</label>
+    <input id="room" value="test" />
+    <label>Channel</label>
+    <select id="channel">
+      <option value="default">default</option>
+      <option value="avatar">avatar</option>
+      <option value="voice">voice</option>
+    </select>
+    <label>User</label>
+    <input id="user" value="martin" />
+  </div>
 
-  const $ = (sel) => document.querySelector(sel);
-  const logEl = $("#log");
-  const stateEl = $("#state");
-  const wsUrlEl = $("#wsurl");
+  <div class="row">
+    <button id="connect">Conectar</button>
+    <button id="disconnect" disabled>Desconectar</button>
+    <span class="pill bad" id="state">OFF</span>
+    <small id="wsurl"></small>
+  </div>
 
-  const roomEl = $("#room");
-  const channelEl = $("#channel");
-  const userEl = $("#user");
-  const msgEl = $("#msg");
+  <div class="row">
+    <button id="join" disabled>Join</button>
+    <button id="ping" disabled>Ping</button>
+    <button id="sendText" disabled>Enviar Msg</button>
+    <input id="msg" placeholder="Hola room..." style="min-width:260px" />
+  </div>
 
-  const btnConnect = $("#connect");
-  const btnDisconnect = $("#disconnect");
-  const btnJoin = $("#join");
-  const btnPing = $("#ping");
-  const btnSendText = $("#sendText");
+  <div id="log"></div>
 
-  let ws = null;
-
-  function log(...args) {
-    const line = `[${new Date().toLocaleTimeString()}] ${args.map(String).join(" ")}`;
-    logEl.textContent += line + "\n";
-    logEl.scrollTop = logEl.scrollHeight;
-    console.log(...args);
-  }
-
-  function setState(on) {
-    stateEl.textContent = on ? "ON" : "OFF";
-    stateEl.className = "pill " + (on ? "ok" : "bad");
-    btnDisconnect.disabled = !on;
-    btnJoin.disabled = !on;
-    btnPing.disabled = !on;
-    btnSendText.disabled = !on;
-    btnConnect.disabled = on;
-  }
-
-  async function getRoomInfo(room, channel) {
-    const r = await fetch(`${API_BASE}/room/${encodeURIComponent(room)}?channel=${encodeURIComponent(channel)}`);
-    const j = await r.json();
-    if (!r.ok) throw new Error(j?.data?.error || "room_info_failed");
-    return j.data;
-  }
-
-  function buildWsUrl(room, channel) {
-    const proto = location.protocol === "https:" ? "wss:" : "ws:";
-    // Siempre apuntamos al API, no al dominio web
-    return `${proto}//api.consia.world/ws/${encodeURIComponent(room)}?channel=${encodeURIComponent(channel)}`;
-  }
-
-  function wsSend(obj) {
-    if (!ws || ws.readyState !== 1) return;
-    ws.send(JSON.stringify(obj));
-  }
-
-  async function connect() {
-    const room = roomEl.value.trim() || "test";
-    const channel = channelEl.value.trim() || "default";
-
-    // Info (para ver que responde)
-    try {
-      const info = await getRoomInfo(room, channel);
-      log("room info:", JSON.stringify(info));
-    } catch (e) {
-      log("room info error:", e.message);
-    }
-
-    const url = buildWsUrl(room, channel);
-    wsUrlEl.textContent = url;
-
-    ws = new WebSocket(url);
-    ws.binaryType = "arraybuffer";
-
-    ws.onopen = () => {
-      log("WS open");
-      setState(true);
-    };
-
-    ws.onmessage = (ev) => {
-      if (typeof ev.data === "string") {
-        log("WS msg:", ev.data);
-      } else {
-        log("WS bin:", `bytes=${ev.data.byteLength}`);
-      }
-    };
-
-    ws.onclose = () => {
-      log("WS closed");
-      setState(false);
-      ws = null;
-    };
-
-    ws.onerror = () => {
-      log("WS error");
-    };
-  }
-
-  function disconnect() {
-    if (ws) ws.close(1000, "bye");
-  }
-
-  btnConnect.onclick = () => connect();
-  btnDisconnect.onclick = () => disconnect();
-
-  btnJoin.onclick = () => {
-    const room = roomEl.value.trim() || "test";
-    const channel = channelEl.value.trim() || "default";
-    const user = userEl.value.trim() || "anon";
-    wsSend({ type: "join", room, channel, user });
-  };
-
-  btnPing.onclick = () => wsSend({ type: "ping" });
-
-  btnSendText.onclick = () => {
-    const text = msgEl.value.trim() || "hola";
-    wsSend({ type: "chat", text });
-    msgEl.value = "";
-  };
-
-  setState(false);
-})();
+  <script src="live.js"></script>
+</body>
+</html>
