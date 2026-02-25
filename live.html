@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CONSIA LIVE — Demo</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:16px}
+    input,button,select{font-size:16px;padding:10px;margin:6px 6px 6px 0}
+    .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+    #log{white-space:pre-wrap;border:1px solid #ddd;padding:12px;border-radius:10px;min-height:240px}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px;margin-left:8px}
+  </style>
+</head>
+<body>
+  <h2>CONSIA LIVE — Demo</h2>
+
+  <div class="row">
+    <label>Room</label>
+    <input id="room" value="test" />
+    <label>Channel</label>
+    <select id="channel">
+      <option value="default">default</option>
+      <option value="avatar">avatar</option>
+      <option value="voice">voice</option>
+    </select>
+    <button id="connect">Conectar</button>
+    <button id="disconnect" disabled>Desconectar</button>
+    <span class="pill" id="state">OFF</span>
+  </div>
+
+  <div class="row">
+    <input id="msg" placeholder="mensaje" style="flex:1;min-width:220px" />
+    <button id="send" disabled>Enviar</button>
+    <button id="ping" disabled>Ping</button>
+    <button id="spam" disabled>Spam x20</button>
+    <button id="clear">Clear</button>
+  </div>
+
+  <div id="log"></div>
+
+<script>
+const $ = (id)=>document.getElementById(id);
+let ws = null;
+
+function log(line){
+  const el = $("log");
+  el.textContent += line + "\n";
+  el.scrollTop = el.scrollHeight;
+}
+function setState(s){
+  $("state").textContent = s;
+}
+
+function wsUrl(room, channel){
+  const base = "wss://api.consia.world";
+  if (channel === "avatar") return `${base}/stream/avatar/${encodeURIComponent(room)}`;
+  if (channel === "voice") return `${base}/stream/voice/${encodeURIComponent(room)}`;
+  return `${base}/room/${encodeURIComponent(room)}`;
+}
+
+$("connect").onclick = () => {
+  const room = $("room").value.trim() || "test";
+  const channel = $("channel").value;
+
+  const url = wsUrl(room, channel);
+  log("CONNECT " + url);
+
+  ws = new WebSocket(url);
+
+  ws.onopen = () => {
+    setState("ON");
+    $("connect").disabled = true;
+    $("disconnect").disabled = false;
+    $("send").disabled = false;
+    $("ping").disabled = false;
+    $("spam").disabled = false;
+
+    // hello
+    ws.send(JSON.stringify({ type:"hello", room, channel, ua:navigator.userAgent }));
+  };
+
+  ws.onmessage = (ev) => {
+    let out = ev.data;
+    try {
+      const obj = JSON.parse(ev.data);
+      out = JSON.stringify(obj);
+    } catch {}
+    log("← " + out);
+  };
+
+  ws.onclose = () => {
+    log("CLOSE");
+    setState("OFF");
+    $("connect").disabled = false;
+    $("disconnect").disabled = true;
+    $("send").disabled = true;
+    $("ping").disabled = true;
+    $("spam").disabled = true;
+    ws = null;
+  };
+
+  ws.onerror = () => {
+    log("ERROR");
+  };
+};
+
+$("disconnect").onclick = () => {
+  if (ws) ws.close();
+};
+
+$("send").onclick = () => {
+  if (!ws) return;
+  const text = $("msg").value;
+  ws.send(JSON.stringify({ type:"msg", text }));
+  log("→ " + JSON.stringify({ type:"msg", text }));
+};
+
+$("ping").onclick = () => {
+  if (!ws) return;
+  ws.send(JSON.stringify({ type:"ping" }));
+  log("→ " + JSON.stringify({ type:"ping" }));
+};
+
+$("spam").onclick = () => {
+  if (!ws) return;
+  for (let i=0;i<20;i++){
+    ws.send(JSON.stringify({ type:"msg", text:`spam ${i+1}` }));
+  }
+  log("→ spam x20");
+};
+
+$("clear").onclick = () => $("log").textContent = "";
+</script>
+</body>
+</html>
