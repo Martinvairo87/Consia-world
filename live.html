@@ -5,69 +5,54 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CONSIA LIVE</title>
   <style>
-    :root{color-scheme:dark}
-    body{margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    .wrap{max-width:980px;margin:0 auto;padding:22px}
-    .brand{letter-spacing:.35em;font-weight:700;text-align:center;margin:26px 0 18px;font-size:34px}
-    .sub{opacity:.75;text-align:center;margin:-8px 0 20px}
-    .card{border:1px solid #222;border-radius:16px;padding:16px;background:rgba(255,255,255,.03)}
-    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-    input,select,button{font-size:16px;padding:12px 12px;border-radius:12px;border:1px solid #2a2a2a;background:#0b0b0b;color:#fff}
-    input{min-width:180px}
+    :root { color-scheme: dark; }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:16px;background:#0a0a0a;color:#fff}
+    h1{letter-spacing:.18em;font-weight:700;margin:0 0 12px 0}
+    .box{border:1px solid #222;border-radius:14px;padding:14px;background:#0f0f0f}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+    input,button,select{font-size:16px;padding:10px 12px;border-radius:12px;border:1px solid #222;background:#111;color:#fff}
     button{cursor:pointer}
     button:disabled{opacity:.5;cursor:not-allowed}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid #2a2a2a;background:#0b0b0b}
-    .dot{width:10px;height:10px;border-radius:999px;background:#444}
-    .dot.on{background:#26ff7a}
-    .dot.off{background:#ff2d2d}
-    #log{margin-top:14px;white-space:pre-wrap;word-break:break-word;border:1px solid #222;border-radius:16px;padding:14px;background:rgba(255,255,255,.02);min-height:240px}
-    .hint{opacity:.75;font-size:13px;margin-top:10px;line-height:1.35}
-    .hr{height:1px;background:#1b1b1b;margin:14px 0}
+    .pill{display:inline-block;padding:6px 10px;border:1px solid #222;border-radius:999px}
+    #log{white-space:pre-wrap;border:1px solid #222;padding:12px;border-radius:12px;min-height:260px;background:#0b0b0b}
+    small{opacity:.7}
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="brand">CONSIA LIVE</div>
-    <div class="sub">Realtime Rooms · WebSocket · Durable Objects</div>
+  <h1>CONSIA LIVE</h1>
 
-    <div class="card">
-      <div class="row">
-        <label>Room</label>
-        <input id="room" value="test" />
-
-        <label>Channel</label>
-        <select id="channel">
-          <option value="default">default</option>
-          <option value="avatar">avatar</option>
-          <option value="voice">voice</option>
-        </select>
-
-        <label>Owner Token (opcional)</label>
-        <input id="token" placeholder="OWNER_TOKEN si REQUIRE=1" />
-
-        <span class="pill"><span id="dot" class="dot off"></span><span id="state">OFF</span></span>
-
-        <button id="connect">Conectar</button>
-        <button id="disconnect" disabled>Desconectar</button>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="row">
-        <input id="msg" placeholder="Mensaje para broadcast..." style="flex:1;min-width:240px" />
-        <button id="send" disabled>Enviar</button>
-        <button id="clear">Limpiar</button>
-      </div>
-
-      <div id="log"></div>
-
-      <div class="hint">
-        Endpoint WS: <b>wss://api.consia.world/ws/&lt;room&gt;</b> (channel por query: <b>?ch=</b>)<br/>
-        Si tu Worker exige token, completá <b>Owner Token</b>.
-      </div>
+  <div class="box">
+    <div class="row">
+      <label>Room</label>
+      <input id="room" value="test" />
+      <label>Channel</label>
+      <select id="channel">
+        <option value="default">default</option>
+        <option value="avatar">avatar</option>
+        <option value="voice">voice</option>
+      </select>
     </div>
+
+    <div class="row">
+      <label>Owner token (opcional)</label>
+      <input id="owner" placeholder="(si REQUIRE_OWNER_FOR_WS=1)" style="min-width:320px" />
+      <button id="connect">Conectar</button>
+      <button id="disconnect" disabled>Desconectar</button>
+      <span class="pill" id="state">OFF</span>
+    </div>
+
+    <div class="row">
+      <input id="msg" placeholder="mensaje..." style="flex:1;min-width:240px" />
+      <button id="send" disabled>Enviar</button>
+      <button id="clear">Limpiar</button>
+    </div>
+
+    <div id="log"></div>
+    <small>WS: <span id="wsurl"></span></small>
   </div>
 
+  <!-- IMPORTANTE: este es el link correcto al JS -->
   <script src="live.js"></script>
 </body>
 </html>
