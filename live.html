@@ -1,619 +1,124 @@
-/* CONSIA LIVE — live.js (COMPLETO)
-   - API_BASE: https://api.consia.world
-   - WebSocket rooms multiusuario
-   - Streaming VOZ (MediaRecorder -> WS)
-   - Streaming AVATAR/VIDEO (MediaRecorder -> WS)
-   - Reproducción remota via MediaSource (WebM)
-   - Budget lock (si el server avisa)
-*/
-
 (() => {
   "use strict";
 
-  // ========= CONFIG =========
   const API_BASE = "https://api.consia.world";
-  const WS_BASE = "wss://api.consia.world";
-  const WS_ROOM_PATH = "/ws/room"; // server: WS en `${WS_BASE}${WS_ROOM_PATH}/${room}`
-  const OWNER_REQUIRED_FOR_WS = true; // tu env: REQUIRE_OWNER_FOR_WS=1
 
-  // ========= HELPERS =========
   const $ = (sel) => document.querySelector(sel);
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-  const now = () => new Date().toISOString();
+  const logEl = $("#log");
+  const stateEl = $("#state");
+  const wsUrlEl = $("#wsurl");
+
+  const roomEl = $("#room");
+  const channelEl = $("#channel");
+  const userEl = $("#user");
+  const msgEl = $("#msg");
+
+  const btnConnect = $("#connect");
+  const btnDisconnect = $("#disconnect");
+  const btnJoin = $("#join");
+  const btnPing = $("#ping");
+  const btnSendText = $("#sendText");
+
+  let ws = null;
 
   function log(...args) {
-    const el = $("#log");
-    const line = `[${now()}] ${args.map(String).join(" ")}`;
-    if (el) el.textContent += line + "\n";
-    // eslint-disable-next-line no-console
+    const line = `[${new Date().toLocaleTimeString()}] ${args.map(String).join(" ")}`;
+    logEl.textContent += line + "\n";
+    logEl.scrollTop = logEl.scrollHeight;
     console.log(...args);
   }
 
-  function ensureEl(id, tag = "div", parent = document.body) {
-    let el = document.getElementById(id);
-    if (!el) {
-      el = document.createElement(tag);
-      el.id = id;
-      parent.appendChild(el);
-    }
-    return el;
+  function setState(on) {
+    stateEl.textContent = on ? "ON" : "OFF";
+    stateEl.className = "pill " + (on ? "ok" : "bad");
+    btnDisconnect.disabled = !on;
+    btnJoin.disabled = !on;
+    btnPing.disabled = !on;
+    btnSendText.disabled = !on;
+    btnConnect.disabled = on;
   }
 
-  function getOwnerToken() {
-    return localStorage.getItem("CONSIA_OWNER_TOKEN") || "";
-  }
-  function setOwnerToken(t) {
-    localStorage.setItem("CONSIA_OWNER_TOKEN", t || "");
-  }
-
-  function headersWithAuth(extra = {}) {
-    const h = new Headers(extra);
-    const tok = getOwnerToken();
-    if (tok) h.set("Authorization", "Bearer " + tok);
-    h.set("Content-Type", "application/json");
-    return h;
+  async function getRoomInfo(room, channel) {
+    const r = await fetch(`${API_BASE}/room/${encodeURIComponent(room)}?channel=${encodeURIComponent(channel)}`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j?.data?.error || "room_info_failed");
+    return j.data;
   }
 
-  function wsUrl(room, channel = "default") {
-    const u = new URL(`${WS_BASE}${WS_ROOM_PATH}/${encodeURIComponent(room)}`);
-    u.searchParams.set("channel", channel);
-    // opcional: device id
-    const dev = localStorage.getItem("CONSIA_DEVICE_ID") || "";
-    if (dev) u.searchParams.set("d", dev);
-    return u.toString();
+  function buildWsUrl(room, channel) {
+    const proto = location.protocol === "https:" ? "wss:" : "ws:";
+    // Siempre apuntamos al API, no al dominio web
+    return `${proto}//api.consia.world/ws/${encodeURIComponent(room)}?channel=${encodeURIComponent(channel)}`;
   }
 
-  function randomId(prefix = "dev") {
-    const s = Math.random().toString(16).slice(2);
-    return `${prefix}_${Date.now().toString(16)}_${s}`;
+  function wsSend(obj) {
+    if (!ws || ws.readyState !== 1) return;
+    ws.send(JSON.stringify(obj));
   }
 
-  function ensureDeviceId() {
-    let d = localStorage.getItem("CONSIA_DEVICE_ID");
-    if (!d) {
-      d = randomId("ios");
-      localStorage.setItem("CONSIA_DEVICE_ID", d);
-    }
-    return d;
-  }
+  async function connect() {
+    const room = roomEl.value.trim() || "test";
+    const channel = channelEl.value.trim() || "default";
 
-  function toArrayBuffer(blob) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onerror = () => reject(r.error);
-      r.onload = () => resolve(r.result);
-      r.readAsArrayBuffer(blob);
-    });
-  }
-
-  // ========= UI WIRING (si faltan elementos, los crea) =========
-  const root = ensureEl("consiaLiveRoot", "div", document.body);
-  root.style.maxWidth = "980px";
-
-  const roomInput = $("#room") || (() => {
-    const wrap = document.createElement("div");
-    wrap.className = "row";
-    wrap.innerHTML = `<label>Room</label> <input id="room" value="test" />`;
-    root.appendChild(wrap);
-    return wrap.querySelector("#room");
-  })();
-
-  const channelSelect = $("#channel") || (() => {
-    const wrap = document.createElement("div");
-    wrap.className = "row";
-    wrap.innerHTML = `
-      <label>Channel</label>
-      <select id="channel">
-        <option value="default">default</option>
-        <option value="avatar">avatar</option>
-        <option value="voice">voice</option>
-      </select>
-    `;
-    root.appendChild(wrap);
-    return wrap.querySelector("#channel");
-  })();
-
-  const connectBtn = $("#connect") || (() => {
-    const b = document.createElement("button");
-    b.id = "connect";
-    b.textContent = "Conectar";
-    root.appendChild(b);
-    return b;
-  })();
-
-  const setTokenBtn = $("#setToken") || (() => {
-    const b = document.createElement("button");
-    b.id = "setToken";
-    b.textContent = "Set OWNER_TOKEN";
-    b.style.marginLeft = "8px";
-    root.appendChild(b);
-    return b;
-  })();
-
-  const startCamBtn = $("#startCam") || (() => {
-    const b = document.createElement("button");
-    b.id = "startCam";
-    b.textContent = "Start Cam (Avatar)";
-    b.style.marginLeft = "8px";
-    root.appendChild(b);
-    return b;
-  })();
-
-  const startMicBtn = $("#startMic") || (() => {
-    const b = document.createElement("button");
-    b.id = "startMic";
-    b.textContent = "Start Mic (Voice)";
-    b.style.marginLeft = "8px";
-    root.appendChild(b);
-    return b;
-  })();
-
-  const stopBtn = $("#stop") || (() => {
-    const b = document.createElement("button");
-    b.id = "stop";
-    b.textContent = "Stop";
-    b.style.marginLeft = "8px";
-    root.appendChild(b);
-    return b;
-  })();
-
-  const vids = $("#videos") || (() => {
-    const wrap = document.createElement("div");
-    wrap.id = "videos";
-    wrap.style.display = "flex";
-    wrap.style.gap = "12px";
-    wrap.style.marginTop = "12px";
-    wrap.innerHTML = `
-      <div style="flex:1">
-        <div class="pill">Local</div>
-        <video id="localVideo" playsinline autoplay muted style="width:100%;border-radius:10px;border:1px solid #ddd"></video>
-      </div>
-      <div style="flex:1">
-        <div class="pill">Remote</div>
-        <video id="remoteVideo" playsinline autoplay style="width:100%;border-radius:10px;border:1px solid #ddd"></video>
-      </div>
-    `;
-    root.appendChild(wrap);
-    return wrap;
-  })();
-
-  const remoteAudio = $("#remoteAudio") || (() => {
-    const a = document.createElement("audio");
-    a.id = "remoteAudio";
-    a.controls = true;
-    a.autoplay = true;
-    a.style.width = "100%";
-    a.style.marginTop = "8px";
-    root.appendChild(a);
-    return a;
-  })();
-
-  const logEl = $("#log") || (() => {
-    const pre = document.createElement("pre");
-    pre.id = "log";
-    pre.style.whiteSpace = "pre-wrap";
-    pre.style.border = "1px solid #ddd";
-    pre.style.padding = "12px";
-    pre.style.borderRadius = "10px";
-    pre.style.minHeight = "220px";
-    pre.style.marginTop = "12px";
-    root.appendChild(pre);
-    return pre;
-  })();
-
-  // ========= STATE =========
-  ensureDeviceId();
-
-  let ws = null;
-  let wsRoom = "";
-  let wsChannel = "default";
-  let wsReady = false;
-
-  let budgetLocked = false;
-
-  // Media
-  let camStream = null;
-  let micStream = null;
-
-  let camRecorder = null;
-  let micRecorder = null;
-
-  // Remote playback via MediaSource (WebM)
-  let remoteVideoMS = null;
-  let remoteVideoSB = null;
-  let remoteVideoQueue = [];
-  let remoteAudioMS = null;
-  let remoteAudioSB = null;
-  let remoteAudioQueue = [];
-
-  // ========= MSE (MediaSource) =========
-  function setupRemoteVideoMSE(mime) {
-    const v = $("#remoteVideo");
-    if (!v) return;
-
-    remoteVideoQueue = [];
-    remoteVideoMS = new MediaSource();
-    v.src = URL.createObjectURL(remoteVideoMS);
-
-    remoteVideoMS.addEventListener("sourceopen", () => {
-      try {
-        remoteVideoSB = remoteVideoMS.addSourceBuffer(mime);
-        remoteVideoSB.mode = "segments";
-        remoteVideoSB.addEventListener("updateend", pumpRemoteVideoQueue);
-        pumpRemoteVideoQueue();
-        log("RemoteVideo MSE ready:", mime);
-      } catch (e) {
-        log("RemoteVideo MSE error:", e?.message || e);
-      }
-    });
-  }
-
-  function setupRemoteAudioMSE(mime) {
-    const a = $("#remoteAudio");
-    if (!a) return;
-
-    remoteAudioQueue = [];
-    remoteAudioMS = new MediaSource();
-    a.src = URL.createObjectURL(remoteAudioMS);
-
-    remoteAudioMS.addEventListener("sourceopen", () => {
-      try {
-        remoteAudioSB = remoteAudioMS.addSourceBuffer(mime);
-        remoteAudioSB.mode = "segments";
-        remoteAudioSB.addEventListener("updateend", pumpRemoteAudioQueue);
-        pumpRemoteAudioQueue();
-        log("RemoteAudio MSE ready:", mime);
-      } catch (e) {
-        log("RemoteAudio MSE error:", e?.message || e);
-      }
-    });
-  }
-
-  function pumpRemoteVideoQueue() {
-    if (!remoteVideoSB || remoteVideoSB.updating) return;
-    const chunk = remoteVideoQueue.shift();
-    if (!chunk) return;
+    // Info (para ver que responde)
     try {
-      remoteVideoSB.appendBuffer(chunk);
+      const info = await getRoomInfo(room, channel);
+      log("room info:", JSON.stringify(info));
     } catch (e) {
-      log("RemoteVideo append error:", e?.message || e);
-    }
-  }
-
-  function pumpRemoteAudioQueue() {
-    if (!remoteAudioSB || remoteAudioSB.updating) return;
-    const chunk = remoteAudioQueue.shift();
-    if (!chunk) return;
-    try {
-      remoteAudioSB.appendBuffer(chunk);
-    } catch (e) {
-      log("RemoteAudio append error:", e?.message || e);
-    }
-  }
-
-  // ========= WS PROTOCOL =========
-  // JSON frames:
-  // {type:"hello", room, channel, device, want:["video","audio"], mime:{video, audio}}
-  // {type:"budget_lock", locked:true, reason}
-  // {type:"info", ...}
-  // Binary frames are prefixed by a small JSON header + \n then raw bytes:
-  // header: {"type":"chunk","kind":"video|audio","mime":"...","ts":...}\n<bytes>
-
-  function packBinaryFrame(headerObj, arrayBuffer) {
-    const header = JSON.stringify(headerObj) + "\n";
-    const enc = new TextEncoder();
-    const h = enc.encode(header);
-    const b = new Uint8Array(arrayBuffer);
-    const out = new Uint8Array(h.length + b.length);
-    out.set(h, 0);
-    out.set(b, h.length);
-    return out.buffer;
-  }
-
-  function unpackBinaryFrame(arrayBuffer) {
-    const u8 = new Uint8Array(arrayBuffer);
-    let nl = -1;
-    for (let i = 0; i < u8.length; i++) {
-      if (u8[i] === 10) { // \n
-        nl = i;
-        break;
-      }
-    }
-    if (nl < 0) return { header: null, payload: arrayBuffer };
-    const dec = new TextDecoder();
-    const headerStr = dec.decode(u8.slice(0, nl));
-    let header = null;
-    try { header = JSON.parse(headerStr); } catch {}
-    const payload = u8.slice(nl + 1).buffer;
-    return { header, payload };
-  }
-
-  async function connectWS(room, channel) {
-    budgetLocked = false;
-
-    if (OWNER_REQUIRED_FOR_WS && !getOwnerToken()) {
-      log("OWNER_TOKEN missing (set it).");
-      return;
+      log("room info error:", e.message);
     }
 
-    if (ws) {
-      try { ws.close(1000, "reconnect"); } catch {}
-      ws = null;
-    }
-
-    wsRoom = room;
-    wsChannel = channel;
-
-    const url = wsUrl(room, channel);
-    log("WS connecting:", url);
+    const url = buildWsUrl(room, channel);
+    wsUrlEl.textContent = url;
 
     ws = new WebSocket(url);
     ws.binaryType = "arraybuffer";
 
     ws.onopen = () => {
-      wsReady = true;
-      log("WS open.");
-
-      // hello
-      const hello = {
-        type: "hello",
-        room,
-        channel,
-        device: ensureDeviceId(),
-        want: ["video", "audio", "data"],
-        mime: {
-          video: pickVideoMime(),
-          audio: pickAudioMime(),
-        },
-        auth: getOwnerToken() ? "bearer" : "none",
-      };
-      ws.send(JSON.stringify(hello));
+      log("WS open");
+      setState(true);
     };
 
     ws.onmessage = (ev) => {
       if (typeof ev.data === "string") {
-        let msg = null;
-        try { msg = JSON.parse(ev.data); } catch {}
-        if (!msg) {
-          log("WS text:", ev.data.slice(0, 200));
-          return;
-        }
-
-        if (msg.type === "budget_lock") {
-          budgetLocked = !!msg.locked;
-          log("BUDGET LOCK:", budgetLocked, msg.reason || "");
-          if (budgetLocked) stopAll();
-          return;
-        }
-
-        if (msg.type === "info" || msg.type === "hello_ack" || msg.type === "join" || msg.type === "leave") {
-          log("WS:", JSON.stringify(msg));
-          return;
-        }
-
-        log("WS msg:", JSON.stringify(msg));
-        return;
-      }
-
-      // binary
-      const { header, payload } = unpackBinaryFrame(ev.data);
-      if (!header || header.type !== "chunk") {
-        log("WS bin:", payload?.byteLength || 0);
-        return;
-      }
-
-      if (header.kind === "video") {
-        if (!remoteVideoMS) setupRemoteVideoMSE(header.mime || pickVideoMime());
-        remoteVideoQueue.push(payload);
-        pumpRemoteVideoQueue();
-        return;
-      }
-
-      if (header.kind === "audio") {
-        if (!remoteAudioMS) setupRemoteAudioMSE(header.mime || pickAudioMime());
-        remoteAudioQueue.push(payload);
-        pumpRemoteAudioQueue();
-        return;
+        log("WS msg:", ev.data);
+      } else {
+        log("WS bin:", `bytes=${ev.data.byteLength}`);
       }
     };
 
-    ws.onclose = (ev) => {
-      wsReady = false;
-      log("WS close:", ev.code, ev.reason || "");
+    ws.onclose = () => {
+      log("WS closed");
+      setState(false);
+      ws = null;
     };
 
     ws.onerror = () => {
-      log("WS error.");
+      log("WS error");
     };
   }
 
-  // ========= MIME PICKERS =========
-  function pickVideoMime() {
-    const candidates = [
-      'video/webm;codecs="vp8,opus"',
-      'video/webm;codecs="vp9,opus"',
-      "video/webm",
-    ];
-    for (const c of candidates) {
-      if (window.MediaRecorder && MediaRecorder.isTypeSupported(c)) return c;
-    }
-    return "video/webm";
+  function disconnect() {
+    if (ws) ws.close(1000, "bye");
   }
 
-  function pickAudioMime() {
-    const candidates = [
-      'audio/webm;codecs="opus"',
-      "audio/webm",
-    ];
-    for (const c of candidates) {
-      if (window.MediaRecorder && MediaRecorder.isTypeSupported(c)) return c;
-    }
-    return "audio/webm";
-  }
+  btnConnect.onclick = () => connect();
+  btnDisconnect.onclick = () => disconnect();
 
-  // ========= STREAM START/STOP =========
-  async function startCam() {
-    if (budgetLocked) return log("Blocked: budget_lock");
-    if (!wsReady) return log("Connect WS first.");
-
-    if (camStream) return log("Cam already active.");
-
-    const constraints = {
-      video: {
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        frameRate: { ideal: 24, max: 30 },
-        facingMode: "user",
-      },
-      audio: false,
-    };
-
-    camStream = await navigator.mediaDevices.getUserMedia(constraints);
-    const lv = $("#localVideo");
-    if (lv) lv.srcObject = camStream;
-
-    const mime = pickVideoMime();
-    camRecorder = new MediaRecorder(camStream, {
-      mimeType: mime,
-      videoBitsPerSecond: 1_200_000, // 1.2 Mbps
-    });
-
-    camRecorder.ondataavailable = async (e) => {
-      try {
-        if (!e.data || e.data.size === 0) return;
-        if (!wsReady || budgetLocked) return;
-
-        const ab = await toArrayBuffer(e.data);
-        const frame = packBinaryFrame(
-          { type: "chunk", kind: "video", mime, ts: Date.now(), room: wsRoom, channel: wsChannel },
-          ab
-        );
-        ws.send(frame);
-      } catch (err) {
-        log("Cam send error:", err?.message || err);
-      }
-    };
-
-    camRecorder.onerror = (e) => log("Cam recorder error:", e?.message || e);
-
-    camRecorder.start(250); // chunks 250ms
-    log("Cam streaming started:", mime);
-  }
-
-  async function startMic() {
-    if (budgetLocked) return log("Blocked: budget_lock");
-    if (!wsReady) return log("Connect WS first.");
-
-    if (micStream) return log("Mic already active.");
-
-    const constraints = {
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true,
-      },
-      video: false,
-    };
-
-    micStream = await navigator.mediaDevices.getUserMedia(constraints);
-
-    const mime = pickAudioMime();
-    micRecorder = new MediaRecorder(micStream, {
-      mimeType: mime,
-      audioBitsPerSecond: 48_000,
-    });
-
-    micRecorder.ondataavailable = async (e) => {
-      try {
-        if (!e.data || e.data.size === 0) return;
-        if (!wsReady || budgetLocked) return;
-
-        const ab = await toArrayBuffer(e.data);
-        const frame = packBinaryFrame(
-          { type: "chunk", kind: "audio", mime, ts: Date.now(), room: wsRoom, channel: wsChannel },
-          ab
-        );
-        ws.send(frame);
-      } catch (err) {
-        log("Mic send error:", err?.message || err);
-      }
-    };
-
-    micRecorder.onerror = (e) => log("Mic recorder error:", e?.message || e);
-
-    micRecorder.start(250);
-    log("Mic streaming started:", mime);
-  }
-
-  function stopAll() {
-    try {
-      if (camRecorder && camRecorder.state !== "inactive") camRecorder.stop();
-    } catch {}
-    try {
-      if (micRecorder && micRecorder.state !== "inactive") micRecorder.stop();
-    } catch {}
-
-    camRecorder = null;
-    micRecorder = null;
-
-    if (camStream) {
-      camStream.getTracks().forEach((t) => t.stop());
-      camStream = null;
-    }
-    if (micStream) {
-      micStream.getTracks().forEach((t) => t.stop());
-      micStream = null;
-    }
-
-    const lv = $("#localVideo");
-    if (lv) lv.srcObject = null;
-
-    log("Stopped all local streams.");
-
-    // keep WS open by default
-  }
-
-  // ========= PING / HEALTH =========
-  async function pingMeet() {
-    try {
-      const res = await fetch(`${API_BASE}/meet/ping`, { method: "GET" });
-      const txt = await res.text();
-      log("PING /meet/ping:", res.status, txt.slice(0, 120));
-    } catch (e) {
-      log("PING error:", e?.message || e);
-    }
-  }
-
-  // ========= BUTTONS =========
-  setTokenBtn.onclick = () => {
-    const cur = getOwnerToken();
-    const t = prompt("Paste OWNER_TOKEN", cur || "");
-    if (t !== null) {
-      setOwnerToken(t.trim());
-      log("OWNER_TOKEN set:", getOwnerToken() ? "YES" : "NO");
-    }
+  btnJoin.onclick = () => {
+    const room = roomEl.value.trim() || "test";
+    const channel = channelEl.value.trim() || "default";
+    const user = userEl.value.trim() || "anon";
+    wsSend({ type: "join", room, channel, user });
   };
 
-  connectBtn.onclick = async () => {
-    const room = (roomInput.value || "test").trim();
-    const channel = (channelSelect.value || "default").trim();
+  btnPing.onclick = () => wsSend({ type: "ping" });
 
-    // hard rule: siempre conectar a la API (no consia.world)
-    await connectWS(room, channel);
-    await sleep(200);
-    await pingMeet();
+  btnSendText.onclick = () => {
+    const text = msgEl.value.trim() || "hola";
+    wsSend({ type: "chat", text });
+    msgEl.value = "";
   };
 
-  startCamBtn.onclick = () => startCam().catch((e) => log("startCam error:", e?.message || e));
-  startMicBtn.onclick = () => startMic().catch((e) => log("startMic error:", e?.message || e));
-  stopBtn.onclick = () => stopAll();
-
-  // ========= AUTO INIT =========
-  (async () => {
-    log("CONSIA LIVE ready.");
-    log("API_BASE:", API_BASE);
-    log("WS_BASE:", WS_BASE);
-    log("Device:", ensureDeviceId());
-    await pingMeet();
-  })();
+  setState(false);
 })();
