@@ -3,49 +3,70 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CONSIA LIVE — Demo</title>
+  <title>CONSIA LIVE</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:16px}
-    input,button,select{font-size:16px;padding:10px;margin:6px 6px 6px 0}
-    .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
-    #log{white-space:pre-wrap;border:1px solid #ddd;padding:12px;border-radius:10px;min-height:240px}
-    .pill{display:inline-block;padding:6px 10px;border:1px solid #ddd;border-radius:999px}
-    .ok{border-color:#2ecc71}
-    .bad{border-color:#e74c3c}
-    small{opacity:.7}
+    :root{color-scheme:dark}
+    body{margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    .wrap{max-width:980px;margin:0 auto;padding:22px}
+    .brand{letter-spacing:.35em;font-weight:700;text-align:center;margin:26px 0 18px;font-size:34px}
+    .sub{opacity:.75;text-align:center;margin:-8px 0 20px}
+    .card{border:1px solid #222;border-radius:16px;padding:16px;background:rgba(255,255,255,.03)}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    input,select,button{font-size:16px;padding:12px 12px;border-radius:12px;border:1px solid #2a2a2a;background:#0b0b0b;color:#fff}
+    input{min-width:180px}
+    button{cursor:pointer}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid #2a2a2a;background:#0b0b0b}
+    .dot{width:10px;height:10px;border-radius:999px;background:#444}
+    .dot.on{background:#26ff7a}
+    .dot.off{background:#ff2d2d}
+    #log{margin-top:14px;white-space:pre-wrap;word-break:break-word;border:1px solid #222;border-radius:16px;padding:14px;background:rgba(255,255,255,.02);min-height:240px}
+    .hint{opacity:.75;font-size:13px;margin-top:10px;line-height:1.35}
+    .hr{height:1px;background:#1b1b1b;margin:14px 0}
   </style>
 </head>
 <body>
-  <h2>CONSIA LIVE — Demo</h2>
+  <div class="wrap">
+    <div class="brand">CONSIA LIVE</div>
+    <div class="sub">Realtime Rooms · WebSocket · Durable Objects</div>
 
-  <div class="row">
-    <label>Room</label>
-    <input id="room" value="test" />
-    <label>Channel</label>
-    <select id="channel">
-      <option value="default">default</option>
-      <option value="avatar">avatar</option>
-      <option value="voice">voice</option>
-    </select>
-    <label>User</label>
-    <input id="user" value="martin" />
+    <div class="card">
+      <div class="row">
+        <label>Room</label>
+        <input id="room" value="test" />
+
+        <label>Channel</label>
+        <select id="channel">
+          <option value="default">default</option>
+          <option value="avatar">avatar</option>
+          <option value="voice">voice</option>
+        </select>
+
+        <label>Owner Token (opcional)</label>
+        <input id="token" placeholder="OWNER_TOKEN si REQUIRE=1" />
+
+        <span class="pill"><span id="dot" class="dot off"></span><span id="state">OFF</span></span>
+
+        <button id="connect">Conectar</button>
+        <button id="disconnect" disabled>Desconectar</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <input id="msg" placeholder="Mensaje para broadcast..." style="flex:1;min-width:240px" />
+        <button id="send" disabled>Enviar</button>
+        <button id="clear">Limpiar</button>
+      </div>
+
+      <div id="log"></div>
+
+      <div class="hint">
+        Endpoint WS: <b>wss://api.consia.world/ws/&lt;room&gt;</b> (channel por query: <b>?ch=</b>)<br/>
+        Si tu Worker exige token, completá <b>Owner Token</b>.
+      </div>
+    </div>
   </div>
-
-  <div class="row">
-    <button id="connect">Conectar</button>
-    <button id="disconnect" disabled>Desconectar</button>
-    <span class="pill bad" id="state">OFF</span>
-    <small id="wsurl"></small>
-  </div>
-
-  <div class="row">
-    <button id="join" disabled>Join</button>
-    <button id="ping" disabled>Ping</button>
-    <button id="sendText" disabled>Enviar Msg</button>
-    <input id="msg" placeholder="Hola room..." style="min-width:260px" />
-  </div>
-
-  <div id="log"></div>
 
   <script src="live.js"></script>
 </body>
