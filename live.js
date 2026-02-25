@@ -1,143 +1,108 @@
 (() => {
   "use strict";
 
+  const $ = (id) => document.getElementById(id);
+
   const API_BASE = "https://api.consia.world";
-  const WS_BASE  = "wss://api.consia.world";
-
-  const $ = (q) => document.querySelector(q);
-
-  const elRoom = $("#room");
-  const elCh = $("#channel");
-  const elToken = $("#token");
-  const elState = $("#state");
-  const elDot = $("#dot");
-  const elLog = $("#log");
-  const elMsg = $("#msg");
-  const btnConnect = $("#connect");
-  const btnDisconnect = $("#disconnect");
-  const btnSend = $("#send");
-  const btnClear = $("#clear");
+  const WS_BASE = "wss://api.consia.world";
 
   let ws = null;
 
-  const now = () => new Date().toLocaleTimeString();
-
-  function log(line, obj) {
-    const text = obj ? `${line} ${JSON.stringify(obj)}` : line;
-    elLog.textContent += `[${now()}] ${text}\n`;
-    elLog.scrollTop = elLog.scrollHeight;
+  function log(...args) {
+    const el = $("log");
+    const line = `[${new Date().toISOString()}] ${args.map(String).join(" ")}`;
+    el.textContent += line + "\n";
+    el.scrollTop = el.scrollHeight;
+    // eslint-disable-next-line no-console
+    console.log(...args);
   }
 
-  function setOn(on) {
-    elState.textContent = on ? "ON" : "OFF";
-    elDot.classList.remove("on", "off");
-    elDot.classList.add(on ? "on" : "off");
-    btnConnect.disabled = on;
-    btnDisconnect.disabled = !on;
-    btnSend.disabled = !on;
+  function setState(on) {
+    $("state").textContent = on ? "ON" : "OFF";
+    $("connect").disabled = on;
+    $("disconnect").disabled = !on;
+    $("send").disabled = !on;
   }
 
-  function buildWsUrl(room, ch, token) {
-    const u = new URL(`${WS_BASE}/ws/${encodeURIComponent(room)}`);
-    if (ch) u.searchParams.set("ch", ch);
-    if (token) u.searchParams.set("token", token);
-    return u.toString();
+  function buildWsUrl() {
+    const room = ($("room").value || "test").trim();
+    // opcional: canal como query (no rompe nada si el backend lo ignora)
+    const channel = $("channel").value || "default";
+    const url = `${WS_BASE}/ws/${encodeURIComponent(room)}?channel=${encodeURIComponent(channel)}`;
+    $("wsurl").textContent = url;
+    return url;
   }
 
   async function ping() {
     try {
-      const r = await fetch(`${API_BASE}/ping`, { method: "GET" });
+      const r = await fetch(`${API_BASE}/ping`, { cache: "no-store" });
       const t = await r.text();
-      log("PING:", { ok: r.ok, status: r.status, text: t.slice(0, 80) });
+      log("PING:", r.status, t.slice(0, 80));
     } catch (e) {
-      log("PING ERROR:", { message: String(e) });
+      log("PING ERROR:", e?.message || e);
     }
   }
 
   function connect() {
-    const room = (elRoom.value || "test").trim();
-    const ch = (elCh.value || "default").trim();
-    const token = (elToken.value || "").trim();
+    if (ws) return;
 
-    // persist token locally (only on your device)
-    if (token) localStorage.setItem("CONSIA_OWNER_TOKEN", token);
+    const url = buildWsUrl();
+    const owner = ($("owner").value || "").trim();
 
-    const wsUrl = buildWsUrl(room, ch, token);
-    log("CONNECT → " + wsUrl);
+    // Si REQUIRE_OWNER_FOR_WS=1, mandamos header por subprotocol (simple) o query
+    // En navegador no podés setear headers arbitrarios en WebSocket.
+    // Entonces lo mandamos en query si está puesto.
+    const finalUrl = owner ? `${url}&owner=${encodeURIComponent(owner)}` : url;
 
-    ws = new WebSocket(wsUrl);
+    log("Conectando a:", finalUrl);
+
+    ws = new WebSocket(finalUrl);
 
     ws.onopen = () => {
-      setOn(true);
-      log("WS OPEN");
-      // send hello
-      ws.send(JSON.stringify({ type: "hello", room, ch, ts: Date.now() }));
+      log("WS OPEN ✅");
+      setState(true);
     };
 
     ws.onmessage = (ev) => {
-      const data = ev.data;
-      try {
-        const j = JSON.parse(data);
-        log("WS IN:", j);
-      } catch {
-        log("WS IN:", { text: String(data) });
-      }
+      log("WS MSG:", ev.data);
     };
 
     ws.onerror = () => {
-      log("WS ERROR");
+      log("WS ERROR ❌");
     };
 
     ws.onclose = (ev) => {
-      log("WS CLOSE:", { code: ev.code, reason: ev.reason || "" });
+      log("WS CLOSE:", ev.code, ev.reason || "");
       ws = null;
-      setOn(false);
+      setState(false);
     };
   }
 
   function disconnect() {
-    if (ws) {
-      log("DISCONNECT");
-      ws.close(1000, "client_close");
-    }
+    if (!ws) return;
+    ws.close(1000, "client_close");
   }
 
   function send() {
     if (!ws || ws.readyState !== 1) return;
-
-    const text = (elMsg.value || "").trim();
-    if (!text) return;
-
-    const payload = {
-      type: "msg",
-      ch: (elCh.value || "default").trim(),
-      text,
-      ts: Date.now(),
-    };
-
-    ws.send(JSON.stringify(payload));
-    log("WS OUT:", payload);
-    elMsg.value = "";
-    elMsg.focus();
+    const msg = ($("msg").value || "").trim();
+    if (!msg) return;
+    ws.send(JSON.stringify({ type: "msg", text: msg, ts: Date.now() }));
+    $("msg").value = "";
   }
 
   function clear() {
-    elLog.textContent = "";
+    $("log").textContent = "";
   }
 
-  // boot
-  setOn(false);
-  elToken.value = localStorage.getItem("CONSIA_OWNER_TOKEN") || "";
+  $("connect").onclick = () => connect();
+  $("disconnect").onclick = () => disconnect();
+  $("send").onclick = () => send();
+  $("clear").onclick = () => clear();
 
-  btnConnect.onclick = () => connect();
-  btnDisconnect.onclick = () => disconnect();
-  btnSend.onclick = () => send();
-  btnClear.onclick = () => clear();
+  $("room").addEventListener("input", buildWsUrl);
+  $("channel").addEventListener("change", buildWsUrl);
 
-  elMsg.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") send();
-  });
-
-  // optional ping on load
+  buildWsUrl();
   ping();
 })();
