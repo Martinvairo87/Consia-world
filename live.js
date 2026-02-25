@@ -2,122 +2,142 @@
   "use strict";
 
   const API_BASE = "https://api.consia.world";
+  const WS_BASE  = "wss://api.consia.world";
 
-  const $ = (sel) => document.querySelector(sel);
-  const logEl = $("#log");
-  const stateEl = $("#state");
-  const wsUrlEl = $("#wsurl");
+  const $ = (q) => document.querySelector(q);
 
-  const roomEl = $("#room");
-  const channelEl = $("#channel");
-  const userEl = $("#user");
-  const msgEl = $("#msg");
-
+  const elRoom = $("#room");
+  const elCh = $("#channel");
+  const elToken = $("#token");
+  const elState = $("#state");
+  const elDot = $("#dot");
+  const elLog = $("#log");
+  const elMsg = $("#msg");
   const btnConnect = $("#connect");
   const btnDisconnect = $("#disconnect");
-  const btnJoin = $("#join");
-  const btnPing = $("#ping");
-  const btnSendText = $("#sendText");
+  const btnSend = $("#send");
+  const btnClear = $("#clear");
 
   let ws = null;
 
-  function log(...args) {
-    const line = `[${new Date().toLocaleTimeString()}] ${args.map(String).join(" ")}`;
-    logEl.textContent += line + "\n";
-    logEl.scrollTop = logEl.scrollHeight;
-    // eslint-disable-next-line no-console
-    console.log(...args);
+  const now = () => new Date().toLocaleTimeString();
+
+  function log(line, obj) {
+    const text = obj ? `${line} ${JSON.stringify(obj)}` : line;
+    elLog.textContent += `[${now()}] ${text}\n`;
+    elLog.scrollTop = elLog.scrollHeight;
   }
 
-  function setState(on) {
-    stateEl.textContent = on ? "ON" : "OFF";
-    stateEl.className = "pill " + (on ? "ok" : "bad");
-    btnDisconnect.disabled = !on;
-    btnJoin.disabled = !on;
-    btnPing.disabled = !on;
-    btnSendText.disabled = !on;
+  function setOn(on) {
+    elState.textContent = on ? "ON" : "OFF";
+    elDot.classList.remove("on", "off");
+    elDot.classList.add(on ? "on" : "off");
     btnConnect.disabled = on;
+    btnDisconnect.disabled = !on;
+    btnSend.disabled = !on;
   }
 
-  async function getRoomInfo(room, channel) {
-    const r = await fetch(`${API_BASE}/room/${encodeURIComponent(room)}?channel=${encodeURIComponent(channel)}`);
-    const j = await r.json();
-    if (!r.ok) throw new Error(j?.data?.error || "room_info_failed");
-    return j.data;
+  function buildWsUrl(room, ch, token) {
+    const u = new URL(`${WS_BASE}/ws/${encodeURIComponent(room)}`);
+    if (ch) u.searchParams.set("ch", ch);
+    if (token) u.searchParams.set("token", token);
+    return u.toString();
   }
 
-  function buildWsUrl(room, channel) {
-    // Siempre conectar al API (donde está el Worker con DO bindings)
-    return `wss://api.consia.world/ws/${encodeURIComponent(room)}?channel=${encodeURIComponent(channel)}`;
-  }
-
-  function wsSend(obj) {
-    if (!ws || ws.readyState !== 1) return;
-    ws.send(JSON.stringify(obj));
-  }
-
-  async function connect() {
-    const room = roomEl.value.trim() || "test";
-    const channel = channelEl.value.trim() || "default";
-
+  async function ping() {
     try {
-      const info = await getRoomInfo(room, channel);
-      log("room info:", JSON.stringify(info));
+      const r = await fetch(`${API_BASE}/ping`, { method: "GET" });
+      const t = await r.text();
+      log("PING:", { ok: r.ok, status: r.status, text: t.slice(0, 80) });
     } catch (e) {
-      log("room info error:", e.message);
+      log("PING ERROR:", { message: String(e) });
     }
+  }
 
-    const url = buildWsUrl(room, channel);
-    wsUrlEl.textContent = url;
+  function connect() {
+    const room = (elRoom.value || "test").trim();
+    const ch = (elCh.value || "default").trim();
+    const token = (elToken.value || "").trim();
 
-    ws = new WebSocket(url);
-    ws.binaryType = "arraybuffer";
+    // persist token locally (only on your device)
+    if (token) localStorage.setItem("CONSIA_OWNER_TOKEN", token);
+
+    const wsUrl = buildWsUrl(room, ch, token);
+    log("CONNECT → " + wsUrl);
+
+    ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      log("WS open");
-      setState(true);
+      setOn(true);
+      log("WS OPEN");
+      // send hello
+      ws.send(JSON.stringify({ type: "hello", room, ch, ts: Date.now() }));
     };
 
     ws.onmessage = (ev) => {
-      if (typeof ev.data === "string") {
-        log("WS msg:", ev.data);
-      } else {
-        log("WS bin:", `bytes=${ev.data.byteLength}`);
+      const data = ev.data;
+      try {
+        const j = JSON.parse(data);
+        log("WS IN:", j);
+      } catch {
+        log("WS IN:", { text: String(data) });
       }
     };
 
-    ws.onclose = () => {
-      log("WS closed");
-      setState(false);
-      ws = null;
+    ws.onerror = () => {
+      log("WS ERROR");
     };
 
-    ws.onerror = () => {
-      log("WS error");
+    ws.onclose = (ev) => {
+      log("WS CLOSE:", { code: ev.code, reason: ev.reason || "" });
+      ws = null;
+      setOn(false);
     };
   }
 
   function disconnect() {
-    if (ws) ws.close(1000, "bye");
+    if (ws) {
+      log("DISCONNECT");
+      ws.close(1000, "client_close");
+    }
   }
+
+  function send() {
+    if (!ws || ws.readyState !== 1) return;
+
+    const text = (elMsg.value || "").trim();
+    if (!text) return;
+
+    const payload = {
+      type: "msg",
+      ch: (elCh.value || "default").trim(),
+      text,
+      ts: Date.now(),
+    };
+
+    ws.send(JSON.stringify(payload));
+    log("WS OUT:", payload);
+    elMsg.value = "";
+    elMsg.focus();
+  }
+
+  function clear() {
+    elLog.textContent = "";
+  }
+
+  // boot
+  setOn(false);
+  elToken.value = localStorage.getItem("CONSIA_OWNER_TOKEN") || "";
 
   btnConnect.onclick = () => connect();
   btnDisconnect.onclick = () => disconnect();
+  btnSend.onclick = () => send();
+  btnClear.onclick = () => clear();
 
-  btnJoin.onclick = () => {
-    const room = roomEl.value.trim() || "test";
-    const channel = channelEl.value.trim() || "default";
-    const user = userEl.value.trim() || "anon";
-    wsSend({ type: "join", room, channel, user });
-  };
+  elMsg.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") send();
+  });
 
-  btnPing.onclick = () => wsSend({ type: "ping" });
-
-  btnSendText.onclick = () => {
-    const text = msgEl.value.trim() || "hola";
-    wsSend({ type: "chat", text });
-    msgEl.value = "";
-  };
-
-  setState(false);
+  // optional ping on load
+  ping();
 })();
