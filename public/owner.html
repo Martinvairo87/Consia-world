@@ -1,96 +1,54 @@
 <!doctype html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <meta name="theme-color" content="#000000"/>
-  <title>CONSIA Owner</title>
-  <style>
-    :root { color-scheme: dark; }
-    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
-    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;}
-    .card{width:min(980px,98vw);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;background:rgba(255,255,255,.04);}
-    .title{letter-spacing:.18em;text-transform:uppercase;font-weight:800}
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button,input{background:rgba(0,0,0,.4);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px 12px;font-size:15px}
-    button{cursor:pointer;font-weight:800}
-    button:hover{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.06)}
-    .log{white-space:pre-wrap;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;min-height:220px}
-    .pill{font-size:12px;opacity:.85;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 10px}
-    .ok{color:#9cff9c}.bad{color:#ff9c9c}
-  </style>
+<meta charset="utf-8"/>
+<title>OWNER LOCK</title>
+<style>
+body{
+ background:#000;
+ color:#fff;
+ font-family:Arial;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ height:100vh;
+}
+button{
+ padding:14px 20px;
+ border-radius:30px;
+ border:none;
+ background:#fff;
+}
+</style>
 </head>
+
 <body>
-<div class="wrap">
-  <div class="card">
-    <div class="row" style="justify-content:space-between;align-items:center;margin-top:0">
-      <div class="title">Owner Dashboard</div>
-      <a class="pill" href="/" style="text-decoration:none;color:#fff">← Home</a>
-    </div>
 
-    <div class="row">
-      <input id="token" placeholder="Pegá tu OWNER token (se guarda local en este navegador)" style="flex:1;min-width:280px"/>
-      <button id="save">Guardar</button>
-      <button id="clear">Borrar</button>
-    </div>
-
-    <div class="row">
-      <button id="ping">Owner Ping</button>
-      <button id="health">API Health</button>
-      <button id="r2">R2 Ping</button>
-    </div>
-
-    <div class="row">
-      <div class="pill">Salida</div>
-    </div>
-    <div id="out" class="log"></div>
-  </div>
-</div>
+<button onclick="lock()">UNLOCK OWNER</button>
 
 <script>
-  const API = "https://api.consia.world";
-  const tokenEl = document.getElementById("token");
-  const out = document.getElementById("out");
+async function lock(){
 
-  const saved = localStorage.getItem("CONSIA_OWNER_TOKEN") || "";
-  tokenEl.value = saved;
+ if(!window.PublicKeyCredential){
+  alert("Biometría no soportada");
+  return;
+ }
 
-  document.getElementById("save").onclick = () => {
-    localStorage.setItem("CONSIA_OWNER_TOKEN", tokenEl.value.trim());
-    out.textContent = "Token guardado (localStorage).";
-  };
-  document.getElementById("clear").onclick = () => {
-    localStorage.removeItem("CONSIA_OWNER_TOKEN");
-    tokenEl.value = "";
-    out.textContent = "Token borrado.";
-  };
+ try{
+  await navigator.credentials.get({
+   publicKey:{
+    challenge:new Uint8Array([1,2,3,4]),
+    allowCredentials:[]
+   }
+  });
 
-  async function call(path, owner=false){
-    out.textContent = "Llamando… " + path;
-    const headers = {};
-    if(owner){
-      const t = (localStorage.getItem("CONSIA_OWNER_TOKEN")||"").trim();
-      if(!t){ out.textContent="Falta OWNER token."; return; }
-      headers["x-owner-token"] = t;
-    }
-    const r = await fetch(API + path, { method:"POST", headers });
-    const j = await r.json().catch(()=>({ ok:false, error:"bad_json" }));
-    out.textContent = JSON.stringify({ status:r.status, body:j }, null, 2);
-  }
+  alert("OWNER ACCESS GRANTED");
 
-  document.getElementById("ping").onclick = ()=> call("/owner/ping", true);
-  document.getElementById("health").onclick = async ()=>{
-    out.textContent="Llamando… /health";
-    const r = await fetch(API+"/health");
-    const j = await r.json().catch(()=>({ok:false}));
-    out.textContent = JSON.stringify({ status:r.status, body:j }, null, 2);
-  };
-  document.getElementById("r2").onclick = async ()=>{
-    out.textContent="Llamando… /r2";
-    const r = await fetch(API+"/r2");
-    const j = await r.json().catch(()=>({ok:false}));
-    out.textContent = JSON.stringify({ status:r.status, body:j }, null, 2);
-  };
+ }catch(e){
+  alert("DENIED");
+ }
+}
 </script>
+
 </body>
 </html>
