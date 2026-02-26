@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <meta name="theme-color" content="#000000"/>
+  <title>CONSIA Marketplace</title>
+  <style>
+    :root { color-scheme: dark; }
+    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+    .wrap{min-height:100%;padding:18px;box-sizing:border-box;}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .title{letter-spacing:.18em;text-transform:uppercase;font-weight:900}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+    .card{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;background:rgba(255,255,255,.04)}
+    .name{font-weight:900}
+    .tag{display:inline-block;font-size:12px;opacity:.85;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;margin-top:8px}
+    button{background:rgba(0,0,0,.4);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px 12px;font-weight:800;cursor:pointer;margin-top:10px;width:100%}
+    button:hover{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.06)}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="title">Marketplace</div>
+    <a href="/" style="text-decoration:none;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 12px;">← Home</a>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+  // Catálogo MVP (dropshipping-ready). Después lo conectamos al API /market (cuando lo agreguemos).
+  const products = [
+    { id:"m-smart-hub", name:"M Smart Hub (Zigbee)", price:"USD 79.99", tag:"Best Seller", desc:"Hub Zigbee + WiFi, compatible Tuya/Zigbee, modo B2B." },
+    { id:"m-lock-pro", name:"M Lock Pro (Biométrica)", price:"USD 129.99", tag:"Premium", desc:"Cerradura biométrica con app, códigos y registro." },
+    { id:"m-cam-4k", name:"M Cam 4K Secure", price:"USD 59.99", tag:"Top Value", desc:"Cámara 4K, detección, alertas, hogar/edificios." },
+    { id:"m-switch", name:"M Switch Touch", price:"USD 24.99", tag:"Volume", desc:"Interruptor táctil smart, escenas, automatización." },
+    { id:"m-curtain", name:"M Curtain Motor", price:"USD 89.99", tag:"WOW", desc:"Motor cortina + escenas + horarios." },
+    { id:"m-sensor-kit", name:"M Sensor Kit", price:"USD 39.99", tag:"Bundle", desc:"Movimiento + puerta + temp/humedad." },
+  ];
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = products.map(p => `
+    <div class="card">
+      <div class="name">${p.name}</div>
+      <div style="opacity:.78;margin-top:6px">${p.desc}</div>
+      <div style="margin-top:10px;font-weight:900">${p.price}</div>
+      <div class="tag">${p.tag}</div>
+      <button onclick="alert('Checkout se conecta en el paso Monetización/Planes. Producto: ${p.id}')">Comprar</button>
+    </div>
+  `).join("");
+</script>
+</body>
+</html>
