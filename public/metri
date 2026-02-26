@@ -1,0 +1,16 @@
+s-001"}
+async function loadMetrics(){
+
+const data = {
+users: Math.floor(Math.random()*1000),
+revenue: Math.floor(Math.random()*50000),
+requests: Math.floor(Math.random()*90000)
+};
+
+document.getElementById("users").innerText=data.users;
+document.getElementById("revenue").innerText="$"+data.revenue;
+document.getElementById("requests").innerText=data.requests;
+
+}
+
+setInterval(loadMetrics
