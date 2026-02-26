@@ -1,0 +1,22 @@
+-001"}
+async function ownerAuth(){
+
+if(!window.PublicKeyCredential){
+alert("Biometric not supported");
+return;
+}
+
+try{
+
+await navigator.credentials.get({
+publicKey:{
+challenge:new Uint8Array(32),
+timeout:60000,
+userVerification:"required"
+}
+});
+
+alert("OWNER AUTH SUCCESS");
+
+}catch(e){
+alert("AUTH FAILED")
