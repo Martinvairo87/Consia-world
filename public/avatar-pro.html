@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CONSIA Avatar PRO</title>
+  <style>
+    html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    #hud{
+      position:fixed;top:12px;left:12px;right:12px;
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;z-index:10
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      backdrop-filter: blur(14px);
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:12px;
+      display:inline-flex;gap:10px;align-items:center;
+    }
+    button{
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,255,213,.10);
+      color:#fff;
+      border-radius:999px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:700;
+    }
+    button:hover{background:rgba(0,255,213,.16)}
+    #stage{position:absolute;inset:0}
+    #cam{
+      position:fixed;right:12px;bottom:12px;
+      width:160px;aspect-ratio:9/16;border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 20px 80px rgba(0,0,0,.55);
+      object-fit:cover;
+      opacity:.85;
+      z-index:10;
+    }
+    #log{
+      position:fixed;left:12px;bottom:12px;
+      max-width:min(640px,calc(100vw - 24px));
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.55);
+      backdrop-filter: blur(14px);
+      border-radius:16px;
+      padding:10px 12px;
+      font-size:12px;
+      white-space:pre-wrap;
+      z-index:10;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:#00ffd5;box-shadow:0 0 20px rgba(0,255,213,.5)}
+    .warn{background:#ffcf5a;box-shadow:0 0 20px rgba(255,207,90,.35)}
+  </style>
+</head>
+<body>
+
+<div id="hud">
+  <div class="pill"><span class="dot" id="wsDot"></span> WS: <span id="wsState">off</span></div>
+  <div class="pill">Face: <b id="faceState">off</b></div>
+  <div class="pill">Emotion: <b id="emoState">neutral</b></div>
+  <div class="pill">Wake: <b id="wakeState">foreground</b></div>
+
+  <button id="btnStart">START (cam + face + ws)</button>
+  <button id="btnTalk">PUSH-TO-TALK</button>
+</div>
+
+<div id="stage"></div>
+<video id="cam" playsinline autoplay muted></video>
+<div id="log">CONSIA Avatar PRO</div>
+
+<!-- FaceMesh (MediaPipe) -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<!-- Three.js + GLTF Loader -->
+<script type="module" src="/avatar-pro.js"></script>
+
+</body>
+</html>
