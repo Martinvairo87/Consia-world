@@ -1,100 +1,82 @@
-<!doctype html>
-<html lang="es">
+}
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>CONSIA</title>
+<meta charset="UTF-8">
+<title>CONSIA CORE</title>
 
-<link rel="manifest" href="/app.webmanifest"/>
-<link rel="apple-touch-icon" href="/assets/icon-192.png"/>
-<meta name="theme-color" content="#000000"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/app.webmanifest">
 
 <style>
 body{
-  margin:0;
-  background:#000;
-  color:#fff;
-  font-family:Arial,Helvetica,sans-serif;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-  overflow:hidden;
+margin:0;
+background:black;
+color:white;
+font-family:Arial, Helvetica, sans-serif;
+overflow:hidden;
 }
 
-/* HOLOGRAPHIC CORE */
-.core{
-  position:relative;
-  text-align:center;
+/* HOLOGRAMA /
+.holo{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:48px;
+letter-spacing:10px;
+animation:glow 2s infinite alternate;
 }
 
-.ring{
-  width:260px;
-  height:260px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.2);
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  animation:spin 12s linear infinite;
+@keyframes glow{
+0%{text-shadow:0 0 10px #0ff;}
+100%{text-shadow:0 0 40px #0ff;}
 }
 
-.ring:nth-child(2){
-  width:340px;
-  height:340px;
-  animation-direction:reverse;
+/ AVATAR /
+#avatar{
+position:fixed;
+bottom:20px;
+right:20px;
+width:120px;
+border-radius:50%;
+box-shadow:0 0 20px cyan;
+cursor:pointer;
 }
 
-@keyframes spin{
-  from{transform:translate(-50%,-50%) rotate(0deg);}
-  to{transform:translate(-50%,-50%) rotate(360deg);}
-}
-
-h1{
-  letter-spacing:.4em;
-  font-size:28px;
-}
-
-.menu{
-  margin-top:40px;
-  display:flex;
-  gap:14px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-a{
-  padding:12px 18px;
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:30px;
-  text-decoration:none;
-  color:#fff;
-  font-size:12px;
+/ WAKE BUTTON */
+#wake{
+position:fixed;
+bottom:20px;
+left:20px;
+padding:15px 20px;
+background:#0ff;
+color:black;
+border:none;
+font-weight:bold;
+border-radius:10px;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="core">
-  <div class="ring"></div>
-  <div class="ring"></div>
-  <h1>CONSIA</h1>
+<div class="holo">CONSIA CORE ACTIVE</div>
 
-  <div class="menu">
-    <a href="/voice.html">VOICE</a>
-    <a href="/owner.html">OWNER</a>
-    <a href="/marketplace.html">MARKET</a>
-    <a href="/dashboard.html">DASH</a>
-  </div>
-</div>
+<img id="avatar" src="/avatar.mp4" onclick="openVoice()">
+
+<button id="wake" onclick="openVoice()">WAKE CONSIA</button>
 
 <script>
+function openVoice(){
+window.location.href="/voice.html";
+}
+
 if("serviceWorker" in navigator){
- navigator.serviceWorker.register("/sw.js");
+navigator.serviceWorker.register("/sw.js");
 }
 </script>
 
 </body>
-</html>
+</html
