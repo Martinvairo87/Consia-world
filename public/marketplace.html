@@ -1,207 +1,33 @@
 <!doctype html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <meta name="theme-color" content="#000000"/>
-  <title>CONSIA Marketplace</title>
-  <style>
-    :root { color-scheme: dark; }
-    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
-    .wrap{min-height:100%;padding:18px;box-sizing:border-box;max-width:1200px;margin:0 auto;}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-    .title{letter-spacing:.18em;text-transform:uppercase;font-weight:900}
-    .pill{font-size:12px;opacity:.85;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 12px;text-decoration:none;color:#fff}
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
-    input,select{background:rgba(0,0,0,.4);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px 12px;font-size:15px}
-    input{flex:1;min-width:240px}
-    select{min-width:180px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-    .card{border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;background:rgba(255,255,255,.04);display:flex;flex-direction:column}
-    .name{font-weight:900;font-size:16px}
-    .desc{opacity:.78;margin-top:6px;line-height:1.35}
-    .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:12px;opacity:.85}
-    .tag{display:inline-block;font-size:12px;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px}
-    .price{margin-top:10px;font-weight:900;font-size:16px}
-    button{background:rgba(0,0,0,.4);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px 12px;font-weight:900;cursor:pointer;margin-top:12px}
-    button:hover{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.06)}
-    .btn2{display:flex;gap:10px}
-    .btn2 button{flex:1}
-    .foot{opacity:.55;font-size:12px;margin-top:18px;text-align:center}
-    .modalBack{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;padding:16px}
-    .modal{max-width:760px;width:100%;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:#050505;padding:16px}
-    .modal h3{margin:0 0 8px;font-size:14px;letter-spacing:.18em;text-transform:uppercase}
-    .log{white-space:pre-wrap;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;min-height:140px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
-    .close{float:right}
-    @media (max-width:980px){.grid{grid-template-columns:1fr}}
-  </style>
+<meta charset="utf-8"/>
+<title>Marketplace</title>
+<script src=”https://js.stripe.com/v3/”></script>
+
+<style>
+body{background:#000;color:#fff;font-family:Arial;text-align:center;padding-top:80px;}
+button{padding:14px 20px;border-radius:30px;border:none;background:#fff;color:#000;}
+</style>
 </head>
+
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="title">Marketplace</div>
-    <div class="row" style="margin-top:0">
-      <a class="pill" href="/">← Home</a>
-      <span class="pill">API: <span id="api">checking…</span></span>
-      <span class="pill">Mode: catálogo + checkout stub</span>
-    </div>
-  </div>
 
-  <div class="row">
-    <input id="q" placeholder="Buscar (ej: cerradura, cámara, zigbee, sensor)" />
-    <select id="cat">
-      <option value="all" selected>Todos</option>
-      <option value="security">Seguridad</option>
-      <option value="automation">Domótica</option>
-      <option value="energy">Energía</option>
-      <option value="bundles">Kits</option>
-    </select>
-    <select id="sort">
-      <option value="rank" selected>Top</option>
-      <option value="price_asc">Precio ↑</option>
-      <option value="price_desc">Precio ↓</option>
-      <option value="name">Nombre</option>
-    </select>
-    <button id="btnOwner">Owner Mode</button>
-  </div>
+<h2>Marketplace</h2>
+<p>Producto Demo</p>
 
-  <div class="grid" id="grid"></div>
-
-  <div class="foot">© CONSIA Marketplace · dropshipping-ready · pagos live = siguiente paso (Stripe/Paddle)</div>
-</div>
-
-<!-- Modal -->
-<div class="modalBack" id="mb">
-  <div class="modal">
-    <button class="close" id="x">Cerrar</button>
-    <h3>CONSIA · Checkout / Logs</h3>
-    <div class="log" id="out">…</div>
-  </div>
-</div>
+<button onclick="checkout()">Comprar</button>
 
 <script>
-  const API = "https://api.consia.world";
-  const $ = (id)=>document.getElementById(id);
+async function checkout(){
 
-  // Health
-  (async()=>{
-    const el = $("api");
-    try{
-      const r = await fetch(API + "/health");
-      const j = await r.json().catch(()=>null);
-      if(r.ok && j && (j.ok || j.service)){ el.textContent="healthy"; el.style.color="#9cff9c"; }
-      else { el.textContent="degraded"; el.style.color="#ff9c9c"; }
-    }catch{ el.textContent="offline"; el.style.color="#ff9c9c"; }
-  })();
+ const res = await fetch("/api/checkout",{method:"POST"});
+ const data = await res.json();
 
-  // Modal
-  const mb = $("mb");
-  const out = $("out");
-  $("x").onclick = ()=> mb.style.display="none";
-  function show(obj){
-    out.textContent = typeof obj === "string" ? obj : JSON.stringify(obj, null, 2);
-    mb.style.display="flex";
-  }
-
-  // Owner mode (local)
-  let ownerMode = false;
-  $("btnOwner").onclick = ()=>{
-    ownerMode = !ownerMode;
-    $("btnOwner").textContent = ownerMode ? "Owner Mode: ON" : "Owner Mode";
-    show(ownerMode
-      ? "Owner Mode ON. (En el siguiente paso conectamos: pricing dinámico, margen, suppliers, pedidos)"
-      : "Owner Mode OFF.");
-    render();
-  };
-
-  // Catalog MVP (dropshipping-ready)
-  const products = [
-    { id:"m-smart-hub", name:"M Smart Hub (Zigbee)", cat:"automation", rank:1, price:79.99, currency:"USD", tag:"Best Seller", ship:"Global", desc:"Hub Zigbee + WiFi. Compatible Tuya/Zigbee. Ideal B2B edificios + hogares.", sku:"MSH-ZB-01" },
-    { id:"m-lock-pro", name:"M Lock Pro (Biométrica)", cat:"security", rank:2, price:129.99, currency:"USD", tag:"Premium", ship:"Global", desc:"Cerradura biométrica + app + códigos. Registro de accesos.", sku:"MLP-BIO-02" },
-    { id:"m-cam-4k", name:"M Cam 4K Secure", cat:"security", rank:3, price:59.99, currency:"USD", tag:"Top Value", ship:"Global", desc:"Cámara 4K, detección, alertas, uso residencial y corporativo.", sku:"MC4K-SEC-01" },
-    { id:"m-switch-touch", name:"M Switch Touch", cat:"automation", rank:4, price:24.99, currency:"USD", tag:"Volume", ship:"Global", desc:"Interruptor táctil smart. Escenas, horarios, control por app.", sku:"MST-TCH-03" },
-    { id:"m-curtain-motor", name:"M Curtain Motor", cat:"automation", rank:5, price:89.99, currency:"USD", tag:"WOW", ship:"Global", desc:"Motor para cortinas + automatización + escenas premium.", sku:"MCM-MTR-01" },
-    { id:"m-sensor-kit", name:"M Sensor Kit", cat:"bundles", rank:6, price:39.99, currency:"USD", tag:"Bundle", ship:"Global", desc:"Kit: movimiento + puerta/ventana + temp/humedad.", sku:"MSK-BND-01" },
-    { id:"m-energy-plug", name:"M Energy Plug", cat:"energy", rank:7, price:19.99, currency:"USD", tag:"Impulse", ship:"Global", desc:"Enchufe inteligente con medición de consumo.", sku:"MEP-EN-01" },
-    { id:"m-fire-safe", name:"M Fire Safe Sensor", cat:"security", rank:8, price:29.99, currency:"USD", tag:"Safety", ship:"Global", desc:"Detector humo/CO con alertas inteligentes.", sku:"MFS-SAF-01" }
-  ];
-
-  function fmt(p){
-    return `${p.currency} ${p.price.toFixed(2)}`;
-  }
-
-  // Filters
-  $("q").oninput = render;
-  $("cat").onchange = render;
-  $("sort").onchange = render;
-
-  function getFiltered(){
-    const q = ($("q").value || "").trim().toLowerCase();
-    const cat = $("cat").value;
-    const sort = $("sort").value;
-
-    let list = products.slice();
-
-    if(cat !== "all") list = list.filter(p => p.cat === cat);
-
-    if(q){
-      list = list.filter(p =>
-        (p.name + " " + p.desc + " " + p.tag + " " + p.sku).toLowerCase().includes(q)
-      );
-    }
-
-    // Owner mode could unlock margin display etc (stub)
-    if(ownerMode){
-      list = list.map(p => ({...p, margin_hint: "35%–55%"}));
-    }
-
-    if(sort === "rank") list.sort((a,b)=>a.rank-b.rank);
-    if(sort === "price_asc") list.sort((a,b)=>a.price-b.price);
-    if(sort === "price_desc") list.sort((a,b)=>b.price-a.price);
-    if(sort === "name") list.sort((a,b)=>a.name.localeCompare(b.name));
-
-    return list;
-  }
-
-  async function checkoutStub(productId){
-    // Pagos live se conectan después (Stripe/Paddle). Ahora: stub seguro.
-    show({
-      ok: true,
-      mode: "checkout_stub",
-      product_id: productId,
-      next: "Conectar Stripe/Paddle: /checkout/create + webhook + plan limits",
-      action: "Decime: 'Dale pagos live' y te entrego worker.js completo con billing"
-    });
-  }
-
-  function render(){
-    const grid = $("grid");
-    const list = getFiltered();
-
-    grid.innerHTML = list.map(p => `
-      <div class="card">
-        <div class="name">${p.name}</div>
-        <div class="desc">${p.desc}</div>
-
-        <div class="meta">
-          <span class="tag">${p.tag}</span>
-          <span class="tag">Cat: ${p.cat}</span>
-          <span class="tag">Ship: ${p.ship}</span>
-          <span class="tag">SKU: ${p.sku}</span>
-          ${p.margin_hint ? `<span class="tag">Margin: ${p.margin_hint}</span>` : ``}
-        </div>
-
-        <div class="price">${fmt(p)}</div>
-
-        <div class="btn2">
-          <button onclick="checkoutStub('${p.id}')">Comprar</button>
-          <button onclick="show({product:${JSON.stringify(p).replace(/</g,'\\u003c')}})">Detalle</button>
-        </div>
-      </div>
-    `).join("");
-  }
-
-  render();
+ const stripe = Stripe(data.key);
+ stripe.redirectToCheckout({sessionId:data.id});
+}
 </script>
+
 </body>
 </html>
