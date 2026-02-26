@@ -11,15 +11,17 @@
     .wrap { min-height:100%; display:flex; align-items:center; justify-content:center; padding:18px; box-sizing:border-box; }
     .card { width:min(980px, 98vw); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:18px; background:rgba(255,255,255,.04); }
     .top { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
-    .title { letter-spacing:.18em; text-transform:uppercase; font-weight:800; }
+    .title { letter-spacing:.18em; text-transform:uppercase; font-weight:900; }
     .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-    button, input, textarea { background:rgba(0,0,0,.4); color:#fff; border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 12px; font-size:15px; }
-    button { cursor:pointer; font-weight:700; }
+    button, input, textarea, select { background:rgba(0,0,0,.4); color:#fff; border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 12px; font-size:15px; }
+    button { cursor:pointer; font-weight:800; }
     button:hover { border-color:rgba(255,255,255,.34); background:rgba(255,255,255,.06); }
     textarea { width:100%; min-height:92px; resize:vertical; }
     .log { white-space:pre-wrap; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:12px; min-height:140px; }
     .pill { font-size:12px; opacity:.85; border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:8px 10px; }
     .ok { color:#9cff9c; } .bad{ color:#ff9c9c; }
+    .muted{opacity:.75;font-size:12px}
+    .flex1{flex:1;min-width:260px}
   </style>
 </head>
 <body>
@@ -35,23 +37,47 @@
     </div>
 
     <div class="row">
-      <button id="btnMic">🎙️ Hablar</button>
+      <div class="flex1">
+        <div class="muted">Wake word (decí “consia”)</div>
+        <input id="wake" value="consia" />
+      </div>
+      <div class="flex1">
+        <div class="muted">Idioma STT</div>
+        <select id="lang">
+          <option value="es-ES" selected>es-ES</option>
+          <option value="en-US">en-US</option>
+          <option value="pt-BR">pt-BR</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="btnListen">🎙️ Escuchar (Wake)</button>
+      <button id="btnSpeak">🎙️ Hablar ahora</button>
       <button id="btnStop" disabled>⏹️ Stop</button>
       <button id="btnSend">➡️ Enviar texto</button>
+      <button id="btnMuteTTS">🔇 TTS: ON</button>
     </div>
 
     <div class="row">
-      <textarea id="msg" placeholder="Escribí acá o tocá Hablar."></textarea>
+      <textarea id="msg" placeholder="Escribí acá o usá el mic."></textarea>
     </div>
 
     <div class="row">
-      <div style="flex:1;min-width:280px;">
-        <div class="pill">Respuesta</div>
+      <div class="flex1">
+        <div class="pill">Respuesta (API)</div>
         <div id="out" class="log"></div>
       </div>
-      <div style="flex:1;min-width:280px;">
-        <div class="pill">Speech (TTS)</div>
-        <div class="log" id="ttslog">Listo. Cuando llegue respuesta, la leo con voz del dispositivo (TTS local).</div>
+      <div class="flex1">
+        <div class="pill">Logs</div>
+        <div id="logs" class="log"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="muted">
+        ✅ STT (Web Speech) + ✅ TTS (dispositivo) + ✅ Wake Word + ✅ API /ask<br>
+        Nota: en iOS/Safari, el mic puede requerir tocar un botón para habilitar audio.
       </div>
     </div>
   </div>
@@ -60,93 +86,248 @@
 <script>
   const API = "https://api.consia.world";
 
-  // health
-  (async()=>{
-    const el = document.getElementById("api");
+  const $ = (id)=>document.getElementById(id);
+  const apiEl = $("api");
+  const micEl = $("mic");
+  const msgEl = $("msg");
+  const outEl = $("out");
+  const logsEl = $("logs");
+  const wakeEl = $("wake");
+  const langEl = $("lang");
+  const btnListen = $("btnListen");
+  const btnSpeak = $("btnSpeak");
+  const btnStop = $("btnStop");
+  const btnSend = $("btnSend");
+  const btnMuteTTS = $("btnMuteTTS");
+
+  let ttsEnabled = true;
+  let mode = "idle"; // idle | wake | speak
+  let recognition = null;
+  let lastHeard = "";
+  let wakeArmed = false;
+
+  function log(line){
+    const ts = new Date().toISOString().slice(11,19);
+    logsEl.textContent = `[${ts}] ${line}\n` + logsEl.textContent;
+  }
+
+  async function health(){
     try{
-      const r = await fetch(API+"/health");
+      const r = await fetch(API + "/health", { method:"GET" });
       const j = await r.json().catch(()=>null);
-      if(r.ok && j && j.ok){ el.textContent="healthy"; el.className="ok"; }
-      else { el.textContent="degraded"; el.className="bad"; }
-    }catch{ el.textContent="offline"; el.className="bad"; }
-  })();
+      if(r.ok && j && (j.ok || j.service)){
+        apiEl.textContent = "healthy";
+        apiEl.className = "ok";
+      } else {
+        apiEl.textContent = "degraded";
+        apiEl.className = "bad";
+      }
+    }catch(e){
+      apiEl.textContent = "offline";
+      apiEl.className = "bad";
+    }
+  }
+  health();
 
-  // STT (Web Speech API) -> texto -> /ask
-  const micEl = document.getElementById("mic");
-  const btnMic = document.getElementById("btnMic");
-  const btnStop = document.getElementById("btnStop");
-  const btnSend = document.getElementById("btnSend");
-  const msg = document.getElementById("msg");
-  const out = document.getElementById("out");
-  const ttslog = document.getElementById("ttslog");
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let rec = null;
-
-  function speakLocal(text){
+  function speak(text){
+    if(!ttsEnabled) { log("TTS OFF: " + text); return; }
     try{
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = "es-ES";
+      u.lang = langEl.value || "es-ES";
       speechSynthesis.speak(u);
-      ttslog.textContent = "Hablando: " + text;
-    }catch{
-      ttslog.textContent = "TTS no disponible en este navegador.";
+      log("TTS: " + text);
+    }catch(e){
+      log("TTS error");
     }
   }
 
   async function askConsia(text){
-    out.textContent = "Enviando a CONSIA…";
+    outEl.textContent = "Enviando a CONSIA…";
+    log("ASK: " + text);
     const r = await fetch(API + "/ask", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify({ message: text })
     });
     const j = await r.json().catch(()=>({ ok:false, error:"bad_json" }));
-    out.textContent = JSON.stringify(j, null, 2);
+    outEl.textContent = JSON.stringify(j, null, 2);
 
-    // si viene "response" lo leo
-    if (j && j.response) speakLocal(String(j.response));
+    // lee respuesta si viene
+    const resp = (j && (j.response || j.text || j.answer)) ? (j.response || j.text || j.answer) : null;
+    if(resp) speak(String(resp));
+    return j;
   }
 
-  btnSend.onclick = async () => {
-    const text = (msg.value || "").trim();
+  function getSpeechRecognition(){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR) return null;
+    const rec = new SR();
+    rec.lang = langEl.value || "es-ES";
+    rec.interimResults = true;
+    rec.continuous = true;
+    return rec;
+  }
+
+  function setMic(state, ok=true){
+    micEl.textContent = state;
+    micEl.className = ok ? "ok" : "bad";
+  }
+
+  function stopRec(){
+    try { recognition && recognition.stop(); } catch {}
+    recognition = null;
+    btnStop.disabled = true;
+    wakeArmed = false;
+    mode = "idle";
+    setMic("idle", true);
+    log("Mic stopped");
+  }
+
+  function startWake(){
+    if(recognition) stopRec();
+    recognition = getSpeechRecognition();
+    if(!recognition){
+      setMic("not_supported", false);
+      log("SpeechRecognition not supported");
+      return;
+    }
+    mode = "wake";
+    wakeArmed = true;
+    btnStop.disabled = false;
+    setMic("listening(wake)", true);
+    log("Wake listening ON");
+
+    let finalText = "";
+
+    recognition.onresult = async (e) => {
+      let interim = "";
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const t = e.results[i][0].transcript;
+        if(e.results[i].isFinal) finalText += t + " ";
+        else interim += t;
+      }
+      const combined = (finalText + interim).trim();
+      msgEl.value = combined;
+      lastHeard = combined.toLowerCase();
+
+      const wake = (wakeEl.value || "consia").toLowerCase().trim();
+
+      // Wake detection: if hears wake word, then speak acknowledge and arm "command capture"
+      if(wakeArmed && wake && lastHeard.includes(wake)){
+        wakeArmed = false;
+        log(`Wake word detected: "${wake}"`);
+        speak("Sí Martín, estoy activa.");
+        // Switch to speak-now mode for next final phrase (command)
+        mode = "speak_after_wake";
+        finalText = ""; // reset to capture next phrase
+        msgEl.value = "";
+        setMic("listening(command)", true);
+      }
+
+      // If we are in command mode and got a final result with some content, send it
+      if(mode === "speak_after_wake"){
+        // If we got any final segment recently, check last final chunk
+        const lastResult = e.results[e.results.length-1];
+        if(lastResult && lastResult.isFinal){
+          const command = (lastResult[0].transcript || "").trim();
+          if(command){
+            log("Command after wake: " + command);
+            await askConsia(command);
+            // go back to wake listening for next wake
+            wakeArmed = true;
+            mode = "wake";
+            setMic("listening(wake)", true);
+            finalText = "";
+            msgEl.value = "";
+          }
+        }
+      }
+    };
+
+    recognition.onstart = ()=>log("Mic started");
+    recognition.onend = ()=>{
+      // In iOS this may end automatically; restart if still in wake mode
+      log("Mic ended");
+      if(mode === "wake" || mode === "speak_after_wake"){
+        try{ recognition.start(); log("Mic restarted"); }catch{}
+      } else {
+        setMic("idle", true);
+      }
+    };
+    recognition.onerror = (ev)=>{ log("Mic error: " + ev.error); };
+
+    try{ recognition.start(); }catch(e){ log("Mic start failed"); }
+  }
+
+  function startSpeakNow(){
+    if(recognition) stopRec();
+    recognition = getSpeechRecognition();
+    if(!recognition){
+      setMic("not_supported", false);
+      log("SpeechRecognition not supported");
+      return;
+    }
+    mode = "speak";
+    btnStop.disabled = false;
+    setMic("listening", true);
+    log("Speak-now ON");
+
+    let finalText = "";
+
+    recognition.onresult = (e) => {
+      let interim = "";
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const t = e.results[i][0].transcript;
+        if(e.results[i].isFinal) finalText += t + " ";
+        else interim += t;
+      }
+      msgEl.value = (finalText + interim).trim();
+    };
+
+    recognition.onend = ()=>{ log("Mic ended"); setMic("idle", true); };
+    recognition.onerror = (ev)=>{ log("Mic error: " + ev.error); setMic("error", false); };
+
+    try{ recognition.start(); }catch(e){ log("Mic start failed"); }
+  }
+
+  btnListen.onclick = ()=>{
+    // iOS requires user gesture -> this is it
+    startWake();
+  };
+
+  btnSpeak.onclick = ()=>{
+    startSpeakNow();
+  };
+
+  btnStop.onclick = async ()=>{
+    // If speak-now mode, send the text on stop
+    const text = (msgEl.value || "").trim();
+    stopRec();
+    if(text) await askConsia(text);
+  };
+
+  btnSend.onclick = async ()=>{
+    const text = (msgEl.value || "").trim();
     if(!text) return;
     await askConsia(text);
   };
 
-  btnMic.onclick = () => {
-    if(!SpeechRecognition){
-      micEl.textContent = "not_supported";
-      micEl.className = "bad";
-      return;
-    }
-    rec = new SpeechRecognition();
-    rec.lang = "es-ES";
-    rec.interimResults = true;
-    rec.continuous = true;
-
-    let finalText = "";
-    rec.onstart = () => { micEl.textContent = "listening"; micEl.className="ok"; btnStop.disabled=false; };
-    rec.onend = () => { micEl.textContent = "idle"; micEl.className=""; btnStop.disabled=true; };
-
-    rec.onresult = (e) => {
-      let interim = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const t = e.results[i][0].transcript;
-        if (e.results[i].isFinal) finalText += t + " ";
-        else interim += t;
-      }
-      msg.value = (finalText + interim).trim();
-    };
-
-    rec.start();
+  btnMuteTTS.onclick = ()=>{
+    ttsEnabled = !ttsEnabled;
+    btnMuteTTS.textContent = ttsEnabled ? "🔇 TTS: ON" : "🔇 TTS: OFF";
+    log("TTS " + (ttsEnabled ? "ON" : "OFF"));
   };
 
-  btnStop.onclick = async () => {
-    try { rec && rec.stop(); } catch {}
-    const text = (msg.value || "").trim();
-    if(text) await askConsia(text);
+  // When language changes, restart mic if active
+  langEl.onchange = ()=>{
+    log("Lang set: " + langEl.value);
+    if(recognition){
+      const curMode = mode;
+      stopRec();
+      if(curMode === "wake" || curMode === "speak_after_wake") startWake();
+      else if(curMode === "speak") startSpeakNow();
+    }
   };
 </script>
 </body>
