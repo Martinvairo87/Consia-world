@@ -1,0 +1,11 @@
+<button onclick="ping()">Ping Admin</button>
+<script>
+async function ping(){
+  const res = await fetch("https://api.consia.world/admin/ping", {
+    headers:{
+      "Authorization":"Bearer TU_OWNER_TOKEN"
+    }
+  });
+  console.log(await res.json());
+}
+</script>
