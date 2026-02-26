@@ -1,55 +1,68 @@
-<!doctype html>
+01"}
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8"/>
+<meta charset="UTF-8">
 <title>CONSIA VOICE</title>
 
 <style>
 body{
- background:#000;
- color:#fff;
- font-family:Arial;
- text-align:center;
- padding-top:80px;
+margin:0;
+background:black;
+color:white;
+font-family:Arial;
+text-align:center;
 }
 
-video{
- width:260px;
- border-radius:20px;
- box-shadow:0 0 40px rgba(255,255,255,.3);
+#orb{
+width:150px;
+height:150px;
+margin:100px auto;
+border-radius:50%;
+background:cyan;
+box-shadow:0 0 40px cyan;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.2);}
+100%{transform:scale(1);}
 }
 
 button{
- margin-top:20px;
- padding:12px 20px;
- border:none;
- border-radius:30px;
- background:#fff;
- color:#000;
+padding:15px 20px;
+font-size:18px;
+background:#0ff;
+border:none;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h2>CONSIA VOICE</h2>
+<h1>CONSIA VOICE</h1>
+<div id="orb"></div>
 
-<video id="avatar" src="/avatar.mp4" autoplay loop muted></video>
-
-<br>
-<button onclick="startWake()">WAKE</button>
+<button onclick="talk()">TALK</button>
 
 <script>
-function speak(text){
- const u = new SpeechSynthesisUtterance(text);
- speechSynthesis.speak(u);
-}
+function talk(){
 
-function startWake(){
- speak("Hola Martín. CONSIA activo.");
- document.getElementById("avatar").play();
+const rec = new webkitSpeechRecognition();
+rec.lang="en-US";
+
+rec.onresult = e=>{
+let text = e.results[0][0].transcript;
+
+const speech = new SpeechSynthesisUtterance(text);
+speechSynthesis.speak(speech);
+};
+
+rec.start();
 }
 </script>
 
 </body>
-</html>
+</h
