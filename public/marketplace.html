@@ -1,52 +1,1005 @@
-ce-001"}
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>CONSIA MARKETPLACE</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CONSIA Marketplace</title>
 
-<style>
-body{
-background:black;
-color:white;
-font-family:Arial;
-text-align:center;
-}
+  <!-- PWA -->
+  <link rel="manifest" href="/app.webmanifest">
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="CONSIA" />
 
-.card{
-border:1px solid #0ff;
-padding:20px;
-margin:20px;
-display:inline-block;
-}
-button{
-padding:10px 15px;
-background:#0ff;
-border:none;
-cursor:pointer;
-}
-</style>
+  <!-- Paddle (opcional si lo usás) -->
+  <script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+
+  <style>
+    :root{
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.65);
+      --line:rgba(255,255,255,.12);
+      --glass:rgba(255,255,255,.06);
+      --glass2:rgba(255,255,255,.10);
+      --ok:#00ffd5;
+      --warn:#ffcf5a;
+      --bad:#ff4d4d;
+      --shadow: 0 20px 80px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 900px at 20% 10%, rgba(0,255,213,.08), transparent 60%),
+                  radial-gradient(900px 700px at 90% 20%, rgba(255,207,90,.06), transparent 55%),
+                  radial-gradient(900px 700px at 50% 90%, rgba(120,120,255,.05), transparent 60%),
+                  var(--bg);
+      color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      letter-spacing:.2px;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1280px;margin:0 auto;padding:20px 18px 80px}
+    .topbar{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(to bottom, rgba(0,0,0,.75), rgba(0,0,0,.35));
+      border-bottom:1px solid var(--line);
+    }
+    .topinner{max-width:1280px;margin:0 auto;padding:14px 18px;display:flex;gap:14px;align-items:center}
+    .brand{
+      display:flex;align-items:center;gap:12px;min-width:190px
+    }
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(0,255,213,.35), rgba(255,255,255,.08));
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow: var(--shadow);
+      display:grid;place-items:center;
+      font-weight:800;
+    }
+    .brand h1{font-size:14px;margin:0;line-height:1}
+    .brand small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+    .search{
+      flex:1;display:flex;gap:10px;align-items:center;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:999px;
+      padding:10px 14px;
+    }
+    .search input{
+      width:100%;border:none;outline:none;background:transparent;color:var(--fg);font-size:14px;
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:9px 12px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--fg);
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill:hover{background:rgba(255,255,255,.09)}
+    .pill b{font-weight:700}
+    .right{
+      display:flex;gap:10px;align-items:center
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:9px 12px;border-radius:999px;
+      border:1px solid rgba(0,255,213,.28);
+      background:rgba(0,255,213,.08);
+      font-size:12px;
+    }
+    .badge .dot{width:8px;height:8px;border-radius:99px;background:var(--ok);box-shadow:0 0 20px rgba(0,255,213,.45)}
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .brand{min-width:auto}
+      .topinner{flex-wrap:wrap}
+    }
+
+    .panel{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panel .hd{
+      padding:16px 16px 12px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      display:flex;align-items:center;justify-content:space-between;gap:10px
+    }
+    .panel .hd h2{margin:0;font-size:13px;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.85)}
+    .panel .bd{padding:14px 16px}
+
+    .filters{display:grid;gap:12px}
+    .group label{display:block;font-size:12px;color:var(--muted);margin:0 0 8px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      padding:8px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25);
+      font-size:12px;cursor:pointer;
+    }
+    .chip.active{
+      border-color: rgba(0,255,213,.45);
+      background: rgba(0,255,213,.10);
+    }
+    .range{
+      display:flex;align-items:center;gap:10px
+    }
+    .range input{flex:1}
+    .muted{color:var(--muted)}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:12px 14px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.07);
+      color:var(--fg);
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    .btn.primary{
+      border-color: rgba(0,255,213,.35);
+      background: rgba(0,255,213,.10);
+    }
+    .btn.primary:hover{background: rgba(0,255,213,.14)}
+    .btn.danger{
+      border-color: rgba(255,77,77,.35);
+      background: rgba(255,77,77,.10);
+    }
+    .btn.small{padding:9px 10px;border-radius:12px;font-size:12px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:14px;
+      padding:16px;
+    }
+    @media (max-width: 1180px){ .cards{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    @media (max-width: 680px){ .cards{grid-template-columns: 1fr;} }
+
+    .card{
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border-radius: 18px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: 250px;
+    }
+    .thumb{
+      height:140px;
+      background:
+        radial-gradient(700px 200px at 30% 20%, rgba(0,255,213,.22), transparent 60%),
+        radial-gradient(500px 260px at 80% 30%, rgba(255,207,90,.18), transparent 60%),
+        rgba(0,0,0,.45);
+      border-bottom:1px solid rgba(255,255,255,.10);
+      position:relative;
+    }
+    .tag{
+      position:absolute;top:12px;left:12px;
+      font-size:11px;
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.35);
+      backdrop-filter: blur(12px);
+    }
+    .tag.ok{border-color:rgba(0,255,213,.30);background:rgba(0,255,213,.08)}
+    .tag.warn{border-color:rgba(255,207,90,.30);background:rgba(255,207,90,.08)}
+    .tag.bad{border-color:rgba(255,77,77,.30);background:rgba(255,77,77,.08)}
+    .content{padding:14px 14px 12px;display:flex;flex-direction:column;gap:8px;flex:1}
+    .title{font-weight:800;font-size:14px;margin:0}
+    .desc{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
+    .meta{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:10px}
+    .price{font-weight:900;font-size:14px}
+    .mini{display:flex;gap:8px}
+    .kpi{
+      font-size:11px;color:rgba(255,255,255,.75);
+      border:1px solid rgba(255,255,255,.12);
+      padding:6px 8px;border-radius:12px;background:rgba(0,0,0,.25)
+    }
+
+    /* Drawer (cart) */
+    .drawer{
+      position:fixed;top:0;right:-420px;width:420px;max-width:92vw;height:100%;
+      background:rgba(0,0,0,.85);
+      border-left:1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(18px);
+      box-shadow: -20px 0 80px rgba(0,0,0,.55);
+      transition: right .22s ease;
+      z-index: 50;
+      display:flex;flex-direction:column;
+    }
+    .drawer.open{right:0}
+    .drawer .hd{padding:16px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:space-between}
+    .drawer .bd{padding:14px 16px;overflow:auto;flex:1;display:grid;gap:10px}
+    .item{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      border-radius:16px;
+      padding:12px;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+    .item h4{margin:0;font-size:13px}
+    .item small{color:var(--muted)}
+    .item .qty{display:flex;gap:6px;align-items:center}
+    .item .qty button{
+      width:28px;height:28px;border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:#fff;cursor:pointer;
+    }
+    .item .qty span{min-width:24px;text-align:center}
+    .drawer .ft{
+      padding:16px;border-top:1px solid rgba(255,255,255,.12);
+      display:grid;gap:10px
+    }
+    .total{display:flex;justify-content:space-between;color:rgba(255,255,255,.9)}
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.45);
+      opacity:0;pointer-events:none;transition: opacity .2s ease;z-index:40;
+    }
+    .overlay.show{opacity:1;pointer-events:auto}
+
+    /* Modal */
+    .modalWrap{
+      position:fixed;inset:0;display:none;place-items:center;z-index:60;
+    }
+    .modalWrap.show{display:grid}
+    .modal{
+      width:min(720px, 94vw);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:20px;
+      background:rgba(0,0,0,.82);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal .hd{padding:16px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;align-items:center}
+    .modal .bd{padding:16px;display:grid;gap:12px}
+    .modal .bd p{margin:0;color:var(--muted);line-height:1.45}
+    .modal .grid2{display:grid;grid-template-columns: 1.2fr .8fr;gap:12px}
+    @media (max-width: 800px){ .modal .grid2{grid-template-columns:1fr} }
+    .field{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.06);
+      display:flex;gap:10px;align-items:center
+    }
+    .field input, .field select{
+      width:100%;
+      border:none;outline:none;background:transparent;color:#fff;font-size:13px;
+    }
+    .footnote{font-size:11px;color:rgba(255,255,255,.55)}
+    .hint{font-size:12px;color:rgba(255,255,255,.7)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  </style>
 </head>
 
 <body>
 
-<h1>CONSIA MARKETPLACE</h1>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topinner">
+      <div class="brand" onclick="location.href='/'" style="cursor:pointer">
+        <div class="logo">C</div>
+        <div>
+          <h1>CONSIA Marketplace</h1>
+          <small>Dropshipping / Digital / Services</small>
+        </div>
+      </div>
 
-<div class="card">
-<h2>CONSIA PRO</h2>
-<p>$29 / month</p>
-<button onclick="payStripe()">Stripe</button>
-<button onclick="payCrypto()">Crypto</button>
-</div>
+      <div class="search" title="Buscar">
+        <span style="opacity:.7">⌕</span>
+        <input id="q" placeholder="Buscar productos, servicios, IA, domótica, etc..." autocomplete="off" />
+      </div>
+
+      <div class="right">
+        <div class="badge"><span class="dot"></span><span id="apiStatus">API OK</span></div>
+        <div class="pill" onclick="openCart()"><b>🛒</b> Carrito <span id="cartCount" class="mono">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+      <!-- FILTERS -->
+      <div class="panel">
+        <div class="hd">
+          <h2>Filtros</h2>
+          <button class="btn small" onclick="resetFilters()">Reset</button>
+        </div>
+        <div class="bd">
+          <div class="filters">
+            <div class="group">
+              <label>Categoría</label>
+              <div class="chips" id="catChips"></div>
+            </div>
+
+            <div class="group">
+              <label>Tipo</label>
+              <div class="chips" id="typeChips"></div>
+            </div>
+
+            <div class="group">
+              <label>Precio máximo (USD)</label>
+              <div class="range">
+                <input id="maxPrice" type="range" min="5" max="1500" value="500" />
+                <span class="mono" id="maxPriceLabel">500</span>
+              </div>
+              <div class="muted" style="font-size:11px;margin-top:6px">Filtra planes, productos y servicios.</div>
+            </div>
+
+            <div class="group">
+              <label>Checkout</label>
+              <div class="row">
+                <button class="btn small primary" onclick="setCheckout('stripe')">Stripe</button>
+                <button class="btn small" onclick="setCheckout('paddle')">Paddle</button>
+                <button class="btn small" onclick="setCheckout('crypto')">Crypto</button>
+              </div>
+              <div class="hint" style="margin-top:8px">
+                Modo actual: <span class="mono" id="checkoutMode">stripe</span>
+              </div>
+              <div class="footnote" style="margin-top:6px">
+                Stripe/Paddle requieren tus keys (se configuran en backend). Crypto aquí queda como “intent” (MVP).
+              </div>
+            </div>
+
+            <div class="group">
+              <label>Acciones rápidas</label>
+              <div class="row">
+                <button class="btn small" onclick="location.href='/owner.html'">Owner</button>
+                <button class="btn small" onclick="location.href='/voice.html'">Voice</button>
+                <button class="btn small" onclick="location.href='/avatar.html'">Avatar</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- CATALOG -->
+      <div class="panel">
+        <div class="hd">
+          <h2>Catálogo</h2>
+          <div class="row">
+            <button class="btn small" onclick="toggleView('all')">Todo</button>
+            <button class="btn small" onclick="toggleView('best')">Best Sellers</button>
+            <button class="btn small" onclick="toggleView('new')">Nuevo</button>
+          </div>
+        </div>
+
+        <div class="cards" id="cards"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART DRAWER -->
+  <div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+  <div class="drawer" id="drawer">
+    <div class="hd">
+      <div style="display:flex;gap:10px;align-items:center">
+        <b>🛒 Carrito</b>
+        <span class="muted" id="cartHint" style="font-size:12px"></span>
+      </div>
+      <button class="btn small" onclick="closeCart()">Cerrar</button>
+    </div>
+    <div class="bd" id="cartItems"></div>
+    <div class="ft">
+      <div class="total">
+        <span>Total</span>
+        <b class="mono" id="cartTotal">$0</b>
+      </div>
+      <button class="btn primary" onclick="openCheckout()">Pagar ahora</button>
+      <button class="btn danger" onclick="clearCart()">Vaciar carrito</button>
+      <div class="footnote">
+        Checkout: <span class="mono" id="cartCheckoutLabel">stripe</span> ·
+        API: <span class="mono">https://api.consia.world</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT MODAL -->
+  <div class="modalWrap" id="modalWrap">
+    <div class="modal">
+      <div class="hd">
+        <b id="mTitle">Producto</b>
+        <button class="btn small" onclick="closeModal()">Cerrar</button>
+      </div>
+      <div class="bd">
+        <div class="grid2">
+          <div>
+            <p id="mDesc"></p>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap" id="mBadges"></div>
+            <div style="margin-top:12px" class="footnote">
+              SKU: <span class="mono" id="mSku"></span>
+            </div>
+          </div>
+          <div>
+            <div class="panel" style="box-shadow:none;background:rgba(255,255,255,.04)">
+              <div class="bd">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <span class="muted">Precio</span>
+                  <b class="mono" id="mPrice"></b>
+                </div>
+                <div style="margin-top:10px" class="field">
+                  <span style="opacity:.75">Qty</span>
+                  <input id="mQty" type="number" min="1" value="1" />
+                </div>
+                <div style="margin-top:10px;display:grid;gap:10px">
+                  <button class="btn primary" onclick="modalAddToCart()">Agregar al carrito</button>
+                  <button class="btn" onclick="modalBuyNow()">Comprar ahora</button>
+                </div>
+                <div class="footnote" style="margin-top:10px">
+                  Compras seguras · Owner-only rules · soft-lock (sin suspender).
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="box-shadow:none;background:rgba(255,255,255,.04)">
+          <div class="hd"><h2>Checkout</h2></div>
+          <div class="bd" style="display:grid;gap:10px">
+            <div class="field">
+              <span style="opacity:.75">Email</span>
+              <input id="buyerEmail" type="email" placeholder="tu@email.com" />
+            </div>
+            <div class="field">
+              <span style="opacity:.75">País</span>
+              <select id="buyerCountry">
+                <option value="AR">Argentina</option>
+                <option value="DO">Rep. Dominicana</option>
+                <option value="US">USA</option>
+                <option value="PY">Paraguay</option>
+                <option value="BR">Brasil</option>
+                <option value="ES">España</option>
+                <option value="MX">México</option>
+                <option value="CL">Chile</option>
+                <option value="CO">Colombia</option>
+              </select>
+            </div>
+            <div class="hint">
+              Modo checkout actual: <span class="mono" id="mCheckoutMode">stripe</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
 <script>
-function payStripe(){
-window.open("https://buy.stripe.com/test");
-}
+  // ========= CONFIG =========
+  const API_BASE = "https://api.consia.world";
+  let checkoutMode = "stripe"; // stripe | paddle | crypto
 
-function payCrypto(){
-window.open("https://commerce.coinbase.com/");
-}
+  // Paddle placeholders (reemplazar por tus IDs reales)
+  const PADDLE_VENDOR_ID = 123456;
+  const PADDLE_PRODUCT_ID = 987654;
+
+  // ========= DATASET (MVP TOP) =========
+  const CATEGORIES = ["IA", "Domótica", "Servicios", "Digital", "Dropshipping"];
+  const TYPES = ["Producto", "Servicio", "Plan", "Kit"];
+
+  const CATALOG = [
+    {
+      id:"plan_pro",
+      sku:"CONSIA-PRO",
+      title:"CONSIA PRO",
+      desc:"Acceso PRO (IA + Voice + Tools). Ideal para power users.",
+      category:"IA",
+      type:"Plan",
+      price:49,
+      badge:"ok",
+      best:true,
+      isNew:true
+    },
+    {
+      id:"plan_business",
+      sku:"CONSIA-BIZ",
+      title:"CONSIA BUSINESS",
+      desc:"Business Suite + métricas + integraciones + límites avanzados.",
+      category:"IA",
+      type:"Plan",
+      price:199,
+      badge:"warn",
+      best:true,
+      isNew:false
+    },
+    {
+      id:"iot_kit",
+      sku:"M-SMART-KIT",
+      title:"M Smart Starter Kit",
+      desc:"Kit de domótica: enchufe smart + switch + sensor. Control desde app.",
+      category:"Domótica",
+      type:"Kit",
+      price:129,
+      badge:"ok",
+      best:true,
+      isNew:true
+    },
+    {
+      id:"content_pack",
+      sku:"RW-CONTENT",
+      title:"Pack Contenido Premium",
+      desc:"Producción de contenido (reels) + copies + calendario de publicaciones.",
+      category:"Servicios",
+      type:"Servicio",
+      price:299,
+      badge:"warn",
+      best:false,
+      isNew:true
+    },
+    {
+      id:"ai_assistant_setup",
+      sku:"CONSIA-SETUP",
+      title:"Implementación CONSIA (Setup)",
+      desc:"Implementación guiada: dominios, workers, pages, seguridad owner-only.",
+      category:"Servicios",
+      type:"Servicio",
+      price:890,
+      badge:"warn",
+      best:true,
+      isNew:false
+    },
+    {
+      id:"dropship_pack",
+      sku:"DS-START",
+      title:"Dropshipping Starter Pack",
+      desc:"Catálogo inicial + páginas + checkout + tracking (MVP).",
+      category:"Dropshipping",
+      type:"Servicio",
+      price:490,
+      badge:"ok",
+      best:false,
+      isNew:false
+    },
+    {
+      id:"digital_templates",
+      sku:"DG-TEMPL",
+      title:"Templates Digitales Premium",
+      desc:"UI kit + landing + componentes (holográfico).",
+      category:"Digital",
+      type:"Producto",
+      price:59,
+      badge:"ok",
+      best:false,
+      isNew:true
+    },
+    {
+      id:"ai_voice_pack",
+      sku:"VOICE-PACK",
+      title:"Voice Pack (STT+TTS)",
+      desc:"Voice UX: comandos, prompts, fallback, detección idioma (MVP).",
+      category:"IA",
+      type:"Producto",
+      price:79,
+      badge:"ok",
+      best:true,
+      isNew:true
+    },
+    {
+      id:"security_owner",
+      sku:"OWNER-LOCK",
+      title:"Owner Security Lock",
+      desc:"Owner-only: token, rate-limits, lock mode, headers, auditoría básica.",
+      category:"IA",
+      type:"Servicio",
+      price:350,
+      badge:"bad",
+      best:true,
+      isNew:false
+    }
+  ];
+
+  // ========= STATE =========
+  let activeCats = new Set(CATEGORIES);
+  let activeTypes = new Set(TYPES);
+  let viewMode = "all"; // all | best | new
+  let maxPrice = 500;
+  let cart = new Map(); // id -> {qty}
+
+  // ========= UI INIT =========
+  const elCards = document.getElementById("cards");
+  const elQ = document.getElementById("q");
+  const elMaxPrice = document.getElementById("maxPrice");
+  const elMaxPriceLabel = document.getElementById("maxPriceLabel");
+  const elCatChips = document.getElementById("catChips");
+  const elTypeChips = document.getElementById("typeChips");
+
+  const elDrawer = document.getElementById("drawer");
+  const elOverlay = document.getElementById("overlay");
+  const elCartItems = document.getElementById("cartItems");
+  const elCartTotal = document.getElementById("cartTotal");
+  const elCartCount = document.getElementById("cartCount");
+  const elCartHint = document.getElementById("cartHint");
+  const elCheckoutMode = document.getElementById("checkoutMode");
+  const elCartCheckoutLabel = document.getElementById("cartCheckoutLabel");
+
+  const modalWrap = document.getElementById("modalWrap");
+  let modalProduct = null;
+
+  function money(n){ return "$"+Number(n).toFixed(0); }
+
+  function mountChips(){
+    elCatChips.innerHTML = "";
+    CATEGORIES.forEach(c=>{
+      const d = document.createElement("div");
+      d.className = "chip active";
+      d.textContent = c;
+      d.onclick = ()=>{ toggleSet(activeCats, c); d.classList.toggle("active"); render(); };
+      elCatChips.appendChild(d);
+    });
+
+    elTypeChips.innerHTML = "";
+    TYPES.forEach(t=>{
+      const d = document.createElement("div");
+      d.className = "chip active";
+      d.textContent = t;
+      d.onclick = ()=>{ toggleSet(activeTypes, t); d.classList.toggle("active"); render(); };
+      elTypeChips.appendChild(d);
+    });
+  }
+
+  function toggleSet(set, val){
+    if(set.has(val)) set.delete(val);
+    else set.add(val);
+    if(set.size===0){ // evitar vacío
+      if(set===activeCats) CATEGORIES.forEach(x=>set.add(x));
+      if(set===activeTypes) TYPES.forEach(x=>set.add(x));
+      mountChips();
+    }
+  }
+
+  function toggleView(m){
+    viewMode = m;
+    render();
+  }
+
+  function setCheckout(m){
+    checkoutMode = m;
+    elCheckoutMode.textContent = checkoutMode;
+    elCartCheckoutLabel.textContent = checkoutMode;
+    const mcm = document.getElementById("mCheckoutMode");
+    if(mcm) mcm.textContent = checkoutMode;
+  }
+
+  function resetFilters(){
+    activeCats = new Set(CATEGORIES);
+    activeTypes = new Set(TYPES);
+    viewMode = "all";
+    maxPrice = 500;
+    elMaxPrice.value = maxPrice;
+    elMaxPriceLabel.textContent = maxPrice;
+    mountChips();
+    render();
+  }
+
+  elMaxPrice.oninput = (e)=>{
+    maxPrice = Number(e.target.value);
+    elMaxPriceLabel.textContent = maxPrice;
+    render();
+  }
+
+  elQ.oninput = ()=>render();
+
+  // ========= RENDER =========
+  function matches(p){
+    if(!activeCats.has(p.category)) return false;
+    if(!activeTypes.has(p.type)) return false;
+    if(p.price > maxPrice) return false;
+
+    if(viewMode==="best" && !p.best) return false;
+    if(viewMode==="new" && !p.isNew) return false;
+
+    const q = elQ.value.trim().toLowerCase();
+    if(q){
+      const hay = (p.title+" "+p.desc+" "+p.category+" "+p.type+" "+p.sku).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  }
+
+  function render(){
+    const list = CATALOG.filter(matches);
+
+    elCards.innerHTML = "";
+    list.forEach(p=>{
+      const card = document.createElement("div");
+      card.className="card";
+      card.innerHTML = `
+        <div class="thumb">
+          <div class="tag ${p.badge}">${p.category} · ${p.type}</div>
+        </div>
+        <div class="content">
+          <h3 class="title">${p.title}</h3>
+          <p class="desc">${p.desc}</p>
+          <div class="meta">
+            <div class="price mono">${money(p.price)}</div>
+            <div class="mini">
+              <div class="kpi">SKU <span class="mono">${p.sku}</span></div>
+              <button class="btn small primary" data-buy="${p.id}">Comprar</button>
+              <button class="btn small" data-add="${p.id}">+ Carrito</button>
+            </div>
+          </div>
+        </div>
+      `;
+      card.querySelector("[data-buy]").onclick = ()=>openProduct(p.id, true);
+      card.querySelector("[data-add]").onclick = ()=>{ addToCart(p.id, 1); toast("Agregado al carrito"); };
+      card.onclick = (e)=>{ if(e.target.closest("button")) return; openProduct(p.id,false); };
+      elCards.appendChild(card);
+    });
+
+    if(list.length===0){
+      const empty = document.createElement("div");
+      empty.style.padding="30px";
+      empty.innerHTML = `<div class="muted">Sin resultados. Ajustá filtros o búsqueda.</div>`;
+      elCards.appendChild(empty);
+    }
+
+    renderCartBadge();
+  }
+
+  // ========= CART =========
+  function addToCart(id, qty){
+    const cur = cart.get(id)?.qty || 0;
+    cart.set(id, {qty: cur + qty});
+    renderCart();
+  }
+
+  function removeFromCart(id){
+    cart.delete(id);
+    renderCart();
+  }
+
+  function changeQty(id, delta){
+    const cur = cart.get(id)?.qty || 0;
+    const next = cur + delta;
+    if(next<=0) cart.delete(id);
+    else cart.set(id, {qty: next});
+    renderCart();
+  }
+
+  function clearCart(){
+    cart.clear();
+    renderCart();
+  }
+
+  function cartSummary(){
+    let total=0, count=0;
+    for(const [id, {qty}] of cart.entries()){
+      const p = CATALOG.find(x=>x.id===id);
+      if(!p) continue;
+      total += p.price * qty;
+      count += qty;
+    }
+    return {total, count};
+  }
+
+  function renderCartBadge(){
+    const {count} = cartSummary();
+    elCartCount.textContent = count;
+  }
+
+  function renderCart(){
+    const {total, count} = cartSummary();
+    elCartItems.innerHTML = "";
+    elCartTotal.textContent = money(total);
+    elCartHint.textContent = count ? `${count} item(s)` : "Vacío";
+    renderCartBadge();
+
+    if(count===0){
+      elCartItems.innerHTML = `<div class="muted">Tu carrito está vacío.</div>`;
+      return;
+    }
+
+    for(const [id, {qty}] of cart.entries()){
+      const p = CATALOG.find(x=>x.id===id);
+      if(!p) continue;
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div>
+          <h4>${p.title}</h4>
+          <small class="mono">${p.sku} · ${money(p.price)} c/u</small>
+        </div>
+        <div class="qty">
+          <button onclick="changeQty('${id}',-1)">-</button>
+          <span class="mono">${qty}</span>
+          <button onclick="changeQty('${id}',1)">+</button>
+          <button class="btn small" style="margin-left:6px" onclick="removeFromCart('${id}')">✕</button>
+        </div>
+      `;
+      elCartItems.appendChild(div);
+    }
+  }
+
+  // ========= DRAWER =========
+  function openCart(){
+    elDrawer.classList.add("open");
+    elOverlay.classList.add("show");
+    renderCart();
+  }
+  function closeCart(){
+    elDrawer.classList.remove("open");
+    elOverlay.classList.remove("show");
+  }
+
+  // ========= PRODUCT MODAL =========
+  function openProduct(id, buyNow){
+    const p = CATALOG.find(x=>x.id===id);
+    if(!p) return;
+
+    modalProduct = p;
+
+    document.getElementById("mTitle").textContent = p.title;
+    document.getElementById("mDesc").textContent = p.desc;
+    document.getElementById("mSku").textContent = p.sku;
+    document.getElementById("mPrice").textContent = money(p.price);
+    document.getElementById("mQty").value = 1;
+    document.getElementById("mCheckoutMode").textContent = checkoutMode;
+
+    const badges = document.getElementById("mBadges");
+    badges.innerHTML = "";
+    const b1 = document.createElement("div"); b1.className="tag ok"; b1.textContent=p.category;
+    const b2 = document.createElement("div"); b2.className="tag warn"; b2.textContent=p.type;
+    const b3 = document.createElement("div"); b3.className="tag"; b3.textContent=(p.best?"Best Seller":"Standard");
+    badges.appendChild(b1); badges.appendChild(b2); badges.appendChild(b3);
+
+    modalWrap.classList.add("show");
+
+    if(buyNow){
+      // nada extra; el usuario toca "Comprar ahora" en el modal
+    }
+  }
+
+  function closeModal(){
+    modalWrap.classList.remove("show");
+    modalProduct = null;
+  }
+
+  function modalAddToCart(){
+    if(!modalProduct) return;
+    const qty = Math.max(1, Number(document.getElementById("mQty").value || 1));
+    addToCart(modalProduct.id, qty);
+    toast("Agregado al carrito");
+  }
+
+  function modalBuyNow(){
+    if(!modalProduct) return;
+    const qty = Math.max(1, Number(document.getElementById("mQty").value || 1));
+    addToCart(modalProduct.id, qty);
+    closeModal();
+    openCheckout();
+  }
+
+  // ========= CHECKOUT =========
+  async function openCheckout(){
+    const {total, count} = cartSummary();
+    if(count===0){ toast("Carrito vacío"); return; }
+
+    // En MVP: abrimos el flujo según modo.
+    if(checkoutMode==="paddle"){
+      try{
+        Paddle.Setup({ vendor: PADDLE_VENDOR_ID });
+        Paddle.Checkout.open({ product: PADDLE_PRODUCT_ID });
+      }catch(e){
+        toast("Paddle no configurado (IDs)"); 
+      }
+      return;
+    }
+
+    if(checkoutMode==="crypto"){
+      toast("Crypto checkout: MVP (intent). Se habilita con backend wallet.");
+      return;
+    }
+
+    // Stripe mode (MVP): llama un endpoint /checkout en Pages Functions (si lo tenés)
+    // Si no existe, queda como placeholder con aviso.
+    try{
+      const res = await fetch("/functions/api/checkout", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          items: [...cart.entries()].map(([id,{qty}])=>{
+            const p = CATALOG.find(x=>x.id===id);
+            return { id, sku:p?.sku, title:p?.title, qty, price:p?.price };
+          }),
+          currency:"USD",
+          total
+        })
+      });
+
+      if(!res.ok){
+        toast("Checkout endpoint no activo (MVP)");
+        return;
+      }
+      const data = await res.json();
+      if(data?.url){
+        location.href = data.url;
+      }else{
+        toast("Checkout response inválida");
+      }
+    }catch(e){
+      toast("Checkout aún no conectado");
+    }
+  }
+
+  // ========= API STATUS =========
+  async function pingAPI(){
+    try{
+      const r = await fetch(API_BASE + "/health", {method:"GET"});
+      if(r.ok){
+        document.getElementById("apiStatus").textContent = "API OK";
+      }else{
+        document.getElementById("apiStatus").textContent = "API FAIL";
+      }
+    }catch(e){
+      document.getElementById("apiStatus").textContent = "API OFF";
+    }
+  }
+
+  // ========= TOAST =========
+  let toastTimer=null;
+  function toast(msg){
+    let t = document.getElementById("toast");
+    if(!t){
+      t = document.createElement("div");
+      t.id="toast";
+      t.style.position="fixed";
+      t.style.bottom="22px";
+      t.style.left="22px";
+      t.style.padding="12px 14px";
+      t.style.border="1px solid rgba(255,255,255,.16)";
+      t.style.background="rgba(0,0,0,.72)";
+      t.style.backdropFilter="blur(14px)";
+      t.style.borderRadius="14px";
+      t.style.boxShadow="0 20px 80px rgba(0,0,0,.55)";
+      t.style.zIndex="80";
+      t.style.fontSize="13px";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity="1";
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>{ t.style.opacity="0"; }, 1600);
+  }
+
+  // ========= PWA SW =========
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", ()=>{
+      navigator.serviceWorker.register("/sw.js").catch(()=>{});
+    });
+  }
+
+  // ========= START =========
+  mountChips();
+  setCheckout("stripe");
+  render();
+  renderCart();
+  pingAPI();
+  setInterval(pingAPI, 12000);
 </script>
 
 </body>
+</html>
