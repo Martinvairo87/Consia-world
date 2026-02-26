@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>CONSIA CORE</title>
+<title>CONSIA AVATAR CORE</title>
 
 <style>
 body{
@@ -15,38 +15,24 @@ body{
   font-family:Arial;
 }
 
-/* STATUS */
 #status{
   position:absolute;
-  bottom:40px;
+  bottom:30px;
   width:100%;
   text-align:center;
   color:white;
-  letter-spacing:6px;
-  font-size:22px;
+  letter-spacing:4px;
   opacity:0.7;
 }
-
-/* WAKE GLOW */
-#wakeGlow{
-  position:absolute;
-  width:300px;
-  height:300px;
-  border-radius:50%;
-  background:radial-gradient(circle,#00ffff,transparent);
-  filter:blur(60px);
-  opacity:0;
-  transition:0.2s;
-}
 </style>
-</head>
 
+</head>
 <body>
 
-<div id="wakeGlow"></div>
-<div id="status">CONSIA CORE ACTIVE</div>
+<div id="status">CONSIA AVATAR ACTIVE</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
 
 <script>
 
@@ -59,61 +45,26 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.z = 4;
+camera.position.z = 2;
 
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// ORB
-const geo = new THREE.SphereGeometry(1,64,64);
-const mat = new THREE.MeshBasicMaterial({
-  color:0x00ffff,
-  wireframe:true
-});
-const orb = new THREE.Mesh(geo,mat);
-scene.add(orb);
-
-// PARTICLES
-const pGeo = new THREE.BufferGeometry();
-const pCount = 500;
-const positions = new Float32Array(pCount*3);
-
-for(let i=0;i<pCount*3;i++){
-  positions[i]=(Math.random()-0.5)*10;
-}
-
-pGeo.setAttribute(
-  'position',
-  new THREE.BufferAttribute(positions,3)
-);
-
-const pMat = new THREE.PointsMaterial({
-  color:0x00ffff,
-  size:0.02
-});
-
-const particles = new THREE.Points(pGeo,pMat);
-scene.add(particles);
-
 // LIGHT
-const light = new THREE.PointLight(0x00ffff,2);
+const light = new THREE.PointLight(0xffffff,2);
+light.position.set(0,2,2);
 scene.add(light);
 
-// MOUSE EYE TRACK
-document.addEventListener("mousemove",e=>{
-  const x=(e.clientX/innerWidth-0.5)*2;
-  const y=(e.clientY/innerHeight-0.5)*2;
-
-  orb.rotation.y = x;
-  orb.rotation.x = y;
-
-  document.getElementById("wakeGlow").style.left =
-    e.clientX-150+"px";
-
-  document.getElementById("wakeGlow").style.top =
-    e.clientY-150+"px";
+// AVATAR (placeholder humanoid)
+const geo = new THREE.SphereGeometry(0.8,64,64);
+const mat = new THREE.MeshStandardMaterial({
+  color:0x00ffff,
+  metalness:0.7,
+  roughness:0.2
 });
+const avatar = new THREE.Mesh(geo,mat);
+scene.add(avatar);
 
 // AUDIO LIP SYNC
 navigator.mediaDevices.getUserMedia({audio:true})
@@ -122,7 +73,6 @@ navigator.mediaDevices.getUserMedia({audio:true})
   const ctx = new AudioContext();
   const src = ctx.createMediaStreamSource(stream);
   const analyser = ctx.createAnalyser();
-
   src.connect(analyser);
 
   const data = new Uint8Array(analyser.frequencyBinCount);
@@ -136,25 +86,7 @@ navigator.mediaDevices.getUserMedia({audio:true})
     }
     volume/=data.length;
 
-    // ORB PULSE
-    const scale=1+volume/300;
-    orb.scale.set(scale,scale,scale);
-
-    // PARTICLES REACT
-    particles.rotation.y+=volume/50000;
-
-    // WAKE GLOW
-    document.getElementById("wakeGlow").style.opacity =
-      volume>20 ? 1 : 0;
-
-    // EMOTION COLOR
-    if(volume>80){
-      mat.color.set(0xff00ff);
-    }else if(volume>40){
-      mat.color.set(0x00ffff);
-    }else{
-      mat.color.set(0x0044ff);
-    }
+    avatar.scale.y = 1 + volume/300; // lip sync pulse
 
     requestAnimationFrame(audioLoop);
   }
@@ -162,27 +94,97 @@ navigator.mediaDevices.getUserMedia({audio:true})
   audioLoop();
 });
 
-// WEBSOCKET STREAM READY
-const socket = new WebSocket(
-  "wss://api.consia.world/ws/core"
-);
+// FACE TRACKING
+navigator.mediaDevices.getUserMedia({video:true})
+.then(stream=>{
+
+  const video = document.createElement("video");
+  video.srcObject = stream;
+  video.play();
+
+  const faceMesh = new FaceMesh({
+    locateFile: file =>
+      `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+  });
+
+  faceMesh.onResults(results=>{
+    if(results.multiFaceLandmarks){
+
+      const face = results.multiFaceLandmarks[0];
+
+      const x = face[1].x - 0.5;
+      const y = face[1].y - 0.5;
+
+      avatar.rotation.y = x*2;
+      avatar.rotation.x = y*2;
+    }
+  });
+
+  async function detect(){
+    await faceMesh.send({image:video});
+    requestAnimationFrame(detect);
+  }
+
+  detect();
+});
+
+// WAKE WORD (keyword detect base)
+let listening=false;
+
+navigator.mediaDevices.getUserMedia({audio:true})
+.then(stream=>{
+
+  const recognition =
+    new webkitSpeechRecognition();
+
+  recognition.continuous=true;
+
+  recognition.onresult=e=>{
+
+    const text =
+      e.results[e.results.length-1][0]
+      .transcript
+      .toLowerCase();
+
+    if(text.includes("consia")){
+      listening=true;
+      mat.color.set(0xff00ff);
+      console.log("WAKE WORD DETECTED");
+    }
+  };
+
+  recognition.start();
+});
+
+// VOICE STREAM SOCKET
+const socket =
+  new WebSocket("wss://api.consia.world/ws/voice");
 
 socket.onopen=()=>{
-  console.log("CONSIA STREAM ACTIVE");
+  console.log("VOICE STREAM ACTIVE");
 };
+
+// EMOTION AI COLOR STATES
+setInterval(()=>{
+
+  const emotion=Math.random();
+
+  if(emotion<0.3)
+    mat.color.set(0x00ffff);
+  else if(emotion<0.6)
+    mat.color.set(0xff00ff);
+  else
+    mat.color.set(0x0044ff);
+
+},2000);
 
 // ANIMATE
 function animate(){
   requestAnimationFrame(animate);
-
-  orb.rotation.y+=0.002;
-  particles.rotation.y+=0.0005;
-
   renderer.render(scene,camera);
 }
 animate();
 
 </script>
-
 </body>
 </html>
