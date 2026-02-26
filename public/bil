@@ -1,0 +1,9 @@
+ing-001"}
+function payPaddle(){
+
+Paddle.Setup({
+vendor:123456
+});
+
+Paddle.Checkout.open({
+product:9876
