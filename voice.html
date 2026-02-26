@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CONSIA Voice</title>
+  <style>
+    :root{--bg:#0b0d12;--card:#121626;--txt:#e9eefc;--mut:#9aa6c7;--acc:#6aa7ff;--ok:#5dffb1}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    .wrap{max-width:980px;margin:0 auto;padding:16px}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:14px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    button, input, textarea{border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--txt);padding:10px 12px;font-size:14px}
+    button{cursor:pointer}
+    button.primary{border-color:rgba(106,167,255,.35);background:rgba(106,167,255,.10)}
+    button.good{border-color:rgba(93,255,177,.35);background:rgba(93,255,177,.10)}
+    textarea{width:100%;min-height:120px;resize:vertical}
+    .out{white-space:pre-wrap;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;min-height:110px}
+    video{width:100%;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:#000}
+    .mut{color:var(--mut)}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-size:12px}
+    .dot{width:10px;height:10px;border-radius:99px;background:var(--ok);box-shadow:0 0 20px rgba(93,255,177,.6)}
+    .mono{font-family:ui-monospace,Menlo,Monaco,Consolas,monospace}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="row" style="justify-content:space-between;margin-bottom:12px">
+    <div class="row"><span class="dot"></span><b style="letter-spacing:.05em">CONSIA VOICE</b></div>
+    <div class="row">
+      <span class="pill">Sesión <span class="mono" id="sid"></span></span>
+      <a href="/" style="text-decoration:none"><button class="primary">Volver</button></a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button class="good" id="start">🎙️ Dictar</button>
+      <button id="stop">⏹️ Stop</button>
+      <button class="primary" id="send">Enviar a /ask</button>
+      <button id="speak">🔊 Leer</button>
+      <button id="reload">Recargar Avatar</button>
+    </div>
+    <p class="mut">Voice local (SpeechRecognition) + TTS. Backend: <span class="mono" id="api"></span></p>
+    <textarea id="txt" placeholder="Dictá o escribí acá…"></textarea>
+    <div style="height:10px"></div>
+    <div class="out mono" id="out"></div>
+    <div style="height:12px"></div>
+    <video id="avatar" controls playsinline></video>
+
+    <div style="height:14px"></div>
+    <div class="row">
+      <input id="room" value="main" placeholder="room" />
+      <button class="primary" id="wsC">WS conectar</button>
+      <button id="wsX">WS cerrar</button>
+      <input id="wsM" placeholder="mensaje..." style="flex:1;min-width:180px" />
+      <button class="good" id="wsS">Enviar</button>
+    </div>
+    <div style="height:10px"></div>
+    <div class="out mono" id="ws"></div>
+  </div>
+</div>
+
+<script>
+  const API="https://api.consia.world";
+  document.getElementById("api").textContent = API;
+
+  const sessionKey="consia_session_id";
+  let sid=localStorage.getItem(sessionKey);
+  if(!sid){ sid=crypto.randomUUID(); localStorage.setItem(sessionKey,sid); }
+  document.getElementById("sid").textContent=sid;
+
+  function hdr(){
+    return {"content-type":"application/json","x-consia-session":sid,"x-consia-device":"voice"};
+  }
+
+  // avatar
+  const av=document.getElementById("avatar");
+  function loadAvatar(){ av.src = API+"/avatar.mp4?ts="+Date.now(); }
+  document.getElementById("reload").onclick=loadAvatar;
+  loadAvatar();
+
+  // speech
+  let rec=null;
+  function setup(){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR) return null;
+    const r=new SR(); r.lang="es-AR"; r.interimResults=true; r.continuous=true;
+    return r;
+  }
+  const txt=document.getElementById("txt");
+  document.getElementById("start").onclick=()=>{
+    if(!rec) rec=setup();
+    if(!rec){ alert("SpeechRecognition no disponible en este navegador."); return; }
+    rec.onresult=(e)=>{
+      let s="";
+      for(let i=e.resultIndex;i<e.results.length;i++) s+=e.results[i][0].transcript;
+      txt.value=s;
+    };
+    rec.start();
+  };
+  document.getElementById("stop").onclick=()=>{ try{ rec && rec.stop(); }catch{} };
+
+  // ask
+  const out=document.getElementById("out");
+  document.getElementById("send").onclick=async()=>{
+    const m=txt.value.trim(); if(!m) return;
+    out.textContent="CONSIA…";
+    const r=await fetch(API+"/ask",{method:"POST",headers:hdr(),body:JSON.stringify({message:m})});
+    const j=await r.json().catch(()=>null);
+    out.textContent=JSON.stringify({status:r.status,...j},null,2);
+  };
+
+  // speak
+  document.getElementById("speak").onclick=()=>{
+    const t=out.textContent||"CONSIA";
+    const u=new SpeechSynthesisUtterance(t.slice(0,1200));
+    u.lang="es-AR";
+    speechSynthesis.speak(u);
+  };
+
+  // ws
+  let ws=null;
+  const wsOut=document.getElementById("ws");
+  const log=(x)=>{ wsOut.textContent+=x+"\n"; wsOut.scrollTop=wsOut.scrollHeight; };
+  document.getElementById("wsC").onclick=()=>{
+    const room=(document.getElementById("room").value||"main").trim();
+    const u=API.replace("https://","wss://")+"/ws/"+encodeURIComponent(room);
+    wsOut.textContent="";
+    ws=new WebSocket(u);
+    ws.onopen=()=>log("WS: connected "+u);
+    ws.onmessage=(e)=>log("MSG: "+e.data);
+    ws.onclose=()=>log("WS: closed");
+    ws.onerror=()=>log("WS: error");
+  };
+  document.getElementById("wsX").onclick=()=>{ try{ ws && ws.close(); }catch{} };
+  document.getElementById("wsS").onclick=()=>{
+    if(!ws) return;
+    const m=(document.getElementById("wsM").value||"").trim();
+    if(!m) return;
+    ws.send(m);
+    document.getElementById("wsM").value="";
+  };
+</script>
+</body>
+</html>
