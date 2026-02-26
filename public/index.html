@@ -2,941 +2,567 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#05070b" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="color-scheme" content="dark" />
   <title>CONSIA</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/app.webmanifest" />
+  <link rel="icon" href="/public/assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="/public/assets/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Social -->
+  <meta property="og:title" content="CONSIA" />
+  <meta property="og:description" content="CONSIA CORE — Owner-Only. Privacy-First. Infinite." />
+  <meta property="og:type" content="website" />
+
   <style>
     :root{
-      --bg:#05070b;
-      --panel:rgba(255,255,255,.06);
-      --panel2:rgba(255,255,255,.08);
-      --stroke:rgba(255,255,255,.10);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.60);
-      --muted2:rgba(255,255,255,.40);
-      --brand:#66d3ff;
-      --brand2:#3aa0ff;
-      --ok:#47e6a0;
-      --warn:#ffd26a;
-      --err:#ff6b6b;
-      --shadow: 0 24px 80px rgba(0,0,0,.55);
-      --r:22px;
-      --r2:16px;
-      --pad:18px;
-      --pad2:14px;
-      --max:1180px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --bg:#000;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.68);
+      --muted2:rgba(255,255,255,.45);
+      --glass:rgba(255,255,255,.06);
+      --glass2:rgba(255,255,255,.10);
+      --line:rgba(255,255,255,.14);
+      --shadow: 0 20px 80px rgba(0,0,0,.65);
+      --radius: 22px;
+      --radius2: 28px;
+      --pad: clamp(14px, 2.2vw, 22px);
+      --max: 1120px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
-      font-family:var(--font);
-      background:
-        radial-gradient(1200px 700px at 18% 10%, rgba(102,211,255,.18), transparent 55%),
-        radial-gradient(900px 620px at 80% 30%, rgba(58,160,255,.14), transparent 55%),
-        radial-gradient(900px 700px at 40% 90%, rgba(71,230,160,.08), transparent 55%),
-        var(--bg);
-      color:var(--text);
+      background: radial-gradient(1200px 800px at 50% 20%, rgba(255,255,255,.08), transparent 55%),
+                  radial-gradient(900px 600px at 10% 70%, rgba(255,255,255,.06), transparent 55%),
+                  radial-gradient(900px 600px at 90% 75%, rgba(255,255,255,.05), transparent 55%),
+                  #000;
+      color:var(--fg);
+      font-family:var(--sans);
       overflow-x:hidden;
     }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max);margin:0 auto;padding:24px 16px 32px}
-    .topbar{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      padding:10px 8px 18px;
+    a{ color:inherit; text-decoration:none; }
+    button{ font-family:inherit; }
+
+    /* Subtle moving grain */
+    .grain{
+      pointer-events:none;
+      position:fixed; inset:0;
+      opacity:.13;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      mix-blend-mode:overlay;
+      animation: drift 14s linear infinite;
+    }
+    @keyframes drift{
+      0%{ transform:translate3d(0,0,0); }
+      100%{ transform:translate3d(-10%, -10%, 0); }
+    }
+
+    /* Top bar */
+    header{
+      position:sticky; top:0; z-index:40;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, rgba(0,0,0,.78), rgba(0,0,0,.35));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav{
+      max-width:var(--max);
+      margin:0 auto;
+      padding: 14px var(--pad);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px;
     }
     .brand{
-      display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.24em;
+      display:flex; align-items:center; gap:12px;
+      letter-spacing:.34em;
       text-transform:uppercase;
+      font-weight:600;
+      font-size:13px;
     }
     .dot{
-      width:10px;height:10px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, #bff1ff, var(--brand));
-      box-shadow: 0 0 22px rgba(102,211,255,.35);
+      width:10px;height:10px;border-radius:999px;
+      background:rgba(255,255,255,.92);
+      box-shadow:0 0 28px rgba(255,255,255,.35);
     }
-    .right{
-      display:flex;align-items:center;gap:10px;
+    .nav-right{
+      display:flex; align-items:center; gap:10px;
     }
     .pill{
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.04);
-      padding:8px 10px;border-radius:999px;
-      color:var(--muted);
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       font-size:12px;
-      display:flex;align-items:center;gap:8px;
+      color:var(--muted);
     }
+    .pill b{ color:var(--fg); font-weight:600; }
     .btn{
-      border:1px solid var(--stroke);
-      background:rgba(255,255,255,.06);
-      color:var(--text);
-      padding:10px 12px;border-radius:999px;
-      font-size:13px;cursor:pointer;
-      transition:.15s ease;
-      user-select:none;
+      appearance:none; border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color:var(--fg);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:.18s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .btn:hover{background:rgba(255,255,255,.09)}
-    .btn.primary{
-      border-color:rgba(102,211,255,.30);
-      background:linear-gradient(180deg, rgba(102,211,255,.20), rgba(58,160,255,.10));
-      box-shadow: 0 0 0 1px rgba(102,211,255,.10) inset;
-    }
-    .btn.ghost{background:transparent}
-    .grid{
-      display:grid;
-      grid-template-columns: 420px 1fr;
-      gap:16px;
-    }
-    @media (max-width:980px){
-      .grid{grid-template-columns:1fr}
+    .btn:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.32); background: rgba(255,255,255,.09); }
+    .btn:active{ transform:translateY(0); }
+
+    /* Hero */
+    main{ position:relative; z-index:10; }
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding: clamp(26px, 4vw, 56px) var(--pad) 90px;
     }
 
-    /* Avatar Panel */
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border:1px solid var(--stroke);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
+    .hero{
+      margin-top: clamp(18px, 2vw, 30px);
+      display:grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: clamp(16px, 2vw, 24px);
+      align-items:stretch;
+    }
+    @media (max-width: 980px){
+      .hero{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
     }
-    .avatarCard{min-height:520px}
-    .avatarStage{
-      position:relative;
-      height:320px;
-      background:
-        radial-gradient(700px 380px at 35% 25%, rgba(102,211,255,.20), transparent 60%),
-        radial-gradient(700px 420px at 70% 35%, rgba(58,160,255,.16), transparent 60%),
-        radial-gradient(700px 480px at 50% 90%, rgba(71,230,160,.08), transparent 65%),
-        rgba(0,0,0,.35);
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .avatarVideo{
-      position:absolute;inset:0;
-      width:100%;height:100%;object-fit:cover;
-      filter:saturate(1.08) contrast(1.05) brightness(.95);
-      opacity:.86;
-    }
-    .avatarOverlay{
-      position:absolute;inset:0;
-      background:
-        radial-gradient(400px 260px at 25% 30%, rgba(102,211,255,.18), transparent 65%),
-        radial-gradient(380px 280px at 75% 35%, rgba(58,160,255,.12), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55));
+    .panel::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(900px 380px at 30% 20%, rgba(255,255,255,.14), transparent 55%);
+      opacity:.7;
       pointer-events:none;
     }
-    .avatarPulse{
-      position:absolute;left:16px;top:14px;
-      display:flex;align-items:center;gap:10px;
-      padding:8px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.30);
-      backdrop-filter: blur(10px);
-      color:rgba(255,255,255,.85);
+
+    .panel-inner{ position:relative; padding: clamp(18px, 2.4vw, 28px); }
+    .kicker{
+      display:flex; align-items:center; gap:10px;
+      font-family:var(--mono);
       font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--muted);
     }
-    .pulseDot{
-      width:10px;height:10px;border-radius:50%;
-      background:rgba(71,230,160,.95);
-      box-shadow:0 0 18px rgba(71,230,160,.35);
-      animation:pulse 1.4s infinite ease-in-out;
-      opacity:.9;
+    .kline{
+      height:1px; flex:1;
+      background: linear-gradient(to right, rgba(255,255,255,.22), transparent);
     }
-    @keyframes pulse{
-      0%{transform:scale(.9);opacity:.6}
-      50%{transform:scale(1.15);opacity:1}
-      100%{transform:scale(.9);opacity:.6}
-    }
-    .avatarHint{
-      position:absolute;right:12px;top:12px;
-      display:flex;gap:8px;align-items:center;
-    }
-    .miniBtn{
-      width:38px;height:38px;border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.28);
-      cursor:pointer;
-      display:grid;place-items:center;
-      transition:.15s ease;
-    }
-    .miniBtn:hover{background:rgba(255,255,255,.10)}
-    .miniBtn svg{opacity:.86}
-    .avatarBody{padding:14px 14px 16px}
-    .avatarLine{
-      font-size:14px;line-height:1.35;color:rgba(255,255,255,.88);
-      margin:0 0 10px 0;
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(34px, 4.2vw, 58px);
+      letter-spacing: .18em;
+      text-transform:uppercase;
+      line-height:1.03;
+      font-weight:650;
     }
     .sub{
-      font-size:12px;color:var(--muted);
-      margin:0 0 14px 0;
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: clamp(14px, 1.35vw, 16px);
+      line-height:1.6;
+      max-width: 58ch;
     }
-    .modes{
-      display:flex;flex-wrap:wrap;gap:8px;
-      margin:0 0 12px 0;
+    .cta-row{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 16px;
     }
-    .mode{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.05);
+    .cta{
+      flex:0 0 auto;
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 16px;
       border-radius:999px;
-      padding:10px 12px;
-      font-size:13px;cursor:pointer;
-      display:flex;align-items:center;gap:8px;
-    }
-    .mode.active{
-      border-color:rgba(102,211,255,.35);
-      background:linear-gradient(180deg, rgba(102,211,255,.18), rgba(58,160,255,.10));
-    }
-    .quickGrid{
-      display:grid;grid-template-columns:1fr 1fr;gap:10px;
-    }
-    .qcard{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.05);
-      border-radius:16px;
-      padding:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color:var(--fg);
+      font-size:12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
       cursor:pointer;
-      transition:.15s ease;
-      min-height:74px;
+      transition:.18s ease;
     }
-    .qcard:hover{background:rgba(255,255,255,.08)}
-    .qtitle{font-size:13px;color:rgba(255,255,255,.90);margin:0 0 6px 0;font-weight:600}
-    .qdesc{font-size:12px;color:var(--muted);margin:0}
+    .cta.primary{
+      background: rgba(255,255,255,.92);
+      color:#000;
+      border-color: rgba(255,255,255,.92);
+    }
+    .cta:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.34); }
+    .cta.primary:hover{ filter:brightness(.98); }
+    .cta:active{ transform: translateY(0); }
 
-    /* Chat panel */
-    .chatCard{min-height:520px;display:flex;flex-direction:column}
-    .chatHead{
-      padding:12px 14px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
     }
-    .chatTitle{font-weight:650;font-size:13px;color:rgba(255,255,255,.9);letter-spacing:.02em}
-    .chatTools{display:flex;gap:8px;align-items:center}
-    .chatBody{
-      padding:14px;
-      flex:1;
-      overflow:auto;
+    .card{
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      padding: 14px 14px;
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:12px;
+      transition:.18s ease;
     }
-    .msg{display:flex;gap:10px;margin:0 0 12px 0}
-    .bubble{
-      max-width:85%;
-      padding:12px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.05);
-      font-size:14px;line-height:1.35;color:rgba(255,255,255,.90);
-      white-space:pre-wrap;
+    .card:hover{ border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.06); transform: translateY(-1px); }
+    .card h3{
+      margin:0;
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-weight:650;
     }
-    .msg.me{justify-content:flex-end}
-    .msg.me .bubble{
-      background:linear-gradient(180deg, rgba(102,211,255,.20), rgba(58,160,255,.10));
-      border-color:rgba(102,211,255,.25);
+    .card p{
+      margin:8px 0 0;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.45;
     }
     .tag{
-      font-size:11px;color:var(--muted2);
-      margin-top:6px;
-    }
-    .composer{
-      padding:12px 14px;
-      border-top:1px solid rgba(255,255,255,.08);
-      display:flex;gap:10px;align-items:flex-end;
-      background:rgba(0,0,0,.10);
-    }
-    .inputWrap{
-      flex:1;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      border-radius:18px;
-      padding:10px 12px;
-      display:flex;gap:10px;align-items:flex-end;
-    }
-    textarea{
-      width:100%;
-      border:0;outline:0;
-      background:transparent;
-      resize:none;
-      color:rgba(255,255,255,.92);
-      font: 14px/1.35 var(--font);
-      min-height:22px;
-      max-height:120px;
-    }
-    textarea::placeholder{color:rgba(255,255,255,.35)}
-    .send{
-      width:44px;height:44px;border-radius:16px;
-      border:1px solid rgba(102,211,255,.25);
-      background:linear-gradient(180deg, rgba(102,211,255,.20), rgba(58,160,255,.10));
-      display:grid;place-items:center;
-      cursor:pointer;
-      transition:.15s ease;
-    }
-    .send:hover{filter:brightness(1.06)}
-    .kbdHint{
-      font-size:12px;color:rgba(255,255,255,.45);
-      padding:0 2px;
+      font-family:var(--mono);
+      font-size:11px;
+      color: var(--muted2);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:999px;
+      padding:8px 10px;
+      white-space:nowrap;
+      background: rgba(0,0,0,.25);
     }
 
-    /* Modal */
-    .modal{
-      position:fixed;inset:0;
-      background:rgba(0,0,0,.60);
-      display:none;align-items:center;justify-content:center;
-      padding:18px;
-      z-index:50;
+    /* Terminal */
+    .term{
+      margin-top: 12px;
+      border-top:1px solid rgba(255,255,255,.10);
+      padding-top: 14px;
+      font-family:var(--mono);
+      font-size:12px;
+      color: rgba(255,255,255,.78);
+      line-height:1.6;
     }
-    .modal.on{display:flex}
-    .modalBox{
-      width:min(820px, 100%);
-      border-radius:24px;
-      border:1px solid rgba(255,255,255,.10);
-      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      box-shadow: 0 28px 120px rgba(0,0,0,.70);
-      overflow:hidden;
+    .term .row{ display:flex; gap:10px; align-items:flex-start; }
+    .prompt{ color: rgba(255,255,255,.55); }
+    .mono{ font-family:var(--mono); }
+
+    /* Footer */
+    footer{
+      border-top:1px solid rgba(255,255,255,.10);
+      padding: 18px var(--pad);
+      color: var(--muted2);
+      font-size:12px;
     }
-    .modalTop{
-      padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    .foot{
+      max-width:var(--max);
+      margin:0 auto;
+      display:flex; justify-content:space-between; align-items:center;
+      gap:12px; flex-wrap:wrap;
     }
-    .modalTitle{font-weight:700;font-size:13px;color:rgba(255,255,255,.90)}
-    .modalBody{padding:16px}
-    .note{
-      color:rgba(255,255,255,.82);
-      font-size:14px;line-height:1.4;margin:0 0 10px 0;
+    .links{ display:flex; gap:14px; flex-wrap:wrap; }
+    .links a{ color: var(--muted); }
+    .links a:hover{ color: var(--fg); }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%; bottom:22px;
+      transform:translateX(-50%);
+      background: rgba(0,0,0,.78);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      padding: 12px 14px;
+      color: rgba(255,255,255,.85);
+      font-size:12px;
+      display:none;
+      align-items:center;
+      gap:10px;
+      z-index:60;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    .small{
-      color:rgba(255,255,255,.55);
-      font-size:12px;margin:0;
+    .toast.show{ display:flex; }
+    .toast .ok{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,.92);
+      box-shadow:0 0 22px rgba(255,255,255,.35);
     }
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="topbar">
+  <div class="grain"></div>
+
+  <header>
+    <div class="nav">
       <div class="brand" aria-label="CONSIA">
         <span class="dot" aria-hidden="true"></span>
         <span>CONSIA</span>
       </div>
-      <div class="right">
+
+      <div class="nav-right">
         <div class="pill" id="statusPill">
-          <span id="statusDot" style="width:8px;height:8px;border-radius:50%;background:var(--muted2);display:inline-block"></span>
-          <span id="statusText">…</span>
+          <span class="mono">API</span>
+          <b id="apiStatus">CHECK</b>
+          <span class="mono" id="apiPing">—</span>
         </div>
-        <button class="btn ghost" id="langBtn" title="Idioma">🌐</button>
-        <button class="btn" id="resetBtn" title="Reiniciar sesión">Reset</button>
+
+        <button class="btn" id="installBtn" style="display:none;">Instalar</button>
+        <button class="btn" id="copyCmdBtn">Comando “.”</button>
       </div>
     </div>
+  </header>
 
-    <div class="grid">
-      <!-- AVATAR / GUIDANCE -->
-      <div class="card avatarCard">
-        <div class="avatarStage" id="avatarStage">
-          <!-- ✅ Avatar hiperrealista: reemplazá src por tu video hiperrealista (mp4/webm) cuando lo tengas -->
-          <video class="avatarVideo" id="avatarVideo" autoplay muted loop playsinline
-            src="avatar/consia-avatar-hyperreal.webm"></video>
-
-          <div class="avatarOverlay"></div>
-
-          <div class="avatarPulse">
-            <span class="pulseDot" id="liveDot"></span>
-            <span id="avatarState">CONSIA • ACTIVA</span>
-          </div>
-
-          <div class="avatarHint">
-            <div class="miniBtn" id="btnVoice" title="Voz">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M12 14a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3Z" stroke="white" opacity=".9" stroke-width="1.6"/>
-                <path d="M19 11a7 7 0 0 1-14 0" stroke="white" opacity=".9" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M12 18v3" stroke="white" opacity=".9" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
+  <main>
+    <div class="wrap">
+      <section class="hero">
+        <!-- Left: Hero -->
+        <div class="panel">
+          <div class="panel-inner">
+            <div class="kicker">
+              <span class="mono">OWNER-ONLY • PRIVACY-FIRST</span>
+              <span class="kline"></span>
+              <span class="mono" id="timeNow">—</span>
             </div>
-            <div class="miniBtn" id="btnFaceTime" title="FaceTime">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M15 10.5V8.8A2.8 2.8 0 0 0 12.2 6H7.8A2.8 2.8 0 0 0 5 8.8v6.4A2.8 2.8 0 0 0 7.8 18h4.4A2.8 2.8 0 0 0 15 15.2v-1.7" stroke="white" opacity=".9" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M15 10.5 19 8v8l-4-2.5" stroke="white" opacity=".9" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="miniBtn" id="btnHyper" title="Hyperrealismo">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11Z" stroke="white" opacity=".9" stroke-width="1.6"/>
-                <path d="M9.5 10.5a2.5 2.5 0 0 0 5 0" stroke="white" opacity=".9" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </div>
-          </div>
-        </div>
 
-        <div class="avatarBody">
-          <p class="avatarLine" id="avatarLine">Decime qué querés. Yo me encargo.</p>
-          <p class="sub" id="avatarSub">Tip: escribí “.” para activar la magia instantánea.</p>
+            <h1>CONSIA CORE</h1>
+            <p class="sub">
+              Sistema operativo vivo para decisiones, voz, avatar y comercio global.
+              Minimal friction. Fail-closed. Self-healing. Sin vueltas.
+            </p>
 
-          <div class="modes" role="tablist" aria-label="Modos">
-            <div class="mode active" data-mode="chat">💬 <span id="mChat">Chat</span></div>
-            <div class="mode" data-mode="voice">🎙️ <span id="mVoice">Voz</span></div>
-            <div class="mode" data-mode="facetime">📹 <span id="mFace">FaceTime</span></div>
-            <div class="mode" data-mode="hyperrealism">✨ <span id="mHyper">Hyperrealismo</span></div>
-          </div>
+            <div class="cta-row">
+              <a class="cta primary" href="/voice.html">Entrar a Voice</a>
+              <a class="cta" href="/owner.html">Owner Dashboard</a>
+              <a class="cta" href="/marketplace.html">Marketplace</a>
+              <a class="cta" href="/live.html">Live</a>
+              <button class="cta" id="wakeBtn">Wake (demo)</button>
+            </div>
 
-          <div class="quickGrid" id="quickGrid">
-            <div class="qcard" data-q="1">
-              <p class="qtitle" id="q1t">Explorar</p>
-              <p class="qdesc" id="q1d">Ver todo lo que CONSIA puede hacer.</p>
-            </div>
-            <div class="qcard" data-q="2">
-              <p class="qtitle" id="q2t">Hacer ahora</p>
-              <p class="qdesc" id="q2d">Planificar, resumir, decidir, ejecutar.</p>
-            </div>
-            <div class="qcard" data-q="3">
-              <p class="qtitle" id="q3t">Soporte</p>
-              <p class="qdesc" id="q3d">Cuenta, pagos, errores, ayuda.</p>
-            </div>
-            <div class="qcard" data-q=".">
-              <p class="qtitle" id="q4t">Magia “.”</p>
-              <p class="qdesc" id="q4d">Un botón. Un punto. Y listo.</p>
+            <div class="term" aria-label="CONSIA Terminal">
+              <div class="row"><span class="prompt">consia@core</span><span>›</span><span id="termLine1">inicializando…</span></div>
+              <div class="row"><span class="prompt">consia@core</span><span>›</span><span id="termLine2">verificando seguridad…</span></div>
+              <div class="row"><span class="prompt">consia@core</span><span>›</span><span id="termLine3">listo.</span></div>
+              <div class="row" style="margin-top:10px;">
+                <span class="prompt">TIP</span><span>›</span>
+                <span>En iPhone: <b>Compartir → “Add to Home Screen”</b> para modo app.</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- CHAT -->
-      <div class="card chatCard">
-        <div class="chatHead">
-          <div class="chatTitle" id="chatTitle">CONSIA • CORE</div>
-          <div class="chatTools">
-            <button class="btn" id="speakBtn" title="Leer respuesta">🔊</button>
-            <button class="btn primary" id="magicBtn" title="Magia">.</button>
+        <!-- Right: Cards -->
+        <div class="panel">
+          <div class="panel-inner">
+            <div class="kicker">
+              <span class="mono">MÓDULOS</span>
+              <span class="kline"></span>
+              <span class="mono">v1</span>
+            </div>
+
+            <div class="grid" style="margin-top:14px;">
+              <a class="card" href="/voice.html">
+                <div>
+                  <h3>VOICE + AVATAR</h3>
+                  <p>STT/TTS + control por comandos. Modo demo wake.</p>
+                </div>
+                <span class="tag">/voice.html</span>
+              </a>
+
+              <a class="card" href="/owner.html">
+                <div>
+                  <h3>OWNER-ONLY</h3>
+                  <p>Panel de control + lock biométrico (cuando habilites WebAuthn).</p>
+                </div>
+                <span class="tag">/owner.html</span>
+              </a>
+
+              <a class="card" href="/marketplace.html">
+                <div>
+                  <h3>MARKETPLACE</h3>
+                  <p>Catálogo + checkout. Pasarela live se habilita al conectar Stripe/Paddle.</p>
+                </div>
+                <span class="tag">/marketplace.html</span>
+              </a>
+
+              <a class="card" href="/api/health">
+                <div>
+                  <h3>API HEALTH</h3>
+                  <p>Chequeo directo desde Pages (proxy functions).</p>
+                </div>
+                <span class="tag">/api/health</span>
+              </a>
+            </div>
+
+            <div class="term">
+              <div class="row"><span class="prompt">ENDPOINT</span><span>›</span><span class="mono" id="apiBase">/api</span></div>
+              <div class="row"><span class="prompt">POLICY</span><span>›</span><span>fail-closed, owner-only, privacy-first</span></div>
+              <div class="row"><span class="prompt">STATE</span><span>›</span><span id="stateLine">sync…</span></div>
+            </div>
           </div>
         </div>
+      </section>
+    </div>
+  </main>
 
-        <div class="chatBody" id="chatBody"></div>
-
-        <div class="composer">
-          <div class="inputWrap">
-            <textarea id="input" rows="1" placeholder="Decime qué querés. (o escribí “.”)"></textarea>
-          </div>
-          <div class="send" id="sendBtn" title="Enviar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M3 12 21 3l-5 18-5-7-8-2Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-        <div class="kbdHint" style="padding:10px 16px 14px">
-          Enter = enviar • Shift+Enter = salto • <span style="opacity:.9">“.”</span> = magia
-        </div>
+  <footer>
+    <div class="foot">
+      <div>© <span id="y"></span> CONSIA • Infinite Core</div>
+      <div class="links">
+        <a href="/pricing.html">Pricing</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/refund.html">Refund</a>
       </div>
     </div>
-  </div>
+  </footer>
 
-  <!-- MODALS -->
-  <div class="modal" id="modal">
-    <div class="modalBox">
-      <div class="modalTop">
-        <div class="modalTitle" id="modalTitle">CONSIA</div>
-        <button class="btn" id="closeModal">Cerrar</button>
-      </div>
-      <div class="modalBody">
-        <p class="note" id="modalNote"></p>
-        <p class="small" id="modalSmall"></p>
-        <div class="row" id="modalActions"></div>
-      </div>
-    </div>
-  </div>
+  <div class="toast" id="toast"><span class="ok"></span><span id="toastMsg">Copiado.</span></div>
 
   <script>
-    /* =========================
-       CONFIG
-       ========================= */
-    const API_URL = "https://api.consia.world/ask";
-    const HEALTH_URL = "https://api.consia.world/health";
+    // ===== CONFIG =====
+    const API = "/api"; // via Pages Functions (correct)
+    const HEALTH = API + "/health";
 
-    const LS = {
-      sid: "consia_sid_v1",
-      lang: "consia_lang_v1",
-      mode: "consia_mode_v1",
-      muted: "consia_muted_v1"
-    };
+    // ===== TIME =====
+    const timeEl = document.getElementById("timeNow");
+    function tick(){
+      const d = new Date();
+      const hh = String(d.getHours()).padStart(2,"0");
+      const mm = String(d.getMinutes()).padStart(2,"0");
+      timeEl.textContent = `${hh}:${mm}`;
+    }
+    tick(); setInterval(tick, 10000);
 
-    /* =========================
-       I18N (global)
-       ========================= */
-    const I18N = {
-      es: {
-        status_ok: "Online",
-        status_down: "Offline",
-        avatar_line: "Decime qué querés. Yo me encargo.",
-        avatar_sub: "Tip: escribí “.” para activar la magia instantánea.",
-        explore: "Explorar",
-        do_now: "Hacer ahora",
-        support: "Soporte",
-        magic_dot: "Magia “.”",
-        q1d: "Ver todo lo que CONSIA puede hacer.",
-        q2d: "Planificar, resumir, decidir, ejecutar.",
-        q3d: "Cuenta, pagos, errores, ayuda.",
-        q4d: "Un botón. Un punto. Y listo.",
-        placeholder: "Decime qué querés. (o escribí “.”)",
-        core_title: "CONSIA • CORE",
-        modal_voice: "Voz",
-        modal_facetime: "FaceTime",
-        modal_hyper: "Hyperrealismo",
-        m_voice: "Voz",
-        m_facetime: "FaceTime",
-        m_hyper: "Hyperrealismo",
-        choose_3: "Elegí 1, 2 o 3.",
-        welcome: "Hola. Elegí una opción:",
-        opt1: "1) Explorar CONSIA",
-        opt2: "2) Hacer algo (ya)",
-        opt3: "3) Soporte / Cuenta",
-        sent: "Enviado",
-        thinking: "Procesando…",
-        cant_mic: "No pude acceder al micrófono en este navegador.",
-        hyper_info_title: "Hyperrealismo",
-        hyper_info_note: "Elegí qué querés ver en Hyperrealismo (avatar, escenas, renders).",
-        facetime_info_title: "FaceTime",
-        facetime_info_note: "Modo FaceTime (cámara + guía). Listo para activar cuando integremos WebRTC.",
-        voice_info_title: "Voz",
-        voice_info_note: "Hablá y CONSIA responde. También puede leer la respuesta en voz alta."
-      },
-      en: {
-        status_ok: "Online",
-        status_down: "Offline",
-        avatar_line: "Tell me what you want. I’ll handle it.",
-        avatar_sub: "Tip: type “.” to trigger instant magic.",
-        explore: "Explore",
-        do_now: "Do now",
-        support: "Support",
-        magic_dot: "Magic “.”",
-        q1d: "See everything CONSIA can do.",
-        q2d: "Plan, summarize, decide, execute.",
-        q3d: "Account, billing, issues, help.",
-        q4d: "One button. One dot. Done.",
-        placeholder: "Tell me what you want. (or type “.”)",
-        core_title: "CONSIA • CORE",
-        modal_voice: "Voice",
-        modal_facetime: "FaceTime",
-        modal_hyper: "Hyperrealism",
-        m_voice: "Voice",
-        m_facetime: "FaceTime",
-        m_hyper: "Hyperrealism",
-        choose_3: "Pick 1, 2 or 3.",
-        welcome: "Hi. Pick an option:",
-        opt1: "1) Explore CONSIA",
-        opt2: "2) Do something (now)",
-        opt3: "3) Support / Account",
-        sent: "Sent",
-        thinking: "Processing…",
-        cant_mic: "I couldn’t access the microphone in this browser.",
-        hyper_info_title: "Hyperrealism",
-        hyper_info_note: "Choose what you want to see in Hyperrealism (avatar, scenes, renders).",
-        facetime_info_title: "FaceTime",
-        facetime_info_note: "FaceTime mode (camera + guidance). Ready to enable when we integrate WebRTC.",
-        voice_info_title: "Voice",
-        voice_info_note: "Speak and CONSIA responds. It can also read the reply out loud."
-      },
-      pt: {
-        status_ok: "Online",
-        status_down: "Offline",
-        avatar_line: "Diga o que você quer. Eu cuido disso.",
-        avatar_sub: "Dica: digite “.” para ativar a magia instantânea.",
-        explore: "Explorar",
-        do_now: "Fazer agora",
-        support: "Suporte",
-        magic_dot: "Magia “.”",
-        q1d: "Ver tudo o que a CONSIA pode fazer.",
-        q2d: "Planejar, resumir, decidir, executar.",
-        q3d: "Conta, pagamentos, erros, ajuda.",
-        q4d: "Um botão. Um ponto. Pronto.",
-        placeholder: "Diga o que você quer. (ou digite “.”)",
-        core_title: "CONSIA • CORE",
-        modal_voice: "Voz",
-        modal_facetime: "FaceTime",
-        modal_hyper: "Hiper-realismo",
-        m_voice: "Voz",
-        m_facetime: "FaceTime",
-        m_hyper: "Hiper-realismo",
-        choose_3: "Escolha 1, 2 ou 3.",
-        welcome: "Olá. Escolha uma opção:",
-        opt1: "1) Explorar CONSIA",
-        opt2: "2) Fazer algo (agora)",
-        opt3: "3) Suporte / Conta",
-        sent: "Enviado",
-        thinking: "Processando…",
-        cant_mic: "Não consegui acessar o microfone neste navegador.",
-        hyper_info_title: "Hiper-realismo",
-        hyper_info_note: "Escolha o que você quer ver em Hiper-realismo (avatar, cenas, renders).",
-        facetime_info_title: "FaceTime",
-        facetime_info_note: "Modo FaceTime (câmera + guia). Pronto para ativar quando integrarmos WebRTC.",
-        voice_info_title: "Voz",
-        voice_info_note: "Fale e a CONSIA responde. Também pode ler a resposta em voz alta."
-      }
-    };
+    // ===== YEAR =====
+    document.getElementById("y").textContent = String(new Date().getFullYear());
 
-    function detectInitialLang(){
-      const saved = localStorage.getItem(LS.lang);
-      if (saved && I18N[saved]) return saved;
-      const nav = (navigator.language || "en").toLowerCase();
-      if (nav.startsWith("es")) return "es";
-      if (nav.startsWith("pt")) return "pt";
-      return "en";
+    // ===== TOAST =====
+    const toast = document.getElementById("toast");
+    const toastMsg = document.getElementById("toastMsg");
+    let toastT = null;
+    function showToast(msg){
+      toastMsg.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastT);
+      toastT = setTimeout(()=>toast.classList.remove("show"), 1600);
     }
 
-    let LANG = detectInitialLang();
-    let MODE = localStorage.getItem(LS.mode) || "chat";
-
-    function t(key){
-      return (I18N[LANG] && I18N[LANG][key]) || (I18N.en[key]) || key;
-    }
-
-    /* =========================
-       SESSION
-       ========================= */
-    function getSid(){
-      let sid = localStorage.getItem(LS.sid);
-      if (!sid) {
-        sid = cryptoRandomId();
-        localStorage.setItem(LS.sid, sid);
-      }
-      return sid;
-    }
-
-    function resetSid(){
-      localStorage.removeItem(LS.sid);
-      window.location.reload();
-    }
-
-    /* =========================
-       UI helpers
-       ========================= */
-    const $ = (id)=>document.getElementById(id);
-
-    const chatBody = $("chatBody");
-    const input = $("input");
-    const sendBtn = $("sendBtn");
-    const magicBtn = $("magicBtn");
-    const resetBtn = $("resetBtn");
-    const langBtn = $("langBtn");
-    const statusText = $("statusText");
-    const statusDot = $("statusDot");
-
-    const avatarLine = $("avatarLine");
-    const avatarSub = $("avatarSub");
-    const avatarState = $("avatarState");
-    const liveDot = $("liveDot");
-
-    const speakBtn = $("speakBtn");
-    const btnVoice = $("btnVoice");
-    const btnFaceTime = $("btnFaceTime");
-    const btnHyper = $("btnHyper");
-
-    const modal = $("modal");
-    const modalTitle = $("modalTitle");
-    const modalNote = $("modalNote");
-    const modalSmall = $("modalSmall");
-    const modalActions = $("modalActions");
-    const closeModal = $("closeModal");
-
-    function setStatus(ok){
-      if (ok){
-        statusText.textContent = t("status_ok");
-        statusDot.style.background = "var(--ok)";
-      } else {
-        statusText.textContent = t("status_down");
-        statusDot.style.background = "var(--err)";
-      }
-    }
-
-    function addMsg(text, who="consia"){
-      const wrap = document.createElement("div");
-      wrap.className = "msg" + (who==="me" ? " me" : "");
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.textContent = text;
-      wrap.appendChild(bubble);
-      chatBody.appendChild(wrap);
-      chatBody.scrollTop = chatBody.scrollHeight;
-      return bubble;
-    }
-
-    function setMode(mode){
-      MODE = mode;
-      localStorage.setItem(LS.mode, MODE);
-      document.querySelectorAll(".mode").forEach(el=>{
-        el.classList.toggle("active", el.dataset.mode === MODE);
-      });
-      // Avatar copy changes subtly
-      if (MODE==="voice") avatarState.textContent = "CONSIA • VOZ";
-      else if (MODE==="facetime") avatarState.textContent = "CONSIA • FACETIME";
-      else if (MODE==="hyperrealism") avatarState.textContent = "CONSIA • HYPERREAL";
-      else avatarState.textContent = "CONSIA • ACTIVA";
-    }
-
-    function applyLang(){
-      localStorage.setItem(LS.lang, LANG);
-      $("chatTitle").textContent = t("core_title");
-      avatarLine.textContent = t("avatar_line");
-      avatarSub.textContent = t("avatar_sub");
-      $("q1t").textContent = t("explore");
-      $("q2t").textContent = t("do_now");
-      $("q3t").textContent = t("support");
-      $("q4t").textContent = t("magic_dot");
-      $("q1d").textContent = t("q1d");
-      $("q2d").textContent = t("q2d");
-      $("q3d").textContent = t("q3d");
-      $("q4d").textContent = t("q4d");
-      input.placeholder = t("placeholder");
-      $("mVoice").textContent = t("m_voice");
-      $("mFace").textContent = t("m_facetime");
-      $("mHyper").textContent = t("m_hyper");
-    }
-
-    function openModal(title, note, small="", actions=[]){
-      modalTitle.textContent = title;
-      modalNote.textContent = note;
-      modalSmall.textContent = small;
-      modalActions.innerHTML = "";
-      actions.forEach(a=>{
-        const b = document.createElement("button");
-        b.className = a.primary ? "btn primary" : "btn";
-        b.textContent = a.label;
-        b.onclick = a.onClick;
-        modalActions.appendChild(b);
-      });
-      modal.classList.add("on");
-    }
-
-    function closeModalNow(){ modal.classList.remove("on"); }
-
-    /* =========================
-       VOICE (SpeechRecognition + TTS)
-       ========================= */
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let recognizer = null;
-    let speaking = false;
-
-    function speak(text){
+    // ===== COPY COMMAND "." =====
+    document.getElementById("copyCmdBtn").addEventListener("click", async () => {
+      const cmd = ".";
       try{
-        if (!text) return;
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = LANG === "pt" ? "pt-BR" : (LANG === "es" ? "es-ES" : "en-US");
-        u.rate = 1.0; u.pitch = 1.0;
-        speaking = true;
-        u.onend = ()=>{ speaking=false; };
-        window.speechSynthesis.speak(u);
-      }catch(e){}
-    }
+        await navigator.clipboard.writeText(cmd);
+        showToast('Comando "." copiado');
+      }catch(e){
+        showToast("No se pudo copiar (iOS)");
+      }
+    });
 
-    async function startVoiceCapture(){
-      if (!SpeechRecognition) {
-        openModal(t("modal_voice"), t("cant_mic"));
+    // ===== API HEALTH CHECK =====
+    const apiStatus = document.getElementById("apiStatus");
+    const apiPing = document.getElementById("apiPing");
+    const term1 = document.getElementById("termLine1");
+    const term2 = document.getElementById("termLine2");
+    const term3 = document.getElementById("termLine3");
+    const stateLine = document.getElementById("stateLine");
+
+    async function healthCheck(){
+      const t0 = performance.now();
+      apiStatus.textContent = "CHECK";
+      apiPing.textContent = "—";
+      try{
+        const res = await fetch(HEALTH, { cache: "no-store" });
+        const ms = Math.round(performance.now() - t0);
+        apiPing.textContent = ms + "ms";
+        if(!res.ok){
+          apiStatus.textContent = "DOWN";
+          term1.textContent = "api health: down";
+          term2.textContent = "modo seguro (read-only)";
+          term3.textContent = "reintenta en 10s…";
+          stateLine.textContent = "LOCK (api down)";
+          return;
+        }
+        const data = await res.json().catch(()=>({}));
+        apiStatus.textContent = "OK";
+        term1.textContent = "api health: ok";
+        term2.textContent = "security: fail-closed ✅";
+        term3.textContent = "ready.";
+        if(data && typeof data === "object"){
+          const binds = data.bindings ? Object.keys(data.bindings).filter(k=>data.bindings[k]).join(", ") : "—";
+          stateLine.textContent = "Bindings: " + binds;
+        }else{
+          stateLine.textContent = "Bindings: —";
+        }
+      }catch(e){
+        apiStatus.textContent = "DOWN";
+        apiPing.textContent = "—";
+        term1.textContent = "api health: error";
+        term2.textContent = "modo seguro (read-only)";
+        term3.textContent = "reintenta en 10s…";
+        stateLine.textContent = "LOCK (network)";
+      }
+    }
+    healthCheck();
+    setInterval(healthCheck, 10000);
+
+    // ===== INSTALL PWA (best effort) =====
+    let deferredPrompt = null;
+    const installBtn = document.getElementById("installBtn");
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "inline-flex";
+    });
+    installBtn.addEventListener("click", async () => {
+      if(!deferredPrompt){
+        showToast("En iPhone: Compartir → Add to Home Screen");
         return;
       }
-      recognizer = new SpeechRecognition();
-      recognizer.lang = LANG === "pt" ? "pt-BR" : (LANG === "es" ? "es-ES" : "en-US");
-      recognizer.interimResults = false;
-      recognizer.maxAlternatives = 1;
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice.catch(()=>null);
+      deferredPrompt = null;
+      installBtn.style.display = "none";
+      showToast(choice?.outcome === "accepted" ? "Instalando…" : "Cancelado");
+    });
 
-      openModal(t("modal_voice"), t("voice_info_note"), "", [
-        { label: "OK", primary:true, onClick: closeModalNow }
-      ]);
-
-      recognizer.onresult = (ev)=>{
-        const text = ev.results?.[0]?.[0]?.transcript || "";
-        if (text.trim()) {
-          input.value = text.trim();
-          autoresize();
-          send();
-        }
-      };
-      recognizer.onerror = ()=>{};
-      recognizer.start();
+    // ===== Service Worker =====
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("/sw.js").catch(()=>{});
     }
 
-    /* =========================
-       API CALL
-       ========================= */
-    async function callAsk(message){
-      const sid = getSid();
-      const payload = { message, mode: MODE, hint: "" };
-
-      const res = await fetch(API_URL, {
-        method:"POST",
-        headers:{
-          "content-type":"application/json",
-          "accept-language": LANG,
-          "x-consia-session": sid
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json().catch(()=> ({}));
-      return { ok: res.ok, status: res.status, data };
-    }
-
-    async function health(){
-      try{
-        const r = await fetch(HEALTH_URL, { headers:{ "accept-language": LANG }});
-        setStatus(r.ok);
-      }catch(e){
-        setStatus(false);
-      }
-    }
-
-    /* =========================
-       “MAGIA”: Home guidance
-       ========================= */
-    function magic(){
-      addMsg(".", "me");
-      sendMessage(".");
-    }
-
-    /* =========================
-       SEND
-       ========================= */
-    async function send(){
-      const text = (input.value || "").trim();
-      if (!text) return;
-      input.value = "";
-      autoresize();
-      addMsg(text, "me");
-      await sendMessage(text);
-    }
-
-    async function sendMessage(text){
-      // UI “alive”
-      liveDot.style.background = "var(--warn)";
-      liveDot.style.boxShadow = "0 0 18px rgba(255,210,106,.35)";
-      const thinking = addMsg(t("thinking"), "consia");
-
-      try{
-        const out = await callAsk(text);
-        if (!out.ok) {
-          thinking.textContent = "Error ("+out.status+").";
-        } else {
-          const ans = out.data?.answer || "";
-          thinking.textContent = ans || "(ok)";
-          // Optional UI quick actions
-          const quick = out.data?.ui?.quick;
-          if (Array.isArray(quick) && quick.length){
-            thinking.textContent += "\n";
-            thinking.textContent += quick.map(q=> `• ${q.id}) ${q.label}`).join("\n");
-          }
-          // Auto-speak in voice mode
-          if (MODE === "voice") speak(ans);
-        }
-      }catch(e){
-        thinking.textContent = "Error.";
-      }finally{
-        liveDot.style.background = "var(--ok)";
-        liveDot.style.boxShadow = "0 0 18px rgba(71,230,160,.35)";
-      }
-    }
-
-    /* =========================
-       One-button guidance cards
-       ========================= */
-    function quickPick(val){
-      if (val === ".") return magic();
-      input.value = String(val);
-      autoresize();
-      send();
-    }
-
-    /* =========================
-       TEXTAREA auto-resize
-       ========================= */
-    function autoresize(){
-      input.style.height = "auto";
-      input.style.height = Math.min(input.scrollHeight, 120) + "px";
-    }
-
-    /* =========================
-       INIT
-       ========================= */
-    function cryptoRandomId(){
-      const a = new Uint8Array(16);
-      crypto.getRandomValues(a);
-      return Array.from(a).map(b=>b.toString(16).padStart(2,"0")).join("");
-    }
-
-    function cycleLang(){
-      LANG = (LANG === "es") ? "en" : (LANG === "en") ? "pt" : "es";
-      applyLang();
-      // refresh a “home” guidance to match language
-      addMsg(t("welcome")+"\n"+t("opt1")+"\n"+t("opt2")+"\n"+t("opt3"), "consia");
-    }
-
-    function initModes(){
-      document.querySelectorAll(".mode").forEach(el=>{
-        el.onclick = ()=>{
-          setMode(el.dataset.mode);
-          if (MODE==="voice"){
-            openModal(t("modal_voice"), t("voice_info_note"), "", [
-              {label:"Iniciar", primary:true, onClick: ()=>{ closeModalNow(); startVoiceCapture(); }},
-              {label:"Cerrar", onClick: closeModalNow}
-            ]);
-          }
-          if (MODE==="facetime"){
-            openModal(t("modal_facetime"), t("facetime_info_note"), "", [
-              {label:"OK", primary:true, onClick: closeModalNow}
-            ]);
-          }
-          if (MODE==="hyperrealism"){
-            openModal(t("modal_hyper"), t("hyper_info_note"), "", [
-              {label:"Avatar hiperrealista", primary:true, onClick: ()=>{ closeModalNow(); quickPick("3"); }},
-              {label:"Escena / Render", onClick: ()=>{ closeModalNow(); input.value="Quiero hyperrealismo: "; input.focus(); autoresize(); }},
-              {label:"Cerrar", onClick: closeModalNow}
-            ]);
-          }
-        };
-      });
-    }
-
-    function initQuickCards(){
-      document.querySelectorAll(".qcard").forEach(el=>{
-        el.onclick = ()=> quickPick(el.dataset.q);
-      });
-    }
-
-    function initButtons(){
-      sendBtn.onclick = send;
-      magicBtn.onclick = magic;
-      resetBtn.onclick = resetSid;
-      langBtn.onclick = cycleLang;
-
-      closeModal.onclick = closeModalNow;
-      modal.onclick = (e)=>{ if (e.target === modal) closeModalNow(); };
-
-      speakBtn.onclick = ()=>{
-        const last = [...chatBody.querySelectorAll(".msg:not(.me) .bubble")].pop();
-        if (last) speak(last.textContent || "");
-      };
-
-      btnVoice.onclick = ()=>{ setMode("voice"); startVoiceCapture(); };
-      btnFaceTime.onclick = ()=>{ setMode("facetime"); openModal(t("modal_facetime"), t("facetime_info_note"), "", [{label:"OK", primary:true, onClick: closeModalNow}]); };
-      btnHyper.onclick = ()=>{ setMode("hyperrealism"); openModal(t("modal_hyper"), t("hyper_info_note"), "", [{label:"OK", primary:true, onClick: closeModalNow}]); };
-
-      input.addEventListener("keydown", (e)=>{
-        if (e.key === "Enter" && !e.shiftKey){
-          e.preventDefault();
-          send();
-        }
-      });
-      input.addEventListener("input", autoresize);
-    }
-
-    async function boot(){
-      applyLang();
-      setMode(MODE);
-      initModes();
-      initQuickCards();
-      initButtons();
-      autoresize();
-      await health();
-
-      // First message: ultra-guided, 3 options
-      addMsg(t("welcome")+"\n"+t("opt1")+"\n"+t("opt2")+"\n"+t("opt3")+"\n\n"+t("choose_3"), "consia");
-    }
-
-    boot();
+    // ===== WAKE (DEMO) =====
+    // Nota: iOS Safari no deja wake word real siempre-on (por políticas).
+    // Esto es demo por interacción del usuario (tap).
+    const wakeBtn = document.getElementById("wakeBtn");
+    wakeBtn.addEventListener("click", async () => {
+      showToast("Wake demo: escuchando…");
+      // Si existe voice.html, redirigimos con un flag para auto-start
+      setTimeout(()=>{ window.location.href = "/voice.html?autostart=1"; }, 650);
+    });
   </script>
 </body>
 </html>
