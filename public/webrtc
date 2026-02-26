@@ -1,0 +1,12 @@
+001"}
+async function startStream(){
+
+const stream = await navigator.mediaDevices.getUserMedia({
+audio:true,
+video:true
+});
+
+let video = document.createElement("video");
+video.srcObject = stream;
+video.autoplay = true;
+document.body.appendChild(video
