@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CONSIA EDU — Idiomas</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#0b1020;color:#fff}
+    .wrap{max-width:980px;margin:0 auto;padding:28px}
+    .hero{display:flex;flex-direction:column;gap:14px;padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.04)}
+    h1{margin:0;font-size:28px;line-height:1.1}
+    p{margin:0;opacity:.85}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+    @media (min-width:860px){.grid{grid-template-columns:repeat(5,minmax(0,1fr));}}
+    button{width:100%;padding:12px 10px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font-weight:700}
+    button:active{transform:scale(.99)}
+    .bar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .pill{padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);font-weight:700}
+    .cta{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+    a{color:#fff;text-decoration:none}
+    .card{margin-top:18px;padding:16px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25)}
+    .row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .small{font-size:12px;opacity:.8}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>CONSIA EDU — Idiomas (Global)</h1>
+      <p>10 idiomas desde hoy. Simulaciones reales. Auto-tests. Progreso y fluidez.</p>
+      <div class="bar">
+        <div class="pill">FREE</div>
+        <div class="pill">PRO $19</div>
+        <div class="pill">GLOBAL $39</div>
+        <div class="pill">ELITE $79</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div><b>Elegí tu idioma</b><div class="small">Nivel 1 (Survival) — 6 simulaciones</div></div>
+        <div class="small">edu.consia.world</div>
+      </div>
+
+      <div class="grid" id="langs"></div>
+
+      <div class="cta">
+        <a class="pill" href="#start" onclick="startQuick()">▶ Empezar ahora</a>
+        <a class="pill" href="#plans" onclick="alert('Paywall: conectar Stripe en Paso 3')">💳 Suscribirme</a>
+      </div>
+
+      <div class="small" style="margin-top:10px;line-height:1.4">
+        *Esto es el MVP Education. Paso 3 conecta Stripe + planes + activación automática.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LANGS = [
+      {code:"es", name:"Español"},
+      {code:"en", name:"English"},
+      {code:"pt", name:"Português"},
+      {code:"fr", name:"Français"},
+      {code:"de", name:"Deutsch"},
+      {code:"it", name:"Italiano"},
+      {code:"zh", name:"中文"},
+      {code:"ar", name:"العربية"},
+      {code:"hi", name:"हिन्दी"},
+      {code:"ja", name:"日本語"}
+    ];
+    let selected = "es";
+
+    const box = document.getElementById("langs");
+    LANGS.forEach(l=>{
+      const b=document.createElement("button");
+      b.textContent=l.name;
+      b.onclick=()=>{selected=l.code; highlight();};
+      b.dataset.code=l.code;
+      box.appendChild(b);
+    });
+
+    function highlight(){
+      [...box.querySelectorAll("button")].forEach(b=>{
+        b.style.outline = (b.dataset.code===selected) ? "2px solid rgba(255,255,255,.7)" : "none";
+      });
+    }
+    highlight();
+
+    function startQuick(){
+      alert("Idioma: " + selected + " | Próximo: Paso 3 = motor de lecciones + auto-test.");
+    }
+    window.startQuick = startQuick;
+  </script>
+</body>
+</html>
