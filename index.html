@@ -1,147 +1,62 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>CONSIA - AI SaaS Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CONSIA — CORE</title>
-
-<!-- PWA -->
-<link rel="manifest" href="/app.webmanifest">
-<meta name="theme-color" content="#000000">
-<link rel="apple-touch-icon" href="/icon-192.png">
-
-<!-- SEO / META -->
-<meta name="description" content="CONSIA Infinite Intelligence System">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-<!-- FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: 'Inter', sans-serif;
-}
-
-body{
-  background:#000;
-  color:#fff;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  overflow:hidden;
-}
-
-/* TITLE */
-
-h1{
-  font-size:48px;
-  letter-spacing:12px;
-  font-weight:300;
-  animation:fadeIn 2s ease forwards;
-}
-
-/* SUB */
-
-p{
-  margin-top:20px;
-  opacity:.6;
-  font-size:14px;
-  letter-spacing:4px;
-  animation:fadeIn 3s ease forwards;
-}
-
-/* NAV */
-
-.nav{
-  position:fixed;
-  bottom:40px;
-  display:flex;
-  gap:20px;
-}
-
-.btn{
-  padding:12px 22px;
-  border:1px solid #fff;
-  text-decoration:none;
-  color:#fff;
-  font-size:12px;
-  letter-spacing:2px;
-  transition:.3s;
-}
-
-.btn:hover{
-  background:#fff;
-  color:#000;
-}
-
-/* ANIM */
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-/* GLOW BG */
-
-body::before{
-  content:"";
-  position:absolute;
-  width:600px;
-  height:600px;
-  background:radial-gradient(circle,#111 0%,transparent 70%);
-  animation:pulse 6s infinite;
-}
-
-@keyframes pulse{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.3);}
-}
+body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center}
+header{padding:80px 20px}
+h1{font-size:48px;letter-spacing:4px}
+section{padding:60px 20px;max-width:900px;margin:auto}
+.pricing{display:flex;justify-content:center;gap:30px;flex-wrap:wrap}
+.card{border:1px solid #444;padding:30px;border-radius:12px;width:250px}
+footer{padding:40px 20px;border-top:1px solid #222;margin-top:60px;font-size:14px}
+a{color:#fff;text-decoration:none;margin:0 10px}
 </style>
 </head>
-
 <body>
 
-<h1>CONSIA CORE ACTIVE</h1>
-<p>INFINITE INTELLIGENCE SYSTEM</p>
+<header>
+<h1>CONSIA</h1>
+<p>AI-Powered SaaS Platform for Automation and Intelligent Assistance</p>
+</header>
 
-<div class="nav">
-  <a href="/voice.html" class="btn">VOICE</a>
-  <a href="/owner.html" class="btn">OWNER</a>
-  <a href="/marketplace.html" class="btn">MARKET</a>
-  <a href="/live.html" class="btn">LIVE</a>
+<section>
+<h2>What is CONSIA?</h2>
+<p>CONSIA is a subscription-based AI software platform providing automation, assistant intelligence, and API-based AI services for individuals and businesses.</p>
+</section>
+
+<section>
+<h2>Pricing</h2>
+<div class="pricing">
+<div class="card">
+<h3>PRO</h3>
+<p>$29 / month</p>
+<p>AI assistant access</p>
 </div>
+<div class="card">
+<h3>BUSINESS</h3>
+<p>$79 / month</p>
+<p>Advanced automation + API</p>
+</div>
+<div class="card">
+<h3>ENTERPRISE</h3>
+<p>Contact us</p>
+<p>Custom infrastructure</p>
+</div>
+</div>
+</section>
 
-<!-- API CHECK -->
-
-<script>
-async function healthCheck(){
-  try{
-    const r = await fetch("https://api.consia.world/health");
-    const j = await r.json();
-    console.log("CONSIA API:", j);
-  }catch(e){
-    console.log("API offline");
-  }
-}
-healthCheck();
-</script>
-
-<!-- SERVICE WORKER -->
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js")
-  .then(()=>console.log("CONSIA SW Active"))
-  .catch(err=>console.log("SW Error",err));
-}
-</script>
+<footer>
+<p>
+<a href="/privacy.html">Privacy Policy</a> |
+<a href="/terms.html">Terms of Service</a> |
+<a href="/refunds.html">Refund Policy</a> |
+<a href="/contact.html">Contact</a>
+</p>
+<p>© 2026 CONSIA. All rights reserved.</p>
+</footer>
 
 </body>
 </html>
