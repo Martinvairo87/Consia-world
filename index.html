@@ -2,101 +2,108 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CONSIA</title>
 
 <style>
 body {
-  margin:0;
-  background:#000;
-  color:#fff;
-  font-family:Arial, sans-serif;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
-
-h1 {
-  letter-spacing:6px;
-  font-weight:300;
+header {
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
 }
-
 #chat {
-  width:90%;
-  max-width:600px;
-  margin-top:40px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
 }
-
-textarea {
-  width:100%;
-  padding:15px;
-  background:#111;
-  border:1px solid #333;
-  color:#fff;
-  resize:none;
-  font-size:16px;
+.message {
+  margin-bottom: 15px;
+  line-height: 1.5;
 }
-
+.user { color: #4ea1ff; }
+.bot { color: #00ffcc; }
+footer {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #222;
+}
+input {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  background: #111;
+  border: none;
+  color: white;
+}
 button {
-  width:100%;
-  padding:15px;
-  background:#fff;
-  border:none;
-  color:#000;
-  font-weight:bold;
-  margin-top:10px;
-  cursor:pointer;
-}
-
-#response {
-  margin-top:20px;
-  white-space:pre-wrap;
-  font-size:14px;
-  color:#ccc;
+  padding: 12px 20px;
+  background: #00ffcc;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h1>CONSIA CORE ACTIVE</h1>
+<header>CONSIA</header>
 
-<div id="chat">
-  <textarea id="input" rows="3" placeholder="Escribí tu mensaje..."></textarea>
-  <button onclick="send()">ENVIAR</button>
-  <div id="response"></div>
-</div>
+<div id="chat"></div>
+
+<footer>
+  <input id="input" placeholder="Escribe tu mensaje..." />
+  <button onclick="send()">Enviar</button>
+</footer>
 
 <script>
+const API_URL = "https://api.consia.world/ask";
+
 async function send() {
-  const input = document.getElementById("input").value;
-  const responseBox = document.getElementById("response");
-  responseBox.innerText = "Pensando...";
+  const input = document.getElementById("input");
+  const chat = document.getElementById("chat");
+
+  const message = input.value.trim();
+  if (!message) return;
+
+  chat.innerHTML += `<div class="message user">Tú: ${message}</div>`;
+  input.value = "";
 
   try {
-    const res = await fetch("https://api.consia.world/ask", {
+    const res = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer demo-key-001"
-      },
-      body: JSON.stringify({ message: input })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message })
     });
 
     const data = await res.json();
 
-    if(data.output){
-      responseBox.innerText = data.output;
+    if (data.ok) {
+      chat.innerHTML += `<div class="message bot">CONSIA: ${data.answer}</div>`;
     } else {
-      responseBox.innerText = JSON.stringify(data, null, 2);
+      chat.innerHTML += `<div class="message bot">Error: ${data.error}</div>`;
     }
 
-  } catch(e) {
-    responseBox.innerText = "Error conectando con API.";
+  } catch (e) {
+    chat.innerHTML += `<div class="message bot">Error conectando con API</div>`;
   }
+
+  chat.scrollTop = chat.scrollHeight;
 }
+
+document.getElementById("input").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") send();
+});
 </script>
 
 </body>
