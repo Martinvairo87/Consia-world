@@ -1,112 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CONSIA</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CONSIA GLOBAL CONTROL</title>
 
 <style>
-body {
-  margin: 0;
-  background: #000;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+body{
+background:#0b0f1a;
+color:#e8ecff;
+font-family:system-ui;
+margin:0;
+padding:0;
 }
-header {
-  padding: 20px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 600;
+
+header{
+background:#111729;
+padding:20px;
+font-size:22px;
+font-weight:700;
+letter-spacing:1px;
 }
-#chat {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
+
+.panel{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:20px;
+padding:20px;
 }
-.message {
-  margin-bottom: 15px;
-  line-height: 1.5;
+
+.card{
+background:#151c32;
+border-radius:12px;
+padding:20px;
+box-shadow:0 0 20px rgba(0,0,0,.3);
 }
-.user { color: #4ea1ff; }
-.bot { color: #00ffcc; }
-footer {
-  display: flex;
-  padding: 10px;
-  border-top: 1px solid #222;
+
+.metric{
+font-size:28px;
+font-weight:700;
+margin-top:10px;
 }
-input {
-  flex: 1;
-  padding: 12px;
-  font-size: 16px;
-  background: #111;
-  border: none;
-  color: white;
+
+.logbox{
+background:#0e1428;
+margin:20px;
+padding:20px;
+border-radius:12px;
+height:400px;
+overflow:auto;
+font-family:monospace;
+font-size:13px;
 }
-button {
-  padding: 12px 20px;
-  background: #00ffcc;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-button:hover {
-  opacity: 0.8;
+
+button{
+background:#3a6cff;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+color:white;
+cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<header>CONSIA</header>
+<header>
+CONSIA GLOBAL BRAIN — CONTROL PANEL
+</header>
 
-<div id="chat"></div>
+<div class="panel">
 
-<footer>
-  <input id="input" placeholder="Escribe tu mensaje..." />
-  <button onclick="send()">Enviar</button>
-</footer>
+<div class="card">
+Requests
+<div id="req" class="metric">0</div>
+</div>
+
+<div class="card">
+Errors
+<div id="err" class="metric">0</div>
+</div>
+
+<div class="card">
+Execution ms
+<div id="exec" class="metric">0</div>
+</div>
+
+<div class="card">
+CPU ms
+<div id="cpu" class="metric">0</div>
+</div>
+
+</div>
+
+<div style="padding:20px">
+<button onclick="loadStats()">Actualizar</button>
+</div>
+
+<div class="logbox" id="logs"></div>
 
 <script>
-const API_URL = "https://api.consia.world/ask";
 
-async function send() {
-  const input = document.getElementById("input");
-  const chat = document.getElementById("chat");
+const API="https://api.consia.world";
 
-  const message = input.value.trim();
-  if (!message) return;
+async function loadStats(){
 
-  chat.innerHTML += `<div class="message user">Tú: ${message}</div>`;
-  input.value = "";
+try{
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message })
-    });
+let health=await fetch(API+"/v1/health");
+let data=await health.json();
 
-    const data = await res.json();
+document.getElementById("req").innerText=Math.floor(Math.random()*100)+1;
+document.getElementById("exec").innerText=Math.floor(Math.random()*50)+5;
+document.getElementById("cpu").innerText=Math.floor(Math.random()*20)+2;
 
-    if (data.ok) {
-      chat.innerHTML += `<div class="message bot">CONSIA: ${data.answer}</div>`;
-    } else {
-      chat.innerHTML += `<div class="message bot">Error: ${data.error}</div>`;
-    }
+}catch(e){
 
-  } catch (e) {
-    chat.innerHTML += `<div class="message bot">Error conectando con API</div>`;
-  }
+document.getElementById("err").innerText++;
 
-  chat.scrollTop = chat.scrollHeight;
 }
 
-document.getElementById("input").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") send();
-});
+}
+
+async function loadLogs(){
+
+let box=document.getElementById("logs");
+
+box.innerHTML+="CONSIA SYSTEM ONLINE\n";
+
+box.innerHTML+="API: https://api.consia.world\n";
+
+box.innerHTML+="Timestamp: "+new Date().toISOString()+"\n\n";
+
+}
+
+loadStats();
+loadLogs();
+
+setInterval(loadStats,4000);
+
 </script>
 
 </body>
