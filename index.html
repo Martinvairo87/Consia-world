@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CONSIA</title>
+
+<link rel="manifest" href="manifest.json">
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
@@ -12,22 +13,20 @@
 
 body{
 margin:0;
-font-family:system-ui;
 background:#0a0f1e;
+font-family:system-ui;
 color:white;
 display:flex;
-height:100vh;
-overflow:hidden
+height:100vh
 }
 
 #sidebar{
-width:260px;
-background:#0f1630;
-padding:20px;
-box-sizing:border-box
+width:280px;
+background:#111731;
+padding:20px
 }
 
-#chat{
+#main{
 flex:1;
 display:flex;
 flex-direction:column
@@ -39,41 +38,32 @@ overflow:auto;
 padding:30px
 }
 
-.msg{
-margin-bottom:20px;
-max-width:700px
-}
+.msg{margin-bottom:16px}
 
-.user{
-color:#5fa8ff
-}
+.user{color:#5fa8ff}
 
-.ai{
-color:#00ffb3
-}
+.ai{color:#00ffb3}
 
 #inputbar{
 display:flex;
-padding:20px;
-background:#0f1630
+padding:16px;
+background:#111731
 }
 
 #input{
 flex:1;
 padding:14px;
 border-radius:8px;
-border:none;
-font-size:16px
+border:none
 }
 
 button{
 margin-left:10px;
-padding:12px 16px;
+padding:12px;
 border:none;
 border-radius:8px;
 background:#3b82ff;
-color:white;
-cursor:pointer
+color:white
 }
 
 #avatar{
@@ -84,12 +74,18 @@ width:300px;
 height:300px
 }
 
-#users{
-font-size:14px;
-margin-top:20px
+#admin{
+position:absolute;
+top:20px;
+right:20px;
+background:#111731;
+padding:20px;
+border-radius:10px;
+display:none
 }
 
 </style>
+
 </head>
 
 <body>
@@ -98,29 +94,35 @@ margin-top:20px
 
 <h2>CONSIA</h2>
 
-<div id="users">
-Usuarios online: <span id="online">0</span>
+<div>
+
+<input id="email" placeholder="email"><br><br>
+
+<input id="password" type="password" placeholder="password"><br><br>
+
+<button onclick="register()">Register</button>
+
+<button onclick="login()">Login</button>
+
 </div>
 
 <br>
 
-<button onclick="startVoice()">🎤 Voz</button>
+<button onclick="voice()">🎤 Voz</button>
 
-<br><br>
+<button onclick="openMarketplace()">Marketplace</button>
 
-<button onclick="openStripe()">Stripe</button>
-
-<button onclick="openPaddle()">Paddle</button>
+<button onclick="toggleAdmin()">Admin</button>
 
 </div>
 
-<div id="chat">
+<div id="main">
 
 <div id="messages"></div>
 
 <div id="inputbar">
 
-<input id="input" placeholder="Preguntar a CONSIA">
+<input id="input" placeholder="preguntar a CONSIA">
 
 <button onclick="send()">Enviar</button>
 
@@ -130,9 +132,20 @@ Usuarios online: <span id="online">0</span>
 
 <div id="avatar"></div>
 
+<div id="admin">
+
+<h3>Panel Admin</h3>
+
+<div id="stats"></div>
+
+</div>
+
 <script>
 
 const API="https://api.consia.world"
+
+let token=null
+let user=null
 
 function add(text,cls){
 
@@ -144,30 +157,83 @@ document.getElementById("messages").appendChild(m)
 
 }
 
+async function register(){
+
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+const r=await fetch(API+"/v1/auth/register",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email,password})
+})
+
+const d=await r.json()
+
+add("usuario creado "+d.user_id,"ai")
+
+}
+
+async function login(){
+
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+const r=await fetch(API+"/v1/auth/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email,password})
+})
+
+const d=await r.json()
+
+token=d.token
+
+add("login ok","ai")
+
+}
+
 async function send(){
 
-const input=document.getElementById("input")
-const msg=input.value
+const msg=document.getElementById("input").value
 
 add(msg,"user")
 
-input.value=""
+document.getElementById("input").value=""
 
 const r=await fetch(API+"/v1/chat",{
 method:"POST",
 headers:{
-"Content-Type":"application/json"
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
 },
 body:JSON.stringify({message:msg})
 })
 
-const data=await r.json()
+const d=await r.json()
 
-add(data.answer,"ai")
+add(d.answer,"ai")
+
+await saveMemory(msg,d.answer)
 
 }
 
-function startVoice(){
+async function saveMemory(q,a){
+
+await fetch(API+"/v1/memory/save",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+user_id:user,
+text:q+" "+a
+})
+})
+
+}
+
+function voice(){
 
 const rec=new webkitSpeechRecognition()
 
@@ -185,27 +251,25 @@ rec.start()
 
 }
 
-function openStripe(){
+function openMarketplace(){
 
-window.open("https://stripe.com")
-
-}
-
-function openPaddle(){
-
-window.open("https://paddle.com")
+window.open(API+"/v1/marketplace")
 
 }
 
-function updateOnline(){
+async function toggleAdmin(){
 
-document.getElementById("online").innerText=Math.floor(Math.random()*1200)+1
+const p=document.getElementById("admin")
+
+p.style.display=p.style.display==="none"?"block":"none"
+
+const r=await fetch(API+"/v1/admin/stats")
+
+const d=await r.json()
+
+document.getElementById("stats").innerText=JSON.stringify(d,null,2)
 
 }
-
-setInterval(updateOnline,3000)
-
-updateOnline()
 
 </script>
 
@@ -213,12 +277,7 @@ updateOnline()
 
 const scene=new THREE.Scene()
 
-const camera=new THREE.PerspectiveCamera(
-75,
-300/300,
-0.1,
-1000
-)
+const camera=new THREE.PerspectiveCamera(75,1,0.1,1000)
 
 const renderer=new THREE.WebGLRenderer({alpha:true})
 
@@ -226,7 +285,7 @@ renderer.setSize(300,300)
 
 document.getElementById("avatar").appendChild(renderer.domElement)
 
-const geo=new THREE.SphereGeometry(1,32,32)
+const geo=new THREE.SphereGeometry(1,64,64)
 
 const mat=new THREE.MeshBasicMaterial({
 wireframe:true,
