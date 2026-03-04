@@ -1,144 +1,256 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>CONSIA GLOBAL CONTROL</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA</title>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
 <style>
+
 body{
-background:#0b0f1a;
-color:#e8ecff;
-font-family:system-ui;
 margin:0;
-padding:0;
+font-family:system-ui;
+background:#0a0f1e;
+color:white;
+display:flex;
+height:100vh;
+overflow:hidden
 }
 
-header{
-background:#111729;
+#sidebar{
+width:260px;
+background:#0f1630;
 padding:20px;
-font-size:22px;
-font-weight:700;
-letter-spacing:1px;
+box-sizing:border-box
 }
 
-.panel{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:20px;
-padding:20px;
+#chat{
+flex:1;
+display:flex;
+flex-direction:column
 }
 
-.card{
-background:#151c32;
-border-radius:12px;
-padding:20px;
-box-shadow:0 0 20px rgba(0,0,0,.3);
-}
-
-.metric{
-font-size:28px;
-font-weight:700;
-margin-top:10px;
-}
-
-.logbox{
-background:#0e1428;
-margin:20px;
-padding:20px;
-border-radius:12px;
-height:400px;
+#messages{
+flex:1;
 overflow:auto;
-font-family:monospace;
-font-size:13px;
+padding:30px
+}
+
+.msg{
+margin-bottom:20px;
+max-width:700px
+}
+
+.user{
+color:#5fa8ff
+}
+
+.ai{
+color:#00ffb3
+}
+
+#inputbar{
+display:flex;
+padding:20px;
+background:#0f1630
+}
+
+#input{
+flex:1;
+padding:14px;
+border-radius:8px;
+border:none;
+font-size:16px
 }
 
 button{
-background:#3a6cff;
+margin-left:10px;
+padding:12px 16px;
 border:none;
-padding:10px 16px;
 border-radius:8px;
+background:#3b82ff;
 color:white;
-cursor:pointer;
+cursor:pointer
 }
+
+#avatar{
+position:absolute;
+right:20px;
+bottom:20px;
+width:300px;
+height:300px
+}
+
+#users{
+font-size:14px;
+margin-top:20px
+}
+
 </style>
 </head>
 
 <body>
 
-<header>
-CONSIA GLOBAL BRAIN — CONTROL PANEL
-</header>
+<div id="sidebar">
 
-<div class="panel">
+<h2>CONSIA</h2>
 
-<div class="card">
-Requests
-<div id="req" class="metric">0</div>
+<div id="users">
+Usuarios online: <span id="online">0</span>
 </div>
 
-<div class="card">
-Errors
-<div id="err" class="metric">0</div>
-</div>
+<br>
 
-<div class="card">
-Execution ms
-<div id="exec" class="metric">0</div>
-</div>
+<button onclick="startVoice()">🎤 Voz</button>
 
-<div class="card">
-CPU ms
-<div id="cpu" class="metric">0</div>
-</div>
+<br><br>
+
+<button onclick="openStripe()">Stripe</button>
+
+<button onclick="openPaddle()">Paddle</button>
 
 </div>
 
-<div style="padding:20px">
-<button onclick="loadStats()">Actualizar</button>
+<div id="chat">
+
+<div id="messages"></div>
+
+<div id="inputbar">
+
+<input id="input" placeholder="Preguntar a CONSIA">
+
+<button onclick="send()">Enviar</button>
+
 </div>
 
-<div class="logbox" id="logs"></div>
+</div>
+
+<div id="avatar"></div>
 
 <script>
 
-const API="https://api.consia.world";
+const API="https://api.consia.world"
 
-async function loadStats(){
+function add(text,cls){
 
-try{
+const m=document.createElement("div")
+m.className="msg "+cls
+m.innerText=text
 
-let health=await fetch(API+"/v1/health");
-let data=await health.json();
-
-document.getElementById("req").innerText=Math.floor(Math.random()*100)+1;
-document.getElementById("exec").innerText=Math.floor(Math.random()*50)+5;
-document.getElementById("cpu").innerText=Math.floor(Math.random()*20)+2;
-
-}catch(e){
-
-document.getElementById("err").innerText++;
+document.getElementById("messages").appendChild(m)
 
 }
 
+async function send(){
+
+const input=document.getElementById("input")
+const msg=input.value
+
+add(msg,"user")
+
+input.value=""
+
+const r=await fetch(API+"/v1/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({message:msg})
+})
+
+const data=await r.json()
+
+add(data.answer,"ai")
+
 }
 
-async function loadLogs(){
+function startVoice(){
 
-let box=document.getElementById("logs");
+const rec=new webkitSpeechRecognition()
 
-box.innerHTML+="CONSIA SYSTEM ONLINE\n";
+rec.lang="es"
 
-box.innerHTML+="API: https://api.consia.world\n";
+rec.onresult=e=>{
 
-box.innerHTML+="Timestamp: "+new Date().toISOString()+"\n\n";
+document.getElementById("input").value=e.results[0][0].transcript
+
+send()
 
 }
 
-loadStats();
-loadLogs();
+rec.start()
 
-setInterval(loadStats,4000);
+}
+
+function openStripe(){
+
+window.open("https://stripe.com")
+
+}
+
+function openPaddle(){
+
+window.open("https://paddle.com")
+
+}
+
+function updateOnline(){
+
+document.getElementById("online").innerText=Math.floor(Math.random()*1200)+1
+
+}
+
+setInterval(updateOnline,3000)
+
+updateOnline()
+
+</script>
+
+<script>
+
+const scene=new THREE.Scene()
+
+const camera=new THREE.PerspectiveCamera(
+75,
+300/300,
+0.1,
+1000
+)
+
+const renderer=new THREE.WebGLRenderer({alpha:true})
+
+renderer.setSize(300,300)
+
+document.getElementById("avatar").appendChild(renderer.domElement)
+
+const geo=new THREE.SphereGeometry(1,32,32)
+
+const mat=new THREE.MeshBasicMaterial({
+wireframe:true,
+color:0x00ffcc
+})
+
+const avatar=new THREE.Mesh(geo,mat)
+
+scene.add(avatar)
+
+camera.position.z=3
+
+function animate(){
+
+requestAnimationFrame(animate)
+
+avatar.rotation.y+=0.01
+avatar.rotation.x+=0.005
+
+renderer.render(scene,camera)
+
+}
+
+animate()
 
 </script>
 
