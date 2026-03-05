@@ -1,317 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA</title>
-
-<link rel="manifest" href="manifest.json">
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-
-<style>
-
-body{
-margin:0;
-background:#0a0f1e;
-font-family:system-ui;
-color:white;
-display:flex;
-height:100vh
-}
-
-#sidebar{
-width:280px;
-background:#111731;
-padding:20px
-}
-
-#main{
-flex:1;
-display:flex;
-flex-direction:column
-}
-
-#messages{
-flex:1;
-overflow:auto;
-padding:30px
-}
-
-.msg{margin-bottom:16px}
-
-.user{color:#5fa8ff}
-
-.ai{color:#00ffb3}
-
-#inputbar{
-display:flex;
-padding:16px;
-background:#111731
-}
-
-#input{
-flex:1;
-padding:14px;
-border-radius:8px;
-border:none
-}
-
-button{
-margin-left:10px;
-padding:12px;
-border:none;
-border-radius:8px;
-background:#3b82ff;
-color:white
-}
-
-#avatar{
-position:absolute;
-right:20px;
-bottom:20px;
-width:300px;
-height:300px
-}
-
-#admin{
-position:absolute;
-top:20px;
-right:20px;
-background:#111731;
-padding:20px;
-border-radius:10px;
-display:none
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div id="sidebar">
-
-<h2>CONSIA</h2>
-
-<div>
-
-<input id="email" placeholder="email"><br><br>
-
-<input id="password" type="password" placeholder="password"><br><br>
-
-<button onclick="register()">Register</button>
-
-<button onclick="login()">Login</button>
-
-</div>
-
-<br>
-
-<button onclick="voice()">🎤 Voz</button>
-
-<button onclick="openMarketplace()">Marketplace</button>
-
-<button onclick="toggleAdmin()">Admin</button>
-
-</div>
-
-<div id="main">
-
-<div id="messages"></div>
-
-<div id="inputbar">
-
-<input id="input" placeholder="preguntar a CONSIA">
-
-<button onclick="send()">Enviar</button>
-
-</div>
-
-</div>
-
-<div id="avatar"></div>
-
-<div id="admin">
-
-<h3>Panel Admin</h3>
-
-<div id="stats"></div>
-
-</div>
-
-<script>
-
-const API="https://api.consia.world"
-
-let token=null
-let user=null
-
-function add(text,cls){
-
-const m=document.createElement("div")
-m.className="msg "+cls
-m.innerText=text
-
-document.getElementById("messages").appendChild(m)
-
-}
-
-async function register(){
-
-const email=document.getElementById("email").value
-const password=document.getElementById("password").value
-
-const r=await fetch(API+"/v1/auth/register",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({email,password})
-})
-
-const d=await r.json()
-
-add("usuario creado "+d.user_id,"ai")
-
-}
-
-async function login(){
-
-const email=document.getElementById("email").value
-const password=document.getElementById("password").value
-
-const r=await fetch(API+"/v1/auth/login",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({email,password})
-})
-
-const d=await r.json()
-
-token=d.token
-
-add("login ok","ai")
-
-}
-
-async function send(){
-
-const msg=document.getElementById("input").value
-
-add(msg,"user")
-
-document.getElementById("input").value=""
-
-const r=await fetch(API+"/v1/chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer "+token
-},
-body:JSON.stringify({message:msg})
-})
-
-const d=await r.json()
-
-add(d.answer,"ai")
-
-await saveMemory(msg,d.answer)
-
-}
-
-async function saveMemory(q,a){
-
-await fetch(API+"/v1/memory/save",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-user_id:user,
-text:q+" "+a
-})
-})
-
-}
-
-function voice(){
-
-const rec=new webkitSpeechRecognition()
-
-rec.lang="es"
-
-rec.onresult=e=>{
-
-document.getElementById("input").value=e.results[0][0].transcript
-
-send()
-
-}
-
-rec.start()
-
-}
-
-function openMarketplace(){
-
-window.open(API+"/v1/marketplace")
-
-}
-
-async function toggleAdmin(){
-
-const p=document.getElementById("admin")
-
-p.style.display=p.style.display==="none"?"block":"none"
-
-const r=await fetch(API+"/v1/admin/stats")
-
-const d=await r.json()
-
-document.getElementById("stats").innerText=JSON.stringify(d,null,2)
-
-}
-
-</script>
-
-<script>
-
-const scene=new THREE.Scene()
-
-const camera=new THREE.PerspectiveCamera(75,1,0.1,1000)
-
-const renderer=new THREE.WebGLRenderer({alpha:true})
-
-renderer.setSize(300,300)
-
-document.getElementById("avatar").appendChild(renderer.domElement)
-
-const geo=new THREE.SphereGeometry(1,64,64)
-
-const mat=new THREE.MeshBasicMaterial({
-wireframe:true,
-color:0x00ffcc
-})
-
-const avatar=new THREE.Mesh(geo,mat)
-
-scene.add(avatar)
-
-camera.position.z=3
-
-function animate(){
-
-requestAnimationFrame(animate)
-
-avatar.rotation.y+=0.01
-avatar.rotation.x+=0.005
-
-renderer.render(scene,camera)
-
-}
-
-animate()
-
-</script>
-
-</body>
-</html>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <title>CONSIA WORLD</title>
+  <style>
+    :root{
+      --bg:#050607; --card:#0b0d10; --muted:#9aa4b2; --txt:#eef2f7; --line:#1a1f29;
+      --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444; --btn:#111827; --btn2:#0f172a;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --r:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 900px at 20% 10%, #0b1020 0%, #050607 45%, #050607 100%);
+      color:var(--txt);
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:24px}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, #60a5fa 0%, #2563eb 30%, #0b1020 70%);
+      box-shadow: var(--shadow);
+      position:relative; overflow:hidden;
+    }
+    .logo:after{
+      content:""; position:absolute; inset:-30%;
+      background: conic-gradient(from 0deg, rgba(255,255,255,.18), rgba(255,255,255,0), rgba(255,255,255,.12), rgba(255,255,255,0));
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    h1{font-size:18px; margin:0}
+    .sub{color:var(--muted); font-size:13px; margin-top:2px}
+    .pill{
+      display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--line);
+      background: rgba(10,12,16,.65); border-radius:999px; box-shadow: var(--shadow);
+    }
+    .dot{width:10px; height:10px; border-radius:50%}
+    .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+    .grid{
+      display:grid; grid-template-columns: 420px 1fr; gap:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background: rgba(11,13,16,.72);
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHd{
+      padding:14px 16px; border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    .cardHd .ttl{font-weight:700; font-size:13px; letter-spacing:.08em; color:#cbd5e1}
+    .cardBd{padding:16px}
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+    input, select, textarea{
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--line);
+      background:#06080c; color:var(--txt); outline:none;
+    }
+    textarea{min-height:110px; resize:vertical}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width:520px){ .row{grid-template-columns:1fr} }
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(17,24,39,.95), rgba(2,6,23,.95));
+      color:var(--txt);
+      padding:11px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:650;
+    }
+    button.secondary{
+      background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(2,6,23,.9));
+      color:#e2e8f0;
+    }
+    button.danger{
+      background: linear-gradient(180deg, rgba(127,29,29,.9), rgba(2,6,23,.9));
+      border-color: rgba(239,68,68,.35);
+    }
+    button:disabled{opacity:.55; cursor:not-allowed}
+    .kpis{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+    }
+    .kpi{
+      padding:12px; border:1px solid var(--line); border-radius:14px; background:rgba(6,8,12,.7);
+    }
+    .kpi .k{font-size:12px; color:var(--muted)}
+    .kpi .v{margin-top:6px; font-size:14px; font-weight:700}
+    .mono{font-family: ui-m
