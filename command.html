@@ -6,468 +6,537 @@
   <title>CONSIA COMMAND CENTER</title>
   <style>
     :root{
-      --bg:#0a0a0a;
-      --panel:#151515;
-      --panel2:#101010;
-      --text:#f5f5f5;
-      --muted:#9ca3af;
-      --accent:#00ff9c;
-      --danger:#ff5c5c;
-      --warning:#ffd166;
-      --border:#262626;
+      --bg:#05070b;
+      --panel:#0c1118;
+      --panel2:#0a0f15;
+      --text:#f5f7fb;
+      --muted:#94a3b8;
+      --accent:#4f8cff;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --border:#1f2937;
+      --bubbleUser:#14213d;
+      --bubbleAi:#0d2a1b;
     }
-
     *{box-sizing:border-box}
-
     body{
       margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--bg);
+      background:radial-gradient(circle at center, #0d1b3a 0%, #05070b 55%);
       color:var(--text);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     }
-
     .wrap{
       max-width:1200px;
       margin:0 auto;
-      padding:28px;
+      padding:24px;
     }
-
-    h1{
-      margin:0 0 6px;
-      font-size:32px;
-      letter-spacing:.5px;
+    .hero{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+      margin-bottom:20px;
+      flex-wrap:wrap;
     }
-
-    .sub{
-      color:var(--muted);
-      margin-bottom:24px;
+    .brand{
+      display:flex;
+      gap:16px;
+      align-items:center;
     }
-
+    .orb{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      background:radial-gradient(circle at 35% 30%, #7aa2ff, #1e3a8a 55%, #05070b 100%);
+      box-shadow:0 0 30px rgba(79,140,255,.35);
+    }
+    h1{margin:0;font-size:18px;letter-spacing:.4px}
+    .sub{margin-top:4px;color:var(--muted)}
+    .status{
+      padding:14px 18px;
+      border:1px solid var(--border);
+      border-radius:20px;
+      background:rgba(0,0,0,.18);
+      min-width:140px;
+      text-align:center;
+    }
+    .status .dot{
+      display:inline-block;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      margin-right:8px;
+      background:var(--danger);
+    }
     .grid{
       display:grid;
       grid-template-columns:repeat(12,1fr);
       gap:16px;
     }
-
     .card{
       background:linear-gradient(180deg,var(--panel),var(--panel2));
       border:1px solid var(--border);
-      border-radius:16px;
-      padding:18px;
-      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      border-radius:22px;
+      overflow:hidden;
     }
-
-    .span-3{grid-column:span 3}
-    .span-4{grid-column:span 4}
-    .span-6{grid-column:span 6}
-    .span-8{grid-column:span 8}
-    .span-12{grid-column:span 12}
-
-    .label{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:8px;
-    }
-
-    .value{
-      font-size:28px;
-      font-weight:700;
-    }
-
-    .ok{color:var(--accent)}
-    .bad{color:var(--danger)}
-    .warn{color:var(--warning)}
-
-    button{
-      background:var(--accent);
-      color:#000;
-      border:none;
-      border-radius:10px;
-      padding:10px 16px;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    button.secondary{
-      background:#222;
-      color:#fff;
-      border:1px solid #333;
-    }
-
-    input, textarea, select{
-      width:100%;
-      background:#0d0d0d;
-      color:#fff;
-      border:1px solid #333;
-      border-radius:10px;
-      padding:12px;
-      font-size:14px;
-      outline:none;
-    }
-
-    textarea{
-      min-height:120px;
-      resize:vertical;
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .row > *{
-      flex:1;
-      min-width:180px;
-    }
-
-    pre{
-      background:#050505;
-      color:#d1fae5;
-      border:1px solid #1f2937;
-      border-radius:12px;
-      padding:14px;
-      overflow:auto;
-      white-space:pre-wrap;
-      word-break:break-word;
-      min-height:120px;
-    }
-
-    .tiny{
-      font-size:12px;
-      color:var(--muted);
-    }
-
-    .pill{
-      display:inline-block;
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:12px;
-      background:#111;
-      border:1px solid #2a2a2a;
-      color:#d1d5db;
-      margin-right:6px;
-    }
-
-    .topbar{
+    .cardHead{
+      padding:18px 20px;
+      border-bottom:1px solid var(--border);
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:12px;
       flex-wrap:wrap;
-      margin-bottom:20px;
     }
-
+    .cardBody{padding:20px}
+    .span-12{grid-column:span 12}
+    .span-8{grid-column:span 8}
+    .span-6{grid-column:span 6}
+    .span-4{grid-column:span 4}
+    .span-3{grid-column:span 3}
+    .label{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:8px;
+    }
+    .value{
+      font-size:26px;
+      font-weight:700;
+    }
+    .ok{color:var(--accent2)}
+    .bad{color:var(--danger)}
+    .warn{color:var(--warning)}
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .row > *{
+      flex:1;
+      min-width:180px;
+    }
+    input, textarea, select{
+      width:100%;
+      background:#070b11;
+      color:#fff;
+      border:1px solid #1f2937;
+      border-radius:16px;
+      padding:14px 14px;
+      font-size:16px;
+      outline:none;
+    }
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+    button{
+      background:#0d1730;
+      color:#fff;
+      border:1px solid #243b64;
+      border-radius:16px;
+      padding:12px 18px;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    button.primary{
+      background:#0f172a;
+      border-color:#29477b;
+      box-shadow:inset 0 0 0 1px rgba(79,140,255,.15);
+    }
+    button.green{
+      background:#0a1f16;
+      border-color:#1d4d36;
+    }
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+    pre{
+      margin:0;
+      background:#03060a;
+      color:#dbeafe;
+      border:1px solid #111827;
+      border-radius:16px;
+      padding:14px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+      min-height:110px;
+    }
+    .tiny{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .chatWrap{
+      min-height:360px;
+      max-height:460px;
+      overflow:auto;
+      border-bottom:1px solid var(--border);
+      padding:18px;
+    }
+    .bubble{
+      max-width:70%;
+      padding:14px 16px;
+      border-radius:18px;
+      margin-bottom:14px;
+      line-height:1.5;
+      font-size:16px;
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .bubble.user{
+      margin-left:auto;
+      background:var(--bubbleUser);
+    }
+    .bubble.ai{
+      background:var(--bubbleAi);
+    }
+    .chatComposer{
+      display:flex;
+      gap:12px;
+      padding:18px;
+      align-items:center;
+    }
+    .chatComposer textarea{
+      min-height:64px;
+      max-height:160px;
+    }
+    .pill{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:#cbd5e1;
+      font-size:12px;
+      margin-right:8px;
+      margin-bottom:8px;
+    }
     @media (max-width: 900px){
-      .span-3,.span-4,.span-6,.span-8,.span-12{grid-column:span 12}
-      .value{font-size:24px}
-      .wrap{padding:16px}
+      .span-12,.span-8,.span-6,.span-4,.span-3{grid-column:span 12}
+      .wrap{padding:14px}
+      .bubble{max-width:88%}
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="topbar">
-      <div>
-        <h1>CONSIA COMMAND CENTER</h1>
-        <div class="sub">Panel central de monitoreo y prueba de CONSIA</div>
+    <div class="hero">
+      <div class="brand">
+        <div class="orb"></div>
+        <div>
+          <h1>CONSIA WORLD</h1>
+          <div class="sub">UI oficial · Multi-AI Router · Brain · Memory · Users · Auth · Voice</div>
+        </div>
       </div>
-      <div class="row" style="flex:0 0 auto">
-        <button onclick="refreshAll()">Actualizar todo</button>
-        <button class="secondary" onclick="clearOutputs()">Limpiar panel</button>
+      <div class="status" id="statusBadge">
+        <span class="dot" id="statusDot"></span>
+        <strong id="statusText">OFFLINE</strong>
       </div>
     </div>
 
     <div class="grid">
       <div class="card span-12">
-        <div class="label">Seguridad (OWNER TOKEN)</div>
-        <div class="row" style="margin-bottom:10px;">
-          <input id="ownerToken" type="password" placeholder="Pegá acá tu OWNER TOKEN" />
-          <select id="authMode">
-            <option value="auto" selected>Auto (usar si existe token)</option>
-            <option value="always">Siempre (forzar auth)</option>
-            <option value="never">Nunca (sin auth)</option>
-          </select>
+        <div class="cardHead">
+          <strong>CONTROL</strong>
+          <button class="primary" onclick="checkHealth()">Refresh Status</button>
         </div>
-        <div class="row">
-          <button onclick="saveToken()">Guardar token</button>
-          <button class="secondary" onclick="clearToken()">Borrar token</button>
+        <div class="cardBody">
+          <div class="row" style="margin-bottom:16px;">
+            <div style="flex:2">
+              <div class="label">API Base</div>
+              <input id="apiBase" value="https://api.consia.world" />
+            </div>
+            <div>
+              <div class="label">Provider (router)</div>
+              <select id="provider">
+                <option value="auto" selected>auto</option>
+                <option value="openai">openai</option>
+                <option value="kimi">kimi</option>
+                <option value="deepseek">deepseek</option>
+              </select>
+            </div>
+            <div>
+              <div class="label">Mode</div>
+              <select id="mode">
+                <option value="auto" selected>auto</option>
+                <option value="chat">chat</option>
+                <option value="reasoning">reasoning</option>
+                <option value="fast">fast</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" style="margin-bottom:16px;">
+            <div style="flex:2">
+              <div class="label">Authorization (Owner Token) — se guarda en este navegador</div>
+              <input id="ownerToken" type="password" placeholder="Pegar token owner… (Bearer se agrega solo)" />
+            </div>
+          </div>
+
+          <div class="row" style="margin-bottom:18px;">
+            <button class="primary" onclick="saveToken()">Guardar</button>
+            <button onclick="clearToken()">Borrar token local</button>
+            <button onclick="testChatRoute()">Test Chat</button>
+          </div>
+
+          <div class="row">
+            <div class="span-3" style="flex:1">
+              <div class="label">System</div>
+              <div class="value" id="systemValue">—</div>
+            </div>
+            <div class="span-3" style="flex:1">
+              <div class="label">Version</div>
+              <div class="value" id="versionValue">—</div>
+            </div>
+            <div class="span-3" style="flex:1">
+              <div class="label">Database</div>
+              <div class="value" id="dbValue">—</div>
+            </div>
+            <div class="span-3" style="flex:1">
+              <div class="label">Router</div>
+              <div class="value" id="routerValue">—</div>
+            </div>
+          </div>
+
+          <div class="tiny" style="margin-top:16px;">
+            El panel prueba automáticamente los endpoints de chat disponibles.  
+            Orden de fallback: <code>/v1/chat</code> → <code>/ask</code> → <code>/chat</code>
+          </div>
         </div>
-        <div class="tiny" style="margin-top:10px;">
-          Si tu Worker exige auth, esto envía Authorization automáticamente.
+      </div>
+
+      <div class="card span-12">
+        <div class="cardHead">
+          <strong>CONSIA CHAT</strong>
+          <div class="tiny" id="routeInfo">route: pendiente…</div>
+        </div>
+
+        <div id="chatWrap" class="chatWrap">
+          <div class="bubble ai">Hola. Soy CONSIA. Pegá tu Owner Token y escribime o hablame.</div>
+        </div>
+
+        <div class="chatComposer">
+          <textarea id="msgInput" placeholder="Escribí acá... (Enter para enviar, Shift+Enter para salto)"></textarea>
+          <button class="green" onclick="sendMessage()">Enviar</button>
         </div>
       </div>
 
-      <div class="card span-3">
-        <div class="label">Estado API</div>
-        <div class="value" id="apiStatus">-</div>
-        <div class="tiny" id="apiTime">Sin datos</div>
-      </div>
-
-      <div class="card span-3">
-        <div class="label">Base de datos</div>
-        <div class="value" id="dbStatus">-</div>
-        <div class="tiny" id="dbInfo">Sin datos</div>
-      </div>
-
-      <div class="card span-3">
-        <div class="label">Motor IA</div>
-        <div class="value" id="aiStatus">-</div>
-        <div class="tiny" id="aiInfo">Sin datos</div>
-      </div>
-
-      <div class="card span-3">
-        <div class="label">Latencia health</div>
-        <div class="value" id="latencyValue">-</div>
-        <div class="tiny">Medición en ms</div>
-      </div>
-
-      <div class="card span-8">
-        <div class="label">Health / Estado general</div>
-        <div class="row" style="margin-bottom:10px;">
-          <input id="healthUrl" value="https://api.consia.world/health" />
-          <button onclick="checkHealth()">Check Health</button>
+      <div class="card span-6">
+        <div class="cardHead">
+          <strong>Health</strong>
         </div>
-        <pre id="healthOutput">Esperando prueba...</pre>
-      </div>
-
-      <div class="card span-4">
-        <div class="label">Resumen rápido</div>
-        <div style="margin-bottom:10px;">
-          <span class="pill">Worker</span>
-          <span class="pill">D1</span>
-          <span class="pill">AI</span>
-          <span class="pill">Memory</span>
-          <span class="pill">Auth</span>
-        </div>
-        <div class="tiny">
-          Este panel prueba health, chat, memoria y mensajes guardados.
+        <div class="cardBody">
+          <pre id="healthOut">Esperando check…</pre>
         </div>
       </div>
 
       <div class="card span-6">
-        <div class="label">Chat test</div>
-        <div class="row" style="margin-bottom:10px;">
-          <input id="chatUrl" value="https://api.consia.world/v1/chat" />
-          <input id="chatUser" value="martin" placeholder="user_id" />
+        <div class="cardHead">
+          <strong>Logs</strong>
         </div>
-        <textarea id="chatMessage">Hola CONSIA</textarea>
-        <div class="row" style="margin-top:10px;">
-          <button onclick="sendChat()">Enviar chat</button>
+        <div class="cardBody">
+          <pre id="logOut">Esperando eventos…</pre>
         </div>
-        <pre id="chatOutput">Esperando mensaje...</pre>
-      </div>
-
-      <div class="card span-6">
-        <div class="label">Messages / memoria guardada</div>
-        <div class="row" style="margin-bottom:10px;">
-          <input id="messagesUrl" value="https://api.consia.world/v1/messages?user_id=martin&limit=20" />
-          <button onclick="loadMessages()">Cargar mensajes</button>
-        </div>
-        <pre id="messagesOutput">Esperando consulta...</pre>
-      </div>
-
-      <div class="card span-6">
-        <div class="label">Memory add</div>
-        <div class="row" style="margin-bottom:10px;">
-          <input id="memoryUrl" value="https://api.consia.world/v1/memory" />
-          <input id="memoryUser" value="martin" placeholder="user_id" />
-        </div>
-        <div class="row" style="margin-bottom:10px;">
-          <input id="memoryKey" value="objetivo" placeholder="k" />
-          <input id="memoryValue" value="Construir CONSIA top 1 mundial" placeholder="v" />
-          <select id="memoryImportance">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </div>
-        <button onclick="addMemory()">Agregar memoria</button>
-        <pre id="memoryOutput">Esperando alta de memoria...</pre>
-      </div>
-
-      <div class="card span-6">
-        <div class="label">Logs rápidos</div>
-        <div class="row" style="margin-bottom:10px;">
-          <button onclick="runLatency()">Test latencia</button>
-          <button class="secondary" onclick="checkRoot()">Check root</button>
-        </div>
-        <pre id="logOutput">Esperando acciones...</pre>
       </div>
     </div>
   </div>
 
   <script>
-    const LS_TOKEN_KEY = "consia_owner_token";
-    const LS_AUTHMODE_KEY = "consia_auth_mode";
+    const LS_TOKEN = "CONSIA_OWNER_TOKEN";
+    const LS_BASE = "CONSIA_API_BASE";
+    const LS_PROVIDER = "CONSIA_PROVIDER";
+    const LS_MODE = "CONSIA_MODE";
+    const LS_WORKING_ROUTE = "CONSIA_WORKING_CHAT_ROUTE";
 
-    function print(id, data){
-      document.getElementById(id).textContent =
+    function qs(id){ return document.getElementById(id); }
+
+    function log(data){
+      qs("logOut").textContent =
         typeof data === "string" ? data : JSON.stringify(data, null, 2);
     }
 
-    function setStatus(id, text, ok=true){
-      const el = document.getElementById(id);
-      el.textContent = text;
-      el.className = "value " + (ok ? "ok" : "bad");
+    function setOnline(ok){
+      qs("statusText").textContent = ok ? "ONLINE" : "OFFLINE";
+      qs("statusDot").style.background = ok ? "#22c55e" : "#ef4444";
+    }
+
+    function addBubble(text, role="ai"){
+      const wrap = qs("chatWrap");
+      const div = document.createElement("div");
+      div.className = "bubble " + role;
+      div.textContent = text;
+      wrap.appendChild(div);
+      wrap.scrollTop = wrap.scrollHeight;
+    }
+
+    function getHeaders(json=true){
+      const h = {};
+      if (json) h["Content-Type"] = "application/json";
+      const token = (qs("ownerToken").value || "").trim();
+      if (token) h["Authorization"] = "Bearer " + token;
+      return h;
+    }
+
+    function getBase(){
+      return (qs("apiBase").value || "").trim().replace(/\/+$/, "");
+    }
+
+    function saveToken(){
+      localStorage.setItem(LS_TOKEN, qs("ownerToken").value || "");
+      localStorage.setItem(LS_BASE, qs("apiBase").value || "");
+      localStorage.setItem(LS_PROVIDER, qs("provider").value || "auto");
+      localStorage.setItem(LS_MODE, qs("mode").value || "auto");
+      log({ ok:true, saved:true });
+    }
+
+    function clearToken(){
+      localStorage.removeItem(LS_TOKEN);
+      qs("ownerToken").value = "";
+      log({ ok:true, cleared:true });
     }
 
     async function safeJson(res){
       const txt = await res.text();
-      try { return JSON.parse(txt); } catch { return { raw: txt }; }
-    }
-
-    function getToken(){
-      return (document.getElementById("ownerToken").value || "").trim();
-    }
-
-    function getAuthMode(){
-      return document.getElementById("authMode").value;
-    }
-
-    function authHeaders(){
-      const mode = getAuthMode();
-      const token = getToken();
-
-      if (mode === "never") return {};
-      if (mode === "auto" && !token) return {};
-      if (!token) return {};
-
-      return {
-        "Authorization": "Bearer " + token,
-        "X-CONSIA-OWNER": token
-      };
-    }
-
-    function saveToken(){
-      const token = getToken();
-      const mode = getAuthMode();
-      localStorage.setItem(LS_AUTHMODE_KEY, mode);
-      if (token) localStorage.setItem(LS_TOKEN_KEY, token);
-      print("logOutput", { ok:true, saved:true, has_token: !!token, mode });
-    }
-
-    function clearToken(){
-      localStorage.removeItem(LS_TOKEN_KEY);
-      document.getElementById("ownerToken").value = "";
-      print("logOutput", { ok:true, cleared:true });
+      try { return JSON.parse(txt); }
+      catch { return { raw: txt }; }
     }
 
     async function checkHealth(){
-      const url = document.getElementById("healthUrl").value.trim();
-      const t0 = performance.now();
-      const res = await fetch(url, { headers: { ...authHeaders() } });
+      const url = getBase() + "/health";
+      const res = await fetch(url, { headers: getHeaders(false) });
       const data = await safeJson(res);
-      const t1 = performance.now();
-      const ms = Math.round(t1 - t0);
 
-      print("healthOutput", data);
-      document.getElementById("latencyValue").textContent = ms + " ms";
-      document.getElementById("apiTime").textContent = "Última verificación: " + new Date().toLocaleTimeString();
+      qs("healthOut").textContent = JSON.stringify(data, null, 2);
 
-      if(res.ok && data.ok){
-        setStatus("apiStatus", "ONLINE", true);
-        setStatus("dbStatus", data.database || data.db || "-", true);
-        setStatus("aiStatus", data.ai || data.engine || data.provider || "-", true);
-        document.getElementById("dbInfo").textContent = "Versión: " + (data.version || "-");
-        document.getElementById("aiInfo").textContent = "Runtime: " + (data.runtime || "-");
+      if (res.ok && data.ok) {
+        setOnline(true);
+        qs("systemValue").textContent = data.system || data.service || "CONSIA";
+        qs("versionValue").textContent = data.version || "—";
+        qs("dbValue").textContent = data.database || (data.has_d1 ? "D1" : "—");
+        qs("routerValue").textContent = data.ai || data.provider || (data.has_openai_key ? "OPENAI" : "—");
       } else {
-        setStatus("apiStatus", "ERROR", false);
+        setOnline(false);
       }
 
-      print("logOutput", { type:"health", status:res.status, latency_ms:ms, data });
+      log({ type:"health", status:res.status, data });
+      return { res, data };
     }
 
-    async function sendChat(){
-      const url = document.getElementById("chatUrl").value.trim();
-      const user_id = document.getElementById("chatUser").value.trim();
-      const message = document.getElementById("chatMessage").value;
+    async function detectChatRoute(){
+      const base = getBase();
+      const candidates = ["/v1/chat", "/ask", "/chat"];
 
-      const t0 = performance.now();
-      const res = await fetch(url, {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          ...authHeaders()
-        },
-        body: JSON.stringify({ user_id, message })
-      });
+      for (const route of candidates) {
+        try {
+          const res = await fetch(base + route, {
+            method: "POST",
+            headers: getHeaders(true),
+            body: JSON.stringify({
+              user_id: "martin",
+              message: "ping"
+            })
+          });
 
-      const data = await safeJson(res);
-      const t1 = performance.now();
-      data.latency_ms = Math.round(t1 - t0);
+          const data = await safeJson(res);
 
-      print("chatOutput", data);
-      print("logOutput", { type:"chat", status:res.status, data });
+          if (res.ok) {
+            localStorage.setItem(LS_WORKING_ROUTE, route);
+            qs("routeInfo").textContent = "route: " + base + route + " (OK)";
+            log({ type:"detect_route", route, status:res.status, data });
+            return route;
+          }
+
+          if (res.status !== 404 && res.status !== 405) {
+            localStorage.setItem(LS_WORKING_ROUTE, route);
+            qs("routeInfo").textContent = "route: " + base + route + " (status " + res.status + ")";
+            log({ type:"detect_route_partial", route, status:res.status, data });
+            return route;
+          }
+        } catch (err) {
+          log({ type:"detect_route_error", route, error:String(err) });
+        }
+      }
+
+      qs("routeInfo").textContent = "route: no detectada";
+      return null;
     }
 
-    async function loadMessages(){
-      const url = document.getElementById("messagesUrl").value.trim();
-      const res = await fetch(url, { headers: { ...authHeaders() } });
-      const data = await safeJson(res);
-      print("messagesOutput", data);
-      print("logOutput", { type:"messages", status:res.status, count:data.count || (data.items?.length || 0) });
+    async function testChatRoute(){
+      const route = await detectChatRoute();
+      if (!route) {
+        addBubble("No encontré un endpoint de chat activo en la API. Health funciona, pero chat todavía no está expuesto.", "ai");
+      } else {
+        addBubble("Ruta detectada: " + route, "ai");
+      }
     }
 
-    async function addMemory(){
-      const url = document.getElementById("memoryUrl").value.trim();
-      const user_id = document.getElementById("memoryUser").value.trim();
-      const k = document.getElementById("memoryKey").value.trim();
-      const v = document.getElementById("memoryValue").value.trim();
-      const importance = Number(document.getElementById("memoryImportance").value);
+    async function sendMessage(){
+      const text = qs("msgInput").value.trim();
+      if (!text) return;
 
-      const res = await fetch(url, {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          ...authHeaders()
-        },
-        body: JSON.stringify({ user_id, k, v, importance })
-      });
+      addBubble(text, "user");
+      qs("msgInput").value = "";
 
-      const data = await safeJson(res);
-      print("memoryOutput", data);
-      print("logOutput", { type:"memory_add", status:res.status, data });
+      let route = localStorage.getItem(LS_WORKING_ROUTE);
+      if (!route) route = await detectChatRoute();
+
+      if (!route) {
+        addBubble("No hay endpoint de chat activo todavía. Hay que exponerlo en el Worker.", "ai");
+        return;
+      }
+
+      const url = getBase() + route;
+
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: getHeaders(true),
+          body: JSON.stringify({
+            user_id: "martin",
+            message: text,
+            provider: qs("provider").value,
+            mode: qs("mode").value
+          })
+        });
+
+        const data = await safeJson(res);
+        log({ type:"chat", route, status:res.status, data });
+
+        const reply =
+          data.reply ||
+          data.answer ||
+          data.message ||
+          data.output ||
+          JSON.stringify(data);
+
+        addBubble(reply, "ai");
+      } catch (err) {
+        addBubble("ERROR: " + String(err), "ai");
+        log({ type:"chat_error", error:String(err) });
+      }
     }
 
-    async function runLatency(){
-      const url = document.getElementById("healthUrl").value.trim();
-      const t0 = performance.now();
-      await fetch(url, { headers: { ...authHeaders() } });
-      const t1 = performance.now();
-      const ms = Math.round(t1 - t0);
-      document.getElementById("latencyValue").textContent = ms + " ms";
-      print("logOutput", { type:"latency", latency_ms: ms });
-    }
+    window.addEventListener("DOMContentLoaded", async () => {
+      qs("ownerToken").value = localStorage.getItem(LS_TOKEN) || "";
+      qs("apiBase").value = localStorage.getItem(LS_BASE) || "https://api.consia.world";
+      qs("provider").value = localStorage.getItem(LS_PROVIDER) || "auto";
+      qs("mode").value = localStorage.getItem(LS_MODE) || "auto";
 
-    async function checkRoot(){
-      const res = await fetch("https://api.consia.world/", { headers: { ...authHeaders() } });
-      const data = await safeJson(res);
-      print("logOutput", { type:"root", status:res.status, data });
-    }
-
-    function clearOutputs(){
-      print("healthOutput", "Esperando prueba...");
-      print("chatOutput", "Esperando mensaje...");
-      print("messagesOutput", "Esperando consulta...");
-      print("memoryOutput", "Esperando alta de memoria...");
-      print("logOutput", "Esperando acciones...");
-    }
-
-    async function refreshAll(){
       await checkHealth();
-      await loadMessages();
-    }
+      const savedRoute = localStorage.getItem(LS_WORKING_ROUTE);
+      if (savedRoute) {
+        qs("routeInfo").textContent = "route: " + getBase() + savedRoute + " (guardada)";
+      }
+    });
 
-    window.onload = () => {
-      const savedToken = localStorage.getItem(LS_TOKEN_KEY) || "";
-      const savedMode = localStorage.getItem(LS_AUTHMODE_KEY) || "auto";
-      document.getElementById("ownerToken").value = savedToken;
-      document.getElementById("authMode").value = savedMode;
-      checkHealth();
-    };
+    qs("msgInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
   </script>
 </body>
 </html>
