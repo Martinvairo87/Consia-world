@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA COMMAND CENTER</title>
+  <style>
+    :root{
+      --bg:#0a0a0a;
+      --panel:#151515;
+      --panel2:#101010;
+      --text:#f5f5f5;
+      --muted:#9ca3af;
+      --accent:#00ff9c;
+      --danger:#ff5c5c;
+      --warning:#ffd166;
+      --border:#262626;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:28px;
+    }
+
+    h1{
+      margin:0 0 6px;
+      font-size:32px;
+      letter-spacing:.5px;
+    }
+
+    .sub{
+      color:var(--muted);
+      margin-bottom:24px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:16px;
+    }
+
+    .card{
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .span-3{grid-column:span 3}
+    .span-4{grid-column:span 4}
+    .span-6{grid-column:span 6}
+    .span-8{grid-column:span 8}
+    .span-12{grid-column:span 12}
+
+    .label{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:8px;
+    }
+
+    .value{
+      font-size:28px;
+      font-weight:700;
+    }
+
+    .ok{color:var(--accent)}
+    .bad{color:var(--danger)}
+    .warn{color:var(--warning)}
+
+    button{
+      background:var(--accent);
+      color:#000;
+      border:none;
+      border-radius:10px;
+      padding:10px 16px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    button.secondary{
+      background:#222;
+      color:#fff;
+      border:1px solid #333;
+    }
+
+    input, textarea, select{
+      width:100%;
+      background:#0d0d0d;
+      color:#fff;
+      border:1px solid #333;
+      border-radius:10px;
+      padding:12px;
+      font-size:14px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .row > *{
+      flex:1;
+      min-width:180px;
+    }
+
+    pre{
+      background:#050505;
+      color:#d1fae5;
+      border:1px solid #1f2937;
+      border-radius:12px;
+      padding:14px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+      min-height:120px;
+    }
+
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .pill{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:#111;
+      border:1px solid #2a2a2a;
+      color:#d1d5db;
+      margin-right:6px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    }
+
+    @media (max-width: 900px){
+      .span-3,.span-4,.span-6,.span-8,.span-12{grid-column:span 12}
+      .value{font-size:24px}
+      .wrap{padding:16px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>CONSIA COMMAND CENTER</h1>
+        <div class="sub">Panel central de monitoreo y prueba de CONSIA</div>
+      </div>
+      <div class="row" style="flex:0 0 auto">
+        <button onclick="refreshAll()">Actualizar todo</button>
+        <button class="secondary" onclick="clearOutputs()">Limpiar panel</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card span-3">
+        <div class="label">Estado API</div>
+        <div class="value" id="apiStatus">-</div>
+        <div class="tiny" id="apiTime">Sin datos</div>
+      </div>
+
+      <div class="card span-3">
+        <div class="label">Base de datos</div>
+        <div class="value" id="dbStatus">-</div>
+        <div class="tiny" id="dbInfo">Sin datos</div>
+      </div>
+
+      <div class="card span-3">
+        <div class="label">Motor IA</div>
+        <div class="value" id="aiStatus">-</div>
+        <div class="tiny" id="aiInfo">Sin datos</div>
+      </div>
+
+      <div class="card span-3">
+        <div class="label">Latencia health</div>
+        <div class="value" id="latencyValue">-</div>
+        <div class="tiny">Medición en ms</div>
+      </div>
+
+      <div class="card span-8">
+        <div class="label">Health / Estado general</div>
+        <div class="row" style="margin-bottom:10px;">
+          <input id="healthUrl" value="https://api.consia.world/v1/health" />
+          <button onclick="checkHealth()">Check Health</button>
+        </div>
+        <pre id="healthOutput">Esperando prueba...</pre>
+      </div>
+
+      <div class="card span-4">
+        <div class="label">Resumen rápido</div>
+        <div style="margin-bottom:10px;">
+          <span class="pill">Worker</span>
+          <span class="pill">D1</span>
+          <span class="pill">AI</span>
+          <span class="pill">Memory</span>
+        </div>
+        <div class="tiny">
+          Este panel sirve para probar chat, health, memoria y listar mensajes guardados en CONSIA.
+        </div>
+      </div>
+
+      <div class="card span-6">
+        <div class="label">Chat test</div>
+        <div class="row" style="margin-bottom:10px;">
+          <input id="chatUrl" value="https://api.consia.world/v1/chat" />
+          <input id="chatUser" value="martin" placeholder="user_id" />
+        </div>
+        <textarea id="chatMessage">Hola CONSIA</textarea>
+        <div class="row" style="margin-top:10px;">
+          <button onclick="sendChat()">Enviar chat</button>
+        </div>
+        <pre id="chatOutput">Esperando mensaje...</pre>
+      </div>
+
+      <div class="card span-6">
+        <div class="label">Messages / memoria guardada</div>
+        <div class="row" style="margin-bottom:10px;">
+          <input id="messagesUrl" value="https://api.consia.world/v1/messages?user_id=martin&limit=20" />
+          <button onclick="loadMessages()">Cargar mensajes</button>
+        </div>
+        <pre id="messagesOutput">Esperando consulta...</pre>
+      </div>
+
+      <div class="card span-6">
+        <div class="label">Memory add</div>
+        <div class="row" style="margin-bottom:10px;">
+          <input id="memoryUrl" value="https://api.consia.world/v1/memory" />
+          <input id="memoryUser" value="martin" placeholder="user_id" />
+        </div>
+        <div class="row" style="margin-bottom:10px;">
+          <input id="memoryKey" value="objetivo" placeholder="k" />
+          <input id="memoryValue" value="Construir CONSIA top 1 mundial" placeholder="v" />
+          <select id="memoryImportance">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <button onclick="addMemory()">Agregar memoria</button>
+        <pre id="memoryOutput">Esperando alta de memoria...</pre>
+      </div>
+
+      <div class="card span-6">
+        <div class="label">Logs rápidos</div>
+        <div class="row" style="margin-bottom:10px;">
+          <button onclick="runLatency()">Test latencia</button>
+          <button class="secondary" onclick="checkRoot()">Check root</button>
+        </div>
+        <pre id="logOutput">Esperando acciones...</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function print(id, data){
+      document.getElementById(id).textContent =
+        typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
+
+    function setStatus(id, text, ok=true){
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = "value " + (ok ? "ok" : "bad");
+    }
+
+    async function safeJson(res){
+      const txt = await res.text();
+      try { return JSON.parse(txt); } catch { return { raw: txt }; }
+    }
+
+    async function checkHealth(){
+      const url = document.getElementById("healthUrl").value.trim();
+      const t0 = performance.now();
+      const res = await fetch(url);
+      const data = await safeJson(res);
+      const t1 = performance.now();
+      const ms = Math.round(t1 - t0);
+
+      print("healthOutput", data);
+      document.getElementById("latencyValue").textContent = ms + " ms";
+      document.getElementById("apiTime").textContent = "Última verificación: " + new Date().toLocaleTimeString();
+
+      if(res.ok && data.ok){
+        setStatus("apiStatus", "ONLINE", true);
+        setStatus("dbStatus", data.database || "-", true);
+        setStatus("aiStatus", data.ai || data.engine || "-", true);
+        document.getElementById("dbInfo").textContent = "Versión: " + (data.version || "-");
+        document.getElementById("aiInfo").textContent = "Runtime: " + (data.runtime || "-");
+      } else {
+        setStatus("apiStatus", "ERROR", false);
+      }
+
+      print("logOutput", { type:"health", status:res.status, latency_ms:ms, data });
+    }
+
+    async function sendChat(){
+      const url = document.getElementById("chatUrl").value.trim();
+      const user_id = document.getElementById("chatUser").value.trim();
+      const message = document.getElementById("chatMessage").value;
+
+      const t0 = performance.now();
+      const res = await fetch(url, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ user_id, message })
+      });
+      const data = await safeJson(res);
+      const t1 = performance.now();
+      data.latency_ms = Math.round(t1 - t0);
+
+      print("chatOutput", data);
+      print("logOutput", { type:"chat", status:res.status, data });
+    }
+
+    async function loadMessages(){
+      const url = document.getElementById("messagesUrl").value.trim();
+      const res = await fetch(url);
+      const data = await safeJson(res);
+      print("messagesOutput", data);
+      print("logOutput", { type:"messages", status:res.status, count:data.count || 0 });
+    }
+
+    async function addMemory(){
+      const url = document.getElementById("memoryUrl").value.trim();
+      const user_id = document.getElementById("memoryUser").value.trim();
+      const k = document.getElementById("memoryKey").value.trim();
+      const v = document.getElementById("memoryValue").value.trim();
+      const importance = Number(document.getElementById("memoryImportance").value);
+
+      const res = await fetch(url, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ user_id, k, v, importance })
+      });
+      const data = await safeJson(res);
+      print("memoryOutput", data);
+      print("logOutput", { type:"memory_add", status:res.status, data });
+    }
+
+    async function runLatency(){
+      const url = document.getElementById("healthUrl").value.trim();
+      const t0 = performance.now();
+      await fetch(url);
+      const t1 = performance.now();
+      const ms = Math.round(t1 - t0);
+      document.getElementById("latencyValue").textContent = ms + " ms";
+      print("logOutput", { type:"latency", latency_ms: ms });
+    }
+
+    async function checkRoot(){
+      const res = await fetch("https://api.consia.world/");
+      const data = await safeJson(res);
+      print("logOutput", { type:"root", status:res.status, data });
+    }
+
+    function clearOutputs(){
+      print("healthOutput", "Esperando prueba...");
+      print("chatOutput", "Esperando mensaje...");
+      print("messagesOutput", "Esperando consulta...");
+      print("memoryOutput", "Esperando alta de memoria...");
+      print("logOutput", "Esperando acciones...");
+    }
+
+    async function refreshAll(){
+      await checkHealth();
+      await loadMessages();
+    }
+
+    window.onload = () => {
+      checkHealth();
+    };
+  </script>
+</body>
+</html>
