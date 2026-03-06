@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family:sans-serif">
+
+<h2>CONSIA TEST</h2>
+
+<input id="msg" value="Hola CONSIA" style="width:300px">
+
+<button onclick="send()">Enviar</button>
+
+<pre id="out"></pre>
+
+<script>
+
+async function send(){
+
+const r = await fetch("https://api.consia.world/v1/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+user_id:"1",
+message:document.getElementById("msg").value
+})
+})
+
+const data = await r.json()
+
+document.getElementById("out").innerText =
+JSON.stringify(data,null,2)
+
+}
+
+</script>
+
+</body>
+</html>
