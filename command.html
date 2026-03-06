@@ -1,542 +1,211 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONSIA COMMAND CENTER</title>
-  <style>
-    :root{
-      --bg:#05070b;
-      --panel:#0c1118;
-      --panel2:#0a0f15;
-      --text:#f5f7fb;
-      --muted:#94a3b8;
-      --accent:#4f8cff;
-      --accent2:#22c55e;
-      --danger:#ef4444;
-      --warning:#f59e0b;
-      --border:#1f2937;
-      --bubbleUser:#14213d;
-      --bubbleAi:#0d2a1b;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:radial-gradient(circle at center, #0d1b3a 0%, #05070b 55%);
-      color:var(--text);
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    }
-    .wrap{
-      max-width:1200px;
-      margin:0 auto;
-      padding:24px;
-    }
-    .hero{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:20px;
-      margin-bottom:20px;
-      flex-wrap:wrap;
-    }
-    .brand{
-      display:flex;
-      gap:16px;
-      align-items:center;
-    }
-    .orb{
-      width:56px;
-      height:56px;
-      border-radius:18px;
-      background:radial-gradient(circle at 35% 30%, #7aa2ff, #1e3a8a 55%, #05070b 100%);
-      box-shadow:0 0 30px rgba(79,140,255,.35);
-    }
-    h1{margin:0;font-size:18px;letter-spacing:.4px}
-    .sub{margin-top:4px;color:var(--muted)}
-    .status{
-      padding:14px 18px;
-      border:1px solid var(--border);
-      border-radius:20px;
-      background:rgba(0,0,0,.18);
-      min-width:140px;
-      text-align:center;
-    }
-    .status .dot{
-      display:inline-block;
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      margin-right:8px;
-      background:var(--danger);
-    }
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(12,1fr);
-      gap:16px;
-    }
-    .card{
-      background:linear-gradient(180deg,var(--panel),var(--panel2));
-      border:1px solid var(--border);
-      border-radius:22px;
-      overflow:hidden;
-    }
-    .cardHead{
-      padding:18px 20px;
-      border-bottom:1px solid var(--border);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-    .cardBody{padding:20px}
-    .span-12{grid-column:span 12}
-    .span-8{grid-column:span 8}
-    .span-6{grid-column:span 6}
-    .span-4{grid-column:span 4}
-    .span-3{grid-column:span 3}
-    .label{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:8px;
-    }
-    .value{
-      font-size:26px;
-      font-weight:700;
-    }
-    .ok{color:var(--accent2)}
-    .bad{color:var(--danger)}
-    .warn{color:var(--warning)}
-    .row{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-    .row > *{
-      flex:1;
-      min-width:180px;
-    }
-    input, textarea, select{
-      width:100%;
-      background:#070b11;
-      color:#fff;
-      border:1px solid #1f2937;
-      border-radius:16px;
-      padding:14px 14px;
-      font-size:16px;
-      outline:none;
-    }
-    textarea{
-      min-height:120px;
-      resize:vertical;
-    }
-    button{
-      background:#0d1730;
-      color:#fff;
-      border:1px solid #243b64;
-      border-radius:16px;
-      padding:12px 18px;
-      font-size:15px;
-      font-weight:700;
-      cursor:pointer;
-    }
-    button.primary{
-      background:#0f172a;
-      border-color:#29477b;
-      box-shadow:inset 0 0 0 1px rgba(79,140,255,.15);
-    }
-    button.green{
-      background:#0a1f16;
-      border-color:#1d4d36;
-    }
-    button:disabled{
-      opacity:.55;
-      cursor:not-allowed;
-    }
-    pre{
-      margin:0;
-      background:#03060a;
-      color:#dbeafe;
-      border:1px solid #111827;
-      border-radius:16px;
-      padding:14px;
-      overflow:auto;
-      white-space:pre-wrap;
-      word-break:break-word;
-      min-height:110px;
-    }
-    .tiny{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.45;
-    }
-    .chatWrap{
-      min-height:360px;
-      max-height:460px;
-      overflow:auto;
-      border-bottom:1px solid var(--border);
-      padding:18px;
-    }
-    .bubble{
-      max-width:70%;
-      padding:14px 16px;
-      border-radius:18px;
-      margin-bottom:14px;
-      line-height:1.5;
-      font-size:16px;
-      border:1px solid rgba(255,255,255,.06);
-    }
-    .bubble.user{
-      margin-left:auto;
-      background:var(--bubbleUser);
-    }
-    .bubble.ai{
-      background:var(--bubbleAi);
-    }
-    .chatComposer{
-      display:flex;
-      gap:12px;
-      padding:18px;
-      align-items:center;
-    }
-    .chatComposer textarea{
-      min-height:64px;
-      max-height:160px;
-    }
-    .pill{
-      display:inline-block;
-      padding:5px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      color:#cbd5e1;
-      font-size:12px;
-      margin-right:8px;
-      margin-bottom:8px;
-    }
-    @media (max-width: 900px){
-      .span-12,.span-8,.span-6,.span-4,.span-3{grid-column:span 12}
-      .wrap{padding:14px}
-      .bubble{max-width:88%}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA COMMAND CENTER</title>
+
+<style>
+body{
+background:#05070b;
+color:white;
+font-family:system-ui;
+margin:0;
+padding:0;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:30px;
+}
+
+.title{
+font-size:22px;
+margin-bottom:20px;
+}
+
+input,textarea{
+width:100%;
+background:#0d1117;
+border:1px solid #222;
+color:white;
+padding:12px;
+border-radius:10px;
+}
+
+button{
+background:#0d1b2a;
+border:1px solid #29477b;
+color:white;
+padding:10px 16px;
+border-radius:10px;
+cursor:pointer;
+margin-right:10px;
+}
+
+.chat{
+border:1px solid #222;
+border-radius:12px;
+height:400px;
+overflow:auto;
+padding:20px;
+margin-bottom:20px;
+}
+
+.msg{
+margin-bottom:12px;
+padding:10px 14px;
+border-radius:12px;
+max-width:70%;
+}
+
+.user{
+background:#132238;
+margin-left:auto;
+}
+
+.ai{
+background:#0e2c1f;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="hero">
-      <div class="brand">
-        <div class="orb"></div>
-        <div>
-          <h1>CONSIA WORLD</h1>
-          <div class="sub">UI oficial · Multi-AI Router · Brain · Memory · Users · Auth · Voice</div>
-        </div>
-      </div>
-      <div class="status" id="statusBadge">
-        <span class="dot" id="statusDot"></span>
-        <strong id="statusText">OFFLINE</strong>
-      </div>
-    </div>
 
-    <div class="grid">
-      <div class="card span-12">
-        <div class="cardHead">
-          <strong>CONTROL</strong>
-          <button class="primary" onclick="checkHealth()">Refresh Status</button>
-        </div>
-        <div class="cardBody">
-          <div class="row" style="margin-bottom:16px;">
-            <div style="flex:2">
-              <div class="label">API Base</div>
-              <input id="apiBase" value="https://api.consia.world" />
-            </div>
-            <div>
-              <div class="label">Provider (router)</div>
-              <select id="provider">
-                <option value="auto" selected>auto</option>
-                <option value="openai">openai</option>
-                <option value="kimi">kimi</option>
-                <option value="deepseek">deepseek</option>
-              </select>
-            </div>
-            <div>
-              <div class="label">Mode</div>
-              <select id="mode">
-                <option value="auto" selected>auto</option>
-                <option value="chat">chat</option>
-                <option value="reasoning">reasoning</option>
-                <option value="fast">fast</option>
-              </select>
-            </div>
-          </div>
+<div class="container">
 
-          <div class="row" style="margin-bottom:16px;">
-            <div style="flex:2">
-              <div class="label">Authorization (Owner Token) — se guarda en este navegador</div>
-              <input id="ownerToken" type="password" placeholder="Pegar token owner… (Bearer se agrega solo)" />
-            </div>
-          </div>
+<div class="title">CONSIA COMMAND CENTER</div>
 
-          <div class="row" style="margin-bottom:18px;">
-            <button class="primary" onclick="saveToken()">Guardar</button>
-            <button onclick="clearToken()">Borrar token local</button>
-            <button onclick="testChatRoute()">Test Chat</button>
-          </div>
+<div style="margin-bottom:20px">
+<label>API</label>
+<input id="api" value="https://api.consia.world">
+</div>
 
-          <div class="row">
-            <div class="span-3" style="flex:1">
-              <div class="label">System</div>
-              <div class="value" id="systemValue">—</div>
-            </div>
-            <div class="span-3" style="flex:1">
-              <div class="label">Version</div>
-              <div class="value" id="versionValue">—</div>
-            </div>
-            <div class="span-3" style="flex:1">
-              <div class="label">Database</div>
-              <div class="value" id="dbValue">—</div>
-            </div>
-            <div class="span-3" style="flex:1">
-              <div class="label">Router</div>
-              <div class="value" id="routerValue">—</div>
-            </div>
-          </div>
+<div style="margin-bottom:20px">
+<label>Owner Token</label>
+<input id="token" placeholder="pegar owner token">
+</div>
 
-          <div class="tiny" style="margin-top:16px;">
-            El panel prueba automáticamente los endpoints de chat disponibles.  
-            Orden de fallback: <code>/v1/chat</code> → <code>/ask</code> → <code>/chat</code>
-          </div>
-        </div>
-      </div>
+<button onclick="saveToken()">Guardar</button>
+<button onclick="testChat()">Test Chat</button>
 
-      <div class="card span-12">
-        <div class="cardHead">
-          <strong>CONSIA CHAT</strong>
-          <div class="tiny" id="routeInfo">route: pendiente…</div>
-        </div>
+<br><br>
 
-        <div id="chatWrap" class="chatWrap">
-          <div class="bubble ai">Hola. Soy CONSIA. Pegá tu Owner Token y escribime o hablame.</div>
-        </div>
+<div id="chat" class="chat"></div>
 
-        <div class="chatComposer">
-          <textarea id="msgInput" placeholder="Escribí acá... (Enter para enviar, Shift+Enter para salto)"></textarea>
-          <button class="green" onclick="sendMessage()">Enviar</button>
-        </div>
-      </div>
+<textarea id="msg" placeholder="Escribí acá..."></textarea>
 
-      <div class="card span-6">
-        <div class="cardHead">
-          <strong>Health</strong>
-        </div>
-        <div class="cardBody">
-          <pre id="healthOut">Esperando check…</pre>
-        </div>
-      </div>
+<br><br>
 
-      <div class="card span-6">
-        <div class="cardHead">
-          <strong>Logs</strong>
-        </div>
-        <div class="cardBody">
-          <pre id="logOut">Esperando eventos…</pre>
-        </div>
-      </div>
-    </div>
-  </div>
+<button onclick="send()">Enviar</button>
 
-  <script>
-    const LS_TOKEN = "CONSIA_OWNER_TOKEN";
-    const LS_BASE = "CONSIA_API_BASE";
-    const LS_PROVIDER = "CONSIA_PROVIDER";
-    const LS_MODE = "CONSIA_MODE";
-    const LS_WORKING_ROUTE = "CONSIA_WORKING_CHAT_ROUTE";
+</div>
 
-    function qs(id){ return document.getElementById(id); }
+<script>
 
-    function log(data){
-      qs("logOut").textContent =
-        typeof data === "string" ? data : JSON.stringify(data, null, 2);
-    }
+const chat=document.getElementById("chat")
 
-    function setOnline(ok){
-      qs("statusText").textContent = ok ? "ONLINE" : "OFFLINE";
-      qs("statusDot").style.background = ok ? "#22c55e" : "#ef4444";
-    }
+function add(text,type){
 
-    function addBubble(text, role="ai"){
-      const wrap = qs("chatWrap");
-      const div = document.createElement("div");
-      div.className = "bubble " + role;
-      div.textContent = text;
-      wrap.appendChild(div);
-      wrap.scrollTop = wrap.scrollHeight;
-    }
+const div=document.createElement("div")
 
-    function getHeaders(json=true){
-      const h = {};
-      if (json) h["Content-Type"] = "application/json";
-      const token = (qs("ownerToken").value || "").trim();
-      if (token) h["Authorization"] = "Bearer " + token;
-      return h;
-    }
+div.className="msg "+type
 
-    function getBase(){
-      return (qs("apiBase").value || "").trim().replace(/\/+$/, "");
-    }
+div.innerText=text
 
-    function saveToken(){
-      localStorage.setItem(LS_TOKEN, qs("ownerToken").value || "");
-      localStorage.setItem(LS_BASE, qs("apiBase").value || "");
-      localStorage.setItem(LS_PROVIDER, qs("provider").value || "auto");
-      localStorage.setItem(LS_MODE, qs("mode").value || "auto");
-      log({ ok:true, saved:true });
-    }
+chat.appendChild(div)
 
-    function clearToken(){
-      localStorage.removeItem(LS_TOKEN);
-      qs("ownerToken").value = "";
-      log({ ok:true, cleared:true });
-    }
+chat.scrollTop=chat.scrollHeight
 
-    async function safeJson(res){
-      const txt = await res.text();
-      try { return JSON.parse(txt); }
-      catch { return { raw: txt }; }
-    }
+}
 
-    async function checkHealth(){
-      const url = getBase() + "/health";
-      const res = await fetch(url, { headers: getHeaders(false) });
-      const data = await safeJson(res);
+function saveToken(){
 
-      qs("healthOut").textContent = JSON.stringify(data, null, 2);
+localStorage.setItem("CONSIA_TOKEN",document.getElementById("token").value)
 
-      if (res.ok && data.ok) {
-        setOnline(true);
-        qs("systemValue").textContent = data.system || data.service || "CONSIA";
-        qs("versionValue").textContent = data.version || "—";
-        qs("dbValue").textContent = data.database || (data.has_d1 ? "D1" : "—");
-        qs("routerValue").textContent = data.ai || data.provider || (data.has_openai_key ? "OPENAI" : "—");
-      } else {
-        setOnline(false);
-      }
+}
 
-      log({ type:"health", status:res.status, data });
-      return { res, data };
-    }
+window.onload=()=>{
 
-    async function detectChatRoute(){
-      const base = getBase();
-      const candidates = ["/v1/chat", "/ask", "/chat"];
+const t=localStorage.getItem("CONSIA_TOKEN")
 
-      for (const route of candidates) {
-        try {
-          const res = await fetch(base + route, {
-            method: "POST",
-            headers: getHeaders(true),
-            body: JSON.stringify({
-              user_id: "martin",
-              message: "ping"
-            })
-          });
+if(t)document.getElementById("token").value=t
 
-          const data = await safeJson(res);
+}
 
-          if (res.ok) {
-            localStorage.setItem(LS_WORKING_ROUTE, route);
-            qs("routeInfo").textContent = "route: " + base + route + " (OK)";
-            log({ type:"detect_route", route, status:res.status, data });
-            return route;
-          }
+async function testChat(){
 
-          if (res.status !== 404 && res.status !== 405) {
-            localStorage.setItem(LS_WORKING_ROUTE, route);
-            qs("routeInfo").textContent = "route: " + base + route + " (status " + res.status + ")";
-            log({ type:"detect_route_partial", route, status:res.status, data });
-            return route;
-          }
-        } catch (err) {
-          log({ type:"detect_route_error", route, error:String(err) });
-        }
-      }
+sendMessage("Hola CONSIA")
 
-      qs("routeInfo").textContent = "route: no detectada";
-      return null;
-    }
+}
 
-    async function testChatRoute(){
-      const route = await detectChatRoute();
-      if (!route) {
-        addBubble("No encontré un endpoint de chat activo en la API. Health funciona, pero chat todavía no está expuesto.", "ai");
-      } else {
-        addBubble("Ruta detectada: " + route, "ai");
-      }
-    }
+async function send(){
 
-    async function sendMessage(){
-      const text = qs("msgInput").value.trim();
-      if (!text) return;
+const text=document.getElementById("msg").value
 
-      addBubble(text, "user");
-      qs("msgInput").value = "";
+sendMessage(text)
 
-      let route = localStorage.getItem(LS_WORKING_ROUTE);
-      if (!route) route = await detectChatRoute();
+document.getElementById("msg").value=""
 
-      if (!route) {
-        addBubble("No hay endpoint de chat activo todavía. Hay que exponerlo en el Worker.", "ai");
-        return;
-      }
+}
 
-      const url = getBase() + route;
+async function sendMessage(text){
 
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: getHeaders(true),
-          body: JSON.stringify({
-            user_id: "martin",
-            message: text,
-            provider: qs("provider").value,
-            mode: qs("mode").value
-          })
-        });
+add(text,"user")
 
-        const data = await safeJson(res);
-        log({ type:"chat", route, status:res.status, data });
+const api=document.getElementById("api").value
 
-        const reply =
-          data.reply ||
-          data.answer ||
-          data.message ||
-          data.output ||
-          JSON.stringify(data);
+const token=document.getElementById("token").value
 
-        addBubble(reply, "ai");
-      } catch (err) {
-        addBubble("ERROR: " + String(err), "ai");
-        log({ type:"chat_error", error:String(err) });
-      }
-    }
+try{
 
-    window.addEventListener("DOMContentLoaded", async () => {
-      qs("ownerToken").value = localStorage.getItem(LS_TOKEN) || "";
-      qs("apiBase").value = localStorage.getItem(LS_BASE) || "https://api.consia.world";
-      qs("provider").value = localStorage.getItem(LS_PROVIDER) || "auto";
-      qs("mode").value = localStorage.getItem(LS_MODE) || "auto";
+const res=await fetch(api+"/v1/chat",{
 
-      await checkHealth();
-      const savedRoute = localStorage.getItem(LS_WORKING_ROUTE);
-      if (savedRoute) {
-        qs("routeInfo").textContent = "route: " + getBase() + savedRoute + " (guardada)";
-      }
-    });
+method:"POST",
 
-    qs("msgInput").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-  </script>
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
+
+body:JSON.stringify({
+message:text,
+user_id:"martin"
+})
+
+})
+
+const data=await res.json()
+
+let reply=
+
+data.reply ||
+
+data.answer ||
+
+data.message ||
+
+data.output ||
+
+data.text ||
+
+data.choices?.[0]?.message?.content ||
+
+"CONSIA activo pero el modelo no devolvió texto."
+
+add(reply,"ai")
+
+}catch(e){
+
+add("ERROR: "+e,"ai")
+
+}
+
+}
+
+</script>
+
 </body>
 </html>
