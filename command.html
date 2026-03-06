@@ -415,4 +415,236 @@
 
     function buildHeaders(withJson = true){
       const headers = {};
-      const token = (($("ownerToken").value || "").trim
+      const token = (($("ownerToken").value || "").trim());
+      if (withJson) headers["Content-Type"] = "application/json";
+      if (token) headers["Authorization"] = "Bearer " + token;
+      return headers;
+    }
+
+    function getApiBase(){
+      return ($("apiBase").value || "https://api.consia.world").trim().replace(/\/+$/, "");
+    }
+
+    function setStatus(label, ok){
+      $("statusText").textContent = label;
+      $("statusDot").style.background = ok ? "#22c55e" : "#ef4444";
+    }
+
+    function addBubble(text, role){
+      const wrap = $("chatWrap");
+      const div = document.createElement("div");
+      div.className = "bubble " + role;
+      div.textContent = text;
+      wrap.appendChild(div);
+      wrap.scrollTop = wrap.scrollHeight;
+    }
+
+    function speak(text){
+      if (!ttsEnabled) return;
+      if (!("speechSynthesis" in window)) return;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "es-AR";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    }
+
+    function toggleTTS(){
+      ttsEnabled = !ttsEnabled;
+      $("ttsBtn").textContent = ttsEnabled ? "🔊 TTS: ON" : "🔇 TTS: OFF";
+    }
+
+    function saveLocal(){
+      localStorage.setItem(LS.token, $("ownerToken").value || "");
+      localStorage.setItem(LS.base, $("apiBase").value || "");
+      localStorage.setItem(LS.provider, $("provider").value || "auto");
+      localStorage.setItem(LS.mode, $("mode").value || "auto");
+    }
+
+    function clearLocal(){
+      localStorage.removeItem(LS.token);
+      $("ownerToken").value = "";
+    }
+
+    async function safeJson(res){
+      const txt = await res.text();
+      try { return JSON.parse(txt); }
+      catch { return { ok:false, raw: txt || "" }; }
+    }
+
+    function fmtMoney(v){
+      const n = Number(v || 0);
+      return "$" + n.toFixed(4);
+    }
+
+    function fmtInt(v){
+      return String(Number(v || 0));
+    }
+
+    async function refreshStatus(){
+      try{
+        const res = await fetch(getApiBase() + "/status", {
+          method: "GET",
+          headers: buildHeaders(false)
+        });
+
+        const data = await safeJson(res);
+
+        if (!res.ok || !data.ok){
+          setStatus("not_found", false);
+          $("systemValue").textContent = "—";
+          $("versionValue").textContent = "—";
+          $("dbValue").textContent = "—";
+          $("routerValue").textContent = "—";
+          return;
+        }
+
+        setStatus("ONLINE", true);
+        $("systemValue").textContent = data.system || "—";
+        $("versionValue").textContent = data.version || data.brain || "—";
+        $("dbValue").textContent = data.database || "—";
+        $("routerValue").textContent = data.router || data.model || "—";
+      }catch(e){
+        setStatus("error", false);
+      }
+    }
+
+    async function loadUsage(){
+      try{
+        const todayRes = await fetch(getApiBase() + "/v1/usage/today", {
+          method:"GET",
+          headers: buildHeaders(false)
+        });
+        const today = await safeJson(todayRes);
+
+        const monthRes = await fetch(getApiBase() + "/v1/usage/month", {
+          method:"GET",
+          headers: buildHeaders(false)
+        });
+        const month = await safeJson(monthRes);
+
+        const t = today.usage || {};
+        const m = month.usage || {};
+
+        $("todayCost").textContent = fmtMoney(t.cost);
+        $("todayRequests").textContent = fmtInt(t.requests);
+        $("monthCost").textContent = fmtMoney(m.cost);
+        $("monthRequests").textContent = fmtInt(m.requests);
+
+        $("todayInputTokens").textContent = fmtInt(t.input_tokens);
+        $("todayOutputTokens").textContent = fmtInt(t.output_tokens);
+        $("monthInputTokens").textContent = fmtInt(m.input_tokens);
+        $("monthOutputTokens").textContent = fmtInt(m.output_tokens);
+      }catch(e){}
+    }
+
+    async function testChat(){
+      $("routeInfo").textContent =
+        "route: " + getApiBase() + "/v1/chat" +
+        " (provider=" + $("provider").value + ", mode=" + $("mode").value + ")";
+      await sendPayload("Hola CONSIA. Confirmame que estás activo y qué proveedor estás usando ahora.");
+    }
+
+    async function sendMessage(){
+      const text = ($("msgInput").value || "").trim();
+      if (!text) return;
+      $("msgInput").value = "";
+      await sendPayload(text);
+    }
+
+    async function sendPayload(text){
+      addBubble(text, "user");
+      const started = performance.now();
+
+      try{
+        const res = await fetch(getApiBase() + "/v1/chat", {
+          method: "POST",
+          headers: buildHeaders(true),
+          body: JSON.stringify({
+            user_id: "owner",
+            message: text,
+            provider: $("provider").value,
+            mode: $("mode").value
+          })
+        });
+
+        const data = await safeJson(res);
+        const elapsed = Math.round(performance.now() - started);
+        $("latencyInfo").textContent = "latency:\n" + elapsed + "ms";
+
+        if (!res.ok || !data.ok){
+          const errText =
+            data.details ||
+            data.message ||
+            data.error ||
+            JSON.stringify(data);
+          addBubble("ERROR: " + errText, "ai");
+          return;
+        }
+
+        const reply =
+          data.reply ||
+          data.answer ||
+          data.message ||
+          data.output ||
+          data.text ||
+          "CONSIA activo pero el modelo no devolvió texto.";
+
+        addBubble(reply, "ai");
+        speak(reply);
+        await loadUsage();
+      }catch(e){
+        const elapsed = Math.round(performance.now() - started);
+        $("latencyInfo").textContent = "latency:\n" + elapsed + "ms";
+        addBubble("ERROR: " + String(e), "ai");
+      }
+    }
+
+    function startVoice(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR){
+        $("voiceStatus").textContent = "not_supported";
+        return;
+      }
+      recognition = new SR();
+      recognition.lang = "es-AR";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => { $("voiceStatus").textContent = "listening"; };
+      recognition.onend = () => { $("voiceStatus").textContent = "idle"; };
+      recognition.onerror = () => { $("voiceStatus").textContent = "error"; };
+      recognition.onresult = async (event) => {
+        const transcript = event.results?.[0]?.[0]?.transcript || "";
+        if (transcript.trim()) {
+          $("msgInput").value = transcript.trim();
+          await sendMessage();
+        }
+      };
+
+      recognition.start();
+    }
+
+    function stopVoice(){
+      if (recognition) recognition.stop();
+      $("voiceStatus").textContent = "idle";
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      $("ownerToken").value = localStorage.getItem(LS.token) || "";
+      $("apiBase").value = localStorage.getItem(LS.base) || "https://api.consia.world";
+      $("provider").value = localStorage.getItem(LS.provider) || "auto";
+      $("mode").value = localStorage.getItem(LS.mode) || "auto";
+      await refreshStatus();
+      await loadUsage();
+      setInterval(loadUsage, 10000);
+    });
+
+    $("msgInput").addEventListener("keydown", async (e) => {
+      if (e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        await sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
