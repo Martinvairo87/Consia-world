@@ -6,31 +6,158 @@
   <title>CONSIA COMMAND CENTER</title>
   <style>
     :root{
-      --bg:#0a0a0a; --panel:#151515; --panel2:#101010;
-      --text:#f5f5f5; --muted:#9ca3af; --accent:#00ff9c;
-      --danger:#ff5c5c; --warning:#ffd166; --border:#262626;
+      --bg:#0a0a0a;
+      --panel:#151515;
+      --panel2:#101010;
+      --text:#f5f5f5;
+      --muted:#9ca3af;
+      --accent:#00ff9c;
+      --danger:#ff5c5c;
+      --warning:#ffd166;
+      --border:#262626;
     }
+
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);}
-    .wrap{max-width:1200px;margin:0 auto;padding:28px;}
-    h1{margin:0 0 6px;font-size:32px;letter-spacing:.5px;}
-    .sub{color:var(--muted);margin-bottom:24px;}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;}
-    .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25);}
-    .span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-6{grid-column:span 6}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
-    .label{color:var(--muted);font-size:13px;margin-bottom:8px;}
-    .value{font-size:28px;font-weight:700;}
-    .ok{color:var(--accent)}.bad{color:var(--danger)}.warn{color:var(--warning)}
-    button{background:var(--accent);color:#000;border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;}
-    button.secondary{background:#222;color:#fff;border:1px solid #333;}
-    input, textarea, select{width:100%;background:#0d0d0d;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font-size:14px;outline:none;}
-    textarea{min-height:120px;resize:vertical;}
-    .row{display:flex;gap:10px;flex-wrap:wrap;}
-    .row > *{flex:1;min-width:180px;}
-    pre{background:#050505;color:#d1fae5;border:1px solid #1f2937;border-radius:12px;padding:14px;overflow:auto;white-space:pre-wrap;word-break:break-word;min-height:120px;}
-    .tiny{font-size:12px;color:var(--muted);}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;background:#111;border:1px solid #2a2a2a;color:#d1d5db;margin-right:6px;}
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:28px;
+    }
+
+    h1{
+      margin:0 0 6px;
+      font-size:32px;
+      letter-spacing:.5px;
+    }
+
+    .sub{
+      color:var(--muted);
+      margin-bottom:24px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:16px;
+    }
+
+    .card{
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+
+    .span-3{grid-column:span 3}
+    .span-4{grid-column:span 4}
+    .span-6{grid-column:span 6}
+    .span-8{grid-column:span 8}
+    .span-12{grid-column:span 12}
+
+    .label{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:8px;
+    }
+
+    .value{
+      font-size:28px;
+      font-weight:700;
+    }
+
+    .ok{color:var(--accent)}
+    .bad{color:var(--danger)}
+    .warn{color:var(--warning)}
+
+    button{
+      background:var(--accent);
+      color:#000;
+      border:none;
+      border-radius:10px;
+      padding:10px 16px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    button.secondary{
+      background:#222;
+      color:#fff;
+      border:1px solid #333;
+    }
+
+    input, textarea, select{
+      width:100%;
+      background:#0d0d0d;
+      color:#fff;
+      border:1px solid #333;
+      border-radius:10px;
+      padding:12px;
+      font-size:14px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .row > *{
+      flex:1;
+      min-width:180px;
+    }
+
+    pre{
+      background:#050505;
+      color:#d1fae5;
+      border:1px solid #1f2937;
+      border-radius:12px;
+      padding:14px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+      min-height:120px;
+    }
+
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .pill{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:#111;
+      border:1px solid #2a2a2a;
+      color:#d1d5db;
+      margin-right:6px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    }
+
     @media (max-width: 900px){
       .span-3,.span-4,.span-6,.span-8,.span-12{grid-column:span 12}
       .value{font-size:24px}
@@ -55,7 +182,7 @@
       <div class="card span-12">
         <div class="label">Seguridad (OWNER TOKEN)</div>
         <div class="row" style="margin-bottom:10px;">
-          <input id="ownerToken" placeholder=KjnbjKGKYGg637986557KUTGGkhrfffjyggydewruy />
+          <input id="ownerToken" type="password" placeholder="Pegá acá tu OWNER TOKEN" />
           <select id="authMode">
             <option value="auto" selected>Auto (usar si existe token)</option>
             <option value="always">Siempre (forzar auth)</option>
@@ -67,7 +194,7 @@
           <button class="secondary" onclick="clearToken()">Borrar token</button>
         </div>
         <div class="tiny" style="margin-top:10px;">
-          Si tu Worker exige auth, esto evita el error por falta de Authorization. El token se guarda en tu navegador.
+          Si tu Worker exige auth, esto envía Authorization automáticamente.
         </div>
       </div>
 
@@ -98,7 +225,7 @@
       <div class="card span-8">
         <div class="label">Health / Estado general</div>
         <div class="row" style="margin-bottom:10px;">
-          <input id="healthUrl" value="https://api.consia.world/v1/health" />
+          <input id="healthUrl" value="https://api.consia.world/health" />
           <button onclick="checkHealth()">Check Health</button>
         </div>
         <pre id="healthOutput">Esperando prueba...</pre>
@@ -114,7 +241,7 @@
           <span class="pill">Auth</span>
         </div>
         <div class="tiny">
-          Este panel prueba health, chat, memoria y lista mensajes guardados en CONSIA.
+          Este panel prueba health, chat, memoria y mensajes guardados.
         </div>
       </div>
 
@@ -150,8 +277,11 @@
           <input id="memoryKey" value="objetivo" placeholder="k" />
           <input id="memoryValue" value="Construir CONSIA top 1 mundial" placeholder="v" />
           <select id="memoryImportance">
-            <option value="1">1</option><option value="2">2</option>
-            <option value="3" selected>3</option><option value="4">4</option><option value="5">5</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
         <button onclick="addMemory()">Agregar memoria</button>
@@ -203,9 +333,8 @@
 
       if (mode === "never") return {};
       if (mode === "auto" && !token) return {};
-      if (!token) return {}; // safety
+      if (!token) return {};
 
-      // enviamos ambos: Authorization y X-CONSIA-OWNER (por compat)
       return {
         "Authorization": "Bearer " + token,
         "X-CONSIA-OWNER": token
@@ -216,7 +345,7 @@
       const token = getToken();
       const mode = getAuthMode();
       localStorage.setItem(LS_AUTHMODE_KEY, mode);
-      if(token) localStorage.setItem(LS_TOKEN_KEY, token);
+      if (token) localStorage.setItem(LS_TOKEN_KEY, token);
       print("logOutput", { ok:true, saved:true, has_token: !!token, mode });
     }
 
@@ -229,10 +358,8 @@
     async function checkHealth(){
       const url = document.getElementById("healthUrl").value.trim();
       const t0 = performance.now();
-
       const res = await fetch(url, { headers: { ...authHeaders() } });
       const data = await safeJson(res);
-
       const t1 = performance.now();
       const ms = Math.round(t1 - t0);
 
@@ -335,12 +462,10 @@
     }
 
     window.onload = () => {
-      // cargar token guardado
       const savedToken = localStorage.getItem(LS_TOKEN_KEY) || "";
       const savedMode = localStorage.getItem(LS_AUTHMODE_KEY) || "auto";
       document.getElementById("ownerToken").value = savedToken;
       document.getElementById("authMode").value = savedMode;
-
       checkHealth();
     };
   </script>
