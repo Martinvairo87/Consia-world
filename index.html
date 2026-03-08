@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
@@ -19,25 +20,46 @@ height:100vh;
 }
 
 header{
-padding:20px;
+padding:18px;
 text-align:center;
-font-size:28px;
+font-size:26px;
 letter-spacing:6px;
 font-weight:bold;
+border-bottom:1px solid #1a2135;
+}
+
+#mode{
+display:flex;
+justify-content:center;
+gap:20px;
+padding:12px;
+border-bottom:1px solid #1a2135;
+}
+
+.modeBtn{
+padding:6px 14px;
+border-radius:20px;
+background:#141b2e;
+cursor:pointer;
+font-size:13px;
+}
+
+.modeBtn.active{
+background:#2563eb;
 }
 
 #chat{
 flex:1;
 overflow-y:auto;
-padding:30px;
+padding:25px;
 max-width:900px;
 margin:auto;
 width:100%;
 }
 
 .message{
-margin-bottom:20px;
-line-height:1.5;
+margin-bottom:18px;
+line-height:1.6;
 }
 
 .user{
@@ -49,11 +71,12 @@ color:#ffffff;
 }
 
 #inputArea{
-padding:20px;
+padding:18px;
 background:#070a13;
 display:flex;
 gap:10px;
 justify-content:center;
+border-top:1px solid #1a2135;
 }
 
 #prompt{
@@ -68,7 +91,7 @@ color:white;
 }
 
 button{
-padding:12px 20px;
+padding:12px 18px;
 border:none;
 border-radius:10px;
 background:#2563eb;
@@ -82,14 +105,14 @@ background:#1d4ed8;
 }
 
 .core{
-width:90px;
-height:90px;
+width:80px;
+height:80px;
 border-radius:50%;
 margin:auto;
-margin-top:40px;
-margin-bottom:20px;
+margin-top:30px;
+margin-bottom:15px;
 background:radial-gradient(circle,#3b82f6,#1e3a8a);
-box-shadow:0 0 40px #3b82f6;
+box-shadow:0 0 30px #3b82f6;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -97,14 +120,8 @@ font-weight:bold;
 letter-spacing:2px;
 }
 
-.tools{
-text-align:center;
-margin-bottom:20px;
-font-size:14px;
-opacity:0.7;
-}
-
 </style>
+
 </head>
 
 <body>
@@ -113,8 +130,12 @@ opacity:0.7;
 
 <div class="core">AI</div>
 
-<div class="tools">
-CHAT • IMAGE • VOICE • TOOLS
+<div id="mode">
+
+<div class="modeBtn active" onclick="setMode('chat')" id="chatBtn">CHAT</div>
+<div class="modeBtn" onclick="setMode('image')" id="imageBtn">IMAGE</div>
+<div class="modeBtn" onclick="setMode('voice')" id="voiceBtn">VOICE</div>
+
 </div>
 
 <div id="chat"></div>
@@ -129,48 +150,35 @@ CHAT • IMAGE • VOICE • TOOLS
 
 <script>
 
-const chat = document.getElementById("chat")
+let mode="chat"
 
-async function send(){
+function setMode(m){
 
-const input = document.getElementById("prompt")
-const text = input.value.trim()
+mode=m
 
-if(!text) return
+document.querySelectorAll(".modeBtn")
+.forEach(b=>b.classList.remove("active"))
 
-addMessage("user",text)
-
-input.value=""
-
-const res = await fetch(
-"https://api.consia.world/ai/chat",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-user_id:"web",
-message:text
-})
-}
-)
-
-const data = await res.json()
-
-addMessage("ai",data.answer)
+document.getElementById(m+"Btn").classList.add("active")
 
 }
+
+const chat=document.getElementById("chat")
 
 function addMessage(type,text){
 
 const div=document.createElement("div")
+
 div.className="message "+type
 
 if(type==="user"){
+
 div.innerHTML="<strong>Tú:</strong> "+text
+
 }else{
+
 div.innerHTML="<strong>CONSIA:</strong> "+text
+
 }
 
 chat.appendChild(div)
@@ -179,11 +187,95 @@ chat.scrollTop=chat.scrollHeight
 
 }
 
+async function send(){
+
+const input=document.getElementById("prompt")
+const text=input.value.trim()
+
+if(!text) return
+
+addMessage("user",text)
+
+input.value=""
+
+let endpoint="https://api.consia.world/ai/chat"
+
+if(mode==="image"){
+
+endpoint="https://api.consia.world/ai/image"
+
+}
+
+const res=await fetch(endpoint,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+user_id:"web",
+
+message:text
+
+})
+
+})
+
+const data=await res.json()
+
+if(mode==="image" && data.image){
+
+addMessage("ai","<img src='"+data.image+"' width='300'>")
+
+}else{
+
+streamText(data.answer)
+
+}
+
+}
+
+function streamText(text){
+
+let i=0
+let output=""
+
+const div=document.createElement("div")
+div.className="message ai"
+div.innerHTML="<strong>CONSIA:</strong> "
+
+chat.appendChild(div)
+
+const interval=setInterval(()=>{
+
+output+=text[i]
+
+div.innerHTML="<strong>CONSIA:</strong> "+output
+
+i++
+
+if(i>=text.length){
+
+clearInterval(interval)
+
+}
+
+chat.scrollTop=chat.scrollHeight
+
+},15)
+
+}
+
 document.getElementById("prompt")
 .addEventListener("keypress",function(e){
 
 if(e.key==="Enter"){
+
 send()
+
 }
 
 })
