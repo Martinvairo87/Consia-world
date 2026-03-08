@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Global Automation Engine</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f1a;
+  color:white;
+}
+header{
+  padding:20px;
+  text-align:center;
+  font-size:28px;
+  letter-spacing:6px;
+  border-bottom:1px solid #1a2135;
+}
+#layout{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+  padding:30px;
+  max-width:1400px;
+  margin:auto;
+}
+.panel{
+  background:#101626;
+  border-radius:12px;
+  padding:20px;
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+.table th,.table td{
+  padding:10px;
+  border-bottom:1px solid #1a2135;
+  text-align:left;
+  font-size:14px;
+}
+.status{
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+}
+.ready{ background:#1d4ed8; }
+.running{ background:#92400e; }
+.done{ background:#10b981; }
+.paused{ background:#6b7280; }
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+.metric{
+  font-size:28px;
+  color:#9ecbff;
+  margin-top:10px;
+}
+.inputRow{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+input,select{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#0d1424;
+  color:white;
+}
+.log{
+  margin-top:16px;
+  padding:12px;
+  border-radius:10px;
+  background:#0d1424;
+  min-height:90px;
+  font-size:13px;
+  line-height:1.5;
+  white-space:pre-wrap;
+}
+@media (max-width:980px){
+  #layout{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<header>CONSIA GLOBAL AUTOMATION ENGINE</header>
+
+<div id="layout">
+
+  <div class="panel">
+    <h2>Automation Flows</h2>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Flow</th>
+          <th>Trigger</th>
+          <th>Module</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="flows"></tbody>
+    </table>
+
+    <div class="inputRow">
+      <input id="flowName" placeholder="Flow name">
+      <select id="flowTrigger">
+        <option value="user_event">User Event</option>
+        <option value="market_signal">Market Signal</option>
+        <option value="order_update">Order Update</option>
+        <option value="price_change">Price Change</option>
+        <option value="schedule">Schedule</option>
+      </select>
+      <select id="flowModule">
+        <option value="AI">AI</option>
+        <option value="Marketplace">Marketplace</option>
+        <option value="Supplier">Supplier Engine</option>
+        <option value="Orders">Order Orchestrator</option>
+        <option value="Logistics">Logistics</option>
+        <option value="Payments">Payments</option>
+        <option value="Agents">Agent Network</option>
+      </select>
+      <button onclick="createFlow()">Create Flow</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Engine Metrics</h2>
+
+    <div>
+      <div>Total Flows</div>
+      <div id="flowCount" class="metric">0</div>
+    </div>
+
+    <div>
+      <div>Running Now</div>
+      <div id="runningCount" class="metric">0</div>
+    </div>
+
+    <div>
+      <div>Automated Decisions</div>
+      <div id="decisionCount" class="metric">0</div>
+    </div>
+
+    <div class="inputRow">
+      <button onclick="simulateTick()">Run Global Tick</button>
+      <button onclick="pauseAll()">Pause All</button>
+    </div>
+
+    <div id="engineLog" class="log">Automation engine ready.</div>
+  </div>
+
+</div>
+
+<script>
+let flows = [
+  {
+    id:"FLOW1001",
+    name:"Optimize Global Pricing",
+    trigger:"price_change",
+    module:"Supplier Engine",
+    status:"ready"
+  },
+  {
+    id:"FLOW1002",
+    name:"Create Supplier Order",
+    trigger:"order_update",
+    module:"Orders",
+    status:"ready"
+  },
+  {
+    id:"FLOW1003",
+    name:"Track Logistics Event",
+    trigger:"schedule",
+    module:"Logistics",
+    status:"ready"
+  }
+];
+
+let decisions = 0;
+
+function render(){
+  const tbody = document.getElementById("flows");
+  tbody.innerHTML = "";
+
+  let running = 0;
+
+  flows.forEach((f, i) => {
+    if(f.status === "running") running++;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${f.id}</td>
+      <td>${f.name}</td>
+      <td>${f.trigger}</td>
+      <td>${f.module}</td>
+      <td><span class="status ${cssStatus(f.status)}">${f.status}</span></td>
+      <td>
+        <button onclick="runFlow(${i})">Run</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("flowCount").innerText = flows.length;
+  document.getElementById("runningCount").innerText = running;
+  document.getElementById("decisionCount").innerText = decisions;
+}
+
+function cssStatus(status){
+  if(status === "ready") return "ready";
+  if(status === "running") return "running";
+  if(status === "done") return "done";
+  return "paused";
+}
+
+function createFlow(){
+  const name = document.getElementById("flowName").value.trim();
+  const trigger = document.getElementById("flowTrigger").value;
+  const module = document.getElementById("flowModule").value;
+
+  if(!name) return;
+
+  flows.push({
+    id:"FLOW" + Math.floor(Math.random()*900000 + 100000),
+    name,
+    trigger,
+    module,
+    status:"ready"
+  });
+
+  document.getElementById("flowName").value = "";
+  log("Flow created: " + name);
+  render();
+}
+
+function runFlow(i){
+  const flow = flows[i];
+  flow.status = "running";
+  decisions++;
+  log("Running flow: " + flow.name + " → module " + flow.module);
+
+  render();
+
+  setTimeout(() => {
+    flow.status = "done";
+    log("Completed flow: " + flow.name);
+    render();
+  }, 1200);
+}
+
+function simulateTick(){
+  if(!flows.length){
+    log("No flows available.");
+    return;
+  }
+
+  const readyFlows = flows.filter(f => f.status === "ready" || f.status === "done");
+  if(!readyFlows.length){
+    log("No ready flows to execute.");
+    return;
+  }
+
+  const picked = readyFlows[Math.floor(Math.random()*readyFlows.length)];
+  const idx = flows.findIndex(f => f.id === picked.id);
+  runFlow(idx);
+}
+
+function pauseAll(){
+  flows.forEach(f => {
+    if(f.status !== "done") f.status = "paused";
+  });
+  log("All active flows paused.");
+  render();
+}
+
+function log(text){
+  const box = document.getElementById("engineLog");
+  const stamp = new Date().toLocaleTimeString();
+  box.textContent = `[${stamp}] ${text}\n` + box.textContent;
+}
+
+render();
+</script>
+
+</body>
+</html>
