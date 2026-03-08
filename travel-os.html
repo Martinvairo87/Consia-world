@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA GLOBAL TRAVEL OS</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#050913;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+border-bottom:1px solid #1a2135;
+}
+
+#logo{
+font-size:20px;
+letter-spacing:6px;
+}
+
+#container{
+max-width:1400px;
+margin:auto;
+padding:40px 20px;
+}
+
+h1{
+font-size:44px;
+}
+
+textarea{
+width:100%;
+height:140px;
+padding:16px;
+border-radius:10px;
+border:none;
+background:#0d1424;
+color:white;
+font-size:16px;
+}
+
+button{
+margin-top:15px;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.section{
+margin-top:40px;
+}
+
+.card{
+background:#101626;
+border:1px solid #1a2135;
+border-radius:12px;
+padding:20px;
+margin-top:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.price{
+font-size:24px;
+color:#3b82f6;
+}
+
+.book{
+background:#10b981;
+}
+
+.panel{
+margin-top:40px;
+background:#101626;
+border:1px solid #1a2135;
+border-radius:12px;
+padding:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div id="logo">CONSIA TRAVEL OS</div>
+
+<button onclick="home()">HOME</button>
+
+</header>
+
+<div id="container">
+
+<h1>CONSIA Global Travel Operating System</h1>
+
+<p>Describe tu viaje y CONSIA planifica, monitorea y gestiona todo automáticamente.</p>
+
+<textarea id="prompt" placeholder="Ej: quiero viajar desde Buenos Aires a Japón 15 días con hotel 5 estrellas, excursiones, y vuelos cómodos..."></textarea>
+
+<button onclick="runOS()">Crear viaje inteligente</button>
+
+<div id="results"></div>
+
+<div class="panel">
+
+<h2>Autopilot</h2>
+
+<p>CONSIA monitorea precios de vuelos y hoteles automáticamente.</p>
+
+<button onclick="activateAutopilot()">Activar Autopilot</button>
+
+</div>
+
+</div>
+
+<script>
+
+function home(){
+
+window.location="/"
+
+}
+
+async function runOS(){
+
+const prompt=document.getElementById("prompt").value
+
+const box=document.getElementById("results")
+
+box.innerHTML="CONSIA creando viaje inteligente..."
+
+try{
+
+const res=await fetch("https://api.consia.world/travel/os",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+prompt
+})
+
+})
+
+const data=await res.json()
+
+render(data)
+
+}catch(e){
+
+box.innerHTML="Error generando viaje"
+
+}
+
+}
+
+function render(data){
+
+const box=document.getElementById("results")
+
+box.innerHTML=""
+
+if(data.plan){
+
+box.innerHTML+=`
+
+<div class="section">
+
+<h2>Plan de viaje</h2>
+
+<p>${data.plan}</p>
+
+</div>
+
+`
+
+}
+
+if(data.flights){
+
+box.innerHTML+=`<div class="section"><h2>Vuelos</h2></div>`
+
+data.flights.forEach(f=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+
+<h3>${f.title}</h3>
+
+<p>${f.provider}</p>
+
+</div>
+
+<div>
+
+<div class="price">$${f.price}</div>
+
+<button class="book" onclick="book('${f.link}')">Reservar</button>
+
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+if(data.hotels){
+
+box.innerHTML+=`<div class="section"><h2>Hoteles</h2></div>`
+
+data.hotels.forEach(h=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+
+<h3>${h.title}</h3>
+
+<p>${h.provider}</p>
+
+</div>
+
+<div>
+
+<div class="price">$${h.price}</div>
+
+<button class="book" onclick="book('${h.link}')">Reservar</button>
+
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+if(data.tours){
+
+box.innerHTML+=`<div class="section"><h2>Excursiones</h2></div>`
+
+data.tours.forEach(t=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+
+<h3>${t.title}</h3>
+
+<p>${t.provider}</p>
+
+</div>
+
+<div>
+
+<div class="price">$${t.price}</div>
+
+<button class="book" onclick="book('${t.link}')">Reservar</button>
+
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+}
+
+async function activateAutopilot(){
+
+alert("CONSIA Autopilot activado. Monitoreando precios.")
+
+}
+
+function book(link){
+
+window.open(link,"_blank")
+
+}
+
+</script>
+
+</body>
+
+</html>
