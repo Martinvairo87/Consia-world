@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Master Nav</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f1a;
+  color:white;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(6,9,18,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #1a2135;
+}
+
+#topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 22px;
+  gap:20px;
+}
+
+#logo{
+  font-size:22px;
+  letter-spacing:6px;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+#nav{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.navBtn{
+  padding:10px 14px;
+  border:none;
+  border-radius:999px;
+  background:#141b2e;
+  color:white;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.navBtn:hover{
+  background:#2563eb;
+}
+
+#hero{
+  padding:42px 24px 24px;
+  text-align:center;
+  border-bottom:1px solid #1a2135;
+}
+
+#hero h1{
+  margin:0;
+  font-size:36px;
+  letter-spacing:2px;
+}
+
+#hero p{
+  max-width:900px;
+  margin:14px auto 0;
+  opacity:.75;
+  line-height:1.6;
+}
+
+#grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
+  padding:28px;
+  max-width:1400px;
+  margin:auto;
+}
+
+.card{
+  background:#101626;
+  border:1px solid #1a2135;
+  border-radius:14px;
+  padding:20px;
+}
+
+.card h3{
+  margin-top:0;
+}
+
+.card p{
+  opacity:.75;
+  min-height:48px;
+}
+
+.card button{
+  margin-top:10px;
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+
+#quick{
+  max-width:1400px;
+  margin:auto;
+  padding:0 28px 30px;
+}
+
+#quickBox{
+  background:#101626;
+  border:1px solid #1a2135;
+  border-radius:14px;
+  padding:20px;
+}
+
+#quickActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+
+.quickBtn{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#141b2e;
+  color:white;
+  cursor:pointer;
+}
+
+.quickBtn:hover{
+  background:#2563eb;
+}
+
+#footer{
+  text-align:center;
+  padding:24px;
+  opacity:.6;
+  border-top:1px solid #1a2135;
+}
+
+@media (max-width: 900px){
+  #topbar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  #nav{
+    justify-content:flex-start;
+  }
+  #hero h1{
+    font-size:28px;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div id="topbar">
+    <div id="logo">CONSIA</div>
+
+    <div id="nav">
+      <button class="navBtn" onclick="go('https://consia.world')">Home</button>
+      <button class="navBtn" onclick="go('https://consia.world/dashboard.html')">Dashboard</button>
+      <button class="navBtn" onclick="go('https://consia.world/apps.html')">App Store</button>
+      <button class="navBtn" onclick="go('https://consia.world/marketplace.html')">Marketplace</button>
+      <button class="navBtn" onclick="go('https://consia.world/consia-os.html')">CONSIA OS</button>
+      <button class="navBtn" onclick="go('https://consia.world/command-center.html')">Command Center</button>
+      <button class="navBtn" onclick="go('https://consia.world/owner.html')">Owner Console</button>
+    </div>
+  </div>
+</header>
+
+<section id="hero">
+  <h1>CONSIA MASTER NAV</h1>
+  <p>
+    Centro maestro de navegación para todo el ecosistema CONSIA:
+    IA, App Store, Marketplace, Product Index, Supplier Engine,
+    Orders, Logistics, Payments, Agents, Automation y control Owner-Only.
+  </p>
+</section>
+
+<section id="grid">
+
+  <div class="card">
+    <h3>AI Home</h3>
+    <p>Interfaz principal de CONSIA para chat, imagen y experiencia central.</p>
+    <button onclick="go('https://consia.world')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Dashboard</h3>
+    <p>Panel de control base para estado, wallet y acciones rápidas.</p>
+    <button onclick="go('https://consia.world/dashboard.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>AI App Store</h3>
+    <p>Catálogo de aplicaciones de IA dentro del ecosistema CONSIA.</p>
+    <button onclick="go('https://consia.world/apps.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Marketplace</h3>
+    <p>Marketplace premium de apps, agentes, prompts y herramientas.</p>
+    <button onclick="go('https://consia.world/marketplace.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Global Commerce</h3>
+    <p>Búsqueda global de productos y simulación de compra vía CONSIA.</p>
+    <button onclick="go('https://consia.world/commerce.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Product Index</h3>
+    <p>Índice global de productos preparado para escala masiva.</p>
+    <button onclick="go('https://consia.world/product-index.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Supplier Engine</h3>
+    <p>Motor de proveedores globales, costos, score y margen CONSIA.</p>
+    <button onclick="go('https://consia.world/supplier-engine.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Order Orchestrator</h3>
+    <p>Orquestación global de pedidos y control operativo.</p>
+    <button onclick="go('https://consia.world/order-orchestrator.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Logistics Engine</h3>
+    <p>Seguimiento de envíos, couriers y estados logísticos globales.</p>
+    <button onclick="go('https://consia.world/logistics-engine.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Payments Engine</h3>
+    <p>Motor financiero global con revenue, comisión y transacciones.</p>
+    <button onclick="go('https://consia.world/payments-engine.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Agent Network</h3>
+    <p>Red de agentes autónomos para análisis y optimización.</p>
+    <button onclick="go('https://consia.world/agent-network.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Automation Engine</h3>
+    <p>Flujos automáticos que conectan y ejecutan módulos de CONSIA.</p>
+    <button onclick="go('https://consia.world/automation-engine.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Command Center</h3>
+    <p>Centro global con métricas, accesos y monitoreo de todo CONSIA.</p>
+    <button onclick="go('https://consia.world/command-center.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Owner Console</h3>
+    <p>Consola Owner-Only para pricing, routing, provider y lock global.</p>
+    <button onclick="go('https://consia.world/owner.html')">Open</button>
+  </div>
+
+</section>
+
+<section id="quick">
+  <div id="quickBox">
+    <h3>Quick Actions</h3>
+    <div id="quickActions">
+      <button class="quickBtn" onclick="go('https://consia.world')">Launch AI</button>
+      <button class="quickBtn" onclick="go('https://consia.world/apps.html')">Open App Store</button>
+      <button class="quickBtn" onclick="go('https://consia.world/marketplace.html')">Open Marketplace</button>
+      <button class="quickBtn" onclick="go('https://consia.world/command-center.html')">Open Command Center</button>
+      <button class="quickBtn" onclick="go('https://consia.world/owner.html')">Open Owner Console</button>
+    </div>
+  </div>
+</section>
+
+<div id="footer">
+  CONSIA MASTER NAV · Global AI Platform
+</div>
+
+<script>
+function go(url){
+  window.location = url;
+}
+</script>
+
+</body>
+</html>
