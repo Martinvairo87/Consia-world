@@ -1,102 +1,230 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>CONSIA Dashboard</title>
+
 <style>
-body{font-family:Arial;background:#0f172a;color:white;margin:0}
-header{padding:20px;background:#020617}
-.container{padding:20px}
-.card{background:#111827;padding:20px;border-radius:10px;margin-bottom:20px}
-button{padding:10px 15px;border:none;border-radius:6px;background:#2563eb;color:white;cursor:pointer}
-input{padding:10px;border-radius:6px;border:none;margin-right:10px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-td,th{padding:10px;border-bottom:1px solid #333}
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b0f1a;
+color:white;
+display:flex;
+height:100vh;
+}
+
+#sidebar{
+width:260px;
+background:#060912;
+border-right:1px solid #1a2135;
+display:flex;
+flex-direction:column;
+}
+
+#logo{
+padding:20px;
+font-weight:bold;
+letter-spacing:6px;
+text-align:center;
+border-bottom:1px solid #1a2135;
+}
+
+.menu{
+padding:14px 20px;
+cursor:pointer;
+font-size:14px;
+opacity:.8;
+}
+
+.menu:hover{
+opacity:1;
+background:#101626;
+}
+
+#main{
+flex:1;
+padding:30px;
+overflow:auto;
+}
+
+.card{
+background:#101626;
+border-radius:12px;
+padding:20px;
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.metric{
+font-size:28px;
+margin-top:10px;
+}
+
+button{
+padding:10px 16px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<header>
-<h2>CONSIA Dashboard</h2>
-</header>
+<div id="sidebar">
 
-<div class="container">
+<div id="logo">CONSIA</div>
+
+<div class="menu" onclick="openPage('chat')">AI Chat</div>
+<div class="menu" onclick="openPage('image')">AI Image</div>
+<div class="menu" onclick="openPage('voice')">AI Voice</div>
+<div class="menu" onclick="openPage('apps')">AI Apps</div>
+<div class="menu" onclick="openPage('wallet')">Wallet</div>
+<div class="menu" onclick="openPage('stats')">System Stats</div>
+
+</div>
+
+<div id="main">
+
+<h1>CONSIA Control Center</h1>
+
+<div class="grid">
 
 <div class="card">
-<h3>AI Chat Test</h3>
-<input id="message" placeholder="Ask CONSIA..." />
-<button onclick="sendChat()">Send</button>
-<p id="chatResult"></p>
+
+<div>Status</div>
+<div class="metric" id="status">Loading...</div>
+
 </div>
 
 <div class="card">
-<h3>Wallet</h3>
-<input id="userId" placeholder="User ID" />
-<button onclick="getWallet()">Get Wallet</button>
-<pre id="walletResult"></pre>
+
+<div>Wallet Balance</div>
+<div class="metric" id="balance">...</div>
+
 </div>
 
 <div class="card">
-<h3>Generate Image</h3>
-<input id="prompt" placeholder="Image prompt"/>
-<button onclick="genImage()">Generate</button>
-<div id="imageResult"></div>
+
+<div>AI Requests</div>
+<div class="metric" id="requests">...</div>
+
+</div>
+
+<div class="card">
+
+<div>System Version</div>
+<div class="metric">V7</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Quick Actions</h3>
+
+<button onclick="openChat()">Open AI Chat</button>
+<button onclick="openImage()">Generate Image</button>
+<button onclick="openVoice()">Voice Mode</button>
+
 </div>
 
 </div>
 
 <script>
 
-const API = "https://consia-api-live.jbdkb7r94d.workers.dev";
+async function loadStatus(){
 
-async function sendChat(){
+try{
 
-const message=document.getElementById("message").value;
+const res=await fetch("https://api.consia.world")
 
-const res=await fetch(API+"/ai/chat",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-user_id:"dashboard",
-message:message
-})
-});
+const data=await res.json()
 
-const data=await res.json();
+document.getElementById("status").innerText="ONLINE"
 
-document.getElementById("chatResult").innerText=data.answer;
+}catch{
+
+document.getElementById("status").innerText="OFFLINE"
 
 }
 
-async function getWallet(){
+}
 
-const user=document.getElementById("userId").value;
+async function loadWallet(){
 
-const res=await fetch(API+"/wallet?user_id="+user);
+try{
 
-const data=await res.json();
+const res=await fetch("https://api.consia.world/wallet?user_id=web")
 
-document.getElementById("walletResult").innerText=JSON.stringify(data,null,2);
+const data=await res.json()
+
+document.getElementById("balance").innerText=data.wallet?.balance ?? "0"
+
+}catch{
+
+document.getElementById("balance").innerText="0"
 
 }
 
-async function genImage(){
+}
 
-const prompt=document.getElementById("prompt").value;
+async function loadStats(){
 
-const res=await fetch(API+"/ai/image",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({prompt:prompt})
-});
+try{
 
-const data=await res.json();
+const res=await fetch("https://api.consia.world/admin/stats")
 
-document.getElementById("imageResult").innerHTML =
-'<img src="'+data.image+'" width="300">';
+const data=await res.json()
+
+document.getElementById("requests").innerText=data.stats?.payments ?? "0"
+
+}catch{
+
+document.getElementById("requests").innerText="..."
 
 }
+
+}
+
+function openPage(p){
+
+if(p==="chat"){
+window.location="https://consia.world"
+}
+
+}
+
+function openChat(){
+window.location="https://consia.world"
+}
+
+function openImage(){
+alert("Image generator ready")
+}
+
+function openVoice(){
+alert("Voice module ready")
+}
+
+loadStatus()
+loadWallet()
+loadStats()
 
 </script>
 
