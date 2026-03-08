@@ -1,722 +1,194 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#000000" />
-  <title>CONSIA WORLD</title>
-  <style>
-    :root{
-      --bg:#050607; --card:#0b0d10; --muted:#9aa4b2; --txt:#eef2f7; --line:#1a1f29;
-      --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444; --btn:#111827; --btn2:#0f172a;
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --r:16px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: radial-gradient(1200px 900px at 20% 10%, #0b1020 0%, #050607 45%, #050607 100%);
-      color:var(--txt);
-    }
-    a{color:inherit}
-    .wrap{max-width:1100px; margin:0 auto; padding:24px}
-    .top{
-      display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
-      margin-bottom:16px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-    }
-    .logo{
-      width:44px; height:44px; border-radius:14px;
-      background: radial-gradient(circle at 30% 30%, #60a5fa 0%, #2563eb 30%, #0b1020 70%);
-      box-shadow: var(--shadow);
-      position:relative; overflow:hidden;
-    }
-    .logo:after{
-      content:""; position:absolute; inset:-30%;
-      background: conic-gradient(from 0deg, rgba(255,255,255,.18), rgba(255,255,255,0), rgba(255,255,255,.12), rgba(255,255,255,0));
-      animation: spin 6s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    h1{font-size:18px; margin:0}
-    .sub{color:var(--muted); font-size:13px; margin-top:2px}
-    .pill{
-      display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--line);
-      background: rgba(10,12,16,.65); border-radius:999px; box-shadow: var(--shadow);
-    }
-    .dot{width:10px; height:10px; border-radius:50%}
-    .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
-    .grid{
-      display:grid; grid-template-columns: 420px 1fr; gap:16px;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-    }
-    .card{
-      background: rgba(11,13,16,.72);
-      border:1px solid var(--line);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .cardHd{
-      padding:14px 16px; border-bottom:1px solid var(--line);
-      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-    }
-    .cardHd .ttl{font-weight:700; font-size:13px; letter-spacing:.08em; color:#cbd5e1}
-    .cardBd{padding:16px}
-    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
-    input, select, textarea{
-      width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--line);
-      background:#06080c; color:var(--txt); outline:none;
-    }
-    textarea{min-height:110px; resize:vertical}
-    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
-    @media (max-width:520px){ .row{grid-template-columns:1fr} }
-    .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-    button{
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(17,24,39,.95), rgba(2,6,23,.95));
-      color:var(--txt);
-      padding:11px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:650;
-    }
-    button.secondary{
-      background: linear-gradient(180deg, rgba(15,23,42,.9), rgba(2,6,23,.9));
-      color:#e2e8f0;
-    }
-    button.danger{
-      background: linear-gradient(180deg, rgba(127,29,29,.9), rgba(2,6,23,.9));
-      border-color: rgba(239,68,68,.35);
-    }
-    button:disabled{opacity:.55; cursor:not-allowed}
-    .kpis{
-      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
-    }
-    .kpi{
-      padding:12px; border:1px solid var(--line); border-radius:14px; background:rgba(6,8,12,.7);
-    }
-    .kpi .k{font-size:12px; color:var(--muted)}
-    .kpi .v{margin-top:6px; font-size:14px; font-weight:700}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
-    .chat{
-      display:flex; flex-direction:column; height: 560px;
-    }
-    .msgs{
-      padding:16px;
-      overflow:auto;
-      display:flex; flex-direction:column; gap:10px;
-      height:100%;
-    }
-    .msg{
-      max-width: 86%;
-      padding:12px 12px;
-      border-radius: 14px;
-      border:1px solid var(--line);
-      background:rgba(6,8,12,.7);
-      line-height:1.35;
-      white-space:pre-wrap;
-    }
-    .msg.me{
-      margin-left:auto;
-      background: rgba(37,99,235,.12);
-      border-color: rgba(96,165,250,.35);
-    }
-    .msg.ai{
-      margin-right:auto;
-      background: rgba(34,197,94,.07);
-      border-color: rgba(34,197,94,.22);
-    }
-    .composer{
-      border-top:1px solid var(--line);
-      padding:12px;
-      display:flex; gap:10px;
-      align-items:flex-end;
-      background: rgba(11,13,16,.72);
-    }
-    .composer textarea{min-height:46px; max-height:140px}
-    .composer .right{display:flex; flex-direction:column; gap:10px}
-    .tiny{font-size:12px; color:var(--muted)}
-    .avatarBox{
-      position:relative;
-      height:260px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background: radial-gradient(700px 300px at 30% 30%, rgba(96,165,250,.12), rgba(0,0,0,.0)),
-                  linear-gradient(180deg, rgba(6,8,12,.85), rgba(2,6,23,.92));
-      overflow:hidden;
-    }
-    canvas{display:block; width:100%; height:100%}
-    .badge{
-      position:absolute; top:10px; left:10px;
-      padding:8px 10px; border-radius:999px;
-      background: rgba(0,0,0,.35);
-      border:1px solid var(--line);
-      font-size:12px;
-      display:flex; gap:8px; align-items:center;
-      backdrop-filter: blur(6px);
-    }
-    .toast{
-      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
-      background: rgba(2,6,23,.92); border:1px solid var(--line);
-      padding:10px 12px; border-radius:12px; box-shadow: var(--shadow);
-      opacity:0; pointer-events:none; transition:opacity .2s ease;
-      max-width:min(680px, calc(100% - 24px));
-      font-size:13px;
-    }
-    .toast.show{opacity:1}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>CONSIA</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0f1a;
+color:white;
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+
+header{
+padding:20px;
+text-align:center;
+font-size:28px;
+letter-spacing:6px;
+font-weight:bold;
+}
+
+#chat{
+flex:1;
+overflow-y:auto;
+padding:30px;
+max-width:900px;
+margin:auto;
+width:100%;
+}
+
+.message{
+margin-bottom:20px;
+line-height:1.5;
+}
+
+.user{
+color:#9ecbff;
+}
+
+.ai{
+color:#ffffff;
+}
+
+#inputArea{
+padding:20px;
+background:#070a13;
+display:flex;
+gap:10px;
+justify-content:center;
+}
+
+#prompt{
+width:600px;
+max-width:80%;
+padding:14px;
+border-radius:10px;
+border:none;
+font-size:16px;
+background:#101626;
+color:white;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:15px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+.core{
+width:90px;
+height:90px;
+border-radius:50%;
+margin:auto;
+margin-top:40px;
+margin-bottom:20px;
+background:radial-gradient(circle,#3b82f6,#1e3a8a);
+box-shadow:0 0 40px #3b82f6;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+letter-spacing:2px;
+}
+
+.tools{
+text-align:center;
+margin-bottom:20px;
+font-size:14px;
+opacity:0.7;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <h1>CONSIA WORLD</h1>
-          <div class="sub">UI oficial · Multi-AI Router · Brain · Memory · Users · Auth · Voice</div>
-        </div>
-      </div>
 
-      <div class="pill" title="Estado del backend">
-        <div id="statusDot" class="dot warn"></div>
-        <div>
-          <div style="font-weight:700;font-size:13px">Estado</div>
-          <div id="statusTxt" class="sub">Verificando…</div>
-        </div>
-      </div>
-    </div>
+<header>CONSIA</header>
 
-    <div class="grid">
+<div class="core">AI</div>
 
-      <!-- LEFT: CONTROL + AVATAR -->
-      <div class="card">
-        <div class="cardHd">
-          <div class="ttl">CONTROL</div>
-          <button class="secondary" id="btnRefresh">Refresh Status</button>
-        </div>
-        <div class="cardBd">
+<div class="tools">
+CHAT • IMAGE • VOICE • TOOLS
+</div>
 
-          <div class="avatarBox">
-            <div class="badge">
-              <div id="voiceDot" class="dot warn"></div>
-              <div><span class="mono">VOICE</span>: <span id="voiceState">idle</span></div>
-            </div>
-            <canvas id="avatar"></canvas>
-          </div>
+<div id="chat"></div>
 
-          <div class="kpis" style="margin-top:12px">
-            <div class="kpi"><div class="k">System</div><div class="v mono" id="kSystem">—</div></div>
-            <div class="kpi"><div class="k">Version</div><div class="v mono" id="kVersion">—</div></div>
-            <div class="kpi"><div class="k">Database</div><div class="v mono" id="kDb">—</div></div>
-            <div class="kpi"><div class="k">Router</div><div class="v mono" id="kRouter">—</div></div>
-          </div>
+<div id="inputArea">
 
-          <label>API Base</label>
-          <input id="apiBase" class="mono" value="https://api.consia.world" />
+<input id="prompt" placeholder="Habla con CONSIA..." />
 
-          <div class="row">
-            <div>
-              <label>Provider (router)</label>
-              <select id="provider">
-                <option value="auto">auto</option>
-                <option value="openai">openai</option>
-                <option value="anthropic">anthropic</option>
-                <option value="gemini">gemini</option>
-                <option value="deepseek">deepseek</option>
-                <option value="kimi">kimi</option>
-                <option value="any">any</option>
-              </select>
-            </div>
-            <div>
-              <label>Mode</label>
-              <select id="mode">
-                <option value="auto">auto</option>
-                <option value="fast">fast</option>
-                <option value="quality">quality</option>
-                <option value="balanced">balanced</option>
-              </select>
-            </div>
-          </div>
+<button onclick="send()">Enviar</button>
 
-          <label>Authorization (Owner Token) — se guarda en este navegador</label>
-          <input id="ownerToken" class="mono" placeholder="Pegar token owner… (Bearer se agrega solo)" />
+</div>
 
-          <div class="btnRow">
-            <button id="btnSave">Guardar</button>
-            <button class="secondary" id="btnClear">Borrar token local</button>
-            <button class="secondary" id="btnTestChat">Test Chat</button>
-          </div>
+<script>
 
-          <label>Voz</label>
-          <div class="btnRow">
-            <button id="btnMic" class="secondary">🎙️ Hablar</button>
-            <button id="btnStop" class="secondary" disabled>⏹ Stop</button>
-            <button id="btnMute" class="secondary">🔊 TTS: ON</button>
-          </div>
-          <div class="tiny">
-            * STT/TTS usa Web Speech API del navegador (si el dispositivo lo soporta).<br/>
-            * Si no hay soporte, igual funciona por texto.
-          </div>
-        </div>
-      </div>
+const chat = document.getElementById("chat")
 
-      <!-- RIGHT: CHAT -->
-      <div class="card chat">
-        <div class="cardHd">
-          <div class="ttl">CONSIA CHAT</div>
-          <div class="sub mono" id="routeHint">route: /v1/chat</div>
-        </div>
+async function send(){
 
-        <div id="msgs" class="msgs"></div>
+const input = document.getElementById("prompt")
+const text = input.value.trim()
 
-        <div class="composer">
-          <textarea id="input" placeholder="Escribí acá… (Enter para enviar, Shift+Enter para salto)"></textarea>
-          <div class="right">
-            <button id="btnSend">Enviar</button>
-            <div class="tiny" id="latency">—</div>
-          </div>
-        </div>
-      </div>
+if(!text) return
 
-    </div>
-  </div>
+addMessage("user",text)
 
-  <div id="toast" class="toast"></div>
+input.value=""
 
-  <script>
-    // ==========
-    // Storage
-    // ==========
-    const LS = {
-      apiBase: "consia_api_base",
-      owner: "consia_owner_token",
-      provider: "consia_provider",
-      mode: "consia_mode",
-      tts: "consia_tts_enabled",
-    };
+const res = await fetch(
+"https://api.consia.world/ai/chat",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+user_id:"web",
+message:text
+})
+}
+)
 
-    const $ = (id) => document.getElementById(id);
+const data = await res.json()
 
-    const apiBaseEl = $("apiBase");
-    const ownerTokenEl = $("ownerToken");
-    const providerEl = $("provider");
-    const modeEl = $("mode");
+addMessage("ai",data.answer)
 
-    const statusDot = $("statusDot");
-    const statusTxt = $("statusTxt");
-    const voiceDot = $("voiceDot");
-    const voiceState = $("voiceState");
+}
 
-    const kSystem = $("kSystem");
-    const kVersion = $("kVersion");
-    const kDb = $("kDb");
-    const kRouter = $("kRouter");
+function addMessage(type,text){
 
-    const msgs = $("msgs");
-    const input = $("input");
-    const btnSend = $("btnSend");
-    const btnRefresh = $("btnRefresh");
-    const btnSave = $("btnSave");
-    const btnClear = $("btnClear");
-    const btnTestChat = $("btnTestChat");
+const div=document.createElement("div")
+div.className="message "+type
 
-    const btnMic = $("btnMic");
-    const btnStop = $("btnStop");
-    const btnMute = $("btnMute");
-    const latencyEl = $("latency");
-    const routeHint = $("routeHint");
+if(type==="user"){
+div.innerHTML="<strong>Tú:</strong> "+text
+}else{
+div.innerHTML="<strong>CONSIA:</strong> "+text
+}
 
-    const toast = $("toast");
+chat.appendChild(div)
 
-    function toastShow(text){
-      toast.textContent = text;
-      toast.classList.add("show");
-      setTimeout(()=>toast.classList.remove("show"), 1800);
-    }
+chat.scrollTop=chat.scrollHeight
 
-    function loadSettings(){
-      const apiBase = localStorage.getItem(LS.apiBase);
-      const owner = localStorage.getItem(LS.owner);
-      const provider = localStorage.getItem(LS.provider);
-      const mode = localStorage.getItem(LS.mode);
-      const tts = localStorage.getItem(LS.tts);
+}
 
-      if (apiBase) apiBaseEl.value = apiBase;
-      if (owner) ownerTokenEl.value = owner;
-      if (provider) providerEl.value = provider;
-      if (mode) modeEl.value = mode;
-      if (tts === "0") setTTS(false); else setTTS(true);
-    }
+document.getElementById("prompt")
+.addEventListener("keypress",function(e){
 
-    function saveSettings(){
-      localStorage.setItem(LS.apiBase, apiBaseEl.value.trim());
-      localStorage.setItem(LS.owner, ownerTokenEl.value.trim());
-      localStorage.setItem(LS.provider, providerEl.value);
-      localStorage.setItem(LS.mode, modeEl.value);
-      toastShow("Guardado ✅");
-      updateRouteHint();
-    }
+if(e.key==="Enter"){
+send()
+}
 
-    function clearToken(){
-      localStorage.removeItem(LS.owner);
-      ownerTokenEl.value = "";
-      toastShow("Token borrado ✅");
-    }
+})
 
-    function authHeader(){
-      const t = ownerTokenEl.value.trim();
-      if (!t) return {};
-      // el backend espera Authorization: Bearer <token>
-      return { "Authorization": "Bearer " + t };
-    }
+</script>
 
-    function updateRouteHint(){
-      const base = apiBaseEl.value.trim().replace(/\/+$/,'');
-      routeHint.textContent = "route: " + base + "/v1/chat (provider=" + providerEl.value + ", mode=" + modeEl.value + ")";
-    }
-
-    // ==========
-    // Status
-    // ==========
-    function setDot(el, cls){
-      el.classList.remove("ok","warn","bad");
-      el.classList.add(cls);
-    }
-
-    async function fetchStatus(){
-      const base = apiBaseEl.value.trim().replace(/\/+$/,'');
-      statusTxt.textContent = "Verificando…";
-      setDot(statusDot, "warn");
-
-      try{
-        const res = await fetch(base + "/v1/status", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader(),
-          }
-        });
-        const j = await res.json().catch(()=> ({}));
-
-        if (!res.ok || !j.ok){
-          setDot(statusDot, "bad");
-          statusTxt.textContent = (j && j.error) ? j.error : ("HTTP " + res.status);
-          kSystem.textContent = "—";
-          kVersion.textContent = "—";
-          kDb.textContent = "—";
-          kRouter.textContent = "—";
-          return;
-        }
-
-        setDot(statusDot, "ok");
-        statusTxt.textContent = "ONLINE";
-        kSystem.textContent = j.system || "CONSIA";
-        kVersion.textContent = j.version || "—";
-        kDb.textContent = j.database || "—";
-
-        // Router info
-        if (j.router && j.router.enabled){
-          const p = j.router.providers ? Object.keys(j.router.providers).filter(k=>j.router.providers[k]).join(",") : "—";
-          kRouter.textContent = (j.router.mode || "auto") + " · " + p;
-        } else {
-          kRouter.textContent = "OFF";
-        }
-      }catch(e){
-        setDot(statusDot, "bad");
-        statusTxt.textContent = "OFFLINE";
-        kSystem.textContent = "—";
-        kVersion.textContent = "—";
-        kDb.textContent = "—";
-        kRouter.textContent = "—";
-      }
-    }
-
-    // ==========
-    // Chat UI
-    // ==========
-    function addMsg(text, who){
-      const div = document.createElement("div");
-      div.className = "msg " + (who === "me" ? "me" : "ai");
-      div.textContent = text;
-      msgs.appendChild(div);
-      msgs.scrollTop = msgs.scrollHeight;
-    }
-
-    // ==========
-    // TTS (SpeechSynthesis)
-    // ==========
-    let TTS_ENABLED = true;
-    function setTTS(on){
-      TTS_ENABLED = !!on;
-      btnMute.textContent = on ? "🔊 TTS: ON" : "🔇 TTS: OFF";
-      localStorage.setItem(LS.tts, on ? "1" : "0");
-    }
-    function speak(text){
-      try{
-        if (!TTS_ENABLED) return;
-        if (!("speechSynthesis" in window)) return;
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = "es-AR";
-        window.speechSynthesis.speak(u);
-      }catch(_){}
-    }
-
-    // ==========
-    // STT (SpeechRecognition)
-    // ==========
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let rec = null;
-    let listening = false;
-
-    function setVoiceState(state, cls){
-      voiceState.textContent = state;
-      setDot(voiceDot, cls);
-    }
-
-    function initSTT(){
-      if (!SpeechRecognition) return false;
-      rec = new SpeechRecognition();
-      rec.lang = "es-AR";
-      rec.interimResults = true;
-      rec.continuous = false;
-
-      rec.onstart = () => {
-        listening = true;
-        btnMic.disabled = true;
-        btnStop.disabled = false;
-        setVoiceState("listening", "ok");
-      };
-
-      rec.onend = () => {
-        listening = false;
-        btnMic.disabled = false;
-        btnStop.disabled = true;
-        setVoiceState("idle", "warn");
-      };
-
-      rec.onerror = () => {
-        setVoiceState("error", "bad");
-      };
-
-      rec.onresult = (ev) => {
-        let finalText = "";
-        let interim = "";
-        for (let i = ev.resultIndex; i < ev.results.length; i++){
-          const tr = ev.results[i][0].transcript;
-          if (ev.results[i].isFinal) finalText += tr;
-          else interim += tr;
-        }
-        if (interim) input.value = interim;
-        if (finalText){
-          input.value = finalText;
-          sendChat();
-        }
-      };
-
-      return true;
-    }
-
-    // ==========
-    // API call /v1/chat
-    // ==========
-    let inFlight = false;
-
-    async function sendChat(textOverride){
-      if (inFlight) return;
-      const base = apiBaseEl.value.trim().replace(/\/+$/,'');
-      const message = (textOverride ?? input.value).trim();
-      if (!message) return;
-
-      // Basic safety: require token for owner calls
-      if (!ownerTokenEl.value.trim()){
-        toastShow("Pegá tu Owner Token primero.");
-        return;
-      }
-
-      inFlight = true;
-      btnSend.disabled = true;
-      input.value = "";
-      addMsg(message, "me");
-
-      const payload = {
-        message,
-        provider: providerEl.value, // backend puede ignorar si usa auto
-        mode: modeEl.value         // backend puede ignorar si usa auto
-      };
-
-      const t0 = performance.now();
-
-      try{
-        const res = await fetch(base + "/v1/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeader(),
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const j = await res.json().catch(()=> ({}));
-        const t1 = performance.now();
-        const ms = Math.round(t1 - t0);
-        latencyEl.textContent = "latency: " + ms + "ms";
-
-        if (!res.ok || !j.ok){
-          const err = (j && (j.error || j.message)) ? (j.error || j.message) : ("HTTP " + res.status);
-          addMsg("ERROR: " + err, "ai");
-          speak("Error");
-          return;
-        }
-
-        const answer = (j.answer ?? j.response ?? "").toString();
-        addMsg(answer || "(sin respuesta)", "ai");
-        speak(answer || "");
-      }catch(e){
-        addMsg("ERROR: network", "ai");
-        speak("Error de red");
-      }finally{
-        inFlight = false;
-        btnSend.disabled = false;
-        input.focus();
-      }
-    }
-
-    async function testChat(){
-      await sendChat("Hola CONSIA. Confirmame que estás activo y qué proveedor estás usando ahora.");
-    }
-
-    // ==========
-    // Avatar (orb simple)
-    // ==========
-    const canvas = $("avatar");
-    const ctx = canvas.getContext("2d");
-    let w=0,h=0, t=0;
-
-    function resize(){
-      const r = canvas.getBoundingClientRect();
-      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      canvas.width = Math.floor(r.width * dpr);
-      canvas.height = Math.floor(r.height * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      w = r.width; h = r.height;
-    }
-    window.addEventListener("resize", resize);
-
-    function draw(){
-      t += 0.016;
-
-      ctx.clearRect(0,0,w,h);
-
-      // background glow
-      const g = ctx.createRadialGradient(w*0.35, h*0.35, 30, w*0.35, h*0.35, Math.max(w,h));
-      g.addColorStop(0, "rgba(96,165,250,0.18)");
-      g.addColorStop(0.35, "rgba(37,99,235,0.08)");
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,w,h);
-
-      // orb
-      const cx = w*0.5, cy = h*0.56;
-      const baseR = Math.min(w,h)*0.18;
-      const pulse = baseR*(0.06*Math.sin(t*2.2) + (listening?0.10*Math.sin(t*10):0));
-      const R = baseR + pulse;
-
-      // outer ring
-      ctx.beginPath();
-      ctx.arc(cx, cy, R*1.55, 0, Math.PI*2);
-      ctx.strokeStyle = listening ? "rgba(34,197,94,0.35)" : "rgba(96,165,250,0.25)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // orb gradient
-      const og = ctx.createRadialGradient(cx - R*0.35, cy - R*0.35, R*0.2, cx, cy, R);
-      og.addColorStop(0, "rgba(255,255,255,0.35)");
-      og.addColorStop(0.25, listening ? "rgba(34,197,94,0.35)" : "rgba(96,165,250,0.32)");
-      og.addColorStop(1, "rgba(2,6,23,0.95)");
-      ctx.fillStyle = og;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI*2);
-      ctx.fill();
-
-      // shimmer particles
-      for(let i=0;i<18;i++){
-        const a = t*0.4 + i*(Math.PI*2/18);
-        const pr = R*1.8 + 10*Math.sin(t + i);
-        const x = cx + Math.cos(a)*pr;
-        const y = cy + Math.sin(a)*pr*0.6;
-        ctx.fillStyle = listening ? "rgba(34,197,94,0.22)" : "rgba(96,165,250,0.18)";
-        ctx.beginPath();
-        ctx.arc(x, y, 1.5 + 1.2*Math.sin(t*2+i), 0, Math.PI*2);
-        ctx.fill();
-      }
-
-      requestAnimationFrame(draw);
-    }
-
-    // ==========
-    // Events
-    // ==========
-    btnRefresh.onclick = fetchStatus;
-
-    btnSave.onclick = () => {
-      saveSettings();
-      fetchStatus();
-    };
-
-    btnClear.onclick = clearToken;
-    btnTestChat.onclick = testChat;
-
-    btnSend.onclick = () => sendChat();
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey){
-        e.preventDefault();
-        sendChat();
-      }
-    });
-
-    btnMute.onclick = () => setTTS(!TTS_ENABLED);
-
-    btnMic.onclick = () => {
-      if (!rec){
-        const ok = initSTT();
-        if (!ok){
-          toastShow("STT no soportado en este navegador.");
-          return;
-        }
-      }
-      try{ rec.start(); }catch(_){}
-    };
-
-    btnStop.onclick = () => {
-      try{
-        if (rec && listening) rec.stop();
-        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-      }catch(_){}
-    };
-
-    providerEl.onchange = updateRouteHint;
-    modeEl.onchange = updateRouteHint;
-    apiBaseEl.onchange = updateRouteHint;
-
-    // ==========
-    // Boot
-    // ==========
-    (function boot(){
-      loadSettings();
-      updateRouteHint();
-      resize();
-      draw();
-      setVoiceState("idle", "warn");
-      fetchStatus();
-
-      addMsg("Hola. Soy CONSIA. Pegá tu Owner Token y escribime o hablame.", "ai");
-    })();
-  </script>
 </body>
 </html>
