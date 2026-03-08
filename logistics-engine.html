@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Global Logistics Engine</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0f1a;
+color:white;
+}
+
+header{
+padding:20px;
+text-align:center;
+font-size:28px;
+letter-spacing:6px;
+border-bottom:1px solid #1a2135;
+}
+
+#layout{
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:20px;
+padding:30px;
+max-width:1400px;
+margin:auto;
+}
+
+.panel{
+background:#101626;
+border-radius:12px;
+padding:20px;
+}
+
+.table{
+width:100%;
+border-collapse:collapse;
+}
+
+.table th,.table td{
+padding:10px;
+border-bottom:1px solid #1a2135;
+text-align:left;
+font-size:14px;
+}
+
+.status{
+padding:4px 10px;
+border-radius:999px;
+font-size:12px;
+}
+
+.processing{ background:#1d4ed8; }
+.transit{ background:#92400e; }
+.customs{ background:#9333ea; }
+.delivered{ background:#10b981; }
+
+button{
+padding:10px 14px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.metric{
+font-size:28px;
+color:#9ecbff;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>CONSIA GLOBAL LOGISTICS ENGINE</header>
+
+<div id="layout">
+
+<div class="panel">
+
+<h2>Shipments</h2>
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Tracking</th>
+<th>Product</th>
+<th>Courier</th>
+<th>Route</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="shipments"></tbody>
+
+</table>
+
+</div>
+
+<div class="panel">
+
+<h2>Logistics Metrics</h2>
+
+<div>
+<div>Total Shipments</div>
+<div id="shipmentsCount" class="metric">0</div>
+</div>
+
+<div>
+<div>Delivered</div>
+<div id="delivered" class="metric">0</div>
+</div>
+
+<div>
+<div>In Transit</div>
+<div id="transit" class="metric">0</div>
+</div>
+
+<button onclick="createShipment()">Create Shipment</button>
+
+</div>
+
+</div>
+
+<script>
+
+let shipments=[]
+
+function createShipment(){
+
+const couriers=[
+"DHL",
+"FedEx",
+"UPS",
+"Global Express"
+]
+
+const routes=[
+"China → USA",
+"China → Europe",
+"China → LATAM",
+"USA → Europe"
+]
+
+const products=[
+"Wireless Headphones",
+"Smart Watch",
+"Gaming Mouse",
+"Portable Speaker"
+]
+
+const shipment={
+
+tracking:"TRK"+Math.floor(Math.random()*1000000),
+
+product:products[Math.floor(Math.random()*products.length)],
+
+courier:couriers[Math.floor(Math.random()*couriers.length)],
+
+route:routes[Math.floor(Math.random()*routes.length)],
+
+status:"processing"
+
+}
+
+shipments.push(shipment)
+
+render()
+
+}
+
+function updateShipment(i){
+
+const states=["processing","transit","customs","delivered"]
+
+let current=states.indexOf(shipments[i].status)
+
+if(current<states.length-1){
+
+shipments[i].status=states[current+1]
+
+}
+
+render()
+
+}
+
+function render(){
+
+const container=document.getElementById("shipments")
+
+container.innerHTML=""
+
+let delivered=0
+let transit=0
+
+shipments.forEach((s,i)=>{
+
+if(s.status==="delivered") delivered++
+if(s.status==="transit") transit++
+
+const tr=document.createElement("tr")
+
+tr.innerHTML=`
+
+<td>${s.tracking}</td>
+
+<td>${s.product}</td>
+
+<td>${s.courier}</td>
+
+<td>${s.route}</td>
+
+<td><span class="status ${s.status}">${s.status}</span></td>
+
+<td>
+
+<button onclick="updateShipment(${i})">
+
+Update
+
+</button>
+
+</td>
+
+`
+
+container.appendChild(tr)
+
+})
+
+document.getElementById("shipmentsCount").innerText=shipments.length
+document.getElementById("delivered").innerText=delivered
+document.getElementById("transit").innerText=transit
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
