@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Global Command Center</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f1a;
+  color:white;
+  display:flex;
+  min-height:100vh;
+}
+#sidebar{
+  width:270px;
+  background:#060912;
+  border-right:1px solid #1a2135;
+  display:flex;
+  flex-direction:column;
+}
+#logo{
+  padding:22px 20px;
+  text-align:center;
+  font-size:22px;
+  letter-spacing:6px;
+  border-bottom:1px solid #1a2135;
+}
+.menu{
+  padding:14px 20px;
+  cursor:pointer;
+  font-size:14px;
+  opacity:.85;
+}
+.menu:hover{
+  background:#101626;
+  opacity:1;
+}
+#main{
+  flex:1;
+  padding:28px;
+  overflow:auto;
+}
+h1{
+  margin-top:0;
+  font-size:30px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
+}
+.card{
+  background:#101626;
+  border-radius:14px;
+  padding:20px;
+  border:1px solid #1a2135;
+}
+.card h3{
+  margin-top:0;
+}
+.metric{
+  font-size:30px;
+  color:#9ecbff;
+  margin-top:10px;
+}
+button{
+  margin-top:12px;
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+button.secondary{
+  background:#141b2e;
+}
+#console{
+  margin-top:24px;
+  background:#101626;
+  border:1px solid #1a2135;
+  border-radius:14px;
+  padding:18px;
+}
+#consoleLog{
+  background:#0d1424;
+  border-radius:10px;
+  padding:14px;
+  min-height:140px;
+  font-size:13px;
+  line-height:1.5;
+  white-space:pre-wrap;
+}
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+@media (max-width: 900px){
+  body{ display:block; }
+  #sidebar{ width:100%; border-right:none; border-bottom:1px solid #1a2135; }
+}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div id="logo">CONSIA</div>
+
+  <div class="menu" onclick="openPage('https://consia.world')">AI Chat</div>
+  <div class="menu" onclick="openPage('https://consia.world/apps.html')">AI App Store</div>
+  <div class="menu" onclick="openPage('https://consia.world/marketplace.html')">Marketplace</div>
+  <div class="menu" onclick="openPage('https://consia.world/product-index.html')">Product Index</div>
+  <div class="menu" onclick="openPage('https://consia.world/supplier-engine.html')">Supplier Engine</div>
+  <div class="menu" onclick="openPage('https://consia.world/order-orchestrator.html')">Orders</div>
+  <div class="menu" onclick="openPage('https://consia.world/logistics-engine.html')">Logistics</div>
+  <div class="menu" onclick="openPage('https://consia.world/payments-engine.html')">Payments</div>
+  <div class="menu" onclick="openPage('https://consia.world/agent-network.html')">Agent Network</div>
+  <div class="menu" onclick="openPage('https://consia.world/automation-engine.html')">Automation Engine</div>
+</div>
+
+<div id="main">
+
+  <h1>CONSIA GLOBAL COMMAND CENTER</h1>
+
+  <div class="grid">
+    <div class="card">
+      <h3>System Status</h3>
+      <div id="statusMetric" class="metric">ONLINE</div>
+      <button onclick="pingApi()">Check API</button>
+    </div>
+
+    <div class="card">
+      <h3>Wallet Balance</h3>
+      <div id="walletMetric" class="metric">...</div>
+      <button onclick="loadWallet()">Refresh Wallet</button>
+    </div>
+
+    <div class="card">
+      <h3>AI Requests</h3>
+      <div id="requestsMetric" class="metric">0</div>
+      <button onclick="simulateRequest()">Simulate</button>
+    </div>
+
+    <div class="card">
+      <h3>Automation Flows</h3>
+      <div id="flowsMetric" class="metric">3</div>
+      <button onclick="simulateFlow()">Run Flow</button>
+    </div>
+
+    <div class="card">
+      <h3>Orders</h3>
+      <div id="ordersMetric" class="metric">0</div>
+      <button onclick="simulateOrder()">Create Order</button>
+    </div>
+
+    <div class="card">
+      <h3>Payments</h3>
+      <div id="paymentsMetric" class="metric">$0</div>
+      <button onclick="simulatePayment()">Create Payment</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="openPage('https://consia.world')">Open CONSIA Home</button>
+    <button onclick="openPage('https://consia.world/dashboard.html')" class="secondary">Dashboard</button>
+    <button onclick="openPage('https://consia.world/consia-os.html')" class="secondary">CONSIA OS</button>
+    <button onclick="openPage('https://consia.world/marketplace.html')" class="secondary">Marketplace</button>
+  </div>
+
+  <div id="console">
+    <h3>Global Console</h3>
+    <div id="consoleLog">Command center ready.</div>
+  </div>
+
+</div>
+
+<script>
+let requests = 0;
+let orders = 0;
+let payments = 0;
+let flows = 3;
+
+function openPage(url){
+  window.location = url;
+}
+
+function log(text){
+  const stamp = new Date().toLocaleTimeString();
+  const box = document.getElementById("consoleLog");
+  box.textContent = `[${stamp}] ${text}\n` + box.textContent;
+}
+
+async function pingApi(){
+  try{
+    const res = await fetch("https://api.consia.world/health");
+    const data = await res.json();
+    document.getElementById("statusMetric").innerText = data.ok ? "ONLINE" : "WARN";
+    log("API health checked successfully.");
+  }catch(e){
+    document.getElementById("statusMetric").innerText = "OFFLINE";
+    log("API health check failed.");
+  }
+}
+
+async function loadWallet(){
+  try{
+    const res = await fetch("https://api.consia.world/wallet?user_id=web");
+    const data = await res.json();
+    const balance = data.wallet?.balance ?? data.balance ?? 0;
+    document.getElementById("walletMetric").innerText = "$" + balance;
+    log("Wallet loaded: $" + balance);
+  }catch(e){
+    document.getElementById("walletMetric").innerText = "$0";
+    log("Wallet load failed.");
+  }
+}
+
+function simulateRequest(){
+  requests++;
+  document.getElementById("requestsMetric").innerText = requests;
+  log("AI request routed successfully.");
+}
+
+function simulateFlow(){
+  flows++;
+  document.getElementById("flowsMetric").innerText = flows;
+  log("Automation flow executed.");
+}
+
+function simulateOrder(){
+  orders++;
+  document.getElementById("ordersMetric").innerText = orders;
+  log("Global order orchestrated.");
+}
+
+function simulatePayment(){
+  payments += 49;
+  document.getElementById("paymentsMetric").innerText = "$" + payments;
+  log("Payment processed and commission registered.");
+}
+
+loadWallet();
+pingApi();
+</script>
+
+</body>
+</html>
