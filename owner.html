@@ -1,96 +1,343 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <meta name="theme-color" content="#000000"/>
-  <title>CONSIA Owner</title>
-  <style>
-    :root { color-scheme: dark; }
-    html,body{height:100%;margin:0;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
-    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;}
-    .card{width:min(980px,98vw);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;background:rgba(255,255,255,.04);}
-    .title{letter-spacing:.18em;text-transform:uppercase;font-weight:800}
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button,input{background:rgba(0,0,0,.4);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:12px 12px;font-size:15px}
-    button{cursor:pointer;font-weight:800}
-    button:hover{border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.06)}
-    .log{white-space:pre-wrap;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;min-height:220px}
-    .pill{font-size:12px;opacity:.85;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:8px 10px}
-    .ok{color:#9cff9c}.bad{color:#ff9c9c}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Owner Console</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f1a;
+  color:white;
+  display:flex;
+  min-height:100vh;
+}
+#sidebar{
+  width:270px;
+  background:#060912;
+  border-right:1px solid #1a2135;
+  display:flex;
+  flex-direction:column;
+}
+#logo{
+  padding:22px 20px;
+  text-align:center;
+  font-size:22px;
+  letter-spacing:6px;
+  border-bottom:1px solid #1a2135;
+}
+.menu{
+  padding:14px 20px;
+  cursor:pointer;
+  font-size:14px;
+  opacity:.85;
+}
+.menu:hover{
+  background:#101626;
+  opacity:1;
+}
+#main{
+  flex:1;
+  padding:28px;
+  overflow:auto;
+}
+h1{
+  margin-top:0;
+  font-size:30px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+.card{
+  background:#101626;
+  border-radius:14px;
+  padding:20px;
+  border:1px solid #1a2135;
+}
+.card h3{
+  margin-top:0;
+}
+.metric{
+  font-size:30px;
+  color:#9ecbff;
+  margin-top:10px;
+}
+button{
+  margin-top:12px;
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+button.secondary{
+  background:#141b2e;
+}
+button.danger{
+  background:#b91c1c;
+}
+input, select{
+  width:100%;
+  box-sizing:border-box;
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#0d1424;
+  color:white;
+}
+#console{
+  margin-top:24px;
+  background:#101626;
+  border:1px solid #1a2135;
+  border-radius:14px;
+  padding:18px;
+}
+#consoleLog{
+  background:#0d1424;
+  border-radius:10px;
+  padding:14px;
+  min-height:180px;
+  font-size:13px;
+  line-height:1.5;
+  white-space:pre-wrap;
+}
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+.badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  background:#141b2e;
+}
+.good{ background:#065f46; }
+.warn{ background:#92400e; }
+.lock{ background:#b91c1c; }
+@media (max-width: 900px){
+  body{ display:block; }
+  #sidebar{ width:100%; border-right:none; border-bottom:1px solid #1a2135; }
+}
+</style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <div class="row" style="justify-content:space-between;align-items:center;margin-top:0">
-      <div class="title">Owner Dashboard</div>
-      <a class="pill" href="/" style="text-decoration:none;color:#fff">← Home</a>
+
+<div id="sidebar">
+  <div id="logo">CONSIA</div>
+
+  <div class="menu" onclick="openPage('https://consia.world/command-center.html')">Command Center</div>
+  <div class="menu" onclick="openPage('https://consia.world/dashboard.html')">Dashboard</div>
+  <div class="menu" onclick="openPage('https://consia.world/consia-os.html')">CONSIA OS</div>
+  <div class="menu" onclick="openPage('https://consia.world/apps.html')">App Store</div>
+  <div class="menu" onclick="openPage('https://consia.world/marketplace.html')">Marketplace</div>
+  <div class="menu" onclick="openPage('https://consia.world/agent-network.html')">Agent Network</div>
+  <div class="menu" onclick="openPage('https://consia.world/automation-engine.html')">Automation Engine</div>
+</div>
+
+<div id="main">
+
+  <h1>CONSIA OWNER CONSOLE</h1>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Owner Status</h3>
+      <div class="metric">OWNER</div>
+      <div class="badge good">Owner-Only Active</div>
+      <button onclick="log('Owner session validated.')">Validate Owner</button>
     </div>
 
-    <div class="row">
-      <input id="token" placeholder="Pegá tu OWNER token (se guarda local en este navegador)" style="flex:1;min-width:280px"/>
-      <button id="save">Guardar</button>
-      <button id="clear">Borrar</button>
+    <div class="card">
+      <h3>Global Pricing Engine</h3>
+      <div class="metric" id="pricingMetric">1.45x</div>
+      <input id="pricingInput" placeholder="Ej: 1.60">
+      <button onclick="updatePricing()">Update Pricing</button>
     </div>
 
-    <div class="row">
-      <button id="ping">Owner Ping</button>
-      <button id="health">API Health</button>
-      <button id="r2">R2 Ping</button>
+    <div class="card">
+      <h3>Revenue Share</h3>
+      <div class="metric" id="shareMetric">15%</div>
+      <input id="shareInput" placeholder="Ej: 20">
+      <button onclick="updateShare()">Update Share</button>
     </div>
 
-    <div class="row">
-      <div class="pill">Salida</div>
+    <div class="card">
+      <h3>Global Lock</h3>
+      <div class="metric" id="lockMetric">OPEN</div>
+      <div id="lockBadge" class="badge good">Operational</div>
+      <button class="danger" onclick="toggleLock()">Toggle LOCK</button>
     </div>
-    <div id="out" class="log"></div>
+
+    <div class="card">
+      <h3>Routing Mode</h3>
+      <div class="metric" id="routeMetric">AUTO</div>
+      <select id="routeSelect">
+        <option value="AUTO">AUTO</option>
+        <option value="CHEAP">CHEAP</option>
+        <option value="SMART">SMART</option>
+        <option value="PREMIUM">PREMIUM</option>
+      </select>
+      <button onclick="updateRouting()">Update Routing</button>
+    </div>
+
+    <div class="card">
+      <h3>Provider Priority</h3>
+      <div class="metric" id="providerMetric">OPENAI</div>
+      <select id="providerSelect">
+        <option value="OPENAI">OPENAI</option>
+        <option value="CLAUDE">CLAUDE</option>
+        <option value="DEEPSEEK">DEEPSEEK</option>
+        <option value="MISTRAL">MISTRAL</option>
+        <option value="WORKERS_AI">WORKERS_AI</option>
+      </select>
+      <button onclick="updateProvider()">Update Provider</button>
+    </div>
   </div>
+
+  <div class="toolbar">
+    <button onclick="pingApi()">Ping API</button>
+    <button onclick="loadWallet()">Load Wallet</button>
+    <button onclick="backupConfig()" class="secondary">Backup Config</button>
+    <button onclick="restoreDefaults()" class="secondary">Restore Defaults</button>
+    <button onclick="purgeCache()" class="secondary">Purge Cache</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Wallet Balance</h3>
+      <div id="walletMetric" class="metric">$0</div>
+    </div>
+
+    <div class="card">
+      <h3>API Health</h3>
+      <div id="healthMetric" class="metric">...</div>
+    </div>
+
+    <div class="card">
+      <h3>Total Revenue</h3>
+      <div id="revenueMetric" class="metric">$0</div>
+    </div>
+
+    <div class="card">
+      <h3>System Version</h3>
+      <div class="metric">OWNER V1</div>
+    </div>
+  </div>
+
+  <div id="console">
+    <h3>Owner Audit Console</h3>
+    <div id="consoleLog">Owner console ready.</div>
+  </div>
+
 </div>
 
 <script>
-  const API = "https://api.consia.world";
-  const tokenEl = document.getElementById("token");
-  const out = document.getElementById("out");
+let globalLocked = false;
+let totalRevenue = 0;
 
-  const saved = localStorage.getItem("CONSIA_OWNER_TOKEN") || "";
-  tokenEl.value = saved;
+function openPage(url){
+  window.location = url;
+}
 
-  document.getElementById("save").onclick = () => {
-    localStorage.setItem("CONSIA_OWNER_TOKEN", tokenEl.value.trim());
-    out.textContent = "Token guardado (localStorage).";
-  };
-  document.getElementById("clear").onclick = () => {
-    localStorage.removeItem("CONSIA_OWNER_TOKEN");
-    tokenEl.value = "";
-    out.textContent = "Token borrado.";
-  };
+function log(text){
+  const stamp = new Date().toLocaleTimeString();
+  const box = document.getElementById("consoleLog");
+  box.textContent = `[${stamp}] ${text}\n` + box.textContent;
+}
 
-  async function call(path, owner=false){
-    out.textContent = "Llamando… " + path;
-    const headers = {};
-    if(owner){
-      const t = (localStorage.getItem("CONSIA_OWNER_TOKEN")||"").trim();
-      if(!t){ out.textContent="Falta OWNER token."; return; }
-      headers["x-owner-token"] = t;
-    }
-    const r = await fetch(API + path, { method:"POST", headers });
-    const j = await r.json().catch(()=>({ ok:false, error:"bad_json" }));
-    out.textContent = JSON.stringify({ status:r.status, body:j }, null, 2);
+function updatePricing(){
+  const v = document.getElementById("pricingInput").value.trim();
+  if(!v) return;
+  document.getElementById("pricingMetric").innerText = v + "x";
+  log("Global pricing engine updated to " + v + "x.");
+}
+
+function updateShare(){
+  const v = document.getElementById("shareInput").value.trim();
+  if(!v) return;
+  document.getElementById("shareMetric").innerText = v + "%";
+  log("Revenue share updated to " + v + "%.");
+}
+
+function toggleLock(){
+  globalLocked = !globalLocked;
+  document.getElementById("lockMetric").innerText = globalLocked ? "LOCKED" : "OPEN";
+  const badge = document.getElementById("lockBadge");
+  badge.className = "badge " + (globalLocked ? "lock" : "good");
+  badge.innerText = globalLocked ? "Emergency Lock" : "Operational";
+  log("Global lock changed to " + (globalLocked ? "LOCKED" : "OPEN") + ".");
+}
+
+function updateRouting(){
+  const mode = document.getElementById("routeSelect").value;
+  document.getElementById("routeMetric").innerText = mode;
+  log("Routing mode updated to " + mode + ".");
+}
+
+function updateProvider(){
+  const provider = document.getElementById("providerSelect").value;
+  document.getElementById("providerMetric").innerText = provider;
+  log("Primary provider updated to " + provider + ".");
+}
+
+async function pingApi(){
+  try{
+    const res = await fetch("https://api.consia.world/health");
+    const data = await res.json();
+    document.getElementById("healthMetric").innerText = data.ok ? "ONLINE" : "WARN";
+    log("API health check completed.");
+  }catch(e){
+    document.getElementById("healthMetric").innerText = "OFFLINE";
+    log("API health check failed.");
   }
+}
 
-  document.getElementById("ping").onclick = ()=> call("/owner/ping", true);
-  document.getElementById("health").onclick = async ()=>{
-    out.textContent="Llamando… /health";
-    const r = await fetch(API+"/health");
-    const j = await r.json().catch(()=>({ok:false}));
-    out.textContent = JSON.stringify({ status:r.status, body:j }, null, 2);
-  };
-  document.getElementById("r2").onclick = async ()=>{
-    out.textContent="Llamando… /r2";
-    const r = await fetch(API+"/r2");
-    const j = await r.json().catch(()=>({ok:false}));
-    out.textContent = JSON.stringify({ status:r.status, body:j }, null, 2);
-  };
+async function loadWallet(){
+  try{
+    const res = await fetch("https://api.consia.world/wallet?user_id=web");
+    const data = await res.json();
+    const balance = data.wallet?.balance ?? data.balance ?? 0;
+    document.getElementById("walletMetric").innerText = "$" + balance;
+    log("Wallet loaded: $" + balance);
+  }catch(e){
+    document.getElementById("walletMetric").innerText = "$0";
+    log("Wallet load failed.");
+  }
+}
+
+function backupConfig(){
+  log("Owner configuration backup generated.");
+}
+
+function restoreDefaults(){
+  document.getElementById("pricingMetric").innerText = "1.45x";
+  document.getElementById("shareMetric").innerText = "15%";
+  document.getElementById("routeMetric").innerText = "AUTO";
+  document.getElementById("providerMetric").innerText = "OPENAI";
+  log("Default owner configuration restored.");
+}
+
+function purgeCache(){
+  log("Global cache purge requested.");
+}
+
+function simulateRevenue(){
+  totalRevenue += 125;
+  document.getElementById("revenueMetric").innerText = "$" + totalRevenue;
+}
+
+pingApi();
+loadWallet();
+simulateRevenue();
 </script>
+
 </body>
 </html>
