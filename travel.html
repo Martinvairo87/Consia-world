@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
@@ -13,25 +12,25 @@
 body{
 margin:0;
 font-family:Arial,Helvetica,sans-serif;
-background:#070b14;
+background:#050913;
 color:white;
 }
 
 header{
-padding:20px;
-border-bottom:1px solid #1a2135;
 display:flex;
 justify-content:space-between;
 align-items:center;
+padding:20px;
+border-bottom:1px solid #1a2135;
 }
 
 #logo{
 font-size:20px;
-letter-spacing:5px;
+letter-spacing:6px;
 }
 
 #container{
-max-width:1200px;
+max-width:1300px;
 margin:auto;
 padding:40px 20px;
 }
@@ -46,20 +45,24 @@ opacity:.7;
 }
 
 .searchBox{
+
 background:#101626;
 border:1px solid #1a2135;
 border-radius:16px;
-padding:20px;
+padding:25px;
 margin-top:30px;
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+
 }
 
 input,select{
 
-width:100%;
 padding:14px;
 border-radius:8px;
 border:none;
-margin-top:10px;
 background:#0d1424;
 color:white;
 
@@ -67,7 +70,6 @@ color:white;
 
 button{
 
-margin-top:15px;
 padding:14px;
 border:none;
 border-radius:10px;
@@ -91,6 +93,10 @@ border-radius:12px;
 padding:20px;
 margin-bottom:20px;
 
+display:flex;
+justify-content:space-between;
+align-items:center;
+
 }
 
 .price{
@@ -103,7 +109,26 @@ color:#3b82f6;
 .book{
 
 background:#10b981;
-margin-top:10px;
+
+}
+
+.filters{
+
+margin-top:20px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+
+}
+
+.filterBtn{
+
+padding:10px 14px;
+border-radius:20px;
+border:none;
+background:#1a2135;
+color:white;
+cursor:pointer;
 
 }
 
@@ -118,9 +143,7 @@ margin-top:10px;
 <div id="logo">CONSIA TRAVEL</div>
 
 <div>
-
 <button onclick="goHome()">HOME</button>
-
 </div>
 
 </header>
@@ -129,25 +152,46 @@ margin-top:10px;
 
 <h1>Buscar vuelos, hoteles y tours</h1>
 
-<p>CONSIA encuentra las mejores opciones en todo el mundo.</p>
+<p>CONSIA analiza miles de opciones en todo el mundo.</p>
 
 <div class="searchBox">
 
 <select id="type">
-
 <option value="flights">Vuelos</option>
 <option value="hotels">Hoteles</option>
 <option value="tours">Tours</option>
-
 </select>
 
-<input id="origin" placeholder="Origen / Ciudad salida">
+<input id="origin" placeholder="Origen">
 
 <input id="destination" placeholder="Destino">
 
 <input id="date" type="date">
 
+<input id="returnDate" type="date">
+
+<select id="people">
+<option value="1">1 persona</option>
+<option value="2">2 personas</option>
+<option value="3">3 personas</option>
+<option value="4">4 personas</option>
+</select>
+
+<select id="class">
+<option value="economy">Economy</option>
+<option value="business">Business</option>
+<option value="first">First Class</option>
+</select>
+
 <button onclick="searchTravel()">Buscar</button>
+
+</div>
+
+<div class="filters">
+
+<button class="filterBtn" onclick="sortPrice()">Precio</button>
+<button class="filterBtn" onclick="sortFast()">Más rápido</button>
+<button class="filterBtn" onclick="sortBest()">Mejor opción</button>
 
 </div>
 
@@ -156,6 +200,8 @@ margin-top:10px;
 </div>
 
 <script>
+
+let currentResults=[]
 
 function goHome(){
 
@@ -169,10 +215,13 @@ const type=document.getElementById("type").value
 const origin=document.getElementById("origin").value
 const destination=document.getElementById("destination").value
 const date=document.getElementById("date").value
+const returnDate=document.getElementById("returnDate").value
+const people=document.getElementById("people").value
+const travelClass=document.getElementById("class").value
 
 const resultsBox=document.getElementById("results")
 
-resultsBox.innerHTML="Buscando..."
+resultsBox.innerHTML="CONSIA buscando..."
 
 try{
 
@@ -181,9 +230,7 @@ const res=await fetch("https://api.consia.world/travel/search",{
 method:"POST",
 
 headers:{
-
 "Content-Type":"application/json"
-
 },
 
 body:JSON.stringify({
@@ -191,7 +238,10 @@ body:JSON.stringify({
 type,
 origin,
 destination,
-date
+date,
+returnDate,
+people,
+class:travelClass
 
 })
 
@@ -199,7 +249,9 @@ date
 
 const data=await res.json()
 
-renderResults(data.results)
+currentResults=data.results || []
+
+renderResults(currentResults)
 
 }catch(e){
 
@@ -215,7 +267,7 @@ const box=document.getElementById("results")
 
 box.innerHTML=""
 
-if(!results || results.length===0){
+if(results.length===0){
 
 box.innerHTML="No se encontraron resultados"
 
@@ -231,13 +283,21 @@ div.className="card"
 
 div.innerHTML=`
 
+<div>
+
 <h3>${item.title}</h3>
 
 <p>${item.description || ""}</p>
 
+</div>
+
+<div>
+
 <div class="price">$${item.price}</div>
 
 <button class="book" onclick="book('${item.link}')">Reservar</button>
+
+</div>
 
 `
 
@@ -253,8 +313,28 @@ window.open(link,"_blank")
 
 }
 
+function sortPrice(){
+
+currentResults.sort((a,b)=>a.price-b.price)
+renderResults(currentResults)
+
+}
+
+function sortFast(){
+
+currentResults.sort((a,b)=>(a.duration||0)-(b.duration||0))
+renderResults(currentResults)
+
+}
+
+function sortBest(){
+
+currentResults.sort((a,b)=>(b.score||0)-(a.score||0))
+renderResults(currentResults)
+
+}
+
 </script>
 
 </body>
-
 </html>
