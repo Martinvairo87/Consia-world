@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Global Agent Network</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0f1a;
+color:white;
+}
+
+header{
+padding:20px;
+text-align:center;
+font-size:28px;
+letter-spacing:6px;
+border-bottom:1px solid #1a2135;
+}
+
+#layout{
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:20px;
+padding:30px;
+max-width:1400px;
+margin:auto;
+}
+
+.panel{
+background:#101626;
+border-radius:12px;
+padding:20px;
+}
+
+.table{
+width:100%;
+border-collapse:collapse;
+}
+
+.table th,.table td{
+padding:10px;
+border-bottom:1px solid #1a2135;
+text-align:left;
+font-size:14px;
+}
+
+.status{
+padding:4px 10px;
+border-radius:999px;
+font-size:12px;
+}
+
+.active{ background:#10b981; }
+.idle{ background:#1d4ed8; }
+.processing{ background:#92400e; }
+
+button{
+padding:10px 14px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.metric{
+font-size:28px;
+color:#9ecbff;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>CONSIA GLOBAL AGENT NETWORK</header>
+
+<div id="layout">
+
+<div class="panel">
+
+<h2>Agents</h2>
+
+<table class="table">
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Agent</th>
+<th>Task</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="agents"></tbody>
+
+</table>
+
+</div>
+
+<div class="panel">
+
+<h2>Network Metrics</h2>
+
+<div>
+<div>Total Agents</div>
+<div id="agentCount" class="metric">0</div>
+</div>
+
+<div>
+<div>Active Tasks</div>
+<div id="tasks" class="metric">0</div>
+</div>
+
+<div>
+<div>Optimizations</div>
+<div id="optimizations" class="metric">0</div>
+</div>
+
+<button onclick="createAgent()">Create Agent</button>
+
+</div>
+
+</div>
+
+<script>
+
+let agents=[]
+
+function createAgent(){
+
+const names=[
+"Price Optimizer",
+"Supplier Finder",
+"Logistics Tracker",
+"Market Analyzer"
+]
+
+const tasks=[
+"Scanning market",
+"Comparing suppliers",
+"Analyzing demand",
+"Optimizing pricing"
+]
+
+const agent={
+
+id:"AGT"+Math.floor(Math.random()*100000),
+
+name:names[Math.floor(Math.random()*names.length)],
+
+task:tasks[Math.floor(Math.random()*tasks.length)],
+
+status:"idle"
+
+}
+
+agents.push(agent)
+
+render()
+
+}
+
+function updateAgent(i){
+
+const states=["idle","processing","active"]
+
+let current=states.indexOf(agents[i].status)
+
+if(current<states.length-1){
+
+agents[i].status=states[current+1]
+
+}
+
+render()
+
+}
+
+function render(){
+
+const container=document.getElementById("agents")
+
+container.innerHTML=""
+
+let tasks=0
+
+agents.forEach((a,i)=>{
+
+if(a.status==="processing" || a.status==="active") tasks++
+
+const tr=document.createElement("tr")
+
+tr.innerHTML=`
+
+<td>${a.id}</td>
+
+<td>${a.name}</td>
+
+<td>${a.task}</td>
+
+<td><span class="status ${a.status}">${a.status}</span></td>
+
+<td>
+
+<button onclick="updateAgent(${i})">
+
+Run
+
+</button>
+
+</td>
+
+`
+
+container.appendChild(tr)
+
+})
+
+document.getElementById("agentCount").innerText=agents.length
+document.getElementById("tasks").innerText=tasks
+document.getElementById("optimizations").innerText=tasks*2
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
