@@ -1,393 +1,391 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>CONSIA</title>
 
 <style>
-
 body{
-margin:0;
-font-family:Arial;
-background:#0b0f1a;
-color:white;
-display:flex;
-height:100vh;
-overflow:hidden;
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f1a;
+  color:white;
 }
 
-#sidebar{
-width:280px;
-background:#060912;
-border-right:1px solid #1a2135;
-display:flex;
-flex-direction:column;
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(6,9,18,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #1a2135;
+}
+
+#topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 22px;
+  gap:20px;
 }
 
 #logo{
-padding:20px;
-font-weight:bold;
-letter-spacing:6px;
-text-align:center;
-border-bottom:1px solid #1a2135;
+  font-size:22px;
+  letter-spacing:6px;
+  font-weight:bold;
+  white-space:nowrap;
 }
 
-#newChat{
-margin:15px;
-padding:12px;
-border:none;
-border-radius:8px;
-background:#2563eb;
-color:white;
-cursor:pointer;
+#nav{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
 }
 
-#wallet{
-padding:12px;
-border-top:1px solid #1a2135;
-border-bottom:1px solid #1a2135;
-text-align:center;
-font-size:14px;
+.navBtn{
+  padding:10px 14px;
+  border:none;
+  border-radius:999px;
+  background:#141b2e;
+  color:white;
+  cursor:pointer;
+  font-size:13px;
 }
 
-#history{
-flex:1;
-overflow-y:auto;
-padding:10px;
+.navBtn:hover{
+  background:#2563eb;
 }
 
-.chatItem{
-padding:10px;
-cursor:pointer;
-font-size:13px;
-opacity:.8;
+#hero{
+  padding:42px 24px 24px;
+  text-align:center;
+  border-bottom:1px solid #1a2135;
 }
 
-.chatItem:hover{
-opacity:1;
+#hero h1{
+  margin:0;
+  font-size:36px;
+  letter-spacing:2px;
 }
 
-#main{
-flex:1;
-display:flex;
-flex-direction:column;
+#hero p{
+  max-width:900px;
+  margin:14px auto 0;
+  opacity:.75;
+  line-height:1.6;
 }
 
-#mode{
-display:flex;
-justify-content:center;
-gap:20px;
-padding:12px;
-border-bottom:1px solid #1a2135;
+#launchBox{
+  max-width:1000px;
+  margin:28px auto 0;
+  background:#101626;
+  border:1px solid #1a2135;
+  border-radius:18px;
+  padding:24px;
 }
 
-.modeBtn{
-padding:6px 14px;
-border-radius:20px;
-background:#141b2e;
-cursor:pointer;
-font-size:13px;
-}
-
-.modeBtn.active{
-background:#2563eb;
-}
-
-#chat{
-flex:1;
-overflow-y:auto;
-padding:30px;
-max-width:900px;
-margin:auto;
-width:100%;
-}
-
-.message{
-margin-bottom:18px;
-line-height:1.6;
-}
-
-.user{
-color:#9ecbff;
-}
-
-.ai{
-color:white;
-}
-
-#inputArea{
-padding:20px;
-background:#070a13;
-display:flex;
-gap:10px;
-justify-content:center;
-border-top:1px solid #1a2135;
+#quickPromptWrap{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:18px;
 }
 
 #prompt{
-width:600px;
-max-width:80%;
-padding:14px;
-border-radius:10px;
-border:none;
-font-size:16px;
-background:#101626;
-color:white;
+  width:620px;
+  max-width:90%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:#0d1424;
+  color:white;
+  font-size:16px;
 }
 
-button{
-padding:12px 18px;
-border:none;
-border-radius:10px;
-background:#2563eb;
-color:white;
-cursor:pointer;
+#sendBtn{
+  padding:14px 18px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
 }
 
+#quickResponse{
+  margin-top:18px;
+  background:#0d1424;
+  border-radius:12px;
+  padding:16px;
+  min-height:70px;
+  text-align:left;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+
+#grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
+  padding:28px;
+  max-width:1400px;
+  margin:auto;
+}
+
+.card{
+  background:#101626;
+  border:1px solid #1a2135;
+  border-radius:14px;
+  padding:20px;
+}
+
+.card h3{
+  margin-top:0;
+}
+
+.card p{
+  opacity:.75;
+  min-height:48px;
+}
+
+.card button{
+  margin-top:10px;
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+
+#quick{
+  max-width:1400px;
+  margin:auto;
+  padding:0 28px 30px;
+}
+
+#quickBox{
+  background:#101626;
+  border:1px solid #1a2135;
+  border-radius:14px;
+  padding:20px;
+}
+
+#quickActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+
+.quickBtn{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#141b2e;
+  color:white;
+  cursor:pointer;
+}
+
+.quickBtn:hover{
+  background:#2563eb;
+}
+
+#footer{
+  text-align:center;
+  padding:24px;
+  opacity:.6;
+  border-top:1px solid #1a2135;
+}
+
+@media (max-width: 900px){
+  #topbar{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  #nav{
+    justify-content:flex-start;
+  }
+  #hero h1{
+    font-size:28px;
+  }
+}
 </style>
-
 </head>
-
 <body>
 
-<div id="sidebar">
+<header>
+  <div id="topbar">
+    <div id="logo">CONSIA</div>
 
-<div id="logo">CONSIA</div>
+    <div id="nav">
+      <button class="navBtn" onclick="go('/dashboard.html')">Dashboard</button>
+      <button class="navBtn" onclick="go('/apps.html')">App Store</button>
+      <button class="navBtn" onclick="go('/marketplace.html')">Marketplace</button>
+      <button class="navBtn" onclick="go('/consia-os.html')">CONSIA OS</button>
+      <button class="navBtn" onclick="go('/command-center.html')">Command Center</button>
+      <button class="navBtn" onclick="go('/owner.html')">Owner Console</button>
+    </div>
+  </div>
+</header>
 
-<div id="wallet">
-Balance: <span id="balance">...</span>
-</div>
+<section id="hero">
+  <h1>CONSIA GLOBAL AI PLATFORM</h1>
+  <p>
+    Puerta de entrada única al ecosistema CONSIA:
+    IA, App Store, Marketplace, Product Index, Supplier Engine, Orders, Logistics,
+    Payments, Agents, Automation y control Owner-Only.
+  </p>
 
-<button id="newChat" onclick="newChat()">Nuevo chat</button>
+  <div id="launchBox">
+    <h3>Launch CONSIA AI</h3>
+    <div id="quickPromptWrap">
+      <input id="prompt" placeholder="Habla con CONSIA..." />
+      <button id="sendBtn" onclick="sendQuickChat()">Enviar</button>
+    </div>
+    <div id="quickResponse">CONSIA listo.</div>
+  </div>
+</section>
 
-<div id="history"></div>
+<section id="grid">
 
-</div>
+  <div class="card">
+    <h3>Dashboard</h3>
+    <p>Estado, wallet y acciones rápidas.</p>
+    <button onclick="go('/dashboard.html')">Open</button>
+  </div>
 
-<div id="main">
+  <div class="card">
+    <h3>AI App Store</h3>
+    <p>Catálogo de aplicaciones de IA dentro de CONSIA.</p>
+    <button onclick="go('/apps.html')">Open</button>
+  </div>
 
-<div id="mode">
+  <div class="card">
+    <h3>Marketplace</h3>
+    <p>Apps, agentes, prompts y herramientas premium.</p>
+    <button onclick="go('/marketplace.html')">Open</button>
+  </div>
 
-<div class="modeBtn active" onclick="setMode('chat')" id="chatBtn">CHAT</div>
-<div class="modeBtn" onclick="setMode('image')" id="imageBtn">IMAGE</div>
-<div class="modeBtn" onclick="setMode('voice')" id="voiceBtn">VOICE</div>
+  <div class="card">
+    <h3>Global Commerce</h3>
+    <p>Búsqueda global y compra vía CONSIA.</p>
+    <button onclick="go('/commerce.html')">Open</button>
+  </div>
 
-</div>
+  <div class="card">
+    <h3>Product Index</h3>
+    <p>Índice global preparado para escalar a millones de productos.</p>
+    <button onclick="go('/product-index.html')">Open</button>
+  </div>
 
-<div id="chat"></div>
+  <div class="card">
+    <h3>Supplier Engine</h3>
+    <p>Optimización de proveedores, costos y margen CONSIA.</p>
+    <button onclick="go('/supplier-engine.html')">Open</button>
+  </div>
 
-<div id="inputArea">
+  <div class="card">
+    <h3>Order Orchestrator</h3>
+    <p>Orquestación global de pedidos.</p>
+    <button onclick="go('/order-orchestrator.html')">Open</button>
+  </div>
 
-<input id="prompt" placeholder="Habla con CONSIA..." />
+  <div class="card">
+    <h3>Logistics Engine</h3>
+    <p>Seguimiento de envíos y couriers globales.</p>
+    <button onclick="go('/logistics-engine.html')">Open</button>
+  </div>
 
-<button onclick="send()">Enviar</button>
+  <div class="card">
+    <h3>Payments Engine</h3>
+    <p>Motor financiero global con comisión y revenue.</p>
+    <button onclick="go('/payments-engine.html')">Open</button>
+  </div>
 
-</div>
+  <div class="card">
+    <h3>Agent Network</h3>
+    <p>Red de agentes autónomos para análisis y optimización.</p>
+    <button onclick="go('/agent-network.html')">Open</button>
+  </div>
 
+  <div class="card">
+    <h3>Automation Engine</h3>
+    <p>Flujos automáticos que conectan módulos de CONSIA.</p>
+    <button onclick="go('/automation-engine.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Command Center</h3>
+    <p>Centro global con métricas y monitoreo.</p>
+    <button onclick="go('/command-center.html')">Open</button>
+  </div>
+
+  <div class="card">
+    <h3>Owner Console</h3>
+    <p>Pricing, routing, provider y lock global.</p>
+    <button onclick="go('/owner.html')">Open</button>
+  </div>
+
+</section>
+
+<section id="quick">
+  <div id="quickBox">
+    <h3>Quick Actions</h3>
+    <div id="quickActions">
+      <button class="quickBtn" onclick="go('/dashboard.html')">Open Dashboard</button>
+      <button class="quickBtn" onclick="go('/apps.html')">Open App Store</button>
+      <button class="quickBtn" onclick="go('/marketplace.html')">Open Marketplace</button>
+      <button class="quickBtn" onclick="go('/command-center.html')">Open Command Center</button>
+      <button class="quickBtn" onclick="go('/owner.html')">Open Owner Console</button>
+    </div>
+  </div>
+</section>
+
+<div id="footer">
+  CONSIA · Master Entry Point
 </div>
 
 <script>
-
-let mode="chat"
-
-let conversations=JSON.parse(localStorage.getItem("consiaChats")||"[]")
-let currentChat=[]
-
-function save(){
-localStorage.setItem("consiaChats",JSON.stringify(conversations))
+function go(path){
+  window.location = path;
 }
 
-function newChat(){
-currentChat=[]
-document.getElementById("chat").innerHTML=""
+async function sendQuickChat(){
+  const input = document.getElementById("prompt");
+  const box = document.getElementById("quickResponse");
+  const message = input.value.trim();
+
+  if(!message) return;
+
+  box.textContent = "CONSIA pensando...";
+
+  try{
+    const res = await fetch("https://api.consia.world/ai/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: "web",
+        message
+      })
+    });
+
+    const data = await res.json();
+    box.textContent = data.answer || "Sin respuesta.";
+  }catch(e){
+    box.textContent = "Error conectando con CONSIA API.";
+  }
 }
 
-function loadHistory(){
-
-const history=document.getElementById("history")
-history.innerHTML=""
-
-conversations.forEach((c,i)=>{
-
-const div=document.createElement("div")
-
-div.className="chatItem"
-
-div.innerText=c[0]?.text||"Chat "+i
-
-div.onclick=()=>{
-
-currentChat=c
-renderChat()
-
-}
-
-history.appendChild(div)
-
-})
-
-}
-
-function renderChat(){
-
-const chat=document.getElementById("chat")
-
-chat.innerHTML=""
-
-currentChat.forEach(m=>{
-addMessage(m.type,m.text,false)
-})
-
-}
-
-function setMode(m){
-
-mode=m
-
-document.querySelectorAll(".modeBtn")
-.forEach(b=>b.classList.remove("active"))
-
-document.getElementById(m+"Btn").classList.add("active")
-
-}
-
-const chat=document.getElementById("chat")
-
-function addMessage(type,text,saveMsg=true){
-
-const div=document.createElement("div")
-
-div.className="message "+type
-
-if(type==="user"){
-div.innerHTML="<strong>Tú:</strong> "+text
-}else{
-div.innerHTML="<strong>CONSIA:</strong> "+text
-}
-
-chat.appendChild(div)
-
-chat.scrollTop=chat.scrollHeight
-
-if(saveMsg){
-currentChat.push({type,text})
-}
-
-}
-
-async function send(){
-
-const input=document.getElementById("prompt")
-
-const text=input.value.trim()
-
-if(!text) return
-
-addMessage("user",text)
-
-input.value=""
-
-let endpoint="https://api.consia.world/ai/chat"
-
-if(mode==="image"){
-endpoint="https://api.consia.world/ai/image"
-}
-
-const res=await fetch(endpoint,{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-user_id:"web",
-message:text
-})
-
-})
-
-const data=await res.json()
-
-if(mode==="image" && data.image){
-
-addMessage("ai","<img src='"+data.image+"' width='350'>")
-
-}else{
-
-streamText(data.answer)
-
-}
-
-conversations.push(currentChat)
-
-save()
-
-loadHistory()
-
-}
-
-function streamText(text){
-
-let i=0
-let output=""
-
-const div=document.createElement("div")
-
-div.className="message ai"
-
-div.innerHTML="<strong>CONSIA:</strong> "
-
-chat.appendChild(div)
-
-const interval=setInterval(()=>{
-
-output+=text[i]
-
-div.innerHTML="<strong>CONSIA:</strong> "+output
-
-i++
-
-if(i>=text.length){
-clearInterval(interval)
-}
-
-chat.scrollTop=chat.scrollHeight
-
-},15)
-
-}
-
-document.getElementById("prompt")
-.addEventListener("keypress",e=>{
-if(e.key==="Enter") send()
-})
-
-async function loadWallet(){
-
-try{
-
-const res=await fetch("https://api.consia.world/wallet?user_id=web")
-
-const data=await res.json()
-
-document.getElementById("balance").innerText=data.wallet?.balance ?? "0"
-
-}catch{
-
-document.getElementById("balance").innerText="0"
-
-}
-
-}
-
-loadWallet()
-loadHistory()
-
+document.getElementById("prompt").addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    sendQuickChat();
+  }
+});
 </script>
 
 </body>
