@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA TRAVEL AUTOPILOT</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#050913;
+color:white;
+}
+
+header{
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #1a2135;
+}
+
+#logo{
+font-size:20px;
+letter-spacing:6px;
+}
+
+#container{
+max-width:1200px;
+margin:auto;
+padding:40px 20px;
+}
+
+h1{
+font-size:42px;
+}
+
+.autopilotBox{
+
+margin-top:30px;
+background:#101626;
+border:1px solid #1a2135;
+border-radius:16px;
+padding:25px;
+
+}
+
+input{
+
+width:100%;
+padding:14px;
+margin-top:10px;
+border-radius:8px;
+border:none;
+background:#0d1424;
+color:white;
+
+}
+
+button{
+
+margin-top:15px;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+
+}
+
+.section{
+
+margin-top:40px;
+
+}
+
+.card{
+
+background:#101626;
+border:1px solid #1a2135;
+border-radius:12px;
+padding:20px;
+margin-top:15px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+}
+
+.price{
+
+font-size:22px;
+color:#3b82f6;
+
+}
+
+.activate{
+
+background:#10b981;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div id="logo">CONSIA AUTOPILOT</div>
+
+<button onclick="home()">HOME</button>
+
+</header>
+
+<div id="container">
+
+<h1>CONSIA Travel Autopilot</h1>
+
+<p>CONSIA monitorea vuelos y te avisa cuando aparece el mejor precio.</p>
+
+<div class="autopilotBox">
+
+<input id="origin" placeholder="Ciudad origen">
+
+<input id="destination" placeholder="Destino">
+
+<input id="date" type="date">
+
+<input id="budget" placeholder="Precio máximo deseado">
+
+<button onclick="activateAutopilot()">Activar Autopilot</button>
+
+</div>
+
+<div id="results"></div>
+
+</div>
+
+<script>
+
+function home(){
+
+window.location="/"
+
+}
+
+async function activateAutopilot(){
+
+const origin=document.getElementById("origin").value
+const destination=document.getElementById("destination").value
+const date=document.getElementById("date").value
+const budget=document.getElementById("budget").value
+
+const box=document.getElementById("results")
+
+box.innerHTML="CONSIA activando monitoreo..."
+
+try{
+
+const res=await fetch("https://api.consia.world/travel/autopilot",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+origin,
+destination,
+date,
+budget
+
+})
+
+})
+
+const data=await res.json()
+
+renderAutopilot(data)
+
+}catch(e){
+
+box.innerHTML="Error activando autopilot"
+
+}
+
+}
+
+function renderAutopilot(data){
+
+const box=document.getElementById("results")
+
+box.innerHTML=""
+
+box.innerHTML+=`
+
+<div class="section">
+
+<h2>Autopilot activo</h2>
+
+<p>CONSIA monitoreará precios y te avisará cuando bajen.</p>
+
+</div>
+
+`
+
+if(data.current){
+
+data.current.forEach(f=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+
+<h3>${f.route}</h3>
+
+<p>${f.airline}</p>
+
+</div>
+
+<div>
+
+<div class="price">$${f.price}</div>
+
+<button class="activate" onclick="book('${f.link}')">Reservar</button>
+
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+}
+
+function book(link){
+
+window.open(link,"_blank")
+
+}
+
+</script>
+
+</body>
+
+</html>
