@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Global Supplier Engine</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b0f1a;
+  color:#fff;
+}
+header{
+  padding:20px;
+  text-align:center;
+  font-size:28px;
+  letter-spacing:6px;
+  border-bottom:1px solid #1a2135;
+}
+#topbar{
+  padding:20px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  border-bottom:1px solid #1a2135;
+}
+#query{
+  width:420px;
+  max-width:80%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  background:#101626;
+  color:white;
+}
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
+#layout{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+  padding:30px;
+  max-width:1400px;
+  margin:auto;
+}
+.panel{
+  background:#101626;
+  border-radius:12px;
+  padding:20px;
+}
+h2,h3{
+  margin-top:0;
+}
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+.table th,.table td{
+  padding:10px;
+  border-bottom:1px solid #1a2135;
+  text-align:left;
+  font-size:14px;
+}
+.badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  background:#141b2e;
+}
+.good{ background:#065f46; }
+.warn{ background:#92400e; }
+.low{ background:#1d4ed8; }
+.card{
+  background:#0d1424;
+  border:1px solid #1a2135;
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:14px;
+}
+.metric{
+  font-size:28px;
+  color:#9ecbff;
+  margin:8px 0 0;
+}
+.small{
+  font-size:12px;
+  opacity:.7;
+}
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+@media (max-width: 980px){
+  #layout{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>CONSIA GLOBAL SUPPLIER ENGINE</header>
+
+<div id="topbar">
+  <input id="query" placeholder="Buscar producto o proveedor global...">
+  <button onclick="searchSuppliers()">Search</button>
+  <button onclick="loadAll()">Reset</button>
+</div>
+
+<div id="layout">
+
+  <div class="panel">
+    <h2>Supplier Index</h2>
+    <p class="small">Motor global para comparar costo, logística, tiempo y margen CONSIA.</p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Proveedor</th>
+          <th>Costo</th>
+          <th>Envío</th>
+          <th>Total</th>
+          <th>Entrega</th>
+          <th>Score</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="supplierRows"></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>CONSIA Optimizer</h2>
+
+    <div class="card">
+      <div class="small">Best Supplier</div>
+      <div id="bestSupplier" class="metric">-</div>
+    </div>
+
+    <div class="card">
+      <div class="small">Lowest Global Cost</div>
+      <div id="bestCost" class="metric">$0</div>
+    </div>
+
+    <div class="card">
+      <div class="small">Suggested CONSIA Price</div>
+      <div id="consiaPrice" class="metric">$0</div>
+    </div>
+
+    <div class="card">
+      <div class="small">Projected Margin</div>
+      <div id="consiaMargin" class="metric">$0</div>
+    </div>
+
+    <div class="card">
+      <h3>Order Automation</h3>
+      <div class="actions">
+        <button onclick="simulateOrder()">Create Supplier Order</button>
+        <button onclick="simulateSync()">Sync Inventory</button>
+      </div>
+      <p id="engineLog" class="small">Engine ready.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const supplierData = [
+  {
+    product:"Wireless Headphones Pro",
+    supplier:"AliExpress Global",
+    cost:18,
+    shipping:6,
+    delivery:"10-15 days",
+    stock:420,
+    reliability:4.5
+  },
+  {
+    product:"Wireless Headphones Pro",
+    supplier:"Alibaba Factory Direct",
+    cost:14,
+    shipping:9,
+    delivery:"18-25 days",
+    stock:2000,
+    reliability:4.2
+  },
+  {
+    product:"Wireless Headphones Pro",
+    supplier:"EU Fast Supplier",
+    cost:22,
+    shipping:4,
+    delivery:"4-7 days",
+    stock:120,
+    reliability:4.8
+  },
+  {
+    product:"Smart Watch Ultra",
+    supplier:"AliExpress Tech Hub",
+    cost:26,
+    shipping:7,
+    delivery:"10-14 days",
+    stock:850,
+    reliability:4.4
+  },
+  {
+    product:"Smart Watch Ultra",
+    supplier:"Shenzhen Supplier",
+    cost:20,
+    shipping:11,
+    delivery:"18-22 days",
+    stock:3500,
+    reliability:4.1
+  },
+  {
+    product:"Gaming Mouse RGB",
+    supplier:"Alibaba Accessories",
+    cost:7,
+    shipping:5,
+    delivery:"12-20 days",
+    stock:5000,
+    reliability:4.3
+  },
+  {
+    product:"Gaming Mouse RGB",
+    supplier:"Fast LATAM Stock",
+    cost:11,
+    shipping:3,
+    delivery:"3-5 days",
+    stock:90,
+    reliability:4.9
+  }
+];
+
+let currentResults = [...supplierData];
+
+function calcScore(item){
+  const total = item.cost + item.shipping;
+  const deliveryScore = item.delivery.includes("3-5") || item.delivery.includes("4-7") ? 5 :
+                        item.delivery.includes("10-15") || item.delivery.includes("10-14") ? 4 : 3;
+  return ((item.reliability * 10) + (deliveryScore * 8) + (Math.max(1, 40 - total))).toFixed(1);
+}
+
+function getStatus(item){
+  if(item.stock < 100) return { text:"Low Stock", cls:"warn" };
+  if(item.reliability >= 4.7) return { text:"Top Supplier", cls:"good" };
+  return { text:"Active", cls:"low" };
+}
+
+function render(rows){
+  const tbody = document.getElementById("supplierRows");
+  tbody.innerHTML = "";
+
+  rows.forEach((item, idx) => {
+    const total = item.cost + item.shipping;
+    const score = calcScore(item);
+    const status = getStatus(item);
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${item.product}</td>
+      <td>${item.supplier}</td>
+      <td>$${item.cost}</td>
+      <td>$${item.shipping}</td>
+      <td>$${total}</td>
+      <td>${item.delivery}</td>
+      <td>${score}</td>
+      <td><span class="badge ${status.cls}">${status.text}</span></td>
+      <td><button onclick="selectSupplier(${idx})">Select</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function findBest(rows){
+  if(!rows.length) return null;
+
+  return [...rows].sort((a,b) => {
+    const totalA = a.cost + a.shipping;
+    const totalB = b.cost + b.shipping;
+    const scoreA = parseFloat(calcScore(a));
+    const scoreB = parseFloat(calcScore(b));
+
+    return (totalA - totalB) || (scoreB - scoreA);
+  })[0];
+}
+
+function updateOptimizer(rows){
+  const best = findBest(rows);
+
+  if(!best){
+    document.getElementById("bestSupplier").innerText = "-";
+    document.getElementById("bestCost").innerText = "$0";
+    document.getElementById("consiaPrice").innerText = "$0";
+    document.getElementById("consiaMargin").innerText = "$0";
+    return;
+  }
+
+  const total = best.cost + best.shipping;
+  const consiaSuggested = Math.ceil((total * 1.45) * 100) / 100;
+  const margin = Math.ceil((consiaSuggested - total) * 100) / 100;
+
+  document.getElementById("bestSupplier").innerText = best.supplier;
+  document.getElementById("bestCost").innerText = "$" + total;
+  document.getElementById("consiaPrice").innerText = "$" + consiaSuggested;
+  document.getElementById("consiaMargin").innerText = "$" + margin;
+}
+
+function searchSuppliers(){
+  const q = document.getElementById("query").value.toLowerCase().trim();
+  currentResults = supplierData.filter(item =>
+    item.product.toLowerCase().includes(q) ||
+    item.supplier.toLowerCase().includes(q)
+  );
+  render(currentResults);
+  updateOptimizer(currentResults);
+}
+
+function loadAll(){
+  document.getElementById("query").value = "";
+  currentResults = [...supplierData];
+  render(currentResults);
+  updateOptimizer(currentResults);
+  document.getElementById("engineLog").innerText = "Full supplier index loaded.";
+}
+
+function selectSupplier(idx){
+  const item = currentResults[idx];
+  const total = item.cost + item.shipping;
+  document.getElementById("bestSupplier").innerText = item.supplier;
+  document.getElementById("bestCost").innerText = "$" + total;
+
+  const consiaSuggested = Math.ceil((total * 1.45) * 100) / 100;
+  const margin = Math.ceil((consiaSuggested - total) * 100) / 100;
+
+  document.getElementById("consiaPrice").innerText = "$" + consiaSuggested;
+  document.getElementById("consiaMargin").innerText = "$" + margin;
+
+  document.getElementById("engineLog").innerText =
+    "Supplier selected: " + item.supplier + " for " + item.product + ".";
+}
+
+function simulateOrder(){
+  const supplier = document.getElementById("bestSupplier").innerText;
+  if(supplier === "-"){
+    document.getElementById("engineLog").innerText = "Select a supplier first.";
+    return;
+  }
+  document.getElementById("engineLog").innerText =
+    "Supplier order created automatically via CONSIA with " + supplier + ".";
+}
+
+function simulateSync(){
+  document.getElementById("engineLog").innerText =
+    "Inventory, pricing and supplier data synced successfully.";
+}
+
+loadAll();
+</script>
+
+</body>
+</html>
