@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA GLOBAL TRAVEL ENGINE</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#050913;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px;
+border-bottom:1px solid #1a2135;
+}
+
+#logo{
+font-size:20px;
+letter-spacing:6px;
+}
+
+#container{
+max-width:1400px;
+margin:auto;
+padding:40px 20px;
+}
+
+h1{
+font-size:44px;
+}
+
+.searchBox{
+
+margin-top:30px;
+background:#101626;
+border:1px solid #1a2135;
+border-radius:16px;
+padding:25px;
+
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:15px;
+
+}
+
+input,select{
+
+padding:14px;
+border-radius:8px;
+border:none;
+background:#0d1424;
+color:white;
+
+}
+
+button{
+
+padding:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+
+}
+
+.tabs{
+
+margin-top:30px;
+display:flex;
+gap:10px;
+}
+
+.tab{
+
+padding:10px 16px;
+border-radius:20px;
+background:#1a2135;
+cursor:pointer;
+
+}
+
+.active{
+background:#2563eb;
+}
+
+.results{
+
+margin-top:30px;
+
+}
+
+.card{
+
+background:#101626;
+border:1px solid #1a2135;
+border-radius:12px;
+padding:20px;
+margin-top:15px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+}
+
+.price{
+
+font-size:24px;
+color:#3b82f6;
+
+}
+
+.book{
+
+background:#10b981;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div id="logo">CONSIA TRAVEL</div>
+
+<button onclick="home()">HOME</button>
+
+</header>
+
+<div id="container">
+
+<h1>CONSIA Global Travel Engine</h1>
+
+<p>Busca vuelos, hoteles, tours y paquetes en todo el mundo.</p>
+
+<div class="searchBox">
+
+<select id="type">
+
+<option value="flights">Vuelos</option>
+<option value="hotels">Hoteles</option>
+<option value="tours">Tours</option>
+<option value="packages">Paquetes</option>
+
+</select>
+
+<input id="origin" placeholder="Origen">
+
+<input id="destination" placeholder="Destino">
+
+<input id="date" type="date">
+
+<input id="returnDate" type="date">
+
+<select id="people">
+
+<option value="1">1 persona</option>
+<option value="2">2 personas</option>
+<option value="3">3 personas</option>
+<option value="4">4 personas</option>
+
+</select>
+
+<select id="class">
+
+<option value="economy">Economy</option>
+<option value="business">Business</option>
+<option value="first">First Class</option>
+
+</select>
+
+<button onclick="search()">Buscar</button>
+
+</div>
+
+<div class="tabs">
+
+<div class="tab active" onclick="setTab('best')">Mejor opción</div>
+<div class="tab" onclick="setTab('cheap')">Más barato</div>
+<div class="tab" onclick="setTab('fast')">Más rápido</div>
+
+</div>
+
+<div id="results" class="results"></div>
+
+</div>
+
+<script>
+
+let resultsData=[]
+let currentTab="best"
+
+function home(){
+window.location="/"
+}
+
+async function search(){
+
+const type=document.getElementById("type").value
+const origin=document.getElementById("origin").value
+const destination=document.getElementById("destination").value
+const date=document.getElementById("date").value
+const returnDate=document.getElementById("returnDate").value
+const people=document.getElementById("people").value
+const travelClass=document.getElementById("class").value
+
+const box=document.getElementById("results")
+
+box.innerHTML="CONSIA buscando en todo el mundo..."
+
+try{
+
+const res=await fetch("https://api.consia.world/travel/global-search",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+type,
+origin,
+destination,
+date,
+returnDate,
+people,
+class:travelClass
+
+})
+
+})
+
+const data=await res.json()
+
+resultsData=data.results || []
+
+sortAndRender()
+
+}catch(e){
+
+box.innerHTML="Error buscando resultados"
+
+}
+
+}
+
+function setTab(tab){
+
+currentTab=tab
+
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
+
+event.target.classList.add("active")
+
+sortAndRender()
+
+}
+
+function sortAndRender(){
+
+let results=[...resultsData]
+
+if(currentTab==="cheap"){
+results.sort((a,b)=>a.price-b.price)
+}
+
+if(currentTab==="fast"){
+results.sort((a,b)=>(a.duration||0)-(b.duration||0))
+}
+
+if(currentTab==="best"){
+results.sort((a,b)=>(b.score||0)-(a.score||0))
+}
+
+render(results)
+
+}
+
+function render(results){
+
+const box=document.getElementById("results")
+
+box.innerHTML=""
+
+if(results.length===0){
+
+box.innerHTML="No se encontraron resultados"
+
+return
+
+}
+
+results.forEach(item=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+
+<h3>${item.title}</h3>
+
+<p>${item.provider || ""}</p>
+
+</div>
+
+<div>
+
+<div class="price">$${item.price}</div>
+
+<button class="book" onclick="book('${item.link}')">Reservar</button>
+
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+function book(link){
+
+window.open(link,"_blank")
+
+}
+
+</script>
+
+</body>
+</html>
