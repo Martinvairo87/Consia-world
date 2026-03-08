@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA Global Product Index</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b0f1a;
+color:white;
+}
+
+header{
+padding:20px;
+text-align:center;
+font-size:28px;
+letter-spacing:6px;
+border-bottom:1px solid #1a2135;
+}
+
+#searchbar{
+padding:20px;
+display:flex;
+justify-content:center;
+gap:10px;
+}
+
+#query{
+width:420px;
+max-width:80%;
+padding:12px;
+border-radius:8px;
+border:none;
+background:#101626;
+color:white;
+}
+
+button{
+padding:12px 18px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+#results{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
+padding:30px;
+max-width:1200px;
+margin:auto;
+}
+
+.card{
+background:#101626;
+border-radius:12px;
+padding:20px;
+text-align:center;
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+}
+
+.price{
+color:#9ecbff;
+font-size:18px;
+margin-top:8px;
+}
+
+.source{
+font-size:12px;
+opacity:.6;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>CONSIA GLOBAL PRODUCT INDEX</header>
+
+<div id="searchbar">
+
+<input id="query" placeholder="Buscar productos globales">
+
+<button onclick="search()">Search</button>
+
+</div>
+
+<div id="results"></div>
+
+<script>
+
+const globalProducts=[
+
+{
+title:"Wireless Headphones Pro",
+price:39,
+img:"https://picsum.photos/300/200",
+supplier:"AliExpress",
+rating:4.8
+},
+
+{
+title:"Smart Watch Ultra",
+price:49,
+img:"https://picsum.photos/300/201",
+supplier:"Alibaba",
+rating:4.7
+},
+
+{
+title:"Portable Speaker Max",
+price:29,
+img:"https://picsum.photos/300/202",
+supplier:"Global Supplier",
+rating:4.6
+},
+
+{
+title:"Gaming Mouse RGB",
+price:19,
+img:"https://picsum.photos/300/203",
+supplier:"AliExpress",
+rating:4.5
+}
+
+]
+
+function search(){
+
+const q=document.getElementById("query").value.toLowerCase()
+
+const results=globalProducts.filter(p=>
+p.title.toLowerCase().includes(q)
+)
+
+render(results)
+
+}
+
+function render(products){
+
+const container=document.getElementById("results")
+
+container.innerHTML=""
+
+products.forEach(p=>{
+
+const div=document.createElement("div")
+
+div.className="card"
+
+div.innerHTML=`
+
+<img src="${p.img}">
+
+<h3>${p.title}</h3>
+
+<div class="price">$${p.price}</div>
+
+<div class="source">Supplier: ${p.supplier}</div>
+
+<div class="source">Rating: ⭐ ${p.rating}</div>
+
+<button onclick="buy('${p.title}')">Buy via CONSIA</button>
+
+`
+
+container.appendChild(div)
+
+})
+
+}
+
+function buy(product){
+
+alert("Compra iniciada vía CONSIA: "+product)
+
+}
+
+render(globalProducts)
+
+</script>
+
+</body>
+</html>
