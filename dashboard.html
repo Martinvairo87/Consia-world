@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CONSIA Dashboard</title>
+<style>
+body{font-family:Arial;background:#0f172a;color:white;margin:0}
+header{padding:20px;background:#020617}
+.container{padding:20px}
+.card{background:#111827;padding:20px;border-radius:10px;margin-bottom:20px}
+button{padding:10px 15px;border:none;border-radius:6px;background:#2563eb;color:white;cursor:pointer}
+input{padding:10px;border-radius:6px;border:none;margin-right:10px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+td,th{padding:10px;border-bottom:1px solid #333}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>CONSIA Dashboard</h2>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h3>AI Chat Test</h3>
+<input id="message" placeholder="Ask CONSIA..." />
+<button onclick="sendChat()">Send</button>
+<p id="chatResult"></p>
+</div>
+
+<div class="card">
+<h3>Wallet</h3>
+<input id="userId" placeholder="User ID" />
+<button onclick="getWallet()">Get Wallet</button>
+<pre id="walletResult"></pre>
+</div>
+
+<div class="card">
+<h3>Generate Image</h3>
+<input id="prompt" placeholder="Image prompt"/>
+<button onclick="genImage()">Generate</button>
+<div id="imageResult"></div>
+</div>
+
+</div>
+
+<script>
+
+const API = "https://consia-api-live.jbdkb7r94d.workers.dev";
+
+async function sendChat(){
+
+const message=document.getElementById("message").value;
+
+const res=await fetch(API+"/ai/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+user_id:"dashboard",
+message:message
+})
+});
+
+const data=await res.json();
+
+document.getElementById("chatResult").innerText=data.answer;
+
+}
+
+async function getWallet(){
+
+const user=document.getElementById("userId").value;
+
+const res=await fetch(API+"/wallet?user_id="+user);
+
+const data=await res.json();
+
+document.getElementById("walletResult").innerText=JSON.stringify(data,null,2);
+
+}
+
+async function genImage(){
+
+const prompt=document.getElementById("prompt").value;
+
+const res=await fetch(API+"/ai/image",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({prompt:prompt})
+});
+
+const data=await res.json();
+
+document.getElementById("imageResult").innerHTML =
+'<img src="'+data.image+'" width="300">';
+
+}
+
+</script>
+
+</body>
+</html>
