@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA AI Travel Agent</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#050913;
+color:white;
+}
+
+header{
+padding:20px;
+display:flex;
+justify-content:space-between;
+border-bottom:1px solid #1a2135;
+}
+
+#logo{
+font-size:20px;
+letter-spacing:6px;
+}
+
+#container{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+
+h1{
+font-size:42px;
+}
+
+.agentBox{
+margin-top:30px;
+background:#101626;
+border:1px solid #1a2135;
+border-radius:16px;
+padding:25px;
+}
+
+textarea{
+width:100%;
+height:120px;
+padding:15px;
+border-radius:10px;
+border:none;
+background:#0d1424;
+color:white;
+font-size:16px;
+}
+
+button{
+margin-top:15px;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.results{
+margin-top:40px;
+}
+
+.section{
+margin-bottom:30px;
+}
+
+.card{
+background:#101626;
+border:1px solid #1a2135;
+border-radius:12px;
+padding:20px;
+margin-top:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.price{
+color:#3b82f6;
+font-size:22px;
+}
+
+.book{
+background:#10b981;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div id="logo">CONSIA AI TRAVEL</div>
+
+<button onclick="goHome()">HOME</button>
+
+</header>
+
+<div id="container">
+
+<h1>Planifica tu viaje con IA</h1>
+
+<p>Describe tu viaje y CONSIA encuentra vuelos, hoteles y tours.</p>
+
+<div class="agentBox">
+
+<textarea id="prompt" placeholder="Ej: quiero viajar desde Buenos Aires a Roma en julio por 10 días con hotel céntrico y excursiones..."></textarea>
+
+<button onclick="askAgent()">Planificar viaje</button>
+
+</div>
+
+<div id="results" class="results"></div>
+
+</div>
+
+<script>
+
+function goHome(){
+window.location="/"
+}
+
+async function askAgent(){
+
+const prompt=document.getElementById("prompt").value
+const results=document.getElementById("results")
+
+results.innerHTML="CONSIA planificando tu viaje..."
+
+try{
+
+const res=await fetch("https://api.consia.world/travel/agent",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+prompt
+})
+
+})
+
+const data=await res.json()
+
+renderTravel(data)
+
+}catch(e){
+
+results.innerHTML="Error generando viaje"
+
+}
+
+}
+
+function renderTravel(data){
+
+const box=document.getElementById("results")
+
+box.innerHTML=""
+
+if(data.flights){
+
+box.innerHTML+=`<div class="section"><h2>Vuelos</h2></div>`
+
+data.flights.forEach(f=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+<h3>${f.title}</h3>
+<p>${f.description || ""}</p>
+</div>
+
+<div>
+<div class="price">$${f.price}</div>
+<button class="book" onclick="book('${f.link}')">Reservar</button>
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+if(data.hotels){
+
+box.innerHTML+=`<div class="section"><h2>Hoteles</h2></div>`
+
+data.hotels.forEach(h=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+<h3>${h.title}</h3>
+<p>${h.description || ""}</p>
+</div>
+
+<div>
+<div class="price">$${h.price}</div>
+<button class="book" onclick="book('${h.link}')">Reservar</button>
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+if(data.tours){
+
+box.innerHTML+=`<div class="section"><h2>Tours y excursiones</h2></div>`
+
+data.tours.forEach(t=>{
+
+box.innerHTML+=`
+
+<div class="card">
+
+<div>
+<h3>${t.title}</h3>
+<p>${t.description || ""}</p>
+</div>
+
+<div>
+<div class="price">$${t.price}</div>
+<button class="book" onclick="book('${t.link}')">Reservar</button>
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+}
+
+function book(link){
+window.open(link,"_blank")
+}
+
+</script>
+
+</body>
+</html>
