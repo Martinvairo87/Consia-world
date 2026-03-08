@@ -20,7 +20,7 @@ overflow:hidden;
 }
 
 #sidebar{
-width:260px;
+width:280px;
 background:#060912;
 border-right:1px solid #1a2135;
 display:flex;
@@ -30,19 +30,27 @@ flex-direction:column;
 #logo{
 padding:20px;
 font-weight:bold;
-letter-spacing:5px;
+letter-spacing:6px;
 text-align:center;
 border-bottom:1px solid #1a2135;
 }
 
 #newChat{
 margin:15px;
-padding:10px;
+padding:12px;
 border:none;
 border-radius:8px;
 background:#2563eb;
 color:white;
 cursor:pointer;
+}
+
+#wallet{
+padding:12px;
+border-top:1px solid #1a2135;
+border-bottom:1px solid #1a2135;
+text-align:center;
+font-size:14px;
 }
 
 #history{
@@ -52,7 +60,7 @@ padding:10px;
 }
 
 .chatItem{
-padding:8px;
+padding:10px;
 cursor:pointer;
 font-size:13px;
 opacity:.8;
@@ -149,6 +157,10 @@ cursor:pointer;
 
 <div id="logo">CONSIA</div>
 
+<div id="wallet">
+Balance: <span id="balance">...</span>
+</div>
+
 <button id="newChat" onclick="newChat()">Nuevo chat</button>
 
 <div id="history"></div>
@@ -161,6 +173,7 @@ cursor:pointer;
 
 <div class="modeBtn active" onclick="setMode('chat')" id="chatBtn">CHAT</div>
 <div class="modeBtn" onclick="setMode('image')" id="imageBtn">IMAGE</div>
+<div class="modeBtn" onclick="setMode('voice')" id="voiceBtn">VOICE</div>
 
 </div>
 
@@ -184,22 +197,17 @@ let conversations=JSON.parse(localStorage.getItem("consiaChats")||"[]")
 let currentChat=[]
 
 function save(){
-
 localStorage.setItem("consiaChats",JSON.stringify(conversations))
-
 }
 
 function newChat(){
-
 currentChat=[]
 document.getElementById("chat").innerHTML=""
-
 }
 
 function loadHistory(){
 
 const history=document.getElementById("history")
-
 history.innerHTML=""
 
 conversations.forEach((c,i)=>{
@@ -213,7 +221,6 @@ div.innerText=c[0]?.text||"Chat "+i
 div.onclick=()=>{
 
 currentChat=c
-
 renderChat()
 
 }
@@ -231,9 +238,7 @@ const chat=document.getElementById("chat")
 chat.innerHTML=""
 
 currentChat.forEach(m=>{
-
 addMessage(m.type,m.text,false)
-
 })
 
 }
@@ -258,13 +263,9 @@ const div=document.createElement("div")
 div.className="message "+type
 
 if(type==="user"){
-
 div.innerHTML="<strong>Tú:</strong> "+text
-
 }else{
-
 div.innerHTML="<strong>CONSIA:</strong> "+text
-
 }
 
 chat.appendChild(div)
@@ -272,9 +273,7 @@ chat.appendChild(div)
 chat.scrollTop=chat.scrollHeight
 
 if(saveMsg){
-
 currentChat.push({type,text})
-
 }
 
 }
@@ -294,9 +293,7 @@ input.value=""
 let endpoint="https://api.consia.world/ai/chat"
 
 if(mode==="image"){
-
 endpoint="https://api.consia.world/ai/image"
-
 }
 
 const res=await fetch(endpoint,{
@@ -337,7 +334,6 @@ loadHistory()
 function streamText(text){
 
 let i=0
-
 let output=""
 
 const div=document.createElement("div")
@@ -357,9 +353,7 @@ div.innerHTML="<strong>CONSIA:</strong> "+output
 i++
 
 if(i>=text.length){
-
 clearInterval(interval)
-
 }
 
 chat.scrollTop=chat.scrollHeight
@@ -370,11 +364,28 @@ chat.scrollTop=chat.scrollHeight
 
 document.getElementById("prompt")
 .addEventListener("keypress",e=>{
-
 if(e.key==="Enter") send()
-
 })
 
+async function loadWallet(){
+
+try{
+
+const res=await fetch("https://api.consia.world/wallet?user_id=web")
+
+const data=await res.json()
+
+document.getElementById("balance").innerText=data.wallet?.balance ?? "0"
+
+}catch{
+
+document.getElementById("balance").innerText="0"
+
+}
+
+}
+
+loadWallet()
 loadHistory()
 
 </script>
