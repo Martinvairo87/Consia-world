@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>CONSIA</title>
 
@@ -11,21 +11,61 @@
 
 body{
 margin:0;
-font-family:Arial,Helvetica,sans-serif;
+font-family:Arial;
 background:#0b0f1a;
 color:white;
 display:flex;
-flex-direction:column;
 height:100vh;
+overflow:hidden;
 }
 
-header{
-padding:18px;
-text-align:center;
-font-size:26px;
-letter-spacing:6px;
+#sidebar{
+width:260px;
+background:#060912;
+border-right:1px solid #1a2135;
+display:flex;
+flex-direction:column;
+}
+
+#logo{
+padding:20px;
 font-weight:bold;
+letter-spacing:5px;
+text-align:center;
 border-bottom:1px solid #1a2135;
+}
+
+#newChat{
+margin:15px;
+padding:10px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+#history{
+flex:1;
+overflow-y:auto;
+padding:10px;
+}
+
+.chatItem{
+padding:8px;
+cursor:pointer;
+font-size:13px;
+opacity:.8;
+}
+
+.chatItem:hover{
+opacity:1;
+}
+
+#main{
+flex:1;
+display:flex;
+flex-direction:column;
 }
 
 #mode{
@@ -51,7 +91,7 @@ background:#2563eb;
 #chat{
 flex:1;
 overflow-y:auto;
-padding:25px;
+padding:30px;
 max-width:900px;
 margin:auto;
 width:100%;
@@ -67,11 +107,11 @@ color:#9ecbff;
 }
 
 .ai{
-color:#ffffff;
+color:white;
 }
 
 #inputArea{
-padding:18px;
+padding:20px;
 background:#070a13;
 display:flex;
 gap:10px;
@@ -96,28 +136,7 @@ border:none;
 border-radius:10px;
 background:#2563eb;
 color:white;
-font-size:15px;
 cursor:pointer;
-}
-
-button:hover{
-background:#1d4ed8;
-}
-
-.core{
-width:80px;
-height:80px;
-border-radius:50%;
-margin:auto;
-margin-top:30px;
-margin-bottom:15px;
-background:radial-gradient(circle,#3b82f6,#1e3a8a);
-box-shadow:0 0 30px #3b82f6;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
-letter-spacing:2px;
 }
 
 </style>
@@ -126,15 +145,22 @@ letter-spacing:2px;
 
 <body>
 
-<header>CONSIA</header>
+<div id="sidebar">
 
-<div class="core">AI</div>
+<div id="logo">CONSIA</div>
+
+<button id="newChat" onclick="newChat()">Nuevo chat</button>
+
+<div id="history"></div>
+
+</div>
+
+<div id="main">
 
 <div id="mode">
 
 <div class="modeBtn active" onclick="setMode('chat')" id="chatBtn">CHAT</div>
 <div class="modeBtn" onclick="setMode('image')" id="imageBtn">IMAGE</div>
-<div class="modeBtn" onclick="setMode('voice')" id="voiceBtn">VOICE</div>
 
 </div>
 
@@ -148,9 +174,69 @@ letter-spacing:2px;
 
 </div>
 
+</div>
+
 <script>
 
 let mode="chat"
+
+let conversations=JSON.parse(localStorage.getItem("consiaChats")||"[]")
+let currentChat=[]
+
+function save(){
+
+localStorage.setItem("consiaChats",JSON.stringify(conversations))
+
+}
+
+function newChat(){
+
+currentChat=[]
+document.getElementById("chat").innerHTML=""
+
+}
+
+function loadHistory(){
+
+const history=document.getElementById("history")
+
+history.innerHTML=""
+
+conversations.forEach((c,i)=>{
+
+const div=document.createElement("div")
+
+div.className="chatItem"
+
+div.innerText=c[0]?.text||"Chat "+i
+
+div.onclick=()=>{
+
+currentChat=c
+
+renderChat()
+
+}
+
+history.appendChild(div)
+
+})
+
+}
+
+function renderChat(){
+
+const chat=document.getElementById("chat")
+
+chat.innerHTML=""
+
+currentChat.forEach(m=>{
+
+addMessage(m.type,m.text,false)
+
+})
+
+}
 
 function setMode(m){
 
@@ -165,7 +251,7 @@ document.getElementById(m+"Btn").classList.add("active")
 
 const chat=document.getElementById("chat")
 
-function addMessage(type,text){
+function addMessage(type,text,saveMsg=true){
 
 const div=document.createElement("div")
 
@@ -185,11 +271,18 @@ chat.appendChild(div)
 
 chat.scrollTop=chat.scrollHeight
 
+if(saveMsg){
+
+currentChat.push({type,text})
+
+}
+
 }
 
 async function send(){
 
 const input=document.getElementById("prompt")
+
 const text=input.value.trim()
 
 if(!text) return
@@ -215,11 +308,8 @@ headers:{
 },
 
 body:JSON.stringify({
-
 user_id:"web",
-
 message:text
-
 })
 
 })
@@ -228,7 +318,7 @@ const data=await res.json()
 
 if(mode==="image" && data.image){
 
-addMessage("ai","<img src='"+data.image+"' width='300'>")
+addMessage("ai","<img src='"+data.image+"' width='350'>")
 
 }else{
 
@@ -236,15 +326,24 @@ streamText(data.answer)
 
 }
 
+conversations.push(currentChat)
+
+save()
+
+loadHistory()
+
 }
 
 function streamText(text){
 
 let i=0
+
 let output=""
 
 const div=document.createElement("div")
+
 div.className="message ai"
+
 div.innerHTML="<strong>CONSIA:</strong> "
 
 chat.appendChild(div)
@@ -270,15 +369,13 @@ chat.scrollTop=chat.scrollHeight
 }
 
 document.getElementById("prompt")
-.addEventListener("keypress",function(e){
+.addEventListener("keypress",e=>{
 
-if(e.key==="Enter"){
-
-send()
-
-}
+if(e.key==="Enter") send()
 
 })
+
+loadHistory()
 
 </script>
 
