@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA OS</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0f1a;
+color:white;
+display:flex;
+height:100vh;
+}
+
+#sidebar{
+width:260px;
+background:#060912;
+border-right:1px solid #1a2135;
+display:flex;
+flex-direction:column;
+}
+
+#logo{
+padding:20px;
+font-size:22px;
+letter-spacing:6px;
+text-align:center;
+border-bottom:1px solid #1a2135;
+}
+
+.menu{
+padding:14px 20px;
+cursor:pointer;
+font-size:14px;
+opacity:.8;
+}
+
+.menu:hover{
+opacity:1;
+background:#101626;
+}
+
+#main{
+flex:1;
+padding:40px;
+overflow:auto;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:20px;
+}
+
+.card{
+background:#101626;
+border-radius:12px;
+padding:20px;
+}
+
+button{
+margin-top:10px;
+padding:10px 14px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.metric{
+font-size:28px;
+color:#9ecbff;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="sidebar">
+
+<div id="logo">CONSIA</div>
+
+<div class="menu" onclick="openPage('https://consia.world')">
+AI Chat
+</div>
+
+<div class="menu" onclick="openPage('https://consia.world/apps.html')">
+AI App Store
+</div>
+
+<div class="menu" onclick="openPage('https://consia.world/marketplace.html')">
+Marketplace
+</div>
+
+<div class="menu" onclick="openPage('https://consia.world/product-index.html')">
+Product Index
+</div>
+
+<div class="menu" onclick="openPage('https://consia.world/supplier-engine.html')">
+Supplier Engine
+</div>
+
+<div class="menu" onclick="openPage('https://consia.world/order-orchestrator.html')">
+Orders
+</div>
+
+<div class="menu" onclick="openPage('https://consia.world/logistics-engine.html')">
+Logistics
+</div>
+
+<div class="menu" onclick="openPage('https://consia.world/payments-engine.html')">
+Payments
+</div>
+
+</div>
+
+<div id="main">
+
+<h1>CONSIA GLOBAL AI OPERATING SYSTEM</h1>
+
+<div class="grid">
+
+<div class="card">
+<h3>AI Engine</h3>
+<p>Motor de inteligencia artificial.</p>
+<button onclick="openPage('https://consia.world')">
+Open
+</button>
+</div>
+
+<div class="card">
+<h3>Marketplace</h3>
+<p>Venta global de productos.</p>
+<button onclick="openPage('https://consia.world/marketplace.html')">
+Open
+</button>
+</div>
+
+<div class="card">
+<h3>Supplier Engine</h3>
+<p>Optimización de proveedores.</p>
+<button onclick="openPage('https://consia.world/supplier-engine.html')">
+Open
+</button>
+</div>
+
+<div class="card">
+<h3>Orders</h3>
+<p>Orquestación de pedidos.</p>
+<button onclick="openPage('https://consia.world/order-orchestrator.html')">
+Open
+</button>
+</div>
+
+<div class="card">
+<h3>Logistics</h3>
+<p>Seguimiento de envíos global.</p>
+<button onclick="openPage('https://consia.world/logistics-engine.html')">
+Open
+</button>
+</div>
+
+<div class="card">
+<h3>Payments</h3>
+<p>Motor financiero global.</p>
+<button onclick="openPage('https://consia.world/payments-engine.html')">
+Open
+</button>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function openPage(url){
+
+window.location=url
+
+}
+
+</script>
+
+</body>
+</html>
