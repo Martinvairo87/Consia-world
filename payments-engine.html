@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Global Payments Engine</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0f1a;
+color:white;
+}
+
+header{
+padding:20px;
+text-align:center;
+font-size:28px;
+letter-spacing:6px;
+border-bottom:1px solid #1a2135;
+}
+
+#layout{
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:20px;
+padding:30px;
+max-width:1400px;
+margin:auto;
+}
+
+.panel{
+background:#101626;
+border-radius:12px;
+padding:20px;
+}
+
+.table{
+width:100%;
+border-collapse:collapse;
+}
+
+.table th,.table td{
+padding:10px;
+border-bottom:1px solid #1a2135;
+text-align:left;
+font-size:14px;
+}
+
+.status{
+padding:4px 10px;
+border-radius:999px;
+font-size:12px;
+}
+
+.pending{ background:#92400e; }
+.completed{ background:#10b981; }
+.failed{ background:#b91c1c; }
+
+button{
+padding:10px 14px;
+border:none;
+border-radius:8px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.metric{
+font-size:28px;
+color:#9ecbff;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>CONSIA GLOBAL PAYMENTS ENGINE</header>
+
+<div id="layout">
+
+<div class="panel">
+
+<h2>Transactions</h2>
+
+<table class="table">
+
+<thead>
+<tr>
+<th>ID</th>
+<th>User</th>
+<th>Amount</th>
+<th>Currency</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="transactions"></tbody>
+
+</table>
+
+</div>
+
+<div class="panel">
+
+<h2>Financial Metrics</h2>
+
+<div>
+<div>Total Revenue</div>
+<div id="revenue" class="metric">$0</div>
+</div>
+
+<div>
+<div>CONSIA Commission</div>
+<div id="commission" class="metric">$0</div>
+</div>
+
+<div>
+<div>Transactions</div>
+<div id="count" class="metric">0</div>
+</div>
+
+<button onclick="simulatePayment()">Create Payment</button>
+
+</div>
+
+</div>
+
+<script>
+
+let transactions=[]
+
+function simulatePayment(){
+
+const currencies=["USD","EUR","USDT"]
+
+const payment={
+
+id:"PAY"+Math.floor(Math.random()*100000),
+
+user:"user"+Math.floor(Math.random()*100),
+
+amount:Math.floor(Math.random()*100)+10,
+
+currency:currencies[Math.floor(Math.random()*currencies.length)],
+
+status:"pending"
+
+}
+
+transactions.push(payment)
+
+render()
+
+}
+
+function updatePayment(i){
+
+const states=["pending","completed"]
+
+let current=states.indexOf(transactions[i].status)
+
+if(current<states.length-1){
+
+transactions[i].status=states[current+1]
+
+}
+
+render()
+
+}
+
+function render(){
+
+const container=document.getElementById("transactions")
+
+container.innerHTML=""
+
+let revenue=0
+let commission=0
+
+transactions.forEach((t,i)=>{
+
+if(t.status==="completed"){
+
+revenue+=t.amount
+commission+=t.amount*0.15
+
+}
+
+const tr=document.createElement("tr")
+
+tr.innerHTML=`
+
+<td>${t.id}</td>
+
+<td>${t.user}</td>
+
+<td>$${t.amount}</td>
+
+<td>${t.currency}</td>
+
+<td><span class="status ${t.status}">${t.status}</span></td>
+
+<td>
+<button onclick="updatePayment(${i})">
+Update
+</button>
+</td>
+
+`
+
+container.appendChild(tr)
+
+})
+
+document.getElementById("count").innerText=transactions.length
+document.getElementById("revenue").innerText="$"+revenue
+document.getElementById("commission").innerText="$"+commission
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
