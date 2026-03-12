@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>CONSIA</title>
 
 <style>
-
 body{
 margin:0;
 background:#020617;
@@ -157,8 +154,41 @@ background:#111b30;
 border:1px solid #1f2b45;
 }
 
-</style>
+.learnbox{
+margin-top:24px;
+background:#0b1220;
+border:1px solid #182238;
+border-radius:16px;
+padding:18px;
+}
 
+.learn-title{
+font-size:18px;
+margin-bottom:12px;
+opacity:.95;
+}
+
+.learn-log{
+white-space:pre-wrap;
+opacity:.9;
+line-height:1.55;
+min-height:120px;
+}
+
+@media (max-width: 768px){
+.container{
+padding:24px;
+}
+
+.chat{
+flex-direction:column;
+}
+
+.title{
+font-size:24px;
+}
+}
+</style>
 </head>
 
 <body>
@@ -176,7 +206,6 @@ border:1px solid #1f2b45;
 <button class="button-main" onclick="newChat()">Nuevo chat</button>
 
 <div class="modules">
-
 <div class="module" onclick="openPage('dashboard.html')">Dashboard</div>
 <div class="module" onclick="openPage('apps.html')">AI App Store</div>
 <div class="module" onclick="openPage('marketplace.html')">Marketplace</div>
@@ -192,50 +221,45 @@ border:1px solid #1f2b45;
 <div class="module" onclick="openPage('autopilot.html')">Autopilot Agents</div>
 <div class="module" onclick="openPage('global-memory.html')">Global Memory</div>
 <div class="module" onclick="openPage('command-center.html')">Command Center</div>
-
 </div>
 
 <div class="status">
-
 <div class="badge green">● CONSIA ONLINE</div>
 <div class="badge">OWNER SECURITY PRO</div>
 <div class="badge">MULTI-AI ENGINE</div>
+<div class="badge">SELF-LEARNING BRAIN</div>
 <div class="badge">AUTOPILOT AGENTS</div>
 <div class="badge">BRAIN ACTIVE</div>
 <div class="badge">VISION ACTIVE</div>
 <div class="badge">VOICE ACTIVE</div>
 <div class="badge">AGENTS READY</div>
 <div class="badge">AUTOMATION READY</div>
-
 </div>
 
 <div class="chat">
-
 <input id="input" placeholder="Habla con CONSIA">
-
 <button onclick="send()">Enviar</button>
-
 </div>
 
 <div class="quick">
-
 <button onclick="runPreset('search','Tesla')">Test Search</button>
 <button onclick="runPreset('vision','Analizar imagen')">Test Vision</button>
 <button onclick="runPreset('marketplace','Publicar producto')">Test Marketplace</button>
 <button onclick="runPreset('automation','Crear workflow')">Test Automation</button>
 <button onclick="runPreset('wallet','Consultar saldo wallet')">Test Wallet</button>
 <button onclick="runAutopilot()">Test Autopilot</button>
-
+<button onclick="refreshLearning()">Ver Learning</button>
+<button onclick="clearLearning()">Reset Learning</button>
 </div>
 
 <div class="console">
-
 <div class="console-title">CONSIA Console</div>
-
-<div class="console-log" id="consoleLog">
-CONSIA BRAIN listo.
+<div class="console-log" id="consoleLog">CONSIA BRAIN listo.</div>
 </div>
 
+<div class="learnbox">
+<div class="learn-title">CONSIA Self-Learning</div>
+<div class="learn-log" id="learningLog">Learning engine listo.</div>
 </div>
 
 </div>
@@ -243,11 +267,11 @@ CONSIA BRAIN listo.
 <script src="owner-key.js"></script>
 <script src="agents-core.js"></script>
 <script src="autopilot-core.js"></script>
+<script src="self-learning-core.js"></script>
 
 <script>
-
 function openPage(page){
-window.location.href=page;
+window.location.href = page;
 }
 
 function newChat(){
@@ -255,48 +279,71 @@ document.getElementById("input").focus();
 }
 
 function logConsole(text){
-
-const box=document.getElementById("consoleLog");
-
+const box = document.getElementById("consoleLog");
 box.textContent += "\n" + text;
-
 box.scrollTop = box.scrollHeight;
+}
 
+function logLearning(text){
+const box = document.getElementById("learningLog");
+box.textContent = text;
 }
 
 function detectTask(text){
-
-const t=text.toLowerCase();
+const t = text.toLowerCase();
 
 if(t.includes("wallet") || t.includes("saldo")) return "wallet";
-
 if(t.includes("producto") || t.includes("marketplace")) return "marketplace";
-
 if(t.includes("automat") || t.includes("workflow")) return "automation";
-
 if(t.includes("imagen") || t.includes("vision")) return "vision";
 
 return "search";
+}
 
+function refreshLearning(){
+const s = CONSIA_LEARNING.summary();
+
+let out = "Interactions: " + s.totalInteractions + "\n";
+out += "Last topic: " + (s.preferences.lastTopic || "-") + "\n";
+out += "Last task: " + (s.preferences.lastTask || "-") + "\n";
+out += "Top signals:\n";
+
+(s.topSignals || []).forEach(item=>{
+out += "- " + item[0] + ": " + item[1] + "\n";
+});
+
+out += "Recent topics: " + (s.lastTopics || []).join(", ");
+
+logLearning(out);
+}
+
+function clearLearning(){
+CONSIA_LEARNING.clear();
+refreshLearning();
+logConsole("CONSIA learning reset.");
 }
 
 async function send(){
 
-let text=document.getElementById("input").value;
+let text = document.getElementById("input").value;
 
 if(!text) return;
 
-let task=detectTask(text);
+let task = detectTask(text);
 
-logConsole("Usuario: "+text);
-
-logConsole("CONSIA task: "+task);
+logConsole("Usuario: " + text);
+logConsole("CONSIA task: " + task);
 
 try{
 
-let response = await CONSIA.run(task,text);
+let response = await CONSIA.run(task, text);
 
-logConsole("CONSIA: "+response);
+logConsole("CONSIA: " + response);
+
+const learned = CONSIA_LEARNING.learn(text, task, response);
+logConsole("LEARNED topic: " + learned.topic);
+
+refreshLearning();
 
 }catch(e){
 
@@ -304,17 +351,22 @@ logConsole("CONSIA ERROR");
 
 }
 
-document.getElementById("input").value="";
+document.getElementById("input").value = "";
 
 }
 
-async function runPreset(task,value){
+async function runPreset(task, value){
 
-logConsole("Preset: "+task);
+logConsole("Preset: " + task);
 
-let response = await CONSIA.run(task,value);
+let response = await CONSIA.run(task, value);
 
-logConsole("CONSIA: "+response);
+logConsole("CONSIA: " + response);
+
+const learned = CONSIA_LEARNING.learn(value, task, response);
+logConsole("LEARNED topic: " + learned.topic);
+
+refreshLearning();
 
 }
 
@@ -325,21 +377,23 @@ logConsole("Autopilot iniciado");
 const result = await CONSIA_AUTOPILOT.run("investigar inteligencia artificial");
 
 result.plan.forEach(step=>{
-logConsole("PLAN → "+step.task);
+logConsole("PLAN → " + step.task);
 });
 
 result.results.forEach(r=>{
-logConsole(r.step+" → "+r.result);
+logConsole(r.step + " → " + r.result);
+CONSIA_LEARNING.learn("autopilot:" + r.step, r.step, r.result);
 });
+
+refreshLearning();
 
 }
 
-document.getElementById("input").addEventListener("keydown",function(e){
-
-if(e.key==="Enter") send();
-
+document.getElementById("input").addEventListener("keydown", function(e){
+if(e.key === "Enter") send();
 });
 
+refreshLearning();
 </script>
 
 </body>
