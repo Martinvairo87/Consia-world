@@ -196,6 +196,27 @@ line-height:1.55;
 min-height:120px;
 }
 
+.strategybox{
+margin-top:24px;
+background:#0b1220;
+border:1px solid #182238;
+border-radius:16px;
+padding:18px;
+}
+
+.strategy-title{
+font-size:18px;
+margin-bottom:12px;
+opacity:.95;
+}
+
+.strategy-log{
+white-space:pre-wrap;
+opacity:.9;
+line-height:1.55;
+min-height:140px;
+}
+
 @media (max-width: 768px){
 .container{
 padding:24px;
@@ -253,6 +274,7 @@ font-size:24px;
 <div class="badge">PROJECT BRAIN</div>
 <div class="badge">AGENT SWARM</div>
 <div class="badge">WORLD MODEL</div>
+<div class="badge">STRATEGIC ENGINE</div>
 <div class="badge">BRAIN ACTIVE</div>
 <div class="badge">VISION ACTIVE</div>
 <div class="badge">VOICE ACTIVE</div>
@@ -280,6 +302,7 @@ font-size:24px;
 <button onclick="runSwarm()">Test Agent Swarm</button>
 <button onclick="worldStatus()">World Status</button>
 <button onclick="worldReason()">World Reason</button>
+<button onclick="runStrategy()">Test Strategy</button>
 </div>
 
 <div class="console">
@@ -297,6 +320,11 @@ font-size:24px;
 <div class="world-log" id="worldLog">World model listo.</div>
 </div>
 
+<div class="strategybox">
+<div class="strategy-title">CONSIA Strategic Engine</div>
+<div class="strategy-log" id="strategyLog">Strategic engine listo.</div>
+</div>
+
 </div>
 
 <script src="owner-key.js"></script>
@@ -306,6 +334,7 @@ font-size:24px;
 <script src="global-memory-core.js"></script>
 <script src="agent-swarm-core.js"></script>
 <script src="world-model-core.js"></script>
+<script src="strategic-engine-core.js"></script>
 
 <script>
 function openPage(page){
@@ -323,13 +352,15 @@ box.scrollTop = box.scrollHeight;
 }
 
 function logLearning(text){
-const box = document.getElementById("learningLog");
-box.textContent = text;
+document.getElementById("learningLog").textContent = text;
 }
 
 function logWorld(text){
-const box = document.getElementById("worldLog");
-box.textContent = text;
+document.getElementById("worldLog").textContent = text;
+}
+
+function logStrategy(text){
+document.getElementById("strategyLog").textContent = text;
 }
 
 function detectTask(text){
@@ -414,6 +445,7 @@ const learned = CONSIA_LEARNING.learn(text, task, response);
 logConsole("LEARNED topic: " + learned.topic);
 
 logWorld(CONSIA_WORLD_MODEL.reason(text));
+logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze(text)));
 refreshLearning();
 
 }catch(e){
@@ -433,6 +465,7 @@ const learned = CONSIA_LEARNING.learn(value, task, response);
 logConsole("LEARNED topic: " + learned.topic);
 
 logWorld(CONSIA_WORLD_MODEL.reason(value));
+logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze(value)));
 refreshLearning();
 }
 
@@ -451,6 +484,7 @@ CONSIA_LEARNING.learn("autopilot:" + r.step, r.step, r.result);
 });
 
 logWorld(CONSIA_WORLD_MODEL.reason("estrategia de automatización"));
+logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze("automatizar procesos del negocio")));
 refreshLearning();
 }
 
@@ -464,6 +498,7 @@ logConsole(r.agent.toUpperCase() + " → " + r.result);
 });
 
 logWorld(CONSIA_WORLD_MODEL.reason("investigar proyecto y estrategia"));
+logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze("estrategia de proyecto empresarial")));
 refreshLearning();
 }
 
@@ -476,12 +511,20 @@ const text = document.getElementById("input").value || "empresa proyecto estrate
 logWorld(CONSIA_WORLD_MODEL.reason(text));
 }
 
+function runStrategy(){
+const text = document.getElementById("input").value || "estrategia de proyecto";
+const result = CONSIA_STRATEGIC.analyze(text);
+logStrategy(CONSIA_STRATEGIC.format(result));
+logConsole("CONSIA STRATEGIC ENGINE ejecutado");
+}
+
 document.getElementById("input").addEventListener("keydown", function(e){
 if(e.key === "Enter") send();
 });
 
 refreshLearning();
 worldStatus();
+runStrategy();
 </script>
 
 </body>
