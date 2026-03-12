@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA • Automation</title>
+<style>
+body{margin:0;background:#020617;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto}
+.wrap{max-width:1100px;margin:auto;padding:30px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+h1{margin:0;font-size:38px}
+.sub{opacity:.72;margin-top:8px}
+a{color:#fff;text-decoration:none}
+.btn{padding:12px 16px;border-radius:14px;background:#111a33;border:1px solid #1f2b4d}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:24px}
+.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:22px}
+.title{font-size:22px;font-weight:700;margin-bottom:10px}
+.txt{opacity:.75;min-height:48px}
+.badge{display:inline-block;margin-top:14px;padding:8px 14px;border-radius:999px;background:#111a33;border:1px solid #1f2b4d}
+.state{margin-top:24px;background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:20px;opacity:.82}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="top">
+  <div>
+    <h1>CONSIA Automation</h1>
+    <div class="sub">Motor base de automatización y workflows</div>
+  </div>
+  <a class="btn" href="/">← Home</a>
+</div>
+
+<div class="grid" id="workflowList">
+  <div class="card">
+    <div class="title">Cargando workflows...</div>
+  </div>
+</div>
+
+<div class="state" id="stateBox">Conectando automation engine...</div>
+
+</div>
+
+<script>
+const API = "https://api.consia.world";
+
+async function loadAutomation(){
+  try{
+    const res = await fetch(API + "/v1/automation");
+    const data = await res.json();
+
+    const list = document.getElementById("workflowList");
+
+    if(!data.workflows || data.workflows.length === 0){
+      list.innerHTML = `
+        <div class="card">
+          <div class="title">Motor activo</div>
+          <div class="txt">El automation engine está online. Todavía no hay workflows cargados.</div>
+          <div class="badge">READY</div>
+        </div>
+
+        <div class="card">
+          <div class="title">Seguimiento</div>
+          <div class="txt">Automatizaciones futuras para agentes, ventas, pagos y acciones globales.</div>
+          <div class="badge">PLANNED</div>
+        </div>
+
+        <div class="card">
+          <div class="title">Orquestación</div>
+          <div class="txt">Base lista para conectar triggers, acciones y lógica operativa.</div>
+          <div class="badge">ONLINE</div>
+        </div>
+      `;
+      document.getElementById("stateBox").textContent = "Automation Engine ONLINE";
+      return;
+    }
+
+    list.innerHTML = "";
+
+    data.workflows.forEach(flow => {
+      list.innerHTML += `
+        <div class="card">
+          <div class="title">${flow.name || "Workflow"}</div>
+          <div class="txt">${flow.description || "Workflow activo en CONSIA."}</div>
+          <div class="badge">${String(flow.status || "online").toUpperCase()}</div>
+        </div>
+      `;
+    });
+
+    document.getElementById("stateBox").textContent = "Workflows cargados";
+  }catch(e){
+    document.getElementById("stateBox").textContent = "Error conectando automation engine";
+  }
+}
+
+loadAutomation();
+</script>
+</body>
+</html>
