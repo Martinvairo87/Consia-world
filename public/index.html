@@ -171,6 +171,7 @@ button{
 </head>
 
 <body>
+
 <div class="container">
 
   <div class="logo">
@@ -216,7 +217,7 @@ button{
 
   <div class="quick">
     <button onclick="runPreset('search','Tesla')">Test Search</button>
-    <button onclick="runPreset('vision','Analizar imagen actual')">Test Vision</button>
+    <button onclick="runPreset('vision','Analizar imagen')">Test Vision</button>
     <button onclick="runPreset('marketplace','Publicar producto')">Test Marketplace</button>
     <button onclick="runPreset('automation','Ejecutar workflow')">Test Automation</button>
     <button onclick="runPreset('wallet','consultar saldo wallet')">Test Wallet</button>
@@ -229,9 +230,14 @@ button{
 
 </div>
 
+<!-- OWNER SECURITY -->
+<script src="owner-key.js"></script>
+
+<!-- AGENT SYSTEM -->
 <script src="agents-core.js"></script>
 
 <script>
+
 function openPage(page){
   window.location.href = page;
 }
@@ -248,75 +254,59 @@ function logConsole(text){
 }
 
 function detectTask(text){
-  const t = String(text || "").toLowerCase();
+  const t = text.toLowerCase();
 
-  if (t.includes("wallet") || t.includes("saldo") || t.includes("pago") || t.includes("balance")) return "wallet";
-  if (t.includes("marketplace") || t.includes("producto") || t.includes("venta")) return "marketplace";
-  if (t.includes("automat") || t.includes("workflow") || t.includes("proceso")) return "automation";
-  if (t.includes("vision") || t.includes("imagen") || t.includes("foto") || t.includes("camara")) return "vision";
+  if(t.includes("wallet") || t.includes("saldo")) return "wallet";
+  if(t.includes("producto") || t.includes("marketplace")) return "marketplace";
+  if(t.includes("automat")) return "automation";
+  if(t.includes("imagen") || t.includes("vision")) return "vision";
 
   return "search";
 }
 
 async function send(){
-  const input = document.getElementById("input");
-  const text = input.value.trim();
+
+  let text = document.getElementById("input").value;
 
   if(!text) return;
 
-  const task = detectTask(text);
+  let task = detectTask(text);
 
   logConsole("Usuario: " + text);
   logConsole("CONSIA task: " + task);
 
   try{
-    let response = "No response";
 
-    if (window.CONSIA && typeof window.CONSIA.run === "function") {
-      response = await window.CONSIA.run(task, text);
-    } else {
-      response = "CONSIA AGENT SYSTEM no cargó.";
-    }
+    let response = await CONSIA.run(task,text);
 
-    if (typeof response === "object") {
-      logConsole("CONSIA: " + JSON.stringify(response, null, 2));
-    } else {
-      logConsole("CONSIA: " + response);
-    }
-  } catch (e){
-    logConsole("CONSIA ERROR: " + (e && e.message ? e.message : "unknown"));
+    logConsole("CONSIA: " + response);
+
+  }catch(e){
+
+    logConsole("CONSIA ERROR");
+
   }
 
-  input.value = "";
+  document.getElementById("input").value = "";
+
 }
 
-async function runPreset(task, value){
+async function runPreset(task,value){
+
   logConsole("Preset: " + task);
 
-  try{
-    let response = "No response";
+  let response = await CONSIA.run(task,value);
 
-    if (window.CONSIA && typeof window.CONSIA.run === "function") {
-      response = await window.CONSIA.run(task, value);
-    } else {
-      response = "CONSIA AGENT SYSTEM no cargó.";
-    }
+  logConsole("CONSIA: " + response);
 
-    if (typeof response === "object") {
-      logConsole("CONSIA: " + JSON.stringify(response, null, 2));
-    } else {
-      logConsole("CONSIA: " + response);
-    }
-  } catch (e){
-    logConsole("CONSIA ERROR: " + (e && e.message ? e.message : "unknown"));
-  }
 }
 
-document.getElementById("input").addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
-    send();
-  }
+document.getElementById("input").addEventListener("keydown",function(e){
+
+  if(e.key === "Enter") send();
+
 });
+
 </script>
 
 </body>
