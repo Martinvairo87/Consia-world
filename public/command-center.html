@@ -1,421 +1,255 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA COMMAND CENTER</title>
+<title>CONSIA • Command Center</title>
 
 <style>
+
 body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#050913;
-  color:white;
+margin:0;
+background:#020617;
+color:#fff;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
 }
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px;
-  border-bottom:1px solid #1a2135;
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:30px;
 }
-#logo{
-  font-size:22px;
-  letter-spacing:6px;
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
 }
-#container{
-  max-width:1500px;
-  margin:auto;
-  padding:30px 20px 50px;
-}
+
 h1{
-  font-size:42px;
-  margin:0 0 10px;
+margin:0;
+font-size:38px;
 }
-p{
-  color:#aab3c5;
+
+.sub{
+opacity:.7;
+margin-top:6px;
 }
+
+a{
+color:white;
+text-decoration:none;
+}
+
+.btn{
+padding:12px 18px;
+border-radius:14px;
+background:#111a33;
+border:1px solid #1f2b4d;
+}
+
 .grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
-  margin-top:25px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:16px;
+margin-top:20px;
 }
+
 .card{
-  background:#101626;
-  border:1px solid #1a2135;
-  border-radius:14px;
-  padding:20px;
+background:#0b1225;
+border:1px solid #1f2b4d;
+border-radius:18px;
+padding:22px;
 }
-.metric{
-  font-size:30px;
-  color:#3b82f6;
-  margin-top:10px;
+
+.title{
+font-size:20px;
+font-weight:700;
+margin-bottom:10px;
 }
-.section{
-  margin-top:35px;
+
+.txt{
+opacity:.75;
+min-height:50px;
 }
-.panel{
-  background:#101626;
-  border:1px solid #1a2135;
-  border-radius:14px;
-  padding:22px;
-}
-.row{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:20px;
-}
-.table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-}
-.table th,.table td{
-  padding:12px 10px;
-  border-bottom:1px solid #1a2135;
-  text-align:left;
-  font-size:14px;
-}
+
 .badge{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:999px;
-  font-size:12px;
+margin-top:12px;
+display:inline-block;
+padding:6px 14px;
+border-radius:999px;
+background:#111a33;
+border:1px solid #1f2b4d;
 }
-.ok{background:#0f5132;color:#d1ffe7;}
-.warn{background:#5c3b00;color:#ffe5a8;}
-.off{background:#5a1320;color:#ffd1d7;}
+
+.panel{
+margin-top:30px;
+background:#0b1225;
+border:1px solid #1f2b4d;
+border-radius:18px;
+padding:22px;
+}
+
+textarea{
+width:100%;
+background:#020617;
+border:1px solid #1f2b4d;
+border-radius:12px;
+color:white;
+padding:12px;
+height:100px;
+}
+
+.controls{
+margin-top:14px;
+display:flex;
+gap:10px;
+}
+
 button{
-  padding:12px 14px;
-  border:none;
-  border-radius:10px;
-  background:#2563eb;
-  color:white;
-  cursor:pointer;
+padding:12px 18px;
+border-radius:12px;
+border:none;
+background:#4c6fff;
+color:white;
+cursor:pointer;
 }
-button.secondary{
-  background:#1a2135;
+
+.state{
+margin-top:18px;
+opacity:.7;
 }
-.actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:14px;
-}
-#console{
-  background:#0d1424;
-  border:1px solid #1a2135;
-  border-radius:12px;
-  padding:16px;
-  min-height:180px;
-  white-space:pre-wrap;
-  line-height:1.6;
-  font-size:13px;
-  margin-top:12px;
-}
-input,select{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:#0d1424;
-  color:white;
-  margin-top:10px;
-}
-@media (max-width:1100px){
-  .grid{grid-template-columns:repeat(2,1fr);}
-  .row{grid-template-columns:1fr;}
-}
-@media (max-width:700px){
-  .grid{grid-template-columns:1fr;}
-}
+
 </style>
 </head>
 
 <body>
 
-<header>
-  <div id="logo">CONSIA COMMAND CENTER</div>
-  <button class="secondary" onclick="goHome()">HOME</button>
-</header>
+<div class="wrap">
 
-<div id="container">
+<div class="top">
+<div>
+<h1>CONSIA Command Center</h1>
+<div class="sub">Control total del sistema CONSIA</div>
+</div>
 
-  <h1>CONSIA Command Center</h1>
-  <p>Centro unificado de control de IA, viajes, marketplace, agentes, automatización y estado general del sistema.</p>
+<a class="btn" href="/">← Home</a>
+</div>
 
-  <div class="grid">
-    <div class="card">
-      <div>Estado API</div>
-      <div class="metric" id="apiStatus">...</div>
-    </div>
-    <div class="card">
-      <div>Wallet</div>
-      <div class="metric" id="walletBalance">$0</div>
-    </div>
-    <div class="card">
-      <div>Requests IA</div>
-      <div class="metric" id="aiRequests">0</div>
-    </div>
-    <div class="card">
-      <div>Revenue</div>
-      <div class="metric" id="revenue">$0</div>
-    </div>
-  </div>
+<div class="grid">
 
-  <div class="section row">
+<div class="card">
+<div class="title">CORE</div>
+<div class="txt">Motor central del sistema operativo CONSIA.</div>
+<div class="badge">ONLINE</div>
+</div>
 
-    <div class="panel">
-      <h2>Módulos del sistema</h2>
+<div class="card">
+<div class="title">API</div>
+<div class="txt">Gateway de conexión con todos los módulos.</div>
+<div class="badge">CONNECTED</div>
+</div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Módulo</th>
-            <th>Estado</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="modulesTable"></tbody>
-      </table>
+<div class="card">
+<div class="title">Agents</div>
+<div class="txt">Sistema de agentes inteligentes.</div>
+<div class="badge">READY</div>
+</div>
 
-      <div class="actions">
-        <button onclick="openModule('/')">AI Home</button>
-        <button onclick="openModule('/travel.html')">Travel</button>
-        <button onclick="openModule('/travel-autopilot.html')">Autopilot</button>
-        <button onclick="openModule('/marketplace.html')">Marketplace</button>
-        <button onclick="openModule('/apps.html')">App Store</button>
-      </div>
-    </div>
+<div class="card">
+<div class="title">Automation</div>
+<div class="txt">Motor de automatización y workflows.</div>
+<div class="badge">ACTIVE</div>
+</div>
 
-    <div class="panel">
-      <h2>Quick Controls</h2>
+<div class="card">
+<div class="title">Marketplace</div>
+<div class="txt">Sistema de productos y comercio.</div>
+<div class="badge">ONLINE</div>
+</div>
 
-      <label>Modo principal</label>
-      <select id="modeSelect">
-        <option value="AUTO">AUTO</option>
-        <option value="AI">AI</option>
-        <option value="TRAVEL">TRAVEL</option>
-        <option value="COMMERCE">COMMERCE</option>
-      </select>
-
-      <label>Proveedor prioritario</label>
-      <select id="providerSelect">
-        <option value="OPENAI">OPENAI</option>
-        <option value="AMADEUS">AMADEUS</option>
-        <option value="SKYSCANNER">SKYSCANNER</option>
-        <option value="BOOKING">BOOKING</option>
-      </select>
-
-      <label>Comisión objetivo %</label>
-      <input id="commissionInput" placeholder="15">
-
-      <div class="actions">
-        <button onclick="saveSettings()">Guardar</button>
-        <button class="secondary" onclick="simulateRun()">Simular ejecución</button>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="section row">
-
-    <div class="panel">
-      <h2>Travel Control</h2>
-      <label>Origen</label>
-      <input id="travelOrigin" placeholder="Buenos Aires">
-      <label>Destino</label>
-      <input id="travelDestination" placeholder="Madrid">
-      <div class="actions">
-        <button onclick="runFlights()">Buscar vuelos</button>
-        <button onclick="runAutopilot()">Activar Autopilot</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>AI Quick Prompt</h2>
-      <label>Prompt</label>
-      <input id="aiPrompt" placeholder="Qué es CONSIA?">
-      <div class="actions">
-        <button onclick="runAI()">Enviar a IA</button>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="section">
-    <div class="panel">
-      <h2>Console</h2>
-      <div id="console">CONSIA Command Center listo.</div>
-    </div>
-  </div>
+<div class="card">
+<div class="title">Wallet</div>
+<div class="txt">Sistema financiero del ecosistema CONSIA.</div>
+<div class="badge">READY</div>
+</div>
 
 </div>
 
+
+<div class="panel">
+
+<div class="title">Ejecutar comando</div>
+
+<textarea id="cmd" placeholder="Escribí un comando para CONSIA..."></textarea>
+
+<div class="controls">
+
+<button onclick="runCommand()">Ejecutar</button>
+
+<button onclick="clearCmd()">Limpiar</button>
+
+</div>
+
+<div class="state" id="state">
+Command center listo.
+</div>
+
+</div>
+
+
+</div>
+
+
 <script>
-const modules = [
-  {name:"AI Router", status:"ok", path:"/"},
-  {name:"Travel Engine", status:"ok", path:"/travel.html"},
-  {name:"Travel Autopilot", status:"ok", path:"/travel-autopilot.html"},
-  {name:"Flights Engine", status:"ok", path:"/flights.html"},
-  {name:"Marketplace", status:"ok", path:"/marketplace.html"},
-  {name:"App Store", status:"ok", path:"/apps.html"},
-  {name:"Agent Network", status:"warn", path:"/agent-network.html"},
-  {name:"Automation Engine", status:"warn", path:"/automation-engine.html"},
-  {name:"Owner Console", status:"ok", path:"/owner.html"}
-];
 
-let aiCounter = 0;
-let revenueCounter = 0;
+const API="https://api.consia.world"
 
-function goHome(){
-  window.location = "/";
+async function runCommand(){
+
+const cmd=document.getElementById("cmd").value
+
+if(!cmd){
+return
 }
 
-function openModule(path){
-  window.location = path;
+document.getElementById("state").textContent="Procesando comando..."
+
+try{
+
+const r=await fetch(API+"/v1/command",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+command:cmd
+})
+})
+
+const d=await r.json()
+
+document.getElementById("state").textContent=
+d.result || "Comando ejecutado."
+
+}catch(e){
+
+document.getElementById("state").textContent=
+"Error ejecutando comando."
+
 }
 
-function logLine(text){
-  const box = document.getElementById("console");
-  const time = new Date().toLocaleTimeString();
-  box.textContent = `[${time}] ${text}\n` + box.textContent;
 }
 
-function renderModules(){
-  const tbody = document.getElementById("modulesTable");
-  tbody.innerHTML = "";
+function clearCmd(){
 
-  modules.forEach(m => {
-    const tr = document.createElement("tr");
-    const badgeClass = m.status === "ok" ? "ok" : (m.status === "warn" ? "warn" : "off");
-    const badgeText = m.status === "ok" ? "ONLINE" : (m.status === "warn" ? "WARN" : "OFFLINE");
+document.getElementById("cmd").value=""
 
-    tr.innerHTML = `
-      <td>${m.name}</td>
-      <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-      <td><button class="secondary" onclick="openModule('${m.path}')">Abrir</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
 }
 
-async function checkHealth(){
-  try{
-    const res = await fetch("https://api.consia.world/health");
-    const data = await res.json();
-    document.getElementById("apiStatus").innerText = data.ok ? "ONLINE" : "WARN";
-    logLine("Health check completado.");
-  }catch(e){
-    document.getElementById("apiStatus").innerText = "OFFLINE";
-    logLine("Health check falló.");
-  }
-}
-
-async function loadWallet(){
-  try{
-    const res = await fetch("https://api.consia.world/wallet?user_id=web");
-    const data = await res.json();
-    const balance = data.wallet?.balance ?? data.balance ?? 0;
-    document.getElementById("walletBalance").innerText = "$" + balance;
-    logLine("Wallet cargada.");
-  }catch(e){
-    document.getElementById("walletBalance").innerText = "$0";
-    logLine("No se pudo cargar wallet.");
-  }
-}
-
-function saveSettings(){
-  const mode = document.getElementById("modeSelect").value;
-  const provider = document.getElementById("providerSelect").value;
-  const commission = document.getElementById("commissionInput").value || "15";
-  logLine(`Settings guardados → mode=${mode}, provider=${provider}, commission=${commission}%`);
-}
-
-function simulateRun(){
-  revenueCounter += 25;
-  document.getElementById("revenue").innerText = "$" + revenueCounter;
-  logLine("Simulación global ejecutada.");
-}
-
-async function runAI(){
-  const prompt = document.getElementById("aiPrompt").value.trim();
-  if(!prompt) return;
-
-  logLine("Enviando prompt a CONSIA AI...");
-
-  try{
-    const res = await fetch("https://api.consia.world/ai/chat", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        user_id:"web",
-        message:prompt
-      })
-    });
-
-    const data = await res.json();
-    aiCounter++;
-    document.getElementById("aiRequests").innerText = aiCounter;
-    logLine("Respuesta IA: " + (data.answer || "Sin respuesta"));
-  }catch(e){
-    logLine("Error ejecutando IA.");
-  }
-}
-
-async function runFlights(){
-  const origin = document.getElementById("travelOrigin").value.trim();
-  const destination = document.getElementById("travelDestination").value.trim();
-
-  logLine(`Buscando vuelos ${origin} → ${destination} ...`);
-
-  try{
-    const res = await fetch("https://api.consia.world/travel/flights", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        origin,
-        destination
-      })
-    });
-
-    const data = await res.json();
-    const total = data.results?.length || 0;
-    logLine(`Flights engine devolvió ${total} resultados.`);
-  }catch(e){
-    logLine("Error en flights engine.");
-  }
-}
-
-async function runAutopilot(){
-  const origin = document.getElementById("travelOrigin").value.trim();
-  const destination = document.getElementById("travelDestination").value.trim();
-
-  logLine(`Activando travel autopilot ${origin} → ${destination} ...`);
-
-  try{
-    const res = await fetch("https://api.consia.world/travel/autopilot", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        origin,
-        destination
-      })
-    });
-
-    const data = await res.json();
-    const total = data.results?.length || 0;
-    logLine(`Autopilot activo. Resultados encontrados: ${total}`);
-  }catch(e){
-    logLine("Error activando autopilot.");
-  }
-}
-
-renderModules();
-checkHealth();
-loadWallet();
 </script>
+
 
 </body>
 </html>
