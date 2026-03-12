@@ -1,9 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
+
 <head>
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>CONSIA VISION AI</title>
 
@@ -18,50 +19,33 @@ text-align:center;
 }
 
 .container{
-max-width:900px;
-margin:auto;
 padding:40px;
-}
-
-h1{
-font-size:40px;
-letter-spacing:4px;
 }
 
 video{
 width:100%;
-max-width:720px;
-border-radius:14px;
+max-width:900px;
+border-radius:16px;
 margin-top:20px;
-background:black;
-}
-
-button{
-margin-top:20px;
-padding:14px 22px;
-border:none;
-border-radius:12px;
-background:#4c6fff;
-color:white;
-font-size:16px;
-cursor:pointer;
 }
 
 canvas{
 display:none;
 }
 
-.result{
+button{
 margin-top:20px;
-background:#0b1225;
-border:1px solid #1c2747;
-padding:20px;
-border-radius:14px;
-text-align:left;
+padding:14px 30px;
+background:#4f6cff;
+border:none;
+border-radius:12px;
+color:white;
+font-size:16px;
+cursor:pointer;
 }
 
 .status{
-margin-top:16px;
+margin-top:20px;
 opacity:.7;
 }
 
@@ -75,101 +59,50 @@ opacity:.7;
 
 <h1>CONSIA VISION AI</h1>
 
-<video id="video" autoplay playsinline muted></video>
+<p>Visión inteligente en vivo</p>
+
+<button onclick="startCamera()">Activar cámara</button>
 
 <br>
 
-<button onclick="startCamera()">
-Activar cámara
-</button>
-
-<button onclick="analyze()">
-Analizar imagen
-</button>
+<video id="video" autoplay playsinline></video>
 
 <canvas id="canvas"></canvas>
 
 <div class="status" id="status">
-Vision ready
-</div>
 
-<div class="result" id="result">
-Resultado aparecerá aquí...
+Vision AI listo
+
 </div>
 
 </div>
 
 <script>
 
-const API="https://api.consia.world"
+let video=document.getElementById("video")
+let canvas=document.getElementById("canvas")
+let ctx=canvas.getContext("2d")
 
 async function startCamera(){
 
-try{
-
-const stream=await navigator.mediaDevices.getUserMedia({
-video:true,
-audio:false
-})
-
-const video=document.getElementById("video")
+const stream=await navigator.mediaDevices.getUserMedia({video:true})
 
 video.srcObject=stream
 
-video.play()
+document.getElementById("status").innerText="Cámara activa"
 
-document.getElementById("status").innerText="Camera LIVE"
-
-}catch(err){
-
-document.getElementById("status").innerText="Error cámara"
+detectLoop()
 
 }
 
-}
-
-async function analyze(){
-
-const video=document.getElementById("video")
-const canvas=document.getElementById("canvas")
-const ctx=canvas.getContext("2d")
+function detectLoop(){
 
 canvas.width=video.videoWidth
 canvas.height=video.videoHeight
 
 ctx.drawImage(video,0,0)
 
-const img=canvas.toDataURL("image/jpeg")
-
-document.getElementById("status").innerText="Analizando..."
-
-try{
-
-const res=await fetch(API+"/v1/vision",{
-
-method:"POST",
-
-headers:{
-"content-type":"application/json"
-},
-
-body:JSON.stringify({
-image:img
-})
-
-})
-
-const data=await res.json()
-
-document.getElementById("result").innerText=data.analysis
-
-document.getElementById("status").innerText="Vision ready"
-
-}catch(err){
-
-document.getElementById("status").innerText="Error análisis"
-
-}
+setTimeout(detectLoop,1000)
 
 }
 
