@@ -12,150 +12,94 @@
 body{
 margin:0;
 background:#020617;
-color:#fff;
+color:white;
 font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
 }
 
-.wrap{
-max-width:1200px;
+.container{
+max-width:900px;
 margin:auto;
-padding:30px;
+padding:40px;
+}
+
+.header{
+display:flex;
+align-items:center;
+gap:20px;
+margin-bottom:30px;
 }
 
 .logo{
-display:flex;
-align-items:center;
-gap:16px;
-margin-bottom:20px;
-}
-
-.logoBox{
 width:60px;
 height:60px;
-border-radius:16px;
-background:linear-gradient(135deg,#7aa2ff,#2f56ff);
+border-radius:14px;
+background:linear-gradient(135deg,#4c6fff,#7aa6ff);
 display:flex;
 align-items:center;
 justify-content:center;
-font-weight:700;
 font-size:28px;
+font-weight:bold;
 }
 
-.heroBtn{
+.title{
+font-size:38px;
+letter-spacing:6px;
+}
+
+.subtitle{
+opacity:.6;
+margin-top:6px;
+}
+
+.chatbtn{
+margin-top:25px;
 width:100%;
 padding:18px;
-font-size:20px;
+font-size:18px;
 border:none;
-border-radius:20px;
-background:linear-gradient(90deg,#4d7cff,#79a0ff);
-color:#fff;
-margin-bottom:30px;
+border-radius:14px;
+background:linear-gradient(90deg,#4c6fff,#7aa6ff);
+color:white;
 cursor:pointer;
 }
 
 .section{
-margin-top:20px;
+margin-top:35px;
 opacity:.7;
+letter-spacing:3px;
 font-size:13px;
-letter-spacing:2px;
-}
-
-.modules{
-margin-top:10px;
 }
 
 .module{
-display:block;
-padding:18px;
-margin-bottom:10px;
+margin-top:14px;
+padding:20px;
 background:#0b1225;
-border-radius:16px;
-border:1px solid #1f2b4d;
-text-decoration:none;
-color:#fff;
+border-radius:14px;
+cursor:pointer;
+border:1px solid #1c2747;
 }
 
 .module:hover{
-border-color:#4d7cff;
+background:#0f1836;
 }
 
-.status{
-margin-top:30px;
+.footer{
+margin-top:40px;
 display:flex;
 gap:10px;
 flex-wrap:wrap;
 }
 
-.pill{
-padding:10px 18px;
-border-radius:999px;
-background:#0b1225;
-border:1px solid #1f2b4d;
-}
-
-.green{
-color:#3ee089;
-}
-
-.card{
-margin-top:30px;
-padding:20px;
-background:#0b1225;
+.badge{
+padding:8px 14px;
 border-radius:20px;
-border:1px solid #1f2b4d;
+background:#0b1225;
+border:1px solid #1c2747;
+font-size:12px;
 }
 
-.chatTabs{
-margin-top:20px;
-display:flex;
-gap:10px;
-}
-
-.tab{
-padding:10px 18px;
-border-radius:999px;
-background:#111a33;
-border:1px solid #1f2b4d;
-}
-
-.chatBox{
-margin-top:20px;
-padding:40px;
-border-top:1px solid #1f2b4d;
-border-bottom:1px solid #1f2b4d;
-text-align:center;
-}
-
-.inputRow{
-margin-top:20px;
-display:flex;
-gap:10px;
-}
-
-.input{
-flex:1;
-padding:18px;
-border-radius:14px;
-border:1px solid #1f2b4d;
-background:#020617;
-color:#fff;
-}
-
-.btn{
-padding:18px 20px;
-border-radius:14px;
-border:none;
-cursor:pointer;
-}
-
-.send{
-background:#4d7cff;
-color:#fff;
-}
-
-.clear{
-background:#111a33;
-color:#fff;
+.online{
+color:#4cff8f;
 }
 
 </style>
@@ -164,118 +108,93 @@ color:#fff;
 
 <body>
 
-<div class="wrap">
+<div class="container">
+
+<div class="header">
 
 <div class="logo">
-
-<div class="logoBox">C</div>
-
-<div>
-<h1 style="margin:0;letter-spacing:6px;">CONSIA</h1>
-<div style="opacity:.6;">Super Interface</div>
-</div>
-
-</div>
-
-<button class="heroBtn">Nuevo chat</button>
-
-<div class="section">MODULES</div>
-
-<div class="modules">
-
-<a class="module" href="/dashboard.html">Dashboard</a>
-
-<a class="module" href="/apps.html">AI App Store</a>
-
-<a class="module" href="/marketplace.html">Marketplace</a>
-
-<a class="module" href="/os.html">CONSIA OS</a>
-
-<a class="module" href="/agents.html">Agents</a>
-
-<a class="module" href="/wallet.html">Wallet</a>
-
-</div>
-
-<div class="section">HISTORIAL</div>
-
-<div class="status">
-
-<div class="pill green">● CONSIA ONLINE</div>
-
-<div class="pill">Mode: CHAT</div>
-
-<a class="pill" href="/apps.html">Apps</a>
-
-<a class="pill" href="/marketplace.html">Marketplace</a>
-
-<a class="pill" href="/dashboard.html">Dashboard</a>
-
-</div>
-
-<div class="card">
-
-<div style="font-size:34px;font-weight:700;margin-bottom:10px;">
-Una sola interfaz para conversar, crear, automatizar y operar todo CONSIA.
-</div>
-
-<div style="opacity:.7;">
-Chat, imagen, voz, control del ecosistema y acceso a todos los módulos.
-</div>
-
-</div>
-
-<div class="card">
-
-<div style="display:flex;align-items:center;gap:20px;">
-
-<div style="
-width:120px;
-height:120px;
-border-radius:60px;
-background:radial-gradient(circle,#9fbaff,#4066ff);
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:700;
-font-size:30px;">
-AI
+C
 </div>
 
 <div>
-
-<h2 style="margin:0;">CONSIA CORE</h2>
-
-<div style="opacity:.7;">
-Inteligencia, comercio, agentes, pagos, logística y automatización.
+<div class="title">CONSIA</div>
+<div class="subtitle">Super Interface</div>
 </div>
 
 </div>
 
+<button class="chatbtn" onclick="newChat()">
+Nuevo chat
+</button>
+
+<div class="section">
+MODULES
 </div>
 
-<div class="chatTabs">
-
-<div class="tab">CHAT</div>
-
-<div class="tab">IMAGE</div>
-
-<div class="tab">VOICE</div>
-
+<div class="module" onclick="openPage('dashboard.html')">
+Dashboard
 </div>
 
-<div class="chatBox">
-CONSIA listo.
+<div class="module" onclick="openPage('apps.html')">
+AI App Store
 </div>
 
-<div class="inputRow">
+<div class="module" onclick="openPage('marketplace.html')">
+Marketplace
+</div>
 
-<input id="input" class="input" placeholder="Habla con CONSIA...">
+<div class="module" onclick="openPage('os.html')">
+CONSIA OS
+</div>
 
-<button class="btn send" onclick="send()">Enviar</button>
+<div class="module" onclick="openPage('agents.html')">
+Agents
+</div>
 
-<button class="btn clear" onclick="clearChat()">Limpiar</button>
+<div class="module" onclick="openPage('wallet.html')">
+Wallet
+</div>
 
+<div class="module" onclick="openPage('voice.html')">
+Voice Interface
+</div>
+
+<div class="module" onclick="openPage('avatar.html')">
+Avatar IA
+</div>
+
+<div class="module" onclick="openPage('autopilot.html')">
+Autopilot
+</div>
+
+<div class="module" onclick="openPage('command-center.html')">
+Command Center
+</div>
+
+<div class="section">
+HISTORIAL
+</div>
+
+<div class="footer">
+
+<div class="badge online">
+● CONSIA ONLINE
+</div>
+
+<div class="badge">
+Mode: CHAT
+</div>
+
+<div class="badge">
+Apps
+</div>
+
+<div class="badge">
+Marketplace
+</div>
+
+<div class="badge">
+Dashboard
 </div>
 
 </div>
@@ -284,31 +203,15 @@ CONSIA listo.
 
 <script>
 
-const API="https://api.consia.world"
+function openPage(page){
 
-function send(){
-
-const text=document.getElementById("input").value
-
-fetch(API+"/v1/chat",{
-method:"POST",
-headers:{"content-type":"application/json"},
-body:JSON.stringify({input:text})
-})
-.then(r=>r.json())
-.then(j=>{
-
-document.querySelector(".chatBox").innerHTML=j.reply
-
-})
+location.href=page
 
 }
 
-function clearChat(){
+function newChat(){
 
-document.querySelector(".chatBox").innerHTML="CONSIA listo."
-
-document.getElementById("input").value=""
+location.href="voice.html"
 
 }
 
