@@ -3,25 +3,48 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>CONSIA • Agents</title>
 
 <style>
+
 body{
 margin:0;
 background:#020617;
-color:white;
+color:#fff;
 font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
 }
 
 .wrap{
-max-width:1100px;
+max-width:1200px;
 margin:auto;
 padding:30px;
 }
 
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
 h1{
-font-size:36px;
-margin-bottom:20px;
+font-size:38px;
+margin:0;
+}
+
+.sub{
+opacity:.7;
+margin-top:6px;
+}
+
+.btn{
+padding:10px 16px;
+border-radius:12px;
+background:#111a33;
+border:1px solid #1f2b4d;
+text-decoration:none;
+color:white;
 }
 
 .grid{
@@ -33,12 +56,12 @@ gap:16px;
 .card{
 background:#0b1225;
 border:1px solid #1f2b4d;
-border-radius:16px;
+border-radius:18px;
 padding:20px;
 }
 
 .title{
-font-size:18px;
+font-size:20px;
 font-weight:700;
 margin-bottom:8px;
 }
@@ -49,28 +72,18 @@ min-height:40px;
 }
 
 .badge{
-margin-top:10px;
+margin-top:12px;
 display:inline-block;
-padding:6px 12px;
+padding:6px 14px;
 border-radius:999px;
 background:#13381c;
 color:#8cffb2;
 font-size:12px;
 }
 
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:30px;
-}
-
-a{
-color:white;
-text-decoration:none;
-background:#111a33;
-padding:10px 16px;
-border-radius:12px;
+.state{
+margin-top:20px;
+opacity:.7;
 }
 
 </style>
@@ -81,54 +94,59 @@ border-radius:12px;
 <div class="wrap">
 
 <div class="top">
+<div>
 <h1>CONSIA Agents</h1>
-<a href="/">Home</a>
+<div class="sub">Red de agentes inteligentes</div>
+</div>
+
+<a class="btn" href="/">Home</a>
 </div>
 
 <div id="agents" class="grid">
-<div class="card">Cargando agentes...</div>
-</div>
 
-</div>
-
-<script>
-
-const API="https://api.consia.world"
-
-async function loadAgents(){
-
-try{
-
-const r=await fetch(API+"/v1/agents")
-const data=await r.json()
-
-const box=document.getElementById("agents")
-box.innerHTML=""
-
-data.agents.forEach(a=>{
-
-box.innerHTML+=`
 <div class="card">
-<div class="title">${a.name}</div>
-<div class="desc">${a.description}</div>
-<div class="badge">${a.status.toUpperCase()}</div>
+<div class="title">Sales Agent</div>
+<div class="desc">Gestión de leads, ventas y seguimiento.</div>
+<div class="badge">ONLINE</div>
 </div>
-`
 
-})
+<div class="card">
+<div class="title">Travel Agent</div>
+<div class="desc">Búsqueda de vuelos, hoteles y rutas.</div>
+<div class="badge">ONLINE</div>
+</div>
 
-}catch(e){
+<div class="card">
+<div class="title">Marketplace Agent</div>
+<div class="desc">Gestión de productos y comercio.</div>
+<div class="badge">ONLINE</div>
+</div>
 
-document.getElementById("agents").innerHTML=
-'<div class="card">Error cargando agentes.</div>'
+<div class="card">
+<div class="title">Research Agent</div>
+<div class="desc">Investigación y análisis de información.</div>
+<div class="badge">ONLINE</div>
+</div>
 
-}
+<div class="card">
+<div class="title">Automation Agent</div>
+<div class="desc">Ejecución de workflows automáticos.</div>
+<div class="badge">ONLINE</div>
+</div>
 
-}
+<div class="card">
+<div class="title">Dev Agent</div>
+<div class="desc">Soporte técnico y desarrollo del sistema.</div>
+<div class="badge">ONLINE</div>
+</div>
 
-loadAgents()
+</div>
 
-</script>
+<div class="state">
+Agent Network activo.
+</div>
+
+</div>
 
 </body>
 </html>
