@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA LIVE CAMERA</title>
+
+<style>
+
+body{
+margin:0;
+background:#020617;
+color:white;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
+text-align:center;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+font-size:40px;
+letter-spacing:4px;
+}
+
+video{
+width:100%;
+max-width:720px;
+border-radius:14px;
+margin-top:20px;
+background:black;
+}
+
+button{
+margin-top:20px;
+padding:14px 22px;
+border:none;
+border-radius:12px;
+background:#4c6fff;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+.status{
+margin-top:16px;
+opacity:.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA LIVE CAMERA</h1>
+
+<video id="video" autoplay playsinline muted></video>
+
+<br>
+
+<button onclick="startCamera()">
+Activar cámara
+</button>
+
+<div class="status" id="status">
+Camera ready
+</div>
+
+</div>
+
+<script>
+
+async function startCamera(){
+
+try{
+
+const stream = await navigator.mediaDevices.getUserMedia({
+video:true,
+audio:false
+})
+
+const video = document.getElementById("video")
+
+video.srcObject = stream
+
+video.play()
+
+document.getElementById("status").innerText="Camera LIVE"
+
+}catch(err){
+
+document.getElementById("status").innerText="Error cámara"
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
