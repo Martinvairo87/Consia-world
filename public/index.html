@@ -228,6 +228,8 @@ font-size:24px;
 <div class="badge">OWNER SECURITY PRO</div>
 <div class="badge">MULTI-AI ENGINE</div>
 <div class="badge">SELF-LEARNING BRAIN</div>
+<div class="badge">GLOBAL MEMORY</div>
+<div class="badge">PROJECT BRAIN</div>
 <div class="badge">AUTOPILOT AGENTS</div>
 <div class="badge">BRAIN ACTIVE</div>
 <div class="badge">VISION ACTIVE</div>
@@ -250,6 +252,9 @@ font-size:24px;
 <button onclick="runAutopilot()">Test Autopilot</button>
 <button onclick="refreshLearning()">Ver Learning</button>
 <button onclick="clearLearning()">Reset Learning</button>
+<button onclick="createProject()">Test Project</button>
+<button onclick="addProjectNote()">Test Note</button>
+<button onclick="memoryStatus()">Memory Status</button>
 </div>
 
 <div class="console">
@@ -258,7 +263,7 @@ font-size:24px;
 </div>
 
 <div class="learnbox">
-<div class="learn-title">CONSIA Self-Learning</div>
+<div class="learn-title">CONSIA Self-Learning + Global Memory</div>
 <div class="learn-log" id="learningLog">Learning engine listo.</div>
 </div>
 
@@ -268,6 +273,7 @@ font-size:24px;
 <script src="agents-core.js"></script>
 <script src="autopilot-core.js"></script>
 <script src="self-learning-core.js"></script>
+<script src="global-memory-core.js"></script>
 
 <script>
 function openPage(page){
@@ -314,6 +320,14 @@ out += "- " + item[0] + ": " + item[1] + "\n";
 
 out += "Recent topics: " + (s.lastTopics || []).join(", ");
 
+try{
+const m = CONSIA_MEMORY.summary();
+out += "\n\nProjects: " + m.totalProjects + "\n";
+out += "Project list: " + (m.projects || []).join(", ");
+}catch(e){
+out += "\n\nProjects: memory engine not ready";
+}
+
 logLearning(out);
 }
 
@@ -323,8 +337,29 @@ refreshLearning();
 logConsole("CONSIA learning reset.");
 }
 
-async function send(){
+function createProject(){
+let result = CONSIA_MEMORY.createProject("CONSIA_CORE");
+logConsole(result);
+refreshLearning();
+}
 
+function addProjectNote(){
+let result = CONSIA_MEMORY.addNote(
+"CONSIA_CORE",
+"Sistema CONSIA activado con GLOBAL MEMORY"
+);
+logConsole(result);
+refreshLearning();
+}
+
+function memoryStatus(){
+const s = CONSIA_MEMORY.summary();
+logConsole("Total proyectos: " + s.totalProjects);
+logConsole("Lista: " + s.projects.join(", "));
+refreshLearning();
+}
+
+async function send(){
 let text = document.getElementById("input").value;
 
 if(!text) return;
@@ -335,9 +370,7 @@ logConsole("Usuario: " + text);
 logConsole("CONSIA task: " + task);
 
 try{
-
 let response = await CONSIA.run(task, text);
-
 logConsole("CONSIA: " + response);
 
 const learned = CONSIA_LEARNING.learn(text, task, response);
@@ -346,32 +379,25 @@ logConsole("LEARNED topic: " + learned.topic);
 refreshLearning();
 
 }catch(e){
-
 logConsole("CONSIA ERROR");
-
 }
 
 document.getElementById("input").value = "";
-
 }
 
 async function runPreset(task, value){
-
 logConsole("Preset: " + task);
 
 let response = await CONSIA.run(task, value);
-
 logConsole("CONSIA: " + response);
 
 const learned = CONSIA_LEARNING.learn(value, task, response);
 logConsole("LEARNED topic: " + learned.topic);
 
 refreshLearning();
-
 }
 
 async function runAutopilot(){
-
 logConsole("Autopilot iniciado");
 
 const result = await CONSIA_AUTOPILOT.run("investigar inteligencia artificial");
@@ -386,7 +412,6 @@ CONSIA_LEARNING.learn("autopilot:" + r.step, r.step, r.result);
 });
 
 refreshLearning();
-
 }
 
 document.getElementById("input").addEventListener("keydown", function(e){
