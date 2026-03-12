@@ -1,212 +1,161 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html>
 <head>
-<meta charset="UTF-8">
-<title>CONSIA CORE</title>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@picovoice/porcupine-web@1.2.0/dist/iife/index.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<meta charset="utf-8">
+<title>CONSIA VOICE</title>
 
 <style>
+
 body{
-  margin:0;
-  background:black;
-  overflow:hidden;
+background:#020617;
+color:white;
+font-family:system-ui;
+margin:0;
+padding:40px;
+text-align:center;
 }
-#canvas3d{
-  position:absolute;
-  top:0;
-  left:0;
+
+h1{
+font-size:42px;
+margin-bottom:20px;
 }
-#video{
-  position:absolute;
-  bottom:20px;
-  right:20px;
-  width:180px;
-  border-radius:10px;
+
+.avatar{
+width:200px;
+height:200px;
+border-radius:50%;
+background:linear-gradient(135deg,#4c6fff,#7aa6ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:70px;
+margin:auto;
+margin-bottom:30px;
 }
+
+button{
+padding:16px 26px;
+font-size:18px;
+border-radius:12px;
+border:none;
+background:#4c6fff;
+color:white;
+cursor:pointer;
+}
+
+.status{
+margin-top:20px;
+opacity:.7;
+}
+
+.chat{
+margin-top:30px;
+max-width:700px;
+margin-left:auto;
+margin-right:auto;
+text-align:left;
+}
+
+.msg{
+margin-bottom:10px;
+padding:10px;
+background:#0b1225;
+border-radius:8px;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<canvas id="canvas3d"></canvas>
-<video id="video" autoplay muted playsinline></video>
+<h1>CONSIA VOICE</h1>
+
+<div class="avatar">
+C
+</div>
+
+<button onclick="startVoice()">
+Hablar con CONSIA
+</button>
+
+<div class="status" id="status">
+Voice ready
+</div>
+
+<div class="chat" id="chat"></div>
 
 <script>
-let scene, camera, renderer, avatar;
-let socket;
-let porcupine;
-let audioContext;
-let mediaStream;
 
-// THREE.JS INIT
-function init3D(){
+const API="https://api.consia.world"
 
-  scene = new THREE.Scene();
+const recognition = new webkitSpeechRecognition()
 
-  camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth/window.innerHeight,
-    0.1,
-    1000
-  );
+recognition.lang="es-ES"
 
-  renderer = new THREE.WebGLRenderer({
-    canvas:document.getElementById("canvas3d"),
-    alpha:true
-  });
+recognition.continuous=false
 
-  renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-  );
+recognition.interimResults=false
 
-  const light = new THREE.PointLight(0x00ffff,2);
-  light.position.set(2,2,2);
-  scene.add(light);
+function addMessage(text){
 
-  const loader = new THREE.GLTFLoader();
+document.getElementById("chat").innerHTML+=`
 
-  loader.load("/assets/avatar.glb",gltf=>{
-    avatar = gltf.scene;
-    avatar.position.set(0,-1,-3);
-    scene.add(avatar);
-  });
+<div class="msg">
+${text}
+</div>
 
-  animate();
+`
+
 }
 
-function animate(){
-  requestAnimationFrame(animate);
-  if(avatar){
-    avatar.rotation.y += 0.002;
-  }
-  renderer.render(scene,camera);
+function speak(text){
+
+const speech = new SpeechSynthesisUtterance(text)
+
+speech.lang="es-ES"
+
+speechSynthesis.speak(speech)
+
 }
 
-// SOCKET REALTIME
-function connectSocket(){
-  socket = new WebSocket("wss://api.consia.world/realtime");
+function startVoice(){
 
-  socket.onopen = ()=>{
-    console.log("Socket conectado");
-  };
+document.getElementById("status").innerText="Escuchando..."
 
-  socket.onmessage = msg=>{
-    console.log("Server:",msg.data);
-  };
+recognition.start()
+
 }
 
-// STREAM AUDIO
-async function startStreaming(){
+recognition.onresult = async function(event){
 
-  mediaStream =
-    await navigator.mediaDevices.getUserMedia({audio:true});
+const text = event.results[0][0].transcript
 
-  const recorder =
-    new MediaRecorder(mediaStream);
+addMessage("👤 "+text)
 
-  recorder.start(300);
+document.getElementById("status").innerText="Pensando..."
 
-  recorder.ondataavailable = e=>{
-    if(socket.readyState===1){
-      socket.send(e.data);
-    }
-  };
+const res = await fetch(API+"/v1/chat",{
+method:"POST",
+headers:{
+"content-type":"application/json"
+},
+body:JSON.stringify({
+input:text
+})
+})
+
+const data = await res.json()
+
+addMessage("CONSIA: "+data.reply)
+
+speak(data.reply)
+
+document.getElementById("status").innerText="Voice ready"
+
 }
-
-// WAKE WORD
-async function initWake(){
-
-  const accessKey = 9+cUNbpO4ENSiqX0sPEMphHDjK3cRgd9oWJwMnzSJ8l9o0R/x8k82Q==
-
-  porcupine =
-    await PorcupineWeb.PorcupineWorker.create(
-      accessKey,
-      [{
-        builtin:"Computer",
-        sensitivity:0.7
-      }],
-      wakeDetected
-    );
-
-  audioContext = new AudioContext();
-
-  const mic =
-    await navigator.mediaDevices.getUserMedia({audio:true});
-
-  const source =
-    audioContext.createMediaStreamSource(mic);
-
-  const processor =
-    audioContext.createScriptProcessor(512,1,1);
-
-  source.connect(processor);
-  processor.connect(audioContext.destination);
-
-  processor.onaudioprocess = e=>{
-    porcupine.process(
-      e.inputBuffer.getChannelData(0)
-    );
-  };
-}
-
-function wakeDetected(){
-  console.log("WAKE");
-  startStreaming();
-}
-
-// FACE TRACKING
-function initFaceTracking(){
-
-  const video =
-    document.getElementById("video");
-
-  const faceMesh =
-    new FaceMesh({
-      locateFile:file=>{
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-      }
-    });
-
-  faceMesh.setOptions({
-    maxNumFaces:1,
-    refineLandmarks:true,
-    minDetectionConfidence:0.5,
-    minTrackingConfidence:0.5
-  });
-
-  faceMesh.onResults(results=>{
-    if(results.multiFaceLandmarks.length>0){
-      if(avatar){
-        avatar.rotation.y =
-          results.multiFaceLandmarks[0][1].x - 0.5;
-      }
-    }
-  });
-
-  const cam =
-    new Camera(video,{
-      onFrame:async()=>{
-        await faceMesh.send({image:video});
-      },
-      width:640,
-      height:480
-    });
-
-  cam.start();
-}
-
-// INIT ALL
-init3D();
-connectSocket();
-initWake();
-initFaceTracking();
 
 </script>
+
 </body>
 </html>
