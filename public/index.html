@@ -175,6 +175,27 @@ line-height:1.55;
 min-height:120px;
 }
 
+.worldbox{
+margin-top:24px;
+background:#0b1220;
+border:1px solid #182238;
+border-radius:16px;
+padding:18px;
+}
+
+.world-title{
+font-size:18px;
+margin-bottom:12px;
+opacity:.95;
+}
+
+.world-log{
+white-space:pre-wrap;
+opacity:.9;
+line-height:1.55;
+min-height:120px;
+}
+
 @media (max-width: 768px){
 .container{
 padding:24px;
@@ -230,7 +251,8 @@ font-size:24px;
 <div class="badge">SELF-LEARNING BRAIN</div>
 <div class="badge">GLOBAL MEMORY</div>
 <div class="badge">PROJECT BRAIN</div>
-<div class="badge">AUTOPILOT AGENTS</div>
+<div class="badge">AGENT SWARM</div>
+<div class="badge">WORLD MODEL</div>
 <div class="badge">BRAIN ACTIVE</div>
 <div class="badge">VISION ACTIVE</div>
 <div class="badge">VOICE ACTIVE</div>
@@ -255,6 +277,9 @@ font-size:24px;
 <button onclick="createProject()">Test Project</button>
 <button onclick="addProjectNote()">Test Note</button>
 <button onclick="memoryStatus()">Memory Status</button>
+<button onclick="runSwarm()">Test Agent Swarm</button>
+<button onclick="worldStatus()">World Status</button>
+<button onclick="worldReason()">World Reason</button>
 </div>
 
 <div class="console">
@@ -267,6 +292,11 @@ font-size:24px;
 <div class="learn-log" id="learningLog">Learning engine listo.</div>
 </div>
 
+<div class="worldbox">
+<div class="world-title">CONSIA World Model</div>
+<div class="world-log" id="worldLog">World model listo.</div>
+</div>
+
 </div>
 
 <script src="owner-key.js"></script>
@@ -274,6 +304,8 @@ font-size:24px;
 <script src="autopilot-core.js"></script>
 <script src="self-learning-core.js"></script>
 <script src="global-memory-core.js"></script>
+<script src="agent-swarm-core.js"></script>
+<script src="world-model-core.js"></script>
 
 <script>
 function openPage(page){
@@ -292,6 +324,11 @@ box.scrollTop = box.scrollHeight;
 
 function logLearning(text){
 const box = document.getElementById("learningLog");
+box.textContent = text;
+}
+
+function logWorld(text){
+const box = document.getElementById("worldLog");
 box.textContent = text;
 }
 
@@ -376,6 +413,7 @@ logConsole("CONSIA: " + response);
 const learned = CONSIA_LEARNING.learn(text, task, response);
 logConsole("LEARNED topic: " + learned.topic);
 
+logWorld(CONSIA_WORLD_MODEL.reason(text));
 refreshLearning();
 
 }catch(e){
@@ -394,6 +432,7 @@ logConsole("CONSIA: " + response);
 const learned = CONSIA_LEARNING.learn(value, task, response);
 logConsole("LEARNED topic: " + learned.topic);
 
+logWorld(CONSIA_WORLD_MODEL.reason(value));
 refreshLearning();
 }
 
@@ -411,7 +450,30 @@ logConsole(r.step + " → " + r.result);
 CONSIA_LEARNING.learn("autopilot:" + r.step, r.step, r.result);
 });
 
+logWorld(CONSIA_WORLD_MODEL.reason("estrategia de automatización"));
 refreshLearning();
+}
+
+async function runSwarm(){
+logConsole("CONSIA SWARM iniciado");
+
+const result = await CONSIA_SWARM.run("investigar inteligencia artificial");
+
+result.results.forEach(r=>{
+logConsole(r.agent.toUpperCase() + " → " + r.result);
+});
+
+logWorld(CONSIA_WORLD_MODEL.reason("investigar proyecto y estrategia"));
+refreshLearning();
+}
+
+function worldStatus(){
+logWorld(CONSIA_WORLD_MODEL.describe());
+}
+
+function worldReason(){
+const text = document.getElementById("input").value || "empresa proyecto estrategia";
+logWorld(CONSIA_WORLD_MODEL.reason(text));
 }
 
 document.getElementById("input").addEventListener("keydown", function(e){
@@ -419,6 +481,7 @@ if(e.key === "Enter") send();
 });
 
 refreshLearning();
+worldStatus();
 </script>
 
 </body>
