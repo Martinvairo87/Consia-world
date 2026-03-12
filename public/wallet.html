@@ -1,35 +1,77 @@
 <!doctype html>
-<html>
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA Wallet</title>
+<title>CONSIA • Wallet</title>
 <style>
-body{margin:0;background:#030712;color:#fff;font-family:-apple-system}
-.wrap{max-width:800px;margin:auto;padding:40px;text-align:center}
-.balance{font-size:50px}
+body{margin:0;background:#020617;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto}
+.wrap{max-width:1000px;margin:auto;padding:30px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+h1{margin:0;font-size:38px}
+.sub{opacity:.72;margin-top:8px}
+a{color:#fff;text-decoration:none}
+.btn{padding:12px 16px;border-radius:14px;background:#111a33;border:1px solid #1f2b4d}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:24px}
+.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:22px}
+.label{opacity:.72;margin-bottom:10px}
+.value{font-size:34px;font-weight:700}
+.state{margin-top:24px;background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:20px;opacity:.82}
 </style>
 </head>
 <body>
-
 <div class="wrap">
 
-<h1>CONSIA Wallet</h1>
+<div class="top">
+  <div>
+    <h1>CONSIA Wallet</h1>
+    <div class="sub">Balance, créditos y estado financiero base</div>
+  </div>
+  <a class="btn" href="/">← Home</a>
+</div>
 
-<div class="balance" id="bal">...</div>
+<div class="grid">
+  <div class="card">
+    <div class="label">Balance</div>
+    <div class="value" id="balance">...</div>
+  </div>
 
-<br>
-<a href="/">← Home</a>
+  <div class="card">
+    <div class="label">Moneda</div>
+    <div class="value" id="currency">...</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Estado</div>
+    <div class="value" id="status">...</div>
+  </div>
+</div>
+
+<div class="state" id="stateBox">Conectando wallet...</div>
 
 </div>
 
 <script>
-fetch("https://api.consia.world/v1/wallet")
-.then(r=>r.json())
-.then(j=>{
-bal.textContent=j.balance+" "+j.currency
-})
-</script>
+const API = "https://api.consia.world";
 
+async function loadWallet(){
+  try{
+    const res = await fetch(API + "/v1/wallet");
+    const data = await res.json();
+
+    document.getElementById("balance").textContent = data.balance ?? 0;
+    document.getElementById("currency").textContent = data.currency || "USD";
+    document.getElementById("status").textContent = data.ok ? "ONLINE" : "READY";
+    document.getElementById("stateBox").textContent = "Wallet ONLINE";
+  }catch(e){
+    document.getElementById("balance").textContent = "0";
+    document.getElementById("currency").textContent = "USD";
+    document.getElementById("status").textContent = "OFF";
+    document.getElementById("stateBox").textContent = "Error conectando wallet";
+  }
+}
+
+loadWallet();
+</script>
 </body>
 </html>
