@@ -103,12 +103,13 @@ body{
 
 input{
   flex:1;
-  padding:14px;
+  padding:16px;
   border-radius:14px;
   border:none;
   background:#0b1220;
   color:white;
   outline:none;
+  font-size:16px;
 }
 
 button{
@@ -131,14 +132,14 @@ button{
 .console-title{
   font-size:18px;
   margin-bottom:12px;
-  opacity:.9;
+  opacity:.95;
 }
 
 .console-log{
-  min-height:140px;
+  min-height:220px;
   white-space:pre-wrap;
-  opacity:.85;
-  line-height:1.5;
+  opacity:.9;
+  line-height:1.55;
 }
 
 .quick{
@@ -218,7 +219,7 @@ button{
     <button onclick="runPreset('vision','Analizar imagen actual')">Test Vision</button>
     <button onclick="runPreset('marketplace','Publicar producto')">Test Marketplace</button>
     <button onclick="runPreset('automation','Ejecutar workflow')">Test Automation</button>
-    <button onclick="runPreset('wallet','Consultar wallet')">Test Wallet</button>
+    <button onclick="runPreset('wallet','consultar saldo wallet')">Test Wallet</button>
   </div>
 
   <div class="console">
@@ -242,14 +243,14 @@ function newChat(){
 
 function logConsole(text){
   const box = document.getElementById("consoleLog");
-  const current = box.textContent.trim();
-  box.textContent = current ? (current + "\n" + text) : text;
+  box.textContent += "\n" + text;
+  box.scrollTop = box.scrollHeight;
 }
 
 function detectTask(text){
   const t = String(text || "").toLowerCase();
 
-  if (t.includes("wallet") || t.includes("saldo") || t.includes("pago")) return "wallet";
+  if (t.includes("wallet") || t.includes("saldo") || t.includes("pago") || t.includes("balance")) return "wallet";
   if (t.includes("marketplace") || t.includes("producto") || t.includes("venta")) return "marketplace";
   if (t.includes("automat") || t.includes("workflow") || t.includes("proceso")) return "automation";
   if (t.includes("vision") || t.includes("imagen") || t.includes("foto") || t.includes("camara")) return "vision";
@@ -283,7 +284,7 @@ async function send(){
       logConsole("CONSIA: " + response);
     }
   } catch (e){
-    logConsole("CONSIA ERROR: " + (e?.message || "unknown"));
+    logConsole("CONSIA ERROR: " + (e && e.message ? e.message : "unknown"));
   }
 
   input.value = "";
@@ -307,7 +308,7 @@ async function runPreset(task, value){
       logConsole("CONSIA: " + response);
     }
   } catch (e){
-    logConsole("CONSIA ERROR: " + (e?.message || "unknown"));
+    logConsole("CONSIA ERROR: " + (e && e.message ? e.message : "unknown"));
   }
 }
 
