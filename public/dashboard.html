@@ -1,36 +1,73 @@
 <!doctype html>
-<html>
+<html lang="es">
 <head>
-<meta charset="utf-8"/>
-<title>Dashboard</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA • Dashboard</title>
 <style>
-body{background:#000;color:#fff;font-family:Arial;text-align:center;padding-top:60px;}
-.card{
- border:1px solid rgba(255,255,255,.2);
- padding:20px;
- margin:20px;
- border-radius:20px;
-}
+body{margin:0;background:#030712;color:#fff;font-family:-apple-system,system-ui}
+.wrap{max-width:1100px;margin:auto;padding:30px}
+.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:24px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+h1{font-size:36px;margin-bottom:30px}
+.stat{font-size:34px;font-weight:700}
+.label{opacity:.7}
+a{color:#6aa0ff}
 </style>
 </head>
-
 <body>
+<div class="wrap">
 
-<h2>CONSIA METRICS</h2>
+<h1>CONSIA Dashboard</h1>
 
-<div class="card" id="users">Users: —</div>
-<div class="card" id="revenue">Revenue: —</div>
+<div class="grid">
+
+<div class="card">
+<div class="label">API</div>
+<div id="api" class="stat">...</div>
+</div>
+
+<div class="card">
+<div class="label">Router</div>
+<div id="router" class="stat">...</div>
+</div>
+
+<div class="card">
+<div class="label">Agents</div>
+<div id="agents" class="stat">...</div>
+</div>
+
+<div class="card">
+<div class="label">Marketplace</div>
+<div id="market" class="stat">...</div>
+</div>
+
+</div>
+
+<div class="card">
+<a href="/">← Volver</a>
+</div>
+
+</div>
 
 <script>
-async function load(){
- const r = await fetch("/api/metrics");
- const d = await r.json();
+const API="https://api.consia.world"
 
- users.innerText="Users: "+d.users;
- revenue.innerText="Revenue: $"+d.revenue;
-}
-load();
+fetch(API+"/v1/health")
+.then(r=>r.json())
+.then(j=>api.textContent=j.status)
+
+fetch(API+"/v1/router",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({input:"ping"})})
+.then(r=>r.json())
+.then(j=>router.textContent=j.status)
+
+fetch(API+"/v1/agents")
+.then(r=>r.json())
+.then(j=>agents.textContent=j.agents.length)
+
+fetch(API+"/v1/marketplace")
+.then(r=>r.json())
+.then(j=>market.textContent=j.items.length)
 </script>
 
 </body>
