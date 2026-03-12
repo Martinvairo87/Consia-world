@@ -1,543 +1,1166 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA</title>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>CONSIA WORLD</title>
+  <meta
+    name="description"
+    content="CONSIA WORLD · Owner System · Multi-AI Engine · Infinite Files · Strategic & Execution Core"
+  />
+  <meta name="theme-color" content="#05070b" />
 
-<style>
-body{
-margin:0;
-background:#020617;
-color:white;
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-}
+  <style>
+    :root{
+      --bg:#05070b;
+      --bg2:#0b1020;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.1);
+      --text:#f4f7fb;
+      --muted:#9fb0c8;
+      --line:rgba(255,255,255,.12);
+      --accent:#5ee7ff;
+      --accent2:#8b5cf6;
+      --ok:#2dd4bf;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --radius:22px;
+      --radius-sm:16px;
+      --max:1400px;
+    }
 
-.container{
-max-width:1100px;
-margin:auto;
-padding:40px;
-}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      margin:0;
+      padding:0;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(94,231,255,.12), transparent 25%),
+        radial-gradient(circle at 80% 0%, rgba(139,92,246,.14), transparent 25%),
+        linear-gradient(180deg, #04060a 0%, #07101d 100%);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      min-height:100%;
+    }
 
-.logo{
-display:flex;
-align-items:center;
-gap:14px;
-}
+    body{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
 
-.logo-box{
-width:48px;
-height:48px;
-background:linear-gradient(135deg,#5b7cff,#7fa1ff);
-border-radius:14px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:700;
-font-size:20px;
-}
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit}
 
-.title{
-font-size:28px;
-font-weight:600;
-}
+    .wrap{
+      width:100%;
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px;
+    }
 
-.subtitle{
-opacity:.6;
-font-size:14px;
-}
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:40;
+      backdrop-filter:blur(18px);
+      background:rgba(5,7,11,.58);
+      border-bottom:1px solid var(--line);
+    }
 
-.button-main{
-margin-top:40px;
-width:100%;
-padding:18px;
-border-radius:18px;
-border:none;
-background:linear-gradient(90deg,#6f8cff,#8aa4ff);
-font-size:18px;
-color:white;
-cursor:pointer;
-}
+    .topbar-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      min-height:72px;
+    }
 
-.modules{
-margin-top:40px;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+    }
 
-.module{
-padding:18px;
-border-radius:16px;
-background:#0b1220;
-margin-bottom:12px;
-cursor:pointer;
-border:1px solid #182238;
-}
+    .orb{
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      position:relative;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.9), rgba(255,255,255,.15) 18%, rgba(94,231,255,.25) 22%, rgba(139,92,246,.18) 38%, rgba(0,0,0,.2) 55%, rgba(0,0,0,.45) 100%),
+        linear-gradient(135deg, rgba(94,231,255,.22), rgba(139,92,246,.18));
+      box-shadow:
+        0 0 30px rgba(94,231,255,.18),
+        0 0 50px rgba(139,92,246,.12),
+        inset 0 0 20px rgba(255,255,255,.12);
+    }
 
-.module:hover{
-background:#111b30;
-}
+    .brand-text{
+      min-width:0;
+    }
 
-.status{
-margin-top:40px;
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-}
+    .brand-title{
+      font-size:15px;
+      font-weight:800;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
 
-.badge{
-padding:8px 14px;
-border-radius:20px;
-background:#0b1220;
-font-size:13px;
-border:1px solid #182238;
-}
+    .brand-sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:60vw;
+    }
 
-.green{
-color:#4ade80;
-}
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
 
-.chat{
-margin-top:40px;
-display:flex;
-gap:10px;
-}
+    .pill,.btn,.chip{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:999px;
+      transition:.2s ease;
+    }
 
-input{
-flex:1;
-padding:16px;
-border-radius:14px;
-border:none;
-background:#0b1220;
-color:white;
-outline:none;
-font-size:16px;
-}
+    .pill{
+      padding:10px 14px;
+      font-size:12px;
+      color:var(--muted);
+    }
 
-button{
-padding:14px 20px;
-border:none;
-border-radius:14px;
-background:#4f6cff;
-color:white;
-cursor:pointer;
-}
+    .btn{
+      cursor:pointer;
+      padding:12px 16px;
+      font-weight:700;
+      box-shadow:var(--shadow);
+    }
 
-.console{
-margin-top:24px;
-background:#0b1220;
-border:1px solid #182238;
-border-radius:16px;
-padding:18px;
-}
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.1)}
+    .btn.primary{
+      background:linear-gradient(135deg, rgba(94,231,255,.18), rgba(139,92,246,.18));
+      border-color:rgba(94,231,255,.26);
+    }
+    .btn.ghost{box-shadow:none}
 
-.console-title{
-font-size:18px;
-margin-bottom:12px;
-opacity:.95;
-}
+    .hero{
+      padding:30px 18px 12px;
+    }
 
-.console-log{
-min-height:220px;
-white-space:pre-wrap;
-opacity:.9;
-line-height:1.55;
-}
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:32px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        linear-gradient(135deg, rgba(94,231,255,.08), rgba(139,92,246,.08));
+      box-shadow:var(--shadow);
+      padding:26px;
+    }
 
-.quick{
-margin-top:18px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:22px;
+      align-items:stretch;
+    }
 
-.quick button{
-background:#111b30;
-border:1px solid #1f2b45;
-}
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:14px;
+    }
 
-.learnbox{
-margin-top:24px;
-background:#0b1220;
-border:1px solid #182238;
-border-radius:16px;
-padding:18px;
-}
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:var(--ok);
+      box-shadow:0 0 12px rgba(45,212,191,.7);
+    }
 
-.learn-title{
-font-size:18px;
-margin-bottom:12px;
-opacity:.95;
-}
+    h1{
+      margin:0;
+      font-size:clamp(32px,5vw,64px);
+      line-height:1.02;
+      letter-spacing:-.03em;
+      max-width:10ch;
+    }
 
-.learn-log{
-white-space:pre-wrap;
-opacity:.9;
-line-height:1.55;
-min-height:120px;
-}
+    .hero p{
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.6;
+      max-width:68ch;
+      margin:16px 0 0;
+    }
 
-.worldbox{
-margin-top:24px;
-background:#0b1220;
-border:1px solid #182238;
-border-radius:16px;
-padding:18px;
-}
+    .hero-cta{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:22px;
+    }
 
-.world-title{
-font-size:18px;
-margin-bottom:12px;
-opacity:.95;
-}
+    .hero-side{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      align-content:start;
+    }
 
-.world-log{
-white-space:pre-wrap;
-opacity:.9;
-line-height:1.55;
-min-height:120px;
-}
+    .mini{
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:18px;
+      background:rgba(255,255,255,.05);
+      min-height:128px;
+    }
 
-.strategybox{
-margin-top:24px;
-background:#0b1220;
-border:1px solid #182238;
-border-radius:16px;
-padding:18px;
-}
+    .mini h3{
+      margin:0 0 8px;
+      font-size:13px;
+      letter-spacing:.08em;
+      color:var(--muted);
+      text-transform:uppercase;
+    }
 
-.strategy-title{
-font-size:18px;
-margin-bottom:12px;
-opacity:.95;
-}
+    .mini strong{
+      display:block;
+      font-size:28px;
+      margin-bottom:6px;
+    }
 
-.strategy-log{
-white-space:pre-wrap;
-opacity:.9;
-line-height:1.55;
-min-height:140px;
-}
+    .section{
+      padding:12px 18px 4px;
+    }
 
-@media (max-width: 768px){
-.container{
-padding:24px;
-}
+    .section-head{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
 
-.chat{
-flex-direction:column;
-}
+    .section-title{
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
 
-.title{
-font-size:24px;
-}
-}
-</style>
+    .section-sub{
+      color:var(--muted);
+      font-size:14px;
+      max-width:72ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:16px;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .span-12{grid-column:span 12}
+    .span-8{grid-column:span 8}
+    .span-7{grid-column:span 7}
+    .span-6{grid-column:span 6}
+    .span-5{grid-column:span 5}
+    .span-4{grid-column:span 4}
+    .span-3{grid-column:span 3}
+
+    .card h2,.card h3,.card h4{
+      margin:0;
+      letter-spacing:-.02em;
+    }
+
+    .card p{
+      color:var(--muted);
+      line-height:1.6;
+      margin:10px 0 0;
+    }
+
+    .status-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+
+    .chip{
+      padding:10px 12px;
+      font-size:12px;
+      color:var(--muted);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .chip b{color:var(--text)}
+
+    .console{
+      margin-top:16px;
+      background:#020408;
+      border:1px solid rgba(94,231,255,.14);
+      border-radius:20px;
+      padding:14px;
+      min-height:220px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .console-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      padding-bottom:10px;
+    }
+
+    .console-body{
+      flex:1;
+      overflow:auto;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:13px;
+      line-height:1.55;
+      color:#d8ecff;
+      white-space:pre-wrap;
+    }
+
+    .composer{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .composer textarea{
+      width:100%;
+      min-height:72px;
+      resize:vertical;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:14px 16px;
+      outline:none;
+    }
+
+    .stack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .module{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:16px;
+      background:rgba(255,255,255,.04);
+    }
+
+    .module-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:start;
+    }
+
+    .module-name{
+      font-weight:800;
+      font-size:16px;
+    }
+
+    .module-badge{
+      font-size:11px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .module-desc{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .kpis{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .kpi{
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:rgba(255,255,255,.04);
+      padding:16px;
+    }
+
+    .kpi .label{
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .kpi .value{
+      font-size:28px;
+      font-weight:800;
+      margin-top:8px;
+    }
+
+    .file-drop{
+      margin-top:14px;
+      border:1.5px dashed rgba(94,231,255,.24);
+      border-radius:24px;
+      padding:20px;
+      background:linear-gradient(135deg, rgba(94,231,255,.06), rgba(139,92,246,.05));
+      text-align:center;
+    }
+
+    .file-drop input{display:none}
+
+    .file-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .file-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+    }
+
+    .file-meta{
+      min-width:0;
+    }
+
+    .file-name{
+      font-weight:700;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .file-sub{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
+    }
+
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .quick{
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .quick:hover{transform:translateY(-2px); background:rgba(255,255,255,.07)}
+    .quick h4{font-size:16px}
+    .quick p{font-size:13px; margin-top:8px}
+
+    .footer{
+      padding:28px 18px 40px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .footer-box{
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:18px;
+      background:rgba(255,255,255,.04);
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .lockscreen{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(1,3,7,.78);
+      backdrop-filter:blur(20px);
+      padding:18px;
+    }
+
+    .lock-card{
+      width:min(480px,100%);
+      border:1px solid var(--line);
+      border-radius:32px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)),
+        linear-gradient(135deg, rgba(94,231,255,.08), rgba(139,92,246,.08));
+      box-shadow:var(--shadow);
+      padding:26px;
+      text-align:center;
+    }
+
+    .lock-card h2{
+      font-size:30px;
+      margin:14px 0 10px;
+      letter-spacing:-.03em;
+    }
+
+    .lock-card p{
+      color:var(--muted);
+      line-height:1.6;
+      margin:0 0 18px;
+    }
+
+    .pin{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .pin input{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      padding:14px 16px;
+      outline:none;
+      text-align:center;
+      letter-spacing:.28em;
+      font-size:20px;
+      font-weight:800;
+    }
+
+    .lock-note{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:12px;
+    }
+
+    .hidden{display:none !important}
+
+    @media (max-width:1100px){
+      .hero-grid{grid-template-columns:1fr}
+      .span-8,.span-7,.span-6,.span-5,.span-4,.span-3{grid-column:span 12}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+    }
+
+    @media (max-width:700px){
+      .wrap{padding:14px}
+      .hero-card,.card,.lock-card{border-radius:24px}
+      .hero-side{grid-template-columns:1fr 1fr}
+      .quick-grid{grid-template-columns:1fr}
+      .kpis{grid-template-columns:1fr}
+      .topbar-inner{align-items:flex-start; padding:8px 0}
+      .brand-sub{max-width:48vw}
+      .composer{grid-template-columns:1fr}
+      .hero-side{grid-template-columns:1fr}
+    }
+  </style>
 </head>
-
 <body>
-
-<div class="container">
-
-<div class="logo">
-<div class="logo-box">C</div>
-<div>
-<div class="title">CONSIA</div>
-<div class="subtitle">Super Interface</div>
-</div>
-</div>
-
-<button class="button-main" onclick="newChat()">Nuevo chat</button>
-
-<div class="modules">
-<div class="module" onclick="openPage('dashboard.html')">Dashboard</div>
-<div class="module" onclick="openPage('apps.html')">AI App Store</div>
-<div class="module" onclick="openPage('marketplace.html')">Marketplace</div>
-<div class="module" onclick="openPage('os.html')">CONSIA OS</div>
-<div class="module" onclick="openPage('agents.html')">Agents</div>
-<div class="module" onclick="openPage('wallet.html')">Wallet</div>
-<div class="module" onclick="openPage('voice.html')">Voice Interface</div>
-<div class="module" onclick="openPage('avatar.html')">Avatar IA</div>
-<div class="module" onclick="openPage('live-camera.html')">Live Camera</div>
-<div class="module" onclick="openPage('vision.html')">Vision AI</div>
-<div class="module" onclick="openPage('automation.html')">Automation Engine</div>
-<div class="module" onclick="openPage('autopilot.html')">Autopilot</div>
-<div class="module" onclick="openPage('autopilot.html')">Autopilot Agents</div>
-<div class="module" onclick="openPage('global-memory.html')">Global Memory</div>
-<div class="module" onclick="openPage('command-center.html')">Command Center</div>
-</div>
-
-<div class="status">
-<div class="badge green">● CONSIA ONLINE</div>
-<div class="badge">OWNER SECURITY PRO</div>
-<div class="badge">MULTI-AI ENGINE</div>
-<div class="badge">SELF-LEARNING BRAIN</div>
-<div class="badge">GLOBAL MEMORY</div>
-<div class="badge">PROJECT BRAIN</div>
-<div class="badge">AGENT SWARM</div>
-<div class="badge">WORLD MODEL</div>
-<div class="badge">STRATEGIC ENGINE</div>
-<div class="badge">EXECUTION ENGINE</div>
-<div class="badge">BRAIN ACTIVE</div>
-<div class="badge">VISION ACTIVE</div>
-<div class="badge">VOICE ACTIVE</div>
-<div class="badge">AGENTS READY</div>
-<div class="badge">AUTOMATION READY</div>
-</div>
-
-<div class="chat">
-<input id="input" placeholder="Habla con CONSIA">
-<button onclick="send()">Enviar</button>
-</div>
-
-<div class="quick">
-<button onclick="runPreset('search','Tesla')">Test Search</button>
-<button onclick="runPreset('vision','Analizar imagen')">Test Vision</button>
-<button onclick="runPreset('marketplace','Publicar producto')">Test Marketplace</button>
-<button onclick="runPreset('automation','Crear workflow')">Test Automation</button>
-<button onclick="runPreset('wallet','Consultar saldo wallet')">Test Wallet</button>
-<button onclick="runAutopilot()">Test Autopilot</button>
-<button onclick="refreshLearning()">Ver Learning</button>
-<button onclick="clearLearning()">Reset Learning</button>
-<button onclick="createProject()">Test Project</button>
-<button onclick="addProjectNote()">Test Note</button>
-<button onclick="memoryStatus()">Memory Status</button>
-<button onclick="runSwarm()">Test Agent Swarm</button>
-<button onclick="worldStatus()">World Status</button>
-<button onclick="worldReason()">World Reason</button>
-<button onclick="runStrategy()">Test Strategy</button>
-</div>
-
-<div class="console">
-<div class="console-title">CONSIA Console</div>
-<div class="console-log" id="consoleLog">CONSIA BRAIN listo.</div>
-</div>
-
-<div class="learnbox">
-<div class="learn-title">CONSIA Self-Learning + Global Memory</div>
-<div class="learn-log" id="learningLog">Learning engine listo.</div>
-</div>
-
-<div class="worldbox">
-<div class="world-title">CONSIA World Model</div>
-<div class="world-log" id="worldLog">World model listo.</div>
-</div>
-
-<div class="strategybox">
-<div class="strategy-title">CONSIA Strategic + Execution Engine</div>
-<div class="strategy-log" id="strategyLog">Strategic engine listo.</div>
-</div>
-
-</div>
-
-<script src="owner-key.js"></script>
-<script src="agents-core.js"></script>
-<script src="autopilot-core.js"></script>
-<script src="self-learning-core.js"></script>
-<script src="global-memory-core.js"></script>
-<script src="agent-swarm-core.js"></script>
-<script src="world-model-core.js"></script>
-<script src="strategic-engine-core.js"></script>
-<script src="execution-engine-core.js"></script>
-
-<script>
-function openPage(page){
-window.location.href = page;
-}
-
-function newChat(){
-document.getElementById("input").focus();
-}
-
-function logConsole(text){
-const box = document.getElementById("consoleLog");
-box.textContent += "\n" + text;
-box.scrollTop = box.scrollHeight;
-}
-
-function logLearning(text){
-document.getElementById("learningLog").textContent = text;
-}
-
-function logWorld(text){
-document.getElementById("worldLog").textContent = text;
-}
-
-function logStrategy(text){
-document.getElementById("strategyLog").textContent = text;
-}
-
-function detectTask(text){
-const t = text.toLowerCase();
-
-if(t.includes("wallet") || t.includes("saldo")) return "wallet";
-if(t.includes("producto") || t.includes("marketplace")) return "marketplace";
-if(t.includes("automat") || t.includes("workflow")) return "automation";
-if(t.includes("imagen") || t.includes("vision")) return "vision";
-
-return "search";
-}
-
-function refreshLearning(){
-const s = CONSIA_LEARNING.summary();
-
-let out = "Interactions: " + s.totalInteractions + "\n";
-out += "Last topic: " + (s.preferences.lastTopic || "-") + "\n";
-out += "Last task: " + (s.preferences.lastTask || "-") + "\n";
-out += "Top signals:\n";
-
-(s.topSignals || []).forEach(item=>{
-out += "- " + item[0] + ": " + item[1] + "\n";
-});
-
-out += "Recent topics: " + (s.lastTopics || []).join(", ");
-
-try{
-const m = CONSIA_MEMORY.summary();
-out += "\n\nProjects: " + m.totalProjects + "\n";
-out += "Project list: " + (m.projects || []).join(", ");
-}catch(e){
-out += "\n\nProjects: memory engine not ready";
-}
-
-logLearning(out);
-}
-
-function clearLearning(){
-CONSIA_LEARNING.clear();
-refreshLearning();
-logConsole("CONSIA learning reset.");
-}
-
-function createProject(){
-let result = CONSIA_MEMORY.createProject("CONSIA_CORE");
-logConsole(result);
-refreshLearning();
-}
-
-function addProjectNote(){
-let result = CONSIA_MEMORY.addNote(
-"CONSIA_CORE",
-"Sistema CONSIA activado con GLOBAL MEMORY"
-);
-logConsole(result);
-refreshLearning();
-}
-
-function memoryStatus(){
-const s = CONSIA_MEMORY.summary();
-logConsole("Total proyectos: " + s.totalProjects);
-logConsole("Lista: " + s.projects.join(", "));
-refreshLearning();
-}
-
-async function send(){
-let text = document.getElementById("input").value;
-
-if(!text) return;
-
-let task = detectTask(text);
-
-logConsole("Usuario: " + text);
-logConsole("CONSIA task: " + task);
-
-try{
-
-let exec = CONSIA_EXECUTION.execute(text);
-
-let response;
-
-if(exec){
-response = exec;
-}else{
-response = await CONSIA.run(task, text);
-}
-
-logConsole("CONSIA: " + response);
-
-const learned = CONSIA_LEARNING.learn(text, task, response);
-logConsole("LEARNED topic: " + learned.topic);
-
-logWorld(CONSIA_WORLD_MODEL.reason(text));
-logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze(text)));
-refreshLearning();
-
-}catch(e){
-logConsole("CONSIA ERROR");
-}
-
-document.getElementById("input").value = "";
-}
-
-async function runPreset(task, value){
-logConsole("Preset: " + task);
-
-let response = await CONSIA.run(task, value);
-logConsole("CONSIA: " + response);
-
-const learned = CONSIA_LEARNING.learn(value, task, response);
-logConsole("LEARNED topic: " + learned.topic);
-
-logWorld(CONSIA_WORLD_MODEL.reason(value));
-logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze(value)));
-refreshLearning();
-}
-
-async function runAutopilot(){
-logConsole("Autopilot iniciado");
-
-const result = await CONSIA_AUTOPILOT.run("investigar inteligencia artificial");
-
-result.plan.forEach(step=>{
-logConsole("PLAN → " + step.task);
-});
-
-result.results.forEach(r=>{
-logConsole(r.step + " → " + r.result);
-CONSIA_LEARNING.learn("autopilot:" + r.step, r.step, r.result);
-});
-
-logWorld(CONSIA_WORLD_MODEL.reason("estrategia de automatización"));
-logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze("automatizar procesos del negocio")));
-refreshLearning();
-}
-
-async function runSwarm(){
-logConsole("CONSIA SWARM iniciado");
-
-const result = await CONSIA_SWARM.run("investigar inteligencia artificial");
-
-result.results.forEach(r=>{
-logConsole(r.agent.toUpperCase() + " → " + r.result);
-});
-
-logWorld(CONSIA_WORLD_MODEL.reason("investigar proyecto y estrategia"));
-logStrategy(CONSIA_STRATEGIC.format(CONSIA_STRATEGIC.analyze("estrategia de proyecto empresarial")));
-refreshLearning();
-}
-
-function worldStatus(){
-logWorld(CONSIA_WORLD_MODEL.describe());
-}
-
-function worldReason(){
-const text = document.getElementById("input").value || "empresa proyecto estrategia";
-logWorld(CONSIA_WORLD_MODEL.reason(text));
-}
-
-function runStrategy(){
-const text = document.getElementById("input").value || "estrategia de proyecto";
-const result = CONSIA_STRATEGIC.analyze(text);
-logStrategy(CONSIA_STRATEGIC.format(result));
-logConsole("CONSIA STRATEGIC ENGINE ejecutado");
-}
-
-document.getElementById("input").addEventListener("keydown", function(e){
-if(e.key === "Enter") send();
-});
-
-refreshLearning();
-worldStatus();
-runStrategy();
-</script>
-
+  <div id="lockscreen" class="lockscreen">
+    <div class="lock-card">
+      <div class="orb" style="margin:0 auto"></div>
+      <h2>OWNER SECURITY PRO</h2>
+      <p>
+        Acceso privado a <b>CONSIA WORLD</b>. Sistema sellado, Owner-Only,
+        privacidad máxima, fail-closed y control directo.
+      </p>
+
+      <div class="pin">
+        <input
+          id="pinInput"
+          type="password"
+          inputmode="numeric"
+          placeholder="PIN OWNER"
+          autocomplete="off"
+        />
+        <button id="unlockBtn" class="btn primary">Entrar al sistema</button>
+        <button id="demoBtn" class="btn ghost">Modo demo local</button>
+      </div>
+
+      <div class="lock-note">
+        Sugerencia: luego conectá validación real por sesión/API si querés cerrar el acceso totalmente.
+      </div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div class="brand">
+        <div class="orb"></div>
+        <div class="brand-text">
+          <div class="brand-title">CONSIA WORLD</div>
+          <div class="brand-sub">OWNER SYSTEM · MULTI-AI ENGINE · INFINITE FILES</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="pill">Estado: <b style="color:#fff">CORE ONLINE</b></div>
+        <button class="btn ghost" id="ownerModeBtn">OWNER MODE</button>
+        <button class="btn primary" id="newSessionBtn">NUEVA SESIÓN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <div class="hero-card">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">
+              <span class="dot"></span>
+              CONSIA ACTIVE · Strategic + Execution + Infinite Files
+            </div>
+
+            <h1>Tu sistema central para pensar, ejecutar y escalar.</h1>
+
+            <p>
+              CONSIA integra chat, ejecución, control Owner-Only, organización de archivos,
+              automatización operativa, enfoque estratégico y módulos escalables para operar
+              al máximo nivel desde una sola interfaz.
+            </p>
+
+            <div class="hero-cta">
+              <button class="btn primary" id="startActionBtn">Abrir núcleo</button>
+              <button class="btn ghost" id="focusFilesBtn">Ir a Infinite Files</button>
+            </div>
+          </div>
+
+          <div class="hero-side">
+            <div class="mini">
+              <h3>Módulos</h3>
+              <strong>08</strong>
+              <span style="color:var(--muted)">Core, Agents, Strategy, Execution, Files, Security, Memory, Marketplace</span>
+            </div>
+            <div class="mini">
+              <h3>Owner Lock</h3>
+              <strong>ON</strong>
+              <span style="color:var(--muted)">Modo privado, local lock, listo para reforzar con backend</span>
+            </div>
+            <div class="mini">
+              <h3>Infinite Files</h3>
+              <strong>READY</strong>
+              <span style="color:var(--muted)">Carga masiva, versionado, orden semántico y procesamiento futuro</span>
+            </div>
+            <div class="mini">
+              <h3>Estado</h3>
+              <strong id="statusLabel">LOCAL</strong>
+              <span style="color:var(--muted)">Shell activo listo para conectar API real</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Núcleo de operación</div>
+          <div class="section-sub">
+            Consola principal para enviar órdenes, visualizar respuestas del sistema y
+            activar módulos estratégicos.
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card span-7" id="coreCard">
+          <h2>CONSIA CORE</h2>
+          <p>
+            Centro de interacción. Acá podés escribir órdenes, lanzar ideas, organizar
+            proyectos y conectar tu API real cuando quieras.
+          </p>
+
+          <div class="status-row">
+            <div class="chip"><span class="dot"></span> <b>Owner Lock</b> activo</div>
+            <div class="chip"><b>Multi-AI</b> preparado</div>
+            <div class="chip"><b>Memory</b> preparada</div>
+            <div class="chip"><b>Execution</b> lista</div>
+          </div>
+
+          <div class="console">
+            <div class="console-head">
+              <span>CONSIA / SYSTEM CONSOLE</span>
+              <span id="consoleMode">Modo local</span>
+            </div>
+            <div class="console-body" id="consoleBody">
+CONSIA WORLD iniciado.
+Estado: shell local activo.
+Seguridad: Owner-Only local habilitado.
+Módulos: Core / Files / Strategy / Execution / Memory / Marketplace.
+Siguiente paso opcional: conectar endpoint real del backend.
+            </div>
+          </div>
+
+          <div class="composer">
+            <textarea
+              id="commandInput"
+              placeholder="Escribí una orden... Ej: Organizar archivos de Manglar por proyecto y fecha"
+            ></textarea>
+            <button class="btn primary" id="sendBtn">Enviar</button>
+          </div>
+        </div>
+
+        <div class="card span-5">
+          <h2>Quick Actions</h2>
+          <p>Disparadores rápidos para mover el sistema sin perder tiempo.</p>
+
+          <div class="quick-grid">
+            <div class="quick" data-prompt="Activar modo estratégico y ordenar prioridades del día">
+              <h4>Strategic Engine</h4>
+              <p>Ordena prioridades, detecta foco y propone ejecución.</p>
+            </div>
+            <div class="quick" data-prompt="Activar modo ejecución y dividir objetivos en acciones mínimas">
+              <h4>Execution Engine</h4>
+              <p>Transforma ideas en pasos concretos, rápidos y accionables.</p>
+            </div>
+            <div class="quick" data-prompt="Abrir Infinite Files y preparar organización automática por empresa y proyecto">
+              <h4>Infinite Files</h4>
+              <p>Organiza, clasifica y deja lista la carga de archivos.</p>
+            </div>
+            <div class="quick" data-prompt="Revisar seguridad owner-only y estado general del sistema">
+              <h4>Owner Security</h4>
+              <p>Chequea bloqueo, privacidad y estado operativo del sistema.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card span-8" id="filesCard">
+          <h2>CONSIA INFINITE FILES</h2>
+          <p>
+            Módulo preparado para carga prácticamente ilimitada, con enfoque en
+            versionado, deduplicación, colas de procesamiento, indexado y organización total.
+          </p>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Archivos</div>
+              <div class="value" id="filesCount">0</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Total local</div>
+              <div class="value" id="filesSize">0 MB</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Versionado</div>
+              <div class="value">ON</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Indexado</div>
+              <div class="value">READY</div>
+            </div>
+          </div>
+
+          <label class="file-drop" for="fileInput">
+            <div style="font-size:18px;font-weight:800">Subir archivos</div>
+            <div style="margin-top:8px;color:var(--muted)">
+              Tocá acá para cargar uno o varios archivos. El sistema los lista,
+              calcula tamaño y deja base preparada para pipeline real.
+            </div>
+            <div style="margin-top:14px">
+              <span class="btn primary" style="display:inline-flex">Seleccionar archivos</span>
+            </div>
+            <input id="fileInput" type="file" multiple />
+          </label>
+
+          <div class="file-list" id="fileList"></div>
+        </div>
+
+        <div class="card span-4">
+          <h2>Arquitectura sellada</h2>
+          <p>Base visible del sistema, lista para conectarse a backend real.</p>
+
+          <div class="stack" style="margin-top:14px">
+            <div class="module">
+              <div class="module-top">
+                <div class="module-name">Core Plane</div>
+                <div class="module-badge">Activo</div>
+              </div>
+              <div class="module-desc">
+                Interfaz central, comandos, sesión, shell visual y núcleo operativo.
+              </div>
+            </div>
+
+            <div class="module">
+              <div class="module-top">
+                <div class="module-name">Infinite Files</div>
+                <div class="module-badge">Preparado</div>
+              </div>
+              <div class="module-desc">
+                Upload gateway, versionado, organización por empresa/proyecto/fecha/tema.
+              </div>
+            </div>
+
+            <div class="module">
+              <div class="module-top">
+                <div class="module-name">Security Layer</div>
+                <div class="module-badge">Owner-Only</div>
+              </div>
+              <div class="module-desc">
+                Bloqueo local, endurecible con sesión segura, tokens y backend.
+              </div>
+            </div>
+
+            <div class="module">
+              <div class="module-top">
+                <div class="module-name">Execution Layer</div>
+                <div class="module-badge">Ready</div>
+              </div>
+              <div class="module-desc">
+                Preparada para acciones automáticas, motores IA y orquestación.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card span-6">
+          <h2>Strategic Engine</h2>
+          <p>
+            Priorización, lectura de contexto, foco diario y transformación de ideas en
+            decisiones concretas para tus empresas y proyectos.
+          </p>
+
+          <div class="status-row">
+            <div class="chip"><b>Prioridades</b> dinámicas</div>
+            <div class="chip"><b>Roadmap</b> operativo</div>
+            <div class="chip"><b>Expansión</b> escalable</div>
+          </div>
+        </div>
+
+        <div class="card span-6">
+          <h2>Execution Engine</h2>
+          <p>
+            Baja cada objetivo a acciones mínimas. Ideal para ejecutar rápido, sin fricción
+            y con foco de sistema central.
+          </p>
+
+          <div class="status-row">
+            <div class="chip"><b>Acciones</b> rápidas</div>
+            <div class="chip"><b>Pasos mínimos</b></div>
+            <div class="chip"><b>Modo directo</b></div>
+          </div>
+        </div>
+
+        <div class="card span-4">
+          <h2>Global Memory</h2>
+          <p>
+            Memoria preparada para continuidad, referencias estratégicas y organización del conocimiento.
+          </p>
+        </div>
+
+        <div class="card span-4">
+          <h2>Agent Swarm</h2>
+          <p>
+            Espacio reservado para múltiples agentes especializados por objetivo, empresa o área.
+          </p>
+        </div>
+
+        <div class="card span-4">
+          <h2>Marketplace</h2>
+          <p>
+            Base visual para productos, servicios, membresías, upsells y expansión comercial global.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer wrap">
+      <div class="footer-box">
+        <div>
+          <strong>CONSIA WORLD</strong><br />
+          Shell completo listo para copiar/pegar y seguir conectando módulos reales.
+        </div>
+        <div>
+          Estado visual: <b style="color:#fff">estable</b> · Seguridad local: <b style="color:#fff">activa</b>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      const OWNER_PIN = "1111"; // CAMBIAR por tu PIN real
+      const lockscreen = document.getElementById("lockscreen");
+      const pinInput = document.getElementById("pinInput");
+      const unlockBtn = document.getElementById("unlockBtn");
+      const demoBtn = document.getElementById("demoBtn");
+      const ownerModeBtn = document.getElementById("ownerModeBtn");
+      const newSessionBtn = document.getElementById("newSessionBtn");
+      const startActionBtn = document.getElementById("startActionBtn");
+      const focusFilesBtn = document.getElementById("focusFilesBtn");
+      const sendBtn = document.getElementById("sendBtn");
+      const commandInput = document.getElementById("commandInput");
+      const consoleBody = document.getElementById("consoleBody");
+      const consoleMode = document.getElementById("consoleMode");
+      const statusLabel = document.getElementById("statusLabel");
+      const fileInput = document.getElementById("fileInput");
+      const fileList = document.getElementById("fileList");
+      const filesCount = document.getElementById("filesCount");
+      const filesSize = document.getElementById("filesSize");
+      const quicks = document.querySelectorAll(".quick");
+
+      let sessionId = cryptoRandom();
+      let uploadedFiles = [];
+
+      function cryptoRandom() {
+        try {
+          return "sess_" + crypto.randomUUID();
+        } catch (e) {
+          return "sess_" + Date.now() + "_" + Math.floor(Math.random() * 99999);
+        }
+      }
+
+      function logLine(text) {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, "0");
+        const mm = String(now.getMinutes()).padStart(2, "0");
+        const stamp = `[${hh}:${mm}] `;
+        consoleBody.textContent += `\n${stamp}${text}`;
+        consoleBody.scrollTop = consoleBody.scrollHeight;
+      }
+
+      function unlock(mode) {
+        lockscreen.classList.add("hidden");
+        consoleMode.textContent = mode === "demo" ? "Modo demo local" : "Modo owner local";
+        statusLabel.textContent = mode === "demo" ? "DEMO" : "OWNER";
+        logLine(`Sesión iniciada (${mode}). ID: ${sessionId}`);
+      }
+
+      unlockBtn.addEventListener("click", () => {
+        const value = (pinInput.value || "").trim();
+        if (value === OWNER_PIN) {
+          unlock("owner");
+        } else {
+          pinInput.value = "";
+          pinInput.placeholder = "PIN incorrecto";
+          logLine("Intento de acceso rechazado.");
+        }
+      });
+
+      demoBtn.addEventListener("click", () => unlock("demo"));
+
+      pinInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") unlockBtn.click();
+      });
+
+      ownerModeBtn.addEventListener("click", () => {
+        lockscreen.classList.remove("hidden");
+        pinInput.value = "";
+        pinInput.focus();
+      });
+
+      newSessionBtn.addEventListener("click", () => {
+        sessionId = cryptoRandom();
+        logLine("Nueva sesión creada: " + sessionId);
+      });
+
+      startActionBtn.addEventListener("click", () => {
+        document.getElementById("coreCard").scrollIntoView({ behavior: "smooth", block: "start" });
+        commandInput.focus();
+      });
+
+      focusFilesBtn.addEventListener("click", () => {
+        document.getElementById("filesCard").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      quicks.forEach((item) => {
+        item.addEventListener("click", () => {
+          commandInput.value = item.dataset.prompt || "";
+          sendCommand();
+        });
+      });
+
+      sendBtn.addEventListener("click", sendCommand);
+
+      commandInput.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          sendCommand();
+        }
+      });
+
+      function fakeResponse(prompt) {
+        const p = (prompt || "").toLowerCase();
+
+        if (p.includes("archivo") || p.includes("files")) {
+          return "CONSIA Infinite Files: pipeline preparado. Recomendación: cargar archivos, agrupar por empresa/proyecto y conectar backend para indexado real.";
+        }
+        if (p.includes("estratég") || p.includes("prior")) {
+          return "Strategic Engine: foco recomendado = 1) ordenar activos 2) priorizar ejecución 3) consolidar sistema central 4) automatizar flujos repetitivos.";
+        }
+        if (p.includes("ejec")) {
+          return "Execution Engine: objetivo dividido en pasos mínimos. Estado = listo para checklist, automatizaciones y conexión de acciones reales.";
+        }
+        if (p.includes("seguridad") || p.includes("owner")) {
+          return "Owner Security: lock local activo. Próximo endurecimiento recomendado = sesión backend, token firmado, validación server-side y cierre completo.";
+        }
+
+        return "CONSIA recibió la orden. Shell local activo. Para respuesta real, conectá tu endpoint backend dentro de sendCommand().";
+      }
+
+      async function sendCommand() {
+        const prompt = (commandInput.value || "").trim();
+        if (!prompt) return;
+
+        logLine("OWNER > " + prompt);
+        commandInput.value = "";
+
+        // Conexión real opcional:
+        // Descomentá y reemplazá por tu endpoint real cuando quieras.
+        /*
+        try {
+          const res = await fetch("https://api.consia.world/v1/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              sessionId,
+              prompt
+            })
+          });
+          const data = await res.json();
+          logLine("CONSIA > " + (data.answer || JSON.stringify(data)));
+          return;
+        } catch (err) {
+          logLine("Error API > " + err.message);
+        }
+        */
+
+        setTimeout(() => {
+          logLine("CONSIA > " + fakeResponse(prompt));
+        }, 280);
+      }
+
+      fileInput.addEventListener("change", (e) => {
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
+
+        uploadedFiles = uploadedFiles.concat(files);
+        renderFiles();
+        logLine(`Infinite Files > ${files.length} archivo(s) agregados a la sesión.`);
+        fileInput.value = "";
+      });
+
+      function formatBytes(bytes) {
+        if (!bytes) return "0 MB";
+        const units = ["B", "KB", "MB", "GB", "TB"];
+        let i = 0;
+        let value = bytes;
+        while (value >= 1024 && i < units.length - 1) {
+          value /= 1024;
+          i++;
+        }
+        return `${value.toFixed(value >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
+      }
+
+      function renderFiles() {
+        fileList.innerHTML = "";
+        let total = 0;
+
+        uploadedFiles.forEach((file, index) => {
+          total += file.size || 0;
+
+          const row = document.createElement("div");
+          row.className = "file-item";
+
+          const meta = document.createElement("div");
+          meta.className = "file-meta";
+
+          const name = document.createElement("div");
+          name.className = "file-name";
+          name.textContent = file.name;
+
+          const sub = document.createElement("div");
+          sub.className = "file-sub";
+          sub.textContent = `${formatBytes(file.size)} · ${file.type || "tipo desconocido"} · v${index + 1}`;
+
+          meta.appendChild(name);
+          meta.appendChild(sub);
+
+          const del = document.createElement("button");
+          del.className = "btn ghost";
+          del.style.padding = "10px 12px";
+          del.style.boxShadow = "none";
+          del.textContent = "Quitar";
+          del.addEventListener("click", () => {
+            uploadedFiles.splice(index, 1);
+            renderFiles();
+            logLine(`Infinite Files > archivo removido: ${file.name}`);
+          });
+
+          row.appendChild(meta);
+          row.appendChild(del);
+          fileList.appendChild(row);
+        });
+
+        filesCount.textContent = String(uploadedFiles.length);
+        filesSize.textContent = formatBytes(total);
+      }
+
+      logLine("Sistema cargado. Esperando autenticación Owner/Demo.");
+    })();
+  </script>
 </body>
 </html>
