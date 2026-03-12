@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA LIVE CAMERA</title>
+
+<style>
+
+body{
+margin:0;
+background:#020617;
+color:white;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
+text-align:center;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+font-size:40px;
+margin-bottom:10px;
+letter-spacing:4px;
+}
+
+.video{
+margin-top:20px;
+border-radius:14px;
+border:1px solid #1c2747;
+background:black;
+width:100%;
+max-width:720px;
+}
+
+.controls{
+margin-top:20px;
+display:flex;
+gap:10px;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+button{
+padding:14px 22px;
+border:none;
+border-radius:12px;
+background:#4c6fff;
+color:white;
+cursor:pointer;
+font-size:16px;
+}
+
+button.stop{
+background:#ff4c6a;
+}
+
+.status{
+margin-top:18px;
+opacity:.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA LIVE CAMERA</h1>
+
+<video id="video" class="video" autoplay playsinline></video>
+
+<div class="controls">
+
+<button onclick="startCamera()">
+Activar cámara
+</button>
+
+<button class="stop" onclick="stopCamera()">
+Detener cámara
+</button>
+
+</div>
+
+<div class="status" id="status">
+Camera ready
+</div>
+
+</div>
+
+<script>
+
+let stream
+
+async function startCamera(){
+
+try{
+
+stream = await navigator.mediaDevices.getUserMedia({
+video:true,
+audio:false
+})
+
+document.getElementById("video").srcObject = stream
+
+document.getElementById("status").innerText="Camera LIVE"
+
+}catch(err){
+
+document.getElementById("status").innerText="Error cámara"
+
+}
+
+}
+
+function stopCamera(){
+
+if(stream){
+
+stream.getTracks().forEach(track=>track.stop())
+
+document.getElementById("video").srcObject=null
+
+document.getElementById("status").innerText="Camera stopped"
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
