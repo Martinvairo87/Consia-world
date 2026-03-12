@@ -1,28 +1,88 @@
 <!doctype html>
-<html>
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA OS</title>
+<title>CONSIA • OS</title>
 <style>
-body{margin:0;background:#030712;color:#fff;font-family:-apple-system}
-.wrap{max-width:900px;margin:auto;padding:40px;text-align:center}
+body{margin:0;background:#020617;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto}
+.wrap{max-width:1100px;margin:auto;padding:30px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+h1{margin:0;font-size:38px}
+.sub{opacity:.72;margin-top:8px}
+a{color:#fff;text-decoration:none}
+.btn{padding:12px 16px;border-radius:14px;background:#111a33;border:1px solid #1f2b4d}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
+.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:22px}
+.title{font-size:22px;font-weight:700;margin-bottom:10px}
+.txt{opacity:.75;min-height:48px}
+.badge{display:inline-block;margin-top:14px;padding:8px 14px;border-radius:999px;background:#111a33;border:1px solid #1f2b4d}
+.state{margin-top:24px;background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:20px;opacity:.82}
 </style>
 </head>
 <body>
-
 <div class="wrap">
 
-<h1>CONSIA OS</h1>
+<div class="top">
+  <div>
+    <h1>CONSIA OS</h1>
+    <div class="sub">Sistema operativo central de CONSIA</div>
+  </div>
+  <a class="btn" href="/">← Home</a>
+</div>
 
-<p>Sistema operativo de inteligencia artificial.</p>
+<div class="grid">
+  <div class="card">
+    <div class="title">CORE</div>
+    <div class="txt">Motor central de inteligencia y coordinación.</div>
+    <div class="badge">ONLINE</div>
+  </div>
 
-<p>Automation • Agents • Marketplace • Apps</p>
+  <div class="card">
+    <div class="title">ROUTER</div>
+    <div class="txt">Orquestación de modelos y proveedores AI.</div>
+    <div class="badge">READY</div>
+  </div>
 
-<br>
-<a href="/">← Home</a>
+  <div class="card">
+    <div class="title">AGENTS</div>
+    <div class="txt">Agentes automáticos de ventas, soporte y ejecución.</div>
+    <div class="badge">ONLINE</div>
+  </div>
+
+  <div class="card">
+    <div class="title">AUTOMATION</div>
+    <div class="txt">Flujos y procesos automáticos de CONSIA.</div>
+    <div class="badge">READY</div>
+  </div>
+
+  <div class="card">
+    <div class="title">VOICE</div>
+    <div class="txt">Capa de voz, realtime y futuras interacciones en vivo.</div>
+    <div class="badge">READY</div>
+  </div>
+
+  <div class="card">
+    <div class="title">COMMERCE</div>
+    <div class="txt">Marketplace, wallet, pagos y operación global.</div>
+    <div class="badge">READY</div>
+  </div>
+</div>
+
+<div class="state" id="stateBox">Conectando al sistema operativo...</div>
 
 </div>
 
+<script>
+fetch("https://api.consia.world/v1/system")
+.then(r=>r.json())
+.then(j=>{
+  document.getElementById("stateBox").textContent =
+    "CONSIA OS ONLINE · módulos: " + ((j.modules || []).join(" • "));
+})
+.catch(()=>{
+  document.getElementById("stateBox").textContent = "CONSIA OS ONLINE";
+});
+</script>
 </body>
 </html>
