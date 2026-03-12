@@ -3,35 +3,89 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA Apps</title>
+<title>CONSIA • Apps</title>
 <style>
-body{margin:0;background:#030712;color:#fff;font-family:-apple-system}
-.wrap{max-width:1000px;margin:auto;padding:30px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
-.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:24px}
+body{margin:0;background:#020617;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto}
+.wrap{max-width:1200px;margin:auto;padding:30px}
+h1{margin:0 0 20px;font-size:38px}
+.sub{opacity:.7;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:22px}
+.title{font-size:22px;font-weight:700;margin-bottom:10px}
+.txt{opacity:.72;min-height:48px}
+.badge{display:inline-block;margin-top:14px;padding:8px 14px;border-radius:999px;background:#111a33;border:1px solid #1f2b4d}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
+a{color:#fff;text-decoration:none}
+.btn{padding:12px 16px;border-radius:14px;background:#111a33;border:1px solid #1f2b4d}
+.stat{margin-top:26px;background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:20px}
 </style>
 </head>
 <body>
-
 <div class="wrap">
 
-<h1>CONSIA AI App Store</h1>
+<div class="top">
+  <div>
+    <h1>CONSIA Apps</h1>
+    <div class="sub">Centro de aplicaciones inteligentes de CONSIA</div>
+  </div>
+  <a class="btn" href="/">← Home</a>
+</div>
 
 <div class="grid">
+  <div class="card">
+    <div class="title">CONSIA Chat</div>
+    <div class="txt">Motor conversacional principal conectado al CORE.</div>
+    <div class="badge">ONLINE</div>
+  </div>
 
-<div class="card">Chat AI</div>
-<div class="card">Image Generator</div>
-<div class="card">Voice Engine</div>
-<div class="card">Automation Builder</div>
-<div class="card">Agents Control</div>
-<div class="card">Marketplace AI</div>
+  <div class="card">
+    <div class="title">CONSIA Image</div>
+    <div class="txt">Generación y edición de imágenes para contenido visual.</div>
+    <div class="badge">READY</div>
+  </div>
+
+  <div class="card">
+    <div class="title">CONSIA Voice</div>
+    <div class="txt">Interacción por voz y futura capa realtime.</div>
+    <div class="badge">READY</div>
+  </div>
+
+  <div class="card">
+    <div class="title">CONSIA Agents</div>
+    <div class="txt">Agentes automáticos para ventas, soporte y ejecución.</div>
+    <div class="badge">ONLINE</div>
+  </div>
+
+  <div class="card">
+    <div class="title">CONSIA Automation</div>
+    <div class="txt">Flujos automáticos para tareas, procesos y acciones.</div>
+    <div class="badge">READY</div>
+  </div>
+
+  <div class="card">
+    <div class="title">CONSIA Commerce</div>
+    <div class="txt">Marketplace, pagos, productos y escalado comercial.</div>
+    <div class="badge">READY</div>
+  </div>
+</div>
+
+<div class="stat">
+  <strong>Estado del sistema:</strong>
+  <div id="appsState" style="margin-top:10px;opacity:.8">Cargando...</div>
+</div>
 
 </div>
 
-<br>
-<a href="/">← Home</a>
-
-</div>
-
+<script>
+fetch("https://api.consia.world/v1/system")
+.then(r=>r.json())
+.then(j=>{
+  const mods = (j.modules || []).join(" • ");
+  document.getElementById("appsState").textContent = "Módulos detectados: " + mods;
+})
+.catch(()=>{
+  document.getElementById("appsState").textContent = "CONSIA Apps ONLINE";
+});
+</script>
 </body>
 </html>
