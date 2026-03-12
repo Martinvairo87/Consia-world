@@ -154,6 +154,18 @@ button{
   border:1px solid #1f2b45;
 }
 
+.topbar{
+  margin-top:18px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.topbar button{
+  background:#111b30;
+  border:1px solid #1f2b45;
+}
+
 @media (max-width: 768px){
   .container{
     padding:24px;
@@ -165,6 +177,11 @@ button{
 
   .title{
     font-size:24px;
+  }
+
+  .topbar{
+    justify-content:flex-start;
+    flex-wrap:wrap;
   }
 }
 </style>
@@ -180,6 +197,10 @@ button{
       <div class="title">CONSIA</div>
       <div class="subtitle">Super Interface</div>
     </div>
+  </div>
+
+  <div class="topbar">
+    <button onclick="ownerLogout()">Owner Logout</button>
   </div>
 
   <button class="button-main" onclick="newChat()">Nuevo chat</button>
@@ -203,6 +224,8 @@ button{
 
   <div class="status">
     <div class="badge green">● CONSIA ONLINE</div>
+    <div class="badge">OWNER SECURITY PRO</div>
+    <div class="badge">MULTI-AI ENGINE</div>
     <div class="badge">BRAIN ACTIVE</div>
     <div class="badge">VISION ACTIVE</div>
     <div class="badge">VOICE ACTIVE</div>
@@ -230,14 +253,10 @@ button{
 
 </div>
 
-<!-- OWNER SECURITY -->
 <script src="owner-key.js"></script>
-
-<!-- AGENT SYSTEM -->
 <script src="agents-core.js"></script>
 
 <script>
-
 function openPage(page){
   window.location.href = page;
 }
@@ -245,6 +264,12 @@ function openPage(page){
 function newChat(){
   const input = document.getElementById("input");
   input.focus();
+}
+
+function ownerLogout(){
+  if (window.CONSIA_OWNER && typeof window.CONSIA_OWNER.logout === "function") {
+    window.CONSIA_OWNER.logout();
+  }
 }
 
 function logConsole(text){
@@ -256,17 +281,16 @@ function logConsole(text){
 function detectTask(text){
   const t = text.toLowerCase();
 
-  if(t.includes("wallet") || t.includes("saldo")) return "wallet";
-  if(t.includes("producto") || t.includes("marketplace")) return "marketplace";
-  if(t.includes("automat")) return "automation";
-  if(t.includes("imagen") || t.includes("vision")) return "vision";
+  if(t.includes("wallet") || t.includes("saldo") || t.includes("pago") || t.includes("balance")) return "wallet";
+  if(t.includes("producto") || t.includes("marketplace") || t.includes("venta")) return "marketplace";
+  if(t.includes("automat") || t.includes("workflow") || t.includes("proceso")) return "automation";
+  if(t.includes("imagen") || t.includes("vision") || t.includes("foto") || t.includes("camara")) return "vision";
 
   return "search";
 }
 
 async function send(){
-
-  let text = document.getElementById("input").value;
+  let text = document.getElementById("input").value.trim();
 
   if(!text) return;
 
@@ -276,37 +300,29 @@ async function send(){
   logConsole("CONSIA task: " + task);
 
   try{
-
-    let response = await CONSIA.run(task,text);
-
+    let response = await CONSIA.run(task, text);
     logConsole("CONSIA: " + response);
-
   }catch(e){
-
     logConsole("CONSIA ERROR");
-
   }
 
   document.getElementById("input").value = "";
-
 }
 
-async function runPreset(task,value){
-
+async function runPreset(task, value){
   logConsole("Preset: " + task);
 
-  let response = await CONSIA.run(task,value);
-
-  logConsole("CONSIA: " + response);
-
+  try{
+    let response = await CONSIA.run(task, value);
+    logConsole("CONSIA: " + response);
+  }catch(e){
+    logConsole("CONSIA ERROR");
+  }
 }
 
-document.getElementById("input").addEventListener("keydown",function(e){
-
+document.getElementById("input").addEventListener("keydown", function(e){
   if(e.key === "Enter") send();
-
 });
-
 </script>
 
 </body>
