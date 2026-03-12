@@ -1,328 +1,345 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>CONSIA</title>
 
 <style>
+
 body{
-  margin:0;
-  background:#020617;
-  color:white;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+margin:0;
+background:#020617;
+color:white;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
 }
 
 .container{
-  max-width:1100px;
-  margin:auto;
-  padding:40px;
+max-width:1100px;
+margin:auto;
+padding:40px;
 }
 
 .logo{
-  display:flex;
-  align-items:center;
-  gap:14px;
+display:flex;
+align-items:center;
+gap:14px;
 }
 
 .logo-box{
-  width:48px;
-  height:48px;
-  background:linear-gradient(135deg,#5b7cff,#7fa1ff);
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  font-size:20px;
+width:48px;
+height:48px;
+background:linear-gradient(135deg,#5b7cff,#7fa1ff);
+border-radius:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:700;
+font-size:20px;
 }
 
 .title{
-  font-size:28px;
-  font-weight:600;
+font-size:28px;
+font-weight:600;
 }
 
 .subtitle{
-  opacity:.6;
-  font-size:14px;
+opacity:.6;
+font-size:14px;
 }
 
 .button-main{
-  margin-top:40px;
-  width:100%;
-  padding:18px;
-  border-radius:18px;
-  border:none;
-  background:linear-gradient(90deg,#6f8cff,#8aa4ff);
-  font-size:18px;
-  color:white;
-  cursor:pointer;
+margin-top:40px;
+width:100%;
+padding:18px;
+border-radius:18px;
+border:none;
+background:linear-gradient(90deg,#6f8cff,#8aa4ff);
+font-size:18px;
+color:white;
+cursor:pointer;
 }
 
 .modules{
-  margin-top:40px;
+margin-top:40px;
 }
 
 .module{
-  padding:18px;
-  border-radius:16px;
-  background:#0b1220;
-  margin-bottom:12px;
-  cursor:pointer;
-  border:1px solid #182238;
+padding:18px;
+border-radius:16px;
+background:#0b1220;
+margin-bottom:12px;
+cursor:pointer;
+border:1px solid #182238;
 }
 
 .module:hover{
-  background:#111b30;
+background:#111b30;
 }
 
 .status{
-  margin-top:40px;
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
+margin-top:40px;
+display:flex;
+gap:12px;
+flex-wrap:wrap;
 }
 
 .badge{
-  padding:8px 14px;
-  border-radius:20px;
-  background:#0b1220;
-  font-size:13px;
-  border:1px solid #182238;
+padding:8px 14px;
+border-radius:20px;
+background:#0b1220;
+font-size:13px;
+border:1px solid #182238;
 }
 
 .green{
-  color:#4ade80;
+color:#4ade80;
 }
 
 .chat{
-  margin-top:40px;
-  display:flex;
-  gap:10px;
+margin-top:40px;
+display:flex;
+gap:10px;
 }
 
 input{
-  flex:1;
-  padding:16px;
-  border-radius:14px;
-  border:none;
-  background:#0b1220;
-  color:white;
-  outline:none;
-  font-size:16px;
+flex:1;
+padding:16px;
+border-radius:14px;
+border:none;
+background:#0b1220;
+color:white;
+outline:none;
+font-size:16px;
 }
 
 button{
-  padding:14px 20px;
-  border:none;
-  border-radius:14px;
-  background:#4f6cff;
-  color:white;
-  cursor:pointer;
+padding:14px 20px;
+border:none;
+border-radius:14px;
+background:#4f6cff;
+color:white;
+cursor:pointer;
 }
 
 .console{
-  margin-top:24px;
-  background:#0b1220;
-  border:1px solid #182238;
-  border-radius:16px;
-  padding:18px;
+margin-top:24px;
+background:#0b1220;
+border:1px solid #182238;
+border-radius:16px;
+padding:18px;
 }
 
 .console-title{
-  font-size:18px;
-  margin-bottom:12px;
-  opacity:.95;
+font-size:18px;
+margin-bottom:12px;
+opacity:.95;
 }
 
 .console-log{
-  min-height:220px;
-  white-space:pre-wrap;
-  opacity:.9;
-  line-height:1.55;
+min-height:220px;
+white-space:pre-wrap;
+opacity:.9;
+line-height:1.55;
 }
 
 .quick{
-  margin-top:18px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+margin-top:18px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
 }
 
 .quick button{
-  background:#111b30;
-  border:1px solid #1f2b45;
+background:#111b30;
+border:1px solid #1f2b45;
 }
 
-.topbar{
-  margin-top:18px;
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-}
-
-.topbar button{
-  background:#111b30;
-  border:1px solid #1f2b45;
-}
-
-@media (max-width: 768px){
-  .container{
-    padding:24px;
-  }
-
-  .chat{
-    flex-direction:column;
-  }
-
-  .title{
-    font-size:24px;
-  }
-
-  .topbar{
-    justify-content:flex-start;
-    flex-wrap:wrap;
-  }
-}
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="logo">
-    <div class="logo-box">C</div>
-    <div>
-      <div class="title">CONSIA</div>
-      <div class="subtitle">Super Interface</div>
-    </div>
-  </div>
+<div class="logo">
+<div class="logo-box">C</div>
+<div>
+<div class="title">CONSIA</div>
+<div class="subtitle">Super Interface</div>
+</div>
+</div>
 
-  <div class="topbar">
-    <button onclick="ownerLogout()">Owner Logout</button>
-  </div>
+<button class="button-main" onclick="newChat()">Nuevo chat</button>
 
-  <button class="button-main" onclick="newChat()">Nuevo chat</button>
+<div class="modules">
 
-  <div class="modules">
-    <div class="module" onclick="openPage('dashboard.html')">Dashboard</div>
-    <div class="module" onclick="openPage('apps.html')">AI App Store</div>
-    <div class="module" onclick="openPage('marketplace.html')">Marketplace</div>
-    <div class="module" onclick="openPage('os.html')">CONSIA OS</div>
-    <div class="module" onclick="openPage('agents.html')">Agents</div>
-    <div class="module" onclick="openPage('wallet.html')">Wallet</div>
-    <div class="module" onclick="openPage('voice.html')">Voice Interface</div>
-    <div class="module" onclick="openPage('avatar.html')">Avatar IA</div>
-    <div class="module" onclick="openPage('live-camera.html')">Live Camera</div>
-    <div class="module" onclick="openPage('vision.html')">Vision AI</div>
-    <div class="module" onclick="openPage('automation.html')">Automation Engine</div>
-    <div class="module" onclick="openPage('autopilot.html')">Autopilot</div>
-    <div class="module" onclick="openPage('global-memory.html')">Global Memory</div>
-    <div class="module" onclick="openPage('command-center.html')">Command Center</div>
-  </div>
+<div class="module" onclick="openPage('dashboard.html')">Dashboard</div>
+<div class="module" onclick="openPage('apps.html')">AI App Store</div>
+<div class="module" onclick="openPage('marketplace.html')">Marketplace</div>
+<div class="module" onclick="openPage('os.html')">CONSIA OS</div>
+<div class="module" onclick="openPage('agents.html')">Agents</div>
+<div class="module" onclick="openPage('wallet.html')">Wallet</div>
+<div class="module" onclick="openPage('voice.html')">Voice Interface</div>
+<div class="module" onclick="openPage('avatar.html')">Avatar IA</div>
+<div class="module" onclick="openPage('live-camera.html')">Live Camera</div>
+<div class="module" onclick="openPage('vision.html')">Vision AI</div>
+<div class="module" onclick="openPage('automation.html')">Automation Engine</div>
+<div class="module" onclick="openPage('autopilot.html')">Autopilot</div>
+<div class="module" onclick="openPage('autopilot.html')">Autopilot Agents</div>
+<div class="module" onclick="openPage('global-memory.html')">Global Memory</div>
+<div class="module" onclick="openPage('command-center.html')">Command Center</div>
 
-  <div class="status">
-    <div class="badge green">● CONSIA ONLINE</div>
-    <div class="badge">OWNER SECURITY PRO</div>
-    <div class="badge">MULTI-AI ENGINE</div>
-    <div class="badge">BRAIN ACTIVE</div>
-    <div class="badge">VISION ACTIVE</div>
-    <div class="badge">VOICE ACTIVE</div>
-    <div class="badge">AGENTS READY</div>
-    <div class="badge">AUTOMATION READY</div>
-  </div>
+</div>
 
-  <div class="chat">
-    <input id="input" placeholder="Habla con CONSIA">
-    <button onclick="send()">Enviar</button>
-  </div>
+<div class="status">
 
-  <div class="quick">
-    <button onclick="runPreset('search','Tesla')">Test Search</button>
-    <button onclick="runPreset('vision','Analizar imagen')">Test Vision</button>
-    <button onclick="runPreset('marketplace','Publicar producto')">Test Marketplace</button>
-    <button onclick="runPreset('automation','Ejecutar workflow')">Test Automation</button>
-    <button onclick="runPreset('wallet','consultar saldo wallet')">Test Wallet</button>
-  </div>
+<div class="badge green">● CONSIA ONLINE</div>
+<div class="badge">OWNER SECURITY PRO</div>
+<div class="badge">MULTI-AI ENGINE</div>
+<div class="badge">AUTOPILOT AGENTS</div>
+<div class="badge">BRAIN ACTIVE</div>
+<div class="badge">VISION ACTIVE</div>
+<div class="badge">VOICE ACTIVE</div>
+<div class="badge">AGENTS READY</div>
+<div class="badge">AUTOMATION READY</div>
 
-  <div class="console">
-    <div class="console-title">CONSIA Console</div>
-    <div class="console-log" id="consoleLog">CONSIA BRAIN listo.</div>
-  </div>
+</div>
+
+<div class="chat">
+
+<input id="input" placeholder="Habla con CONSIA">
+
+<button onclick="send()">Enviar</button>
+
+</div>
+
+<div class="quick">
+
+<button onclick="runPreset('search','Tesla')">Test Search</button>
+<button onclick="runPreset('vision','Analizar imagen')">Test Vision</button>
+<button onclick="runPreset('marketplace','Publicar producto')">Test Marketplace</button>
+<button onclick="runPreset('automation','Crear workflow')">Test Automation</button>
+<button onclick="runPreset('wallet','Consultar saldo wallet')">Test Wallet</button>
+<button onclick="runAutopilot()">Test Autopilot</button>
+
+</div>
+
+<div class="console">
+
+<div class="console-title">CONSIA Console</div>
+
+<div class="console-log" id="consoleLog">
+CONSIA BRAIN listo.
+</div>
+
+</div>
 
 </div>
 
 <script src="owner-key.js"></script>
 <script src="agents-core.js"></script>
+<script src="autopilot-core.js"></script>
 
 <script>
+
 function openPage(page){
-  window.location.href = page;
+window.location.href=page;
 }
 
 function newChat(){
-  const input = document.getElementById("input");
-  input.focus();
-}
-
-function ownerLogout(){
-  if (window.CONSIA_OWNER && typeof window.CONSIA_OWNER.logout === "function") {
-    window.CONSIA_OWNER.logout();
-  }
+document.getElementById("input").focus();
 }
 
 function logConsole(text){
-  const box = document.getElementById("consoleLog");
-  box.textContent += "\n" + text;
-  box.scrollTop = box.scrollHeight;
+
+const box=document.getElementById("consoleLog");
+
+box.textContent += "\n" + text;
+
+box.scrollTop = box.scrollHeight;
+
 }
 
 function detectTask(text){
-  const t = text.toLowerCase();
 
-  if(t.includes("wallet") || t.includes("saldo") || t.includes("pago") || t.includes("balance")) return "wallet";
-  if(t.includes("producto") || t.includes("marketplace") || t.includes("venta")) return "marketplace";
-  if(t.includes("automat") || t.includes("workflow") || t.includes("proceso")) return "automation";
-  if(t.includes("imagen") || t.includes("vision") || t.includes("foto") || t.includes("camara")) return "vision";
+const t=text.toLowerCase();
 
-  return "search";
+if(t.includes("wallet") || t.includes("saldo")) return "wallet";
+
+if(t.includes("producto") || t.includes("marketplace")) return "marketplace";
+
+if(t.includes("automat") || t.includes("workflow")) return "automation";
+
+if(t.includes("imagen") || t.includes("vision")) return "vision";
+
+return "search";
+
 }
 
 async function send(){
-  let text = document.getElementById("input").value.trim();
 
-  if(!text) return;
+let text=document.getElementById("input").value;
 
-  let task = detectTask(text);
+if(!text) return;
 
-  logConsole("Usuario: " + text);
-  logConsole("CONSIA task: " + task);
+let task=detectTask(text);
 
-  try{
-    let response = await CONSIA.run(task, text);
-    logConsole("CONSIA: " + response);
-  }catch(e){
-    logConsole("CONSIA ERROR");
-  }
+logConsole("Usuario: "+text);
 
-  document.getElementById("input").value = "";
+logConsole("CONSIA task: "+task);
+
+try{
+
+let response = await CONSIA.run(task,text);
+
+logConsole("CONSIA: "+response);
+
+}catch(e){
+
+logConsole("CONSIA ERROR");
+
 }
 
-async function runPreset(task, value){
-  logConsole("Preset: " + task);
+document.getElementById("input").value="";
 
-  try{
-    let response = await CONSIA.run(task, value);
-    logConsole("CONSIA: " + response);
-  }catch(e){
-    logConsole("CONSIA ERROR");
-  }
 }
 
-document.getElementById("input").addEventListener("keydown", function(e){
-  if(e.key === "Enter") send();
+async function runPreset(task,value){
+
+logConsole("Preset: "+task);
+
+let response = await CONSIA.run(task,value);
+
+logConsole("CONSIA: "+response);
+
+}
+
+async function runAutopilot(){
+
+logConsole("Autopilot iniciado");
+
+const result = await CONSIA_AUTOPILOT.run("investigar inteligencia artificial");
+
+result.plan.forEach(step=>{
+logConsole("PLAN → "+step.task);
 });
+
+result.results.forEach(r=>{
+logConsole(r.step+" → "+r.result);
+});
+
+}
+
+document.getElementById("input").addEventListener("keydown",function(e){
+
+if(e.key==="Enter") send();
+
+});
+
 </script>
 
 </body>
