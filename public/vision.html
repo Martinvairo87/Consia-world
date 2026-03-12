@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA VISION AI</title>
+
+<style>
+
+body{
+margin:0;
+background:#020617;
+color:white;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
+text-align:center;
+}
+
+.container{
+padding:40px;
+}
+
+video{
+width:100%;
+max-width:900px;
+border-radius:16px;
+margin-top:20px;
+}
+
+canvas{
+display:none;
+}
+
+button{
+margin-top:20px;
+padding:14px 30px;
+background:#4f6cff;
+border:none;
+border-radius:12px;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+.status{
+margin-top:20px;
+opacity:.7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA VISION AI</h1>
+
+<p>Visión inteligente en vivo</p>
+
+<button onclick="startCamera()">Activar cámara</button>
+
+<br>
+
+<video id="video" autoplay playsinline></video>
+
+<canvas id="canvas"></canvas>
+
+<div class="status" id="status">
+
+Vision AI listo
+
+</div>
+
+</div>
+
+<script>
+
+let video=document.getElementById("video")
+let canvas=document.getElementById("canvas")
+let ctx=canvas.getContext("2d")
+
+async function startCamera(){
+
+const stream=await navigator.mediaDevices.getUserMedia({video:true})
+
+video.srcObject=stream
+
+document.getElementById("status").innerText="Cámara activa"
+
+detectLoop()
+
+}
+
+function detectLoop(){
+
+canvas.width=video.videoWidth
+canvas.height=video.videoHeight
+
+ctx.drawImage(video,0,0)
+
+setTimeout(detectLoop,1000)
+
+}
+
+</script>
+
+</body>
+</html>
