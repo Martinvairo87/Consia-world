@@ -275,6 +275,7 @@ font-size:24px;
 <div class="badge">AGENT SWARM</div>
 <div class="badge">WORLD MODEL</div>
 <div class="badge">STRATEGIC ENGINE</div>
+<div class="badge">EXECUTION ENGINE</div>
 <div class="badge">BRAIN ACTIVE</div>
 <div class="badge">VISION ACTIVE</div>
 <div class="badge">VOICE ACTIVE</div>
@@ -321,7 +322,7 @@ font-size:24px;
 </div>
 
 <div class="strategybox">
-<div class="strategy-title">CONSIA Strategic Engine</div>
+<div class="strategy-title">CONSIA Strategic + Execution Engine</div>
 <div class="strategy-log" id="strategyLog">Strategic engine listo.</div>
 </div>
 
@@ -336,6 +337,7 @@ font-size:24px;
 <script src="world-model-core.js"></script>
 <script src="strategic-engine-core.js"></script>
 <script src="execution-engine-core.js"></script>
+
 <script>
 function openPage(page){
 window.location.href = page;
@@ -438,7 +440,17 @@ logConsole("Usuario: " + text);
 logConsole("CONSIA task: " + task);
 
 try{
-let response = await CONSIA.run(task, text);
+
+let exec = CONSIA_EXECUTION.execute(text);
+
+let response;
+
+if(exec){
+response = exec;
+}else{
+response = await CONSIA.run(task, text);
+}
+
 logConsole("CONSIA: " + response);
 
 const learned = CONSIA_LEARNING.learn(text, task, response);
