@@ -1,431 +1,318 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CONSIA</title>
-  <style>
-    :root{
-      --bg:#040816;
-      --bg2:#071127;
-      --card:#0c1730;
-      --line:#1a2b52;
-      --text:#f2f6ff;
-      --muted:#a9b7d6;
-      --blue:#4d7cff;
-      --blue2:#79a0ff;
-      --green:#1dbb73;
-      --warn:#d2a23b;
-      --danger:#d9534f;
-      --radius:22px;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),#020611 70%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif}
-    a{text-decoration:none;color:inherit}
-    .wrap{max-width:1280px;margin:0 auto;padding:22px}
-    .top{
-      display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px
-    }
-    .brand{display:flex;align-items:center;gap:16px}
-    .logo{
-      width:68px;height:68px;border-radius:22px;
-      background:radial-gradient(circle at 35% 30%,#a8c2ff 0,#6d93ff 35%,#2949b7 75%,#13234d 100%);
-      box-shadow:0 0 40px rgba(91,132,255,.45);
-      display:flex;align-items:center;justify-content:center;font-weight:800;font-size:34px
-    }
-    .brand h1{margin:0;font-size:28px;letter-spacing:8px}
-    .sub{color:var(--muted);margin-top:4px}
-    .langbar{display:flex;align-items:center;gap:10px}
-    .select{
-      background:#0a142b;border:1px solid var(--line);color:var(--text);
-      border-radius:14px;padding:12px 14px;font-size:15px
-    }
-    .heroBtn{
-      width:100%;border:none;cursor:pointer;
-      border-radius:24px;padding:22px 24px;
-      font-size:22px;font-weight:700;color:#fff;
-      background:linear-gradient(90deg,var(--blue),var(--blue2));
-      box-shadow:0 0 35px rgba(91,132,255,.35);
-      margin:12px 0 18px
-    }
-    .sectionTitle{color:var(--muted);font-size:15px;letter-spacing:2px;text-transform:uppercase;margin:20px 0 12px}
-    .grid{
-      display:grid;grid-template-columns:1.1fr .9fr;gap:18px
-    }
-    .card{
-      background:linear-gradient(180deg,#091327,#081022);
-      border:1px solid var(--line);
-      border-radius:24px;padding:18px;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 10px 30px rgba(0,0,0,.18)
-    }
-    .modules{display:grid;gap:12px}
-    .module{
-      background:#0c1730;border:1px solid var(--line);border-radius:20px;
-      padding:18px 20px;font-size:20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer
-    }
-    .module:hover{border-color:#3052a8}
-    .pills{display:flex;gap:12px;flex-wrap:wrap}
-    .pill{
-      padding:14px 20px;border-radius:999px;background:#0e1831;border:1px solid var(--line)
-    }
-    .live{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:999px;background:#081322;border:1px solid var(--line)}
-    .dot{width:12px;height:12px;border-radius:50%;background:#2ad08b;box-shadow:0 0 14px rgba(42,208,139,.75)}
-    .badge{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:999px;background:#0e1831;border:1px solid var(--line)}
-    .headline{
-      font-size:58px;line-height:1.03;font-weight:900;margin:16px 0 14px;letter-spacing:-1.5px
-    }
-    .muted{color:var(--muted)}
-    .coreCard{display:flex;gap:18px;align-items:center;padding:22px}
-    .orb{
-      width:160px;height:160px;border-radius:50%;
-      background:radial-gradient(circle at 35% 30%,#b8d0ff 0,#7da4ff 38%,#3864db 70%,#1b2f70 100%);
-      box-shadow:0 0 45px rgba(91,132,255,.35)
-    }
-    .tabs{display:flex;gap:14px;margin-top:16px}
-    .tab{
-      background:#0d1730;border:1px solid var(--line);color:var(--text);
-      padding:14px 22px;border-radius:999px;cursor:pointer;font-size:18px
-    }
-    .tab.active{background:linear-gradient(90deg,var(--blue),var(--blue2))}
-    .panel{
-      min-height:260px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-      margin-top:12px;padding:28px 14px
-    }
-    .center{display:flex;align-items:center;justify-content:center}
-    .bubble{
-      padding:16px 26px;border-radius:999px;background:#0e1831;border:1px solid var(--line);font-size:18px
-    }
-    .chatbar{
-      display:grid;grid-template-columns:1fr 120px 120px;gap:12px;margin-top:18px
-    }
-    .input{
-      width:100%;background:#0c1730;border:1px solid var(--line);color:var(--text);
-      border-radius:20px;padding:20px 22px;font-size:18px
-    }
-    .btn{
-      border:none;border-radius:20px;padding:18px 18px;font-size:18px;cursor:pointer;color:#fff
-    }
-    .btnPrimary{background:linear-gradient(90deg,var(--blue),var(--blue2))}
-    .btnGhost{background:#10192f;border:1px solid var(--line)}
-    .statusGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px}
-    .mini{
-      background:#0c1730;border:1px solid var(--line);border-radius:20px;padding:18px
-    }
-    .mini strong{display:block;font-size:14px;color:var(--muted);margin-bottom:8px}
-    .mini span{font-size:30px}
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr}
-      .headline{font-size:42px}
-      .coreCard{flex-direction:column;align-items:flex-start}
-      .orb{width:120px;height:120px}
-      .chatbar{grid-template-columns:1fr}
-      .statusGrid{grid-template-columns:1fr 1fr}
-    }
-    @media (max-width: 640px){
-      .headline{font-size:34px}
-      .statusGrid{grid-template-columns:1fr}
-      .brand h1{font-size:22px;letter-spacing:6px}
-      .module{font-size:18px}
-      .heroBtn{font-size:20px}
-    }
-  </style>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA</title>
+
+<style>
+
+body{
+margin:0;
+background:#020617;
+color:#fff;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
+}
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:16px;
+margin-bottom:20px;
+}
+
+.logoBox{
+width:60px;
+height:60px;
+border-radius:16px;
+background:linear-gradient(135deg,#7aa2ff,#2f56ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:700;
+font-size:28px;
+}
+
+.heroBtn{
+width:100%;
+padding:18px;
+font-size:20px;
+border:none;
+border-radius:20px;
+background:linear-gradient(90deg,#4d7cff,#79a0ff);
+color:#fff;
+margin-bottom:30px;
+cursor:pointer;
+}
+
+.section{
+margin-top:20px;
+opacity:.7;
+font-size:13px;
+letter-spacing:2px;
+}
+
+.modules{
+margin-top:10px;
+}
+
+.module{
+display:block;
+padding:18px;
+margin-bottom:10px;
+background:#0b1225;
+border-radius:16px;
+border:1px solid #1f2b4d;
+text-decoration:none;
+color:#fff;
+}
+
+.module:hover{
+border-color:#4d7cff;
+}
+
+.status{
+margin-top:30px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.pill{
+padding:10px 18px;
+border-radius:999px;
+background:#0b1225;
+border:1px solid #1f2b4d;
+}
+
+.green{
+color:#3ee089;
+}
+
+.card{
+margin-top:30px;
+padding:20px;
+background:#0b1225;
+border-radius:20px;
+border:1px solid #1f2b4d;
+}
+
+.chatTabs{
+margin-top:20px;
+display:flex;
+gap:10px;
+}
+
+.tab{
+padding:10px 18px;
+border-radius:999px;
+background:#111a33;
+border:1px solid #1f2b4d;
+}
+
+.chatBox{
+margin-top:20px;
+padding:40px;
+border-top:1px solid #1f2b4d;
+border-bottom:1px solid #1f2b4d;
+text-align:center;
+}
+
+.inputRow{
+margin-top:20px;
+display:flex;
+gap:10px;
+}
+
+.input{
+flex:1;
+padding:18px;
+border-radius:14px;
+border:1px solid #1f2b4d;
+background:#020617;
+color:#fff;
+}
+
+.btn{
+padding:18px 20px;
+border-radius:14px;
+border:none;
+cursor:pointer;
+}
+
+.send{
+background:#4d7cff;
+color:#fff;
+}
+
+.clear{
+background:#111a33;
+color:#fff;
+}
+
+</style>
+
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div class="brand">
-        <div class="logo">C</div>
-        <div>
-          <h1>CONSIA</h1>
-          <div class="sub" id="ui-subtitle">Super Interface</div>
-        </div>
-      </div>
 
-      <div class="langbar">
-        <select id="langSelect" class="select">
-          <option value="es">Español</option>
-          <option value="en">English</option>
-          <option value="pt">Português</option>
-        </select>
-      </div>
-    </div>
+<div class="wrap">
 
-    <button class="heroBtn" id="newChatBtn">Nuevo chat</button>
+<div class="logo">
 
-    <div class="sectionTitle" id="ui-modules-title">Módulos</div>
+<div class="logoBox">C</div>
 
-    <div class="grid">
-      <div class="card">
-        <div class="modules">
-          <a class="module" href="/dashboard.html"><span id="m-dashboard">Dashboard</span><span>›</span></a>
-          <a class="module" href="/apps.html"><span id="m-apps">AI App Store</span><span>›</span></a>
-          <a class="module" href="/marketplace.html"><span id="m-marketplace">Marketplace</span><span>›</span></a>
-          <a class="module" href="/os.html"><span id="m-os">CONSIA OS</span><span>›</span></a>
-          <a class="module" href="/command-center.html"><span id="m-command">Command Center</span><span>›</span></a>
-          <a class="module" href="/owner.html"><span id="m-owner">Owner Console</span><span>›</span></a>
-        </div>
+<div>
+<h1 style="margin:0;letter-spacing:6px;">CONSIA</h1>
+<div style="opacity:.6;">Super Interface</div>
+</div>
 
-        <div class="sectionTitle" style="margin-top:28px" id="ui-history-title">Historial</div>
+</div>
 
-        <div class="pills" style="margin-bottom:18px">
-          <div class="live"><span class="dot"></span><span id="ui-online">CONSIA ONLINE</span></div>
-          <div class="badge"><span id="ui-mode-label">Mode:</span> <strong id="ui-mode-value">CHAT</strong></div>
-        </div>
+<button class="heroBtn">Nuevo chat</button>
 
-        <div class="pills">
-          <a class="pill" href="/apps.html" id="ui-quick-apps">Apps</a>
-          <a class="pill" href="/marketplace.html" id="ui-quick-marketplace">Marketplace</a>
-          <a class="pill" href="/command-center.html" id="ui-quick-command">Command</a>
-        </div>
-      </div>
+<div class="section">MODULES</div>
 
-      <div class="card">
-        <div class="badge"><span class="dot"></span><span id="ui-index-active">INDEX ULTRA ACTIVE</span></div>
-        <div class="headline" id="ui-headline">Una sola interfaz para conversar, crear, automatizar y operar todo CONSIA.</div>
-        <p class="muted" id="ui-copy">Chat, imagen, voz, control del ecosistema, acceso a módulos y experiencia tipo plataforma mundial desde la home.</p>
+<div class="modules">
 
-        <div class="card coreCard" style="margin-top:18px">
-          <div class="orb"></div>
-          <div>
-            <h2 style="margin:0 0 10px;font-size:28px" id="ui-core-title">CONSIA CORE</h2>
-            <p class="muted" style="margin:0;font-size:18px" id="ui-core-copy">Inteligencia, comercio, agentes, pagos, logística y automatización en una sola capa operativa.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+<a class="module" href="/dashboard.html">Dashboard</a>
 
-    <div class="card" style="margin-top:18px">
-      <div class="tabs">
-        <button class="tab active" id="tab-chat">CHAT</button>
-        <button class="tab" id="tab-image">IMAGE</button>
-        <button class="tab" id="tab-voice">VOICE</button>
-      </div>
+<a class="module" href="/apps.html">AI App Store</a>
 
-      <div class="panel center" id="chatPanel">
-        <div class="bubble" id="ui-ready">CONSIA listo.</div>
-      </div>
+<a class="module" href="/marketplace.html">Marketplace</a>
 
-      <div class="chatbar">
-        <input id="chatInput" class="input" placeholder="Habla con CONSIA..." />
-        <button id="sendBtn" class="btn btnPrimary">Enviar</button>
-        <button id="clearBtn" class="btn btnGhost">Limpiar</button>
-      </div>
+<a class="module" href="/os.html">CONSIA OS</a>
 
-      <div class="statusGrid">
-        <div class="mini">
-          <strong>API</strong>
-          <span id="apiStatus">…</span>
-        </div>
-        <div class="mini">
-          <strong>Router</strong>
-          <span id="routerStatus">…</span>
-        </div>
-        <div class="mini">
-          <strong>Idioma</strong>
-          <span id="langStatus">ES</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<a class="module" href="/agents.html">Agents</a>
 
-  <script>
-    const API = "https://api.consia.world";
+<a class="module" href="/wallet.html">Wallet</a>
 
-    const I18N = {
-      es: {
-        subtitle: "Super Interface",
-        newChat: "Nuevo chat",
-        modules: "Módulos",
-        history: "Historial",
-        online: "CONSIA ONLINE",
-        mode: "Modo:",
-        headline: "Una sola interfaz para conversar, crear, automatizar y operar todo CONSIA.",
-        copy: "Chat, imagen, voz, control del ecosistema, acceso a módulos y experiencia tipo plataforma mundial desde la home.",
-        coreTitle: "CONSIA CORE",
-        coreCopy: "Inteligencia, comercio, agentes, pagos, logística y automatización en una sola capa operativa.",
-        ready: "CONSIA listo.",
-        input: "Habla con CONSIA...",
-        send: "Enviar",
-        clear: "Limpiar",
-        apps: "AI App Store",
-        marketplace: "Marketplace",
-        os: "CONSIA OS",
-        command: "Command Center",
-        owner: "Owner Console",
-        dashboard: "Dashboard",
-        indexActive: "INDEX ULTRA ACTIVE"
-      },
-      en: {
-        subtitle: "Super Interface",
-        newChat: "New chat",
-        modules: "Modules",
-        history: "History",
-        online: "CONSIA ONLINE",
-        mode: "Mode:",
-        headline: "One interface to talk, create, automate and operate all CONSIA.",
-        copy: "Chat, image, voice, ecosystem control, module access and world-platform experience from the home screen.",
-        coreTitle: "CONSIA CORE",
-        coreCopy: "Intelligence, commerce, agents, payments, logistics and automation in one operating layer.",
-        ready: "CONSIA ready.",
-        input: "Talk to CONSIA...",
-        send: "Send",
-        clear: "Clear",
-        apps: "AI App Store",
-        marketplace: "Marketplace",
-        os: "CONSIA OS",
-        command: "Command Center",
-        owner: "Owner Console",
-        dashboard: "Dashboard",
-        indexActive: "INDEX ULTRA ACTIVE"
-      },
-      pt: {
-        subtitle: "Super Interface",
-        newChat: "Novo chat",
-        modules: "Módulos",
-        history: "Histórico",
-        online: "CONSIA ONLINE",
-        mode: "Modo:",
-        headline: "Uma única interface para conversar, criar, automatizar e operar todo o CONSIA.",
-        copy: "Chat, imagem, voz, controle do ecossistema, acesso a módulos e experiência de plataforma mundial desde a home.",
-        coreTitle: "CONSIA CORE",
-        coreCopy: "Inteligência, comércio, agentes, pagamentos, logística e automação em uma única camada operacional.",
-        ready: "CONSIA pronto.",
-        input: "Fale com CONSIA...",
-        send: "Enviar",
-        clear: "Limpar",
-        apps: "AI App Store",
-        marketplace: "Marketplace",
-        os: "CONSIA OS",
-        command: "Command Center",
-        owner: "Owner Console",
-        dashboard: "Dashboard",
-        indexActive: "INDEX ULTRA ACTIVE"
-      }
-    };
+</div>
 
-    const els = {
-      subtitle: document.getElementById("ui-subtitle"),
-      newChat: document.getElementById("newChatBtn"),
-      modules: document.getElementById("ui-modules-title"),
-      history: document.getElementById("ui-history-title"),
-      online: document.getElementById("ui-online"),
-      modeLabel: document.getElementById("ui-mode-label"),
-      headline: document.getElementById("ui-headline"),
-      copy: document.getElementById("ui-copy"),
-      coreTitle: document.getElementById("ui-core-title"),
-      coreCopy: document.getElementById("ui-core-copy"),
-      ready: document.getElementById("ui-ready"),
-      input: document.getElementById("chatInput"),
-      send: document.getElementById("sendBtn"),
-      clear: document.getElementById("clearBtn"),
-      apps: document.getElementById("m-apps"),
-      marketplace: document.getElementById("m-marketplace"),
-      os: document.getElementById("m-os"),
-      command: document.getElementById("m-command"),
-      owner: document.getElementById("m-owner"),
-      dashboard: document.getElementById("m-dashboard"),
-      indexActive: document.getElementById("ui-index-active"),
-      quickApps: document.getElementById("ui-quick-apps"),
-      quickMarketplace: document.getElementById("ui-quick-marketplace"),
-      quickCommand: document.getElementById("ui-quick-command"),
-      langStatus: document.getElementById("langStatus")
-    };
+<div class="section">HISTORIAL</div>
 
-    function applyLang(lang){
-      const t = I18N[lang] || I18N.es;
-      els.subtitle.textContent = t.subtitle;
-      els.newChat.textContent = t.newChat;
-      els.modules.textContent = t.modules;
-      els.history.textContent = t.history;
-      els.online.textContent = t.online;
-      els.modeLabel.textContent = t.mode;
-      els.headline.textContent = t.headline;
-      els.copy.textContent = t.copy;
-      els.coreTitle.textContent = t.coreTitle;
-      els.coreCopy.textContent = t.coreCopy;
-      els.ready.textContent = t.ready;
-      els.input.placeholder = t.input;
-      els.send.textContent = t.send;
-      els.clear.textContent = t.clear;
-      els.apps.textContent = t.apps;
-      els.marketplace.textContent = t.marketplace;
-      els.os.textContent = t.os;
-      els.command.textContent = t.command;
-      els.owner.textContent = t.owner;
-      els.dashboard.textContent = t.dashboard;
-      els.quickApps.textContent = t.apps;
-      els.quickMarketplace.textContent = t.marketplace;
-      els.quickCommand.textContent = t.command;
-      els.indexActive.textContent = t.indexActive;
-      els.langStatus.textContent = lang.toUpperCase();
-      localStorage.setItem("consia_lang", lang);
-    }
+<div class="status">
 
-    document.getElementById("langSelect").addEventListener("change", (e) => {
-      applyLang(e.target.value);
-    });
+<div class="pill green">● CONSIA ONLINE</div>
 
-    const savedLang = localStorage.getItem("consia_lang") || "es";
-    document.getElementById("langSelect").value = savedLang;
-    applyLang(savedLang);
+<div class="pill">Mode: CHAT</div>
 
-    async function pingHealth(){
-      try{
-        const r = await fetch(API + "/v1/health");
-        const j = await r.json();
-        document.getElementById("apiStatus").textContent = j.status || "ONLINE";
-      }catch(e){
-        document.getElementById("apiStatus").textContent = "OFF";
-      }
-    }
+<a class="pill" href="/apps.html">Apps</a>
 
-    async function pingRouter(){
-      try{
-        const r = await fetch(API + "/v1/router", {
-          method:"POST",
-          headers:{ "content-type":"application/json" },
-          body: JSON.stringify({ provider:"openai", mode:"auto", input:"ping" })
-        });
-        const j = await r.json();
-        document.getElementById("routerStatus").textContent = j.status || "READY";
-      }catch(e){
-        document.getElementById("routerStatus").textContent = "OFF";
-      }
-    }
+<a class="pill" href="/marketplace.html">Marketplace</a>
 
-    async function sendChat(){
-      const input = document.getElementById("chatInput").value.trim();
-      if(!input) return;
-      const panel = document.getElementById("chatPanel");
-      panel.innerHTML = '<div class="bubble">...</div>';
-      try{
-        const r = await fetch(API + "/v1/chat", {
-          method:"POST",
-          headers:{ "content-type":"application/json" },
-          body: JSON.stringify({ input, provider:"openai" })
-        });
-        const j = await r.json();
-        panel.innerHTML = '<div class="bubble">' + (j.reply || "OK") + "</div>";
-      }catch(e){
-        panel.innerHTML = '<div class="bubble">ERROR</div>';
-      }
-    }
+<a class="pill" href="/dashboard.html">Dashboard</a>
 
-    document.getElementById("sendBtn").addEventListener("click", sendChat);
-    document.getElementById("chatInput").addEventListener("keydown", (e) => {
-      if(e.key === "Enter") sendChat();
-    });
-    document.getElementById("clearBtn").addEventListener("click", () => {
-      document.getElementById("chatInput").value = "";
-      document.getElementById("chatPanel").innerHTML = '<div class="bubble">' + (I18N[document.getElementById("langSelect").value].ready) + "</div>";
-    });
-    document.getElementById("newChatBtn").addEventListener("click", () => {
-      document.getElementById("chatInput").value = "";
-      document.getElementById("chatPanel").innerHTML = '<div class="bubble">' + (I18N[document.getElementById("langSelect").value].ready) + "</div>";
-    });
+</div>
 
-    pingHealth();
-    pingRouter();
-  </script>
+<div class="card">
+
+<div style="font-size:34px;font-weight:700;margin-bottom:10px;">
+Una sola interfaz para conversar, crear, automatizar y operar todo CONSIA.
+</div>
+
+<div style="opacity:.7;">
+Chat, imagen, voz, control del ecosistema y acceso a todos los módulos.
+</div>
+
+</div>
+
+<div class="card">
+
+<div style="display:flex;align-items:center;gap:20px;">
+
+<div style="
+width:120px;
+height:120px;
+border-radius:60px;
+background:radial-gradient(circle,#9fbaff,#4066ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:700;
+font-size:30px;">
+AI
+</div>
+
+<div>
+
+<h2 style="margin:0;">CONSIA CORE</h2>
+
+<div style="opacity:.7;">
+Inteligencia, comercio, agentes, pagos, logística y automatización.
+</div>
+
+</div>
+
+</div>
+
+<div class="chatTabs">
+
+<div class="tab">CHAT</div>
+
+<div class="tab">IMAGE</div>
+
+<div class="tab">VOICE</div>
+
+</div>
+
+<div class="chatBox">
+CONSIA listo.
+</div>
+
+<div class="inputRow">
+
+<input id="input" class="input" placeholder="Habla con CONSIA...">
+
+<button class="btn send" onclick="send()">Enviar</button>
+
+<button class="btn clear" onclick="clearChat()">Limpiar</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const API="https://api.consia.world"
+
+function send(){
+
+const text=document.getElementById("input").value
+
+fetch(API+"/v1/chat",{
+method:"POST",
+headers:{"content-type":"application/json"},
+body:JSON.stringify({input:text})
+})
+.then(r=>r.json())
+.then(j=>{
+
+document.querySelector(".chatBox").innerHTML=j.reply
+
+})
+
+}
+
+function clearChat(){
+
+document.querySelector(".chatBox").innerHTML="CONSIA listo."
+
+document.getElementById("input").value=""
+
+}
+
+</script>
+
 </body>
 </html>
