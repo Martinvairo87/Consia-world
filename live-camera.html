@@ -25,43 +25,30 @@ padding:40px;
 
 h1{
 font-size:40px;
-margin-bottom:10px;
 letter-spacing:4px;
 }
 
-.video{
-margin-top:20px;
-border-radius:14px;
-border:1px solid #1c2747;
-background:black;
+video{
 width:100%;
 max-width:720px;
-}
-
-.controls{
+border-radius:14px;
 margin-top:20px;
-display:flex;
-gap:10px;
-justify-content:center;
-flex-wrap:wrap;
+background:black;
 }
 
 button{
+margin-top:20px;
 padding:14px 22px;
 border:none;
 border-radius:12px;
 background:#4c6fff;
 color:white;
-cursor:pointer;
 font-size:16px;
-}
-
-button.stop{
-background:#ff4c6a;
+cursor:pointer;
 }
 
 .status{
-margin-top:18px;
+margin-top:16px;
 opacity:.7;
 }
 
@@ -75,19 +62,13 @@ opacity:.7;
 
 <h1>CONSIA LIVE CAMERA</h1>
 
-<video id="video" class="video" autoplay playsinline></video>
+<video id="video" autoplay playsinline muted></video>
 
-<div class="controls">
+<br>
 
 <button onclick="startCamera()">
 Activar cámara
 </button>
-
-<button class="stop" onclick="stopCamera()">
-Detener cámara
-</button>
-
-</div>
 
 <div class="status" id="status">
 Camera ready
@@ -97,38 +78,26 @@ Camera ready
 
 <script>
 
-let stream
-
 async function startCamera(){
 
 try{
 
-stream = await navigator.mediaDevices.getUserMedia({
+const stream = await navigator.mediaDevices.getUserMedia({
 video:true,
 audio:false
 })
 
-document.getElementById("video").srcObject = stream
+const video = document.getElementById("video")
+
+video.srcObject = stream
+
+video.play()
 
 document.getElementById("status").innerText="Camera LIVE"
 
 }catch(err){
 
 document.getElementById("status").innerText="Error cámara"
-
-}
-
-}
-
-function stopCamera(){
-
-if(stream){
-
-stream.getTracks().forEach(track=>track.stop())
-
-document.getElementById("video").srcObject=null
-
-document.getElementById("status").innerText="Camera stopped"
 
 }
 
