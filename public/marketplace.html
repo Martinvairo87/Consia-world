@@ -1,60 +1,53 @@
-<body style="background:#0b0b0b;color:white;font-family:Arial,Helvetica,sans-serif;margin:0;padding:40px;">
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Marketplace</title>
+<style>
+body{margin:0;background:#030712;color:#fff;font-family:-apple-system}
+.wrap{max-width:1100px;margin:auto;padding:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:20px}
+.price{font-size:22px;margin-top:10px}
+</style>
+</head>
+<body>
 
-<h1 style="font-size:32px;margin-bottom:10px;">CONSIA Marketplace</h1>
-<p style="opacity:.7;margin-bottom:40px;">Productos y servicios del ecosistema CONSIA</p>
+<div class="wrap">
 
-<div id="products" style="max-width:800px;"></div>
+<h1>CONSIA Marketplace</h1>
+
+<div class="grid" id="products"></div>
+
+<br>
+<a href="/">← Home</a>
+
+</div>
 
 <script>
-async function loadProducts() {
-  try {
-    const res = await fetch("https://api.consia.world/v1/marketplace/products");
-    const data = await res.json();
+const API="https://api.consia.world"
 
-    const container = document.getElementById("products");
+fetch(API+"/v1/marketplace")
+.then(r=>r.json())
+.then(j=>{
+const el=document.getElementById("products")
 
-    if (!data.ok || !data.items || !data.items.length) {
-      container.innerHTML = "<p>No hay productos disponibles</p>";
-      return;
-    }
-
-    container.innerHTML = data.items.map(item => `
-      <div style="
-        background:#111;
-        border:1px solid #333;
-        border-radius:14px;
-        padding:24px;
-        margin-bottom:20px;
-      ">
-        <h2 style="margin:0 0 10px 0;">${item.name}</h2>
-        <p style="opacity:.7;margin-bottom:14px;">${item.description || ""}</p>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <strong style="font-size:18px;">USD ${item.price_usd}</strong>
-
-          <button onclick="buyProduct('${item.id}')" style="
-            background:#00ff9c;
-            border:none;
-            padding:10px 18px;
-            border-radius:8px;
-            font-weight:bold;
-            cursor:pointer;
-          ">
-            Comprar
-          </button>
-        </div>
-      </div>
-    `).join("");
-  } catch (err) {
-    document.getElementById("products").innerHTML = "<p>Error cargando productos</p>";
-  }
+if(j.items.length===0){
+el.innerHTML="<p>Marketplace vacío</p>"
+return
 }
 
-function buyProduct(id) {
-  alert("Compra iniciada: " + id);
-}
-
-loadProducts();
+j.items.forEach(p=>{
+el.innerHTML+=`
+<div class="card">
+<h3>${p.name}</h3>
+<p>${p.description||""}</p>
+<div class="price">$${p.price_usd}</div>
+</div>`
+})
+})
 </script>
 
 </body>
+</html>
