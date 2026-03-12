@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONSIA Wallet</title>
+<style>
+body{margin:0;background:#030712;color:#fff;font-family:-apple-system}
+.wrap{max-width:800px;margin:auto;padding:40px;text-align:center}
+.balance{font-size:50px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<h1>CONSIA Wallet</h1>
+
+<div class="balance" id="bal">...</div>
+
+<br>
+<a href="/">← Home</a>
+
+</div>
+
+<script>
+fetch("https://api.consia.world/v1/wallet")
+.then(r=>r.json())
+.then(j=>{
+bal.textContent=j.balance+" "+j.currency
+})
+</script>
+
+</body>
+</html>
