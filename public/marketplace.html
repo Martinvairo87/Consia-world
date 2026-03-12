@@ -3,50 +3,190 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA Marketplace</title>
+<title>CONSIA • Marketplace</title>
+
 <style>
-body{margin:0;background:#030712;color:#fff;font-family:-apple-system}
-.wrap{max-width:1100px;margin:auto;padding:30px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:20px}
-.price{font-size:22px;margin-top:10px}
+
+body{
+margin:0;
+background:#020617;
+color:#fff;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
+}
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+h1{
+margin:0;
+font-size:38px;
+}
+
+.sub{
+opacity:.7;
+margin-top:8px;
+}
+
+.btn{
+padding:12px 16px;
+border-radius:14px;
+background:#111a33;
+border:1px solid #1f2b4d;
+color:#fff;
+text-decoration:none;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:16px;
+margin-top:20px;
+}
+
+.card{
+background:#0b1225;
+border:1px solid #1f2b4d;
+border-radius:20px;
+padding:22px;
+}
+
+.title{
+font-size:22px;
+font-weight:700;
+margin-bottom:10px;
+}
+
+.desc{
+opacity:.75;
+min-height:50px;
+}
+
+.price{
+margin-top:14px;
+font-size:22px;
+font-weight:700;
+color:#79a0ff;
+}
+
+.state{
+margin-top:20px;
+background:#0b1225;
+border:1px solid #1f2b4d;
+border-radius:20px;
+padding:20px;
+opacity:.8;
+}
+
 </style>
+
 </head>
+
 <body>
 
 <div class="wrap">
 
+<div class="top">
+
+<div>
 <h1>CONSIA Marketplace</h1>
+<div class="sub">Productos y servicios del ecosistema CONSIA</div>
+</div>
 
-<div class="grid" id="products"></div>
+<a class="btn" href="/">← Home</a>
 
-<br>
-<a href="/">← Home</a>
+</div>
+
+<div class="grid" id="products">
+
+<div class="card">
+<div class="title">Cargando productos...</div>
+</div>
+
+</div>
+
+<div class="state" id="stateBox">
+Conectando al marketplace...
+</div>
 
 </div>
 
 <script>
+
 const API="https://api.consia.world"
 
-fetch(API+"/v1/marketplace")
-.then(r=>r.json())
-.then(j=>{
-const el=document.getElementById("products")
+async function loadMarketplace(){
 
-if(j.items.length===0){
-el.innerHTML="<p>Marketplace vacío</p>"
+try{
+
+const res=await fetch(API+"/v1/marketplace")
+
+const data=await res.json()
+
+const list=document.getElementById("products")
+
+if(!data.items || data.items.length===0){
+
+list.innerHTML=`
+
+<div class="card">
+
+<div class="title">Marketplace vacío</div>
+
+<div class="desc">
+El marketplace está activo pero todavía no hay productos cargados.
+</div>
+
+</div>
+
+`
+
+document.getElementById("stateBox").textContent="Marketplace ONLINE"
+
 return
 }
 
-j.items.forEach(p=>{
-el.innerHTML+=`
+list.innerHTML=""
+
+data.items.forEach(p=>{
+
+list.innerHTML+=`
+
 <div class="card">
-<h3>${p.name}</h3>
-<p>${p.description||""}</p>
-<div class="price">$${p.price_usd}</div>
-</div>`
+
+<div class="title">${p.name}</div>
+
+<div class="desc">${p.description || ""}</div>
+
+<div class="price">$${p.price_usd || 0}</div>
+
+</div>
+
+`
+
 })
-})
+
+document.getElementById("stateBox").textContent="Productos cargados"
+
+}catch(e){
+
+document.getElementById("stateBox").textContent="Error conectando al marketplace"
+
+}
+
+}
+
+loadMarketplace()
+
 </script>
 
 </body>
