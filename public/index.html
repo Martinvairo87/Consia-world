@@ -1,34 +1,27 @@
 <!doctype html>
 <html lang="es">
 <head>
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>CONSIA</title>
-
 <style>
-
 body{
 margin:0;
 background:#020617;
 color:white;
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
 }
-
 .container{
 max-width:900px;
 margin:auto;
 padding:40px;
 }
-
 .header{
 display:flex;
 align-items:center;
 gap:20px;
 margin-bottom:30px;
 }
-
 .logo{
 width:60px;
 height:60px;
@@ -40,17 +33,14 @@ justify-content:center;
 font-size:28px;
 font-weight:bold;
 }
-
 .title{
 font-size:38px;
 letter-spacing:6px;
 }
-
 .subtitle{
 opacity:.6;
 margin-top:6px;
 }
-
 .chatbtn{
 margin-top:25px;
 width:100%;
@@ -62,14 +52,12 @@ background:linear-gradient(90deg,#4c6fff,#7aa6ff);
 color:white;
 cursor:pointer;
 }
-
 .section{
 margin-top:35px;
 opacity:.7;
 letter-spacing:3px;
 font-size:13px;
 }
-
 .module{
 margin-top:14px;
 padding:20px;
@@ -78,18 +66,15 @@ border-radius:14px;
 cursor:pointer;
 border:1px solid #1c2747;
 }
-
 .module:hover{
 background:#0f1836;
 }
-
 .footer{
 margin-top:40px;
 display:flex;
 gap:10px;
 flex-wrap:wrap;
 }
-
 .badge{
 padding:8px 14px;
 border-radius:20px;
@@ -97,124 +82,101 @@ background:#0b1225;
 border:1px solid #1c2747;
 font-size:12px;
 }
-
 .online{
 color:#4cff8f;
 }
-
 </style>
-
 </head>
-
 <body>
 
 <div class="container">
 
-<div class="header">
+  <div class="header">
+    <div class="logo">C</div>
+    <div>
+      <div class="title">CONSIA</div>
+      <div class="subtitle">Super Interface</div>
+    </div>
+  </div>
 
-<div class="logo">
-C
-</div>
+  <button class="chatbtn" onclick="newChat()">
+    Nuevo chat
+  </button>
 
-<div>
-<div class="title">CONSIA</div>
-<div class="subtitle">Super Interface</div>
-</div>
+  <div class="section">
+    MODULES
+  </div>
 
-</div>
+  <div class="module" onclick="openPage('dashboard.html')">
+    Dashboard
+  </div>
 
-<button class="chatbtn" onclick="newChat()">
-Nuevo chat
-</button>
+  <div class="module" onclick="openPage('apps.html')">
+    AI App Store
+  </div>
 
-<div class="section">
-MODULES
-</div>
+  <div class="module" onclick="openPage('marketplace.html')">
+    Marketplace
+  </div>
 
-<div class="module" onclick="openPage('dashboard.html')">
-Dashboard
-</div>
+  <div class="module" onclick="openPage('os.html')">
+    CONSIA OS
+  </div>
 
-<div class="module" onclick="openPage('apps.html')">
-AI App Store
-</div>
+  <div class="module" onclick="openPage('agents.html')">
+    Agents
+  </div>
 
-<div class="module" onclick="openPage('marketplace.html')">
-Marketplace
-</div>
+  <div class="module" onclick="openPage('wallet.html')">
+    Wallet
+  </div>
 
-<div class="module" onclick="openPage('os.html')">
-CONSIA OS
-</div>
+  <div class="module" onclick="openPage('voice.html')">
+    Voice Interface
+  </div>
 
-<div class="module" onclick="openPage('agents.html')">
-Agents
-</div>
+  <div class="module" onclick="openPage('avatar.html')">
+    Avatar IA
+  </div>
 
-<div class="module" onclick="openPage('wallet.html')">
-Wallet
-</div>
+  <div class="module" onclick="openPage('autopilot.html')">
+    Autopilot
+  </div>
 
-<div class="module" onclick="openPage('voice.html')">
-Voice Interface
-</div>
+  <div class="module" onclick="openPage('automation.html')">
+    Automation Engine
+  </div>
 
-<div class="module" onclick="openPage('avatar.html')">
-Avatar IA
-</div>
+  <div class="module" onclick="openPage('global-memory.html')">
+    Global Memory
+  </div>
 
-<div class="module" onclick="openPage('autopilot.html')">
-Autopilot
-</div>
+  <div class="module" onclick="openPage('command-center.html')">
+    Command Center
+  </div>
 
-<div class="module" onclick="openPage('command-center.html')">
-Command Center
-</div>
+  <div class="section">
+    HISTORIAL
+  </div>
 
-<div class="section">
-HISTORIAL
-</div>
-
-<div class="footer">
-
-<div class="badge online">
-● CONSIA ONLINE
-</div>
-
-<div class="badge">
-Mode: CHAT
-</div>
-
-<div class="badge">
-Apps
-</div>
-
-<div class="badge">
-Marketplace
-</div>
-
-<div class="badge">
-Dashboard
-</div>
-
-</div>
+  <div class="footer">
+    <div class="badge online">● CONSIA ONLINE</div>
+    <div class="badge">Mode: CHAT</div>
+    <div class="badge">Apps</div>
+    <div class="badge">Marketplace</div>
+    <div class="badge">Dashboard</div>
+  </div>
 
 </div>
 
 <script>
-
 function openPage(page){
-
-location.href=page
-
+  location.href = page;
 }
 
 function newChat(){
-
-location.href="voice.html"
-
+  location.href = "voice.html";
 }
-
 </script>
 
 </body>
