@@ -1,288 +1,30 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA VOICE</title>
-<style>
-body{
-margin:0;
-background:#020617;
-color:#fff;
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
-}
-.wrap{
-max-width:900px;
-margin:0 auto;
-padding:32px 20px 60px;
-}
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:16px;
-margin-bottom:28px;
-}
-h1{
-margin:0;
-font-size:40px;
-letter-spacing:.04em;
-}
-.sub{
-opacity:.72;
-margin-top:8px;
-font-size:20px;
-}
-.home{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-padding:12px 18px;
-border-radius:14px;
-background:#111a33;
-border:1px solid #1f2b4d;
-color:#fff;
-text-decoration:none;
-}
-.hero{
-background:#0b1225;
-border:1px solid #1f2b4d;
-border-radius:24px;
-padding:28px;
-text-align:center;
-}
-.avatar{
-width:180px;
-height:180px;
-margin:0 auto 22px;
-border-radius:50%;
-background:radial-gradient(circle at 35% 30%, #9bb8ff 0%, #6d8fff 35%, #4068ff 70%, #2747b7 100%);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:76px;
-font-weight:700;
-box-shadow:0 0 40px rgba(76,111,255,.28);
-}
-.controls{
-display:flex;
-flex-wrap:wrap;
-gap:12px;
-justify-content:center;
-margin-top:18px;
-}
-button{
-padding:14px 22px;
-border:none;
-border-radius:14px;
-background:#4c6fff;
-color:#fff;
-font-size:16px;
-cursor:pointer;
-}
-button.secondary{
-background:#111a33;
-border:1px solid #1f2b4d;
-}
-button:disabled{
-opacity:.45;
-cursor:not-allowed;
-}
-.status{
-margin-top:18px;
-opacity:.78;
-font-size:17px;
-min-height:24px;
-}
-.chat{
-margin-top:24px;
-display:grid;
-gap:12px;
-}
-.msg{
-background:#0b1225;
-border:1px solid #1f2b4d;
-border-radius:16px;
-padding:14px 16px;
-line-height:1.45;
-text-align:left;
-}
-.me{
-border-color:#3450b3;
-}
-.consia{
-border-color:#1f5c3b;
-}
-.note{
-margin-top:22px;
-background:#0b1225;
-border:1px solid #1f2b4d;
-border-radius:18px;
-padding:18px;
-opacity:.82;
-}
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <div class="top">
-    <div>
-      <h1>CONSIA VOICE</h1>
-      <div class="sub">Voz, respuesta hablada y capa live base</div>
-    </div>
-    <a class="home" href="/">← Home</a>
-  </div>
-
-  <div class="hero">
-    <div class="avatar">C</div>
-    <div class="controls">
-      <button id="talkBtn" type="button">Hablar con CONSIA</button>
-      <button id="testBtn" class="secondary" type="button">Test IA</button>
-      <button id="clearBtn" class="secondary" type="button">Limpiar</button>
-    </div>
-    <div class="status" id="status">VOICE READY</div>
-    <div class="chat" id="chat"></div>
-  </div>
-
-  <div class="note" id="supportNote">
-    Inicializando soporte de voz...
-  </div>
-
-</div>
+<button onclick="start()">Hablar con CONSIA</button>
 
 <script>
-(() => {
-  const API = "https://api.consia.world";
-  const chat = document.getElementById("chat");
-  const statusBox = document.getElementById("status");
-  const talkBtn = document.getElementById("talkBtn");
-  const testBtn = document.getElementById("testBtn");
-  const clearBtn = document.getElementById("clearBtn");
-  const supportNote = document.getElementById("supportNote");
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let recognition = null;
-  let listening = false;
+function start(){
 
-  function setStatus(text){
-    statusBox.textContent = text;
-  }
+const rec=new webkitSpeechRecognition()
 
-  function addMessage(text, cls){
-    const div = document.createElement("div");
-    div.className = "msg " + cls;
-    div.textContent = text;
-    chat.appendChild(div);
-    div.scrollIntoView({ behavior: "smooth", block: "end" });
-  }
+rec.lang="es-ES"
 
-  function speak(text){
-    try{
-      if (!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = "es-ES";
-      window.speechSynthesis.speak(utter);
-    }catch(e){
-      console.error("speech error", e);
-    }
-  }
+rec.onresult=async e=>{
 
-  async function askConsia(input){
-    setStatus("CONSIA pensando...");
-    try{
-      const res = await fetch(API + "/v1/chat", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ input })
-      });
+const text=e.results[0][0].transcript
 
-      const data = await res.json();
-      const reply = data.reply || "CONSIA no devolvió respuesta.";
-      addMessage("CONSIA: " + reply, "consia");
-      speak(reply);
-      setStatus("VOICE READY");
-    }catch(e){
-      console.error(e);
-      addMessage("CONSIA: Error conectando con la API.", "consia");
-      setStatus("Error conectando");
-    }
-  }
+const r=await fetch("https://api.consia.world/chat",{
+method:"POST",
+body:JSON.stringify({message:text})
+})
 
-  async function runTest(){
-    addMessage("👤 Test de voz / IA", "me");
-    await askConsia("Hola CONSIA, decime en una frase si estás online.");
-  }
+const j=await r.json()
 
-  function initRecognition(){
-    if (!SpeechRecognition){
-      supportNote.textContent = "Este navegador no soporta reconocimiento de voz web. La pantalla ya funciona y podés usar Test IA.";
-      talkBtn.disabled = true;
-      setStatus("Voice recognition no disponible");
-      return;
-    }
+alert(j.answer)
 
-    recognition = new SpeechRecognition();
-    recognition.lang = "es-ES";
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+}
 
-    supportNote.textContent = "Reconocimiento de voz detectado. Podés hablar con CONSIA desde esta pantalla.";
+rec.start()
 
-    recognition.onstart = () => {
-      listening = true;
-      setStatus("Escuchando...");
-    };
+}
 
-    recognition.onend = () => {
-      listening = false;
-      if (statusBox.textContent === "Escuchando...") {
-        setStatus("VOICE READY");
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error("recognition error", event);
-      listening = false;
-      setStatus("Error de voz: " + (event.error || "desconocido"));
-    };
-
-    recognition.onresult = async (event) => {
-      const text = event.results?.[0]?.[0]?.transcript || "";
-      if (!text) {
-        setStatus("No se detectó voz");
-        return;
-      }
-      addMessage("👤 " + text, "me");
-      await askConsia(text);
-    };
-  }
-
-  talkBtn.addEventListener("click", () => {
-    if (!recognition){
-      setStatus("Reconocimiento no disponible");
-      return;
-    }
-    if (listening) return;
-    try{
-      recognition.start();
-    }catch(e){
-      console.error(e);
-      setStatus("No se pudo iniciar el micrófono");
-    }
-  });
-
-  testBtn.addEventListener("click", runTest);
-
-  clearBtn.addEventListener("click", () => {
-    chat.innerHTML = "";
-    setStatus("VOICE READY");
-  });
-
-  initRecognition();
-})();
 </script>
-</body>
-</html>
