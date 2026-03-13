@@ -98,7 +98,7 @@
 
       <section id="tab-home" class="panel">
         <h3>Home</h3>
-        <p>Panel central Owner.</p>
+        <div class="list" id="homeSummary"></div>
       </section>
 
       <section id="tab-files" class="panel hidden">
@@ -160,7 +160,10 @@
       <section id="tab-settings" class="panel hidden">
         <h3>Settings</h3>
         <div class="list" id="settingsList"></div>
-        <div class="row"><button class="btn" id="logoutBtn">Cerrar sesión</button></div>
+        <div class="row">
+          <button class="btn" id="clearChatBtn">Limpiar chat</button>
+          <button class="btn" id="logoutBtn">Cerrar sesión</button>
+        </div>
       </section>
 
       <main class="chat" id="chat"></main>
@@ -322,13 +325,15 @@
       if (data.ok && data.owner) {
         setStatus(true, "Owner");
         showOwner(true);
-        if (!chat.children.length) add("assistant", "OWNER MODE ACTIVE\n\nCONSIA listo.");
         await loadDashboard();
         await loadFiles();
         await loadMemory();
         await loadAcademy();
         await loadMedia();
         await loadSettings();
+        await loadHomeSummary();
+        await loadChatHistory();
+        if (!chat.children.length) add("assistant", "OWNER MODE ACTIVE\n\nCONSIA listo.");
       } else {
         setStatus(false, "Bloqueado");
         showOwner(false);
@@ -353,6 +358,33 @@
       document.getElementById("statMemory").textContent = data.cards.memory;
       document.getElementById("statAcademy").textContent = data.cards.academy;
       document.getElementById("statMedia").textContent = data.cards.media;
+    }
+
+    async function loadHomeSummary() {
+      const { data } = await api("/v1/home-summary");
+      const { data: m } = await api("/v1/metrics");
+      const box = document.getElementById("homeSummary");
+      if (!box) return;
+      const metrics = m?.items || {};
+      box.innerHTML = `
+        <div class="item">
+          <div class="itemTitle">Resumen Owner</div>
+          <div class="itemMeta">Files: ${metrics.files_count || 0} • Memory: ${metrics.memory_count || 0} • Chats: ${metrics.chat_count || 0}</div>
+          <div class="itemMeta">Tamaño files: ${formatBytes(metrics.files_total_size || 0)}</div>
+        </div>
+        <div class="item">
+          <div class="itemTitle">Último archivo</div>
+          <div>${escapeHtml(metrics.last_file?.filename || "Sin archivos")}</div>
+        </div>
+        <div class="item">
+          <div class="itemTitle">Última memoria</div>
+          <div>${escapeHtml(metrics.last_memory?.title || "Sin memorias")}</div>
+        </div>
+        <div class="item">
+          <div class="itemTitle">Recientes</div>
+          <div class="mono">${escapeHtml(JSON.stringify(data, null, 2))}</div>
+        </div>
+      `;
     }
 
     async function loadFiles() {
@@ -394,7 +426,7 @@
             <div class="item">
               <div class="itemTitle">${escapeHtml(item.filename)}</div>
               ${item.is_image ? `<img class="thumb" src="${item.preview_url}" alt="" style="width:220px;height:220px">` : ""}
-              <div class="itemMeta">${formatBytes(item.size)} • ${item.content_type || ""}</div>
+              <div class="itemMeta">${formatBytes(item.size)} • ${escapeHtml(item.content_type || "")}</div>
             </div>
           `;
         };
@@ -409,6 +441,7 @@
           });
           await loadFiles();
           await loadDashboard();
+          await loadHomeSummary();
         };
       });
     }
@@ -423,6 +456,7 @@
       document.getElementById("fileInput").value = "";
       await loadFiles();
       await loadDashboard();
+      await loadHomeSummary();
     }
 
     async function loadMemory() {
@@ -467,6 +501,7 @@
           });
           await loadMemory();
           await loadDashboard();
+          await loadHomeSummary();
         };
       });
     }
@@ -490,6 +525,7 @@
       clearMemoryForm();
       await loadMemory();
       await loadDashboard();
+      await loadHomeSummary();
     }
 
     function clearMemoryForm() {
@@ -572,11 +608,15 @@
 
     async function loadSettings() {
       const { data } = await api("/v1/health");
+      const { data: m } = await api("/v1/metrics");
+      const metrics = m?.items || {};
       const box = document.getElementById("settingsList");
       box.innerHTML = `
         <div class="item"><div class="itemTitle">API</div><div>Online</div></div>
         <div class="item"><div class="itemTitle">DB</div><div>${data?.services?.db ? "OK" : "Error"}</div></div>
         <div class="item"><div class="itemTitle">Storage</div><div>${data?.services?.storage ? "OK" : "No bound"}</div></div>
+        <div class="item"><div class="itemTitle">Chats</div><div>${metrics.chat_count || 0}</div></div>
+        <div class="item"><div class="itemTitle">Files size</div><div>${formatBytes(metrics.files_total_size || 0)}</div></div>
       `;
     }
 
@@ -591,6 +631,29 @@
         body: JSON.stringify({ message })
       });
       add("assistant", data.answer || "Sin respuesta.");
+      await loadDashboard();
+      await loadHomeSummary();
+      await loadSettings();
+    }
+
+    async function loadChatHistory() {
+      const { data } = await api("/v1/chat/history");
+      if (!data.ok) return;
+      chat.innerHTML = "";
+      (data.items || []).forEach(item => add(item.role === "user" ? "user" : "assistant", item.content));
+    }
+
+    async function clearChatHistory() {
+      await api("/v1/chat/clear", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "{}"
+      });
+      chat.innerHTML = "";
+      add("assistant", "OWNER MODE ACTIVE\n\nCONSIA listo.");
+      await loadDashboard();
+      await loadHomeSummary();
+      await loadSettings();
     }
 
     document.querySelectorAll(".tab").forEach(btn => {
@@ -608,6 +671,7 @@
     document.getElementById("loginBtn").onclick = loginPasskey;
     document.getElementById("refreshBtn").onclick = checkMe;
     document.getElementById("logoutBtn").onclick = logout;
+    document.getElementById("clearChatBtn").onclick = clearChatHistory;
     document.getElementById("sendBtn").onclick = sendChat;
     document.getElementById("uploadBtn").onclick = uploadFile;
     document.getElementById("refreshFilesBtn").onclick = loadFiles;
