@@ -32,13 +32,14 @@
       background:rgba(255,255,255,.04);font-size:13px;color:var(--muted)
     }
     .pill.ok{background:rgba(25,195,125,.12);color:#88efba;border-color:rgba(25,195,125,.3)}
+    .pill.warn{background:rgba(255,185,0,.12);color:#ffd67a;border-color:rgba(255,185,0,.3)}
     .layout{width:min(1450px, calc(100% - 28px));margin:22px auto 30px;display:grid;grid-template-columns:340px 1fr;gap:18px}
     .panel,.card{
       background:linear-gradient(180deg, rgba(16,24,51,.92), rgba(10,17,38,.96));
       border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)
     }
     .side{padding:18px;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 120px)}
-    .main{display:grid;grid-template-rows:auto auto auto auto auto;gap:18px}
+    .main{display:grid;grid-template-rows:auto auto auto auto auto auto;gap:18px}
     .section-title{font-size:15px;color:#d9e2ff;font-weight:700;margin-bottom:10px}
     .muted{color:var(--muted);font-size:13px;line-height:1.45}
     .hero{
@@ -105,6 +106,7 @@
     .danger-text{color:#ff9cab}
     .ok-text{color:#8af0ba}
     pre{margin:0;white-space:pre-wrap;color:#dce6ff}
+    code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px}
     @media (max-width:1200px){
       .layout{grid-template-columns:1fr}
       .content-grid,.two-col{grid-template-columns:1fr}
@@ -123,6 +125,7 @@
   <div class="topbar">
     <div class="brand">CONSIA</div>
     <div class="top-right">
+      <div class="pill" id="ownerStatusPill">Owner: bloqueado</div>
       <div class="pill ok" id="apiStatus">API online</div>
       <div class="pill" id="serverTime">Server time: ...</div>
       <div class="pill" id="versionPill">v...</div>
@@ -131,6 +134,23 @@
 
   <div class="layout">
     <aside class="panel side">
+      <div class="side-block">
+        <div class="section-title">Owner Access</div>
+        <div class="muted">Registro de passkey y desbloqueo con Face ID / Touch ID en Safari.</div>
+
+        <div class="toolbar">
+          <button class="green" onclick="registerPasskey()">Registrar Passkey</button>
+          <button class="green" onclick="loginPasskey()">Entrar con Face ID</button>
+          <button class="red" onclick="revokeOwnerSession()">Cerrar owner</button>
+        </div>
+
+        <div class="table-wrap">
+          <div class="scroll-box" style="padding:14px;">
+            <pre id="ownerBox">Sin sesión owner.</pre>
+          </div>
+        </div>
+      </div>
+
       <div class="side-block">
         <div class="section-title">Sistema</div>
         <div class="mini-list">
@@ -177,7 +197,7 @@
     <main class="main">
       <section class="hero panel">
         <h1>CONSIA ACTIVE</h1>
-        <p>Centro de control final conectado a chat, memory, files, upload R2, swarm, marketplace y executor owner.</p>
+        <p>Centro de control final conectado a passkey owner, chat, memory, files, upload R2, swarm, marketplace y approval center.</p>
       </section>
 
       <section class="grid-4">
@@ -298,7 +318,7 @@
       <section class="two-col">
         <div class="card">
           <div class="section-title">Owner Actions</div>
-          <div class="muted">Centro de aprobación y ejecución de CONSIA.</div>
+          <div class="muted">Centro de aprobación y ejecución de CONSIA. Requiere owner session.</div>
 
           <div style="margin-top:12px;">
             <input id="actionType" type="text" value="cloudflare_list_workers" placeholder="action_type" />
@@ -354,6 +374,7 @@
 
   <script>
     const API = "https://api.consia.world";
+    const RP_ID = "consia.world";
 
     function fmtTs(ts){
       if(!ts) return "-";
@@ -385,22 +406,163 @@
       document.getElementById("messages").innerHTML = '<div class="msg system">Chat limpio.</div>';
     }
 
-    async function apiGet(path){
-      const res = await fetch(API + path);
+    function getOwnerSession(){
+      return localStorage.getItem("consia_owner_session") || "";
+    }
+
+    function setOwnerSession(token, expiresAt){
+      localStorage.setItem("consia_owner_session", token);
+      if (expiresAt) localStorage.setItem("consia_owner_expires_at", String(expiresAt));
+    }
+
+    function clearOwnerSessionLocal(){
+      localStorage.removeItem("consia_owner_session");
+      localStorage.removeItem("consia_owner_expires_at");
+    }
+
+    function base64UrlToBuffer(base64url) {
+      const padding = "=".repeat((4 - base64url.length % 4) % 4);
+      const base64 = (base64url + padding).replace(/-/g, "+").replace(/_/g, "/");
+      const str = atob(base64);
+      const bytes = new Uint8Array(str.length);
+      for (let i = 0; i < str.length; i++) bytes[i] = str.charCodeAt(i);
+      return bytes.buffer;
+    }
+
+    function bufferToBase64Url(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let str = "";
+      for (const byte of bytes) str += String.fromCharCode(byte);
+      return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    async function apiGet(path, ownerProtected = false){
+      const headers = {};
+      if (ownerProtected && getOwnerSession()) {
+        headers["x-owner-session"] = getOwnerSession();
+      }
+      const res = await fetch(API + path, { headers });
       const data = await res.json();
       if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "request_failed");
       return data;
     }
 
-    async function apiPost(path, payload){
+    async function apiPost(path, payload, ownerProtected = false){
+      const headers = { "Content-Type":"application/json" };
+      if (ownerProtected && getOwnerSession()) {
+        headers["x-owner-session"] = getOwnerSession();
+      }
       const res = await fetch(API + path, {
         method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        headers,
         body: JSON.stringify(payload || {})
       });
       const data = await res.json();
       if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "request_failed");
       return data;
+    }
+
+    async function loadOwnerStatus(){
+      const pill = document.getElementById("ownerStatusPill");
+      const box = document.getElementById("ownerBox");
+
+      try{
+        const data = await apiGet("/v1/owner/status", true);
+        pill.textContent = "Owner: desbloqueado";
+        pill.className = "pill ok";
+        box.textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        pill.textContent = "Owner: bloqueado";
+        pill.className = "pill warn";
+        box.textContent = "Sin sesión owner.";
+      }
+    }
+
+    async function registerPasskey(){
+      try{
+        const data = await apiPost("/v1/passkey/register/challenge", {});
+        const challenge = Uint8Array.from(data.challenge, c => c.charCodeAt(0));
+
+        const publicKey = {
+          challenge,
+          rp: {
+            name: data.rp || "CONSIA",
+            id: data.rp_id || RP_ID
+          },
+          user: {
+            id: Uint8Array.from("martin-vairo", c => c.charCodeAt(0)),
+            name: "martin-vairo",
+            displayName: "Martín Vairo"
+          },
+          pubKeyCredParams: [
+            { type: "public-key", alg: -7 },
+            { type: "public-key", alg: -257 }
+          ],
+          authenticatorSelection: {
+            residentKey: "preferred",
+            userVerification: "preferred"
+          },
+          timeout: 60000,
+          attestation: "none"
+        };
+
+        const credential = await navigator.credentials.create({ publicKey });
+        if (!credential) throw new Error("passkey_not_created");
+
+        const payload = {
+          credential_id: bufferToBase64Url(credential.rawId),
+          public_key: "registered"
+        };
+
+        const verify = await apiPost("/v1/passkey/register/verify", payload);
+        document.getElementById("ownerBox").textContent = JSON.stringify(verify, null, 2);
+        addMessage("Passkey registrada correctamente.", "system");
+      } catch(err){
+        document.getElementById("ownerBox").textContent = "Error registrando passkey: " + (err.message || err);
+      }
+    }
+
+    async function loginPasskey(){
+      try{
+        const data = await apiPost("/v1/passkey/login/challenge", {});
+        const challenge = Uint8Array.from(data.challenge, c => c.charCodeAt(0));
+        const allowCredentials = (data.allow || []).map(item => ({
+          id: base64UrlToBuffer(item.credential_id),
+          type: "public-key"
+        }));
+
+        const publicKey = {
+          challenge,
+          allowCredentials,
+          userVerification: "preferred",
+          rpId: data.rp_id || RP_ID,
+          timeout: 60000
+        };
+
+        const assertion = await navigator.credentials.get({ publicKey });
+        if (!assertion) throw new Error("passkey_login_failed");
+
+        const verify = await apiPost("/v1/passkey/login/verify", {
+          credential_id: bufferToBase64Url(assertion.rawId)
+        });
+
+        setOwnerSession(verify.owner_session, verify.expires_at);
+        await loadOwnerStatus();
+        await loadActions();
+        addMessage("Owner desbloqueado con Face ID / Passkey.", "system");
+      } catch(err){
+        document.getElementById("ownerBox").textContent = "Error entrando con passkey: " + (err.message || err);
+      }
+    }
+
+    async function revokeOwnerSession(){
+      try{
+        await apiPost("/v1/owner/session/revoke", {}, true);
+      } catch(_) {}
+      clearOwnerSessionLocal();
+      await loadOwnerStatus();
+      await loadActions();
+      addMessage("Sesión owner cerrada.", "system");
     }
 
     async function loadHealth(){
@@ -479,7 +641,7 @@
       const value = document.getElementById("memoryInput").value.trim();
       if(!value) return;
       try{
-        await apiPost("/v1/memory", { user_id:"owner", key:"note", content:value });
+        await apiPost("/v1/memory", { user_id:"owner", key:"note", content:value }, true);
         document.getElementById("memoryInput").value = "";
         await loadMemory();
         addMessage("Memory guardada correctamente.", "system");
@@ -516,6 +678,10 @@
       const input = document.getElementById("fileUpload");
       const file = input.files && input.files[0];
       if(!file) return;
+      if(!getOwnerSession()) {
+        addMessage("Necesitás entrar como owner para subir archivos.", "system");
+        return;
+      }
 
       const form = new FormData();
       form.append("file", file);
@@ -523,6 +689,9 @@
       try{
         const res = await fetch(API + "/v1/files/upload", {
           method: "POST",
+          headers: {
+            "x-owner-session": getOwnerSession()
+          },
           body: form
         });
         const data = await res.json();
@@ -606,7 +775,12 @@
 
     async function loadActions(){
       try{
-        const data = await apiGet("/v1/actions/pending");
+        if(!getOwnerSession()) {
+          document.getElementById("actionsTable").innerHTML = `<tr><td colspan="4" class="muted">Entrá como owner para ver acciones.</td></tr>`;
+          return;
+        }
+
+        const data = await apiGet("/v1/actions/pending", true);
         const items = data.items || [];
 
         document.getElementById("actionsTable").innerHTML = items.length ? items.map(a => `
@@ -628,6 +802,8 @@
 
     async function createAction(){
       try{
+        if(!getOwnerSession()) throw new Error("owner_session_missing");
+
         const action_type = document.getElementById("actionType").value.trim();
         const target = document.getElementById("actionTarget").value.trim();
         const risk_level = document.getElementById("actionRisk").value.trim() || "low";
@@ -644,7 +820,7 @@
           target,
           payload,
           risk_level
-        });
+        }, true);
 
         document.getElementById("actionResult").textContent = JSON.stringify(data, null, 2);
         await loadActions();
@@ -655,7 +831,7 @@
 
     async function approveAction(actionId){
       try{
-        const data = await apiPost("/v1/actions/approve", { action_id: actionId });
+        const data = await apiPost("/v1/actions/approve", { action_id: actionId }, true);
         document.getElementById("actionResult").textContent = JSON.stringify(data, null, 2);
         await loadActions();
       } catch(err){
@@ -665,7 +841,7 @@
 
     async function executeAction(actionId){
       try{
-        const data = await apiPost("/v1/actions/execute", { action_id: actionId });
+        const data = await apiPost("/v1/actions/execute", { action_id: actionId }, true);
         document.getElementById("actionResult").textContent = JSON.stringify(data, null, 2);
         await loadActions();
         await loadMemory();
@@ -676,6 +852,7 @@
 
     async function refreshAll(){
       await Promise.allSettled([
+        loadOwnerStatus(),
         loadHealth(),
         loadAgents(),
         loadProducts(),
