@@ -20,7 +20,7 @@
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 50% -10%, #141824 0%, #08090d 50%, #040507 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
     body{display:flex;justify-content:center}
-    .app{width:min(100%,920px);min-height:100dvh;display:flex;flex-direction:column;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}
+    .app{width:min(100%,1100px);min-height:100dvh;display:flex;flex-direction:column;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}
     .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 2px 14px}
     .brand{display:flex;align-items:center;gap:12px}
     .orb{
@@ -51,6 +51,14 @@
       min-height:54px;border-radius:18px;font-size:15px;font-weight:700;padding:0 18px
     }
     .btn.primary{background:#ffffff;color:#06080d}
+    .btn.small{min-height:42px;padding:0 14px}
+    .hidden{display:none}
+    .nav{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+    .tab{
+      border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);
+      padding:12px 16px;border-radius:16px;font-weight:700
+    }
+    .tab.active{background:#fff;color:#06080d}
     .grid{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -65,10 +73,31 @@
     }
     .card h3{margin:0 0 8px;font-size:16px}
     .card p{font-size:13px}
-    .hidden{display:none}
+    .panel{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      border-radius:22px;
+      padding:16px;
+      margin-top:14px;
+    }
+    .input,.textarea{
+      width:100%;border:1px solid var(--line);background:#0c1017;color:var(--text);
+      border-radius:14px;padding:14px;font:inherit
+    }
+    .textarea{min-height:110px;resize:vertical}
+    .list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+    .item{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      border-radius:16px;
+      padding:14px;
+    }
+    .itemTitle{font-weight:700;margin-bottom:6px}
+    .itemMeta{font-size:12px;color:var(--muted);margin-top:6px}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .composerWrap{
       position:fixed;left:50%;transform:translateX(-50%);
-      bottom:0;width:min(100%,920px);padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+      bottom:0;width:min(100%,1100px);padding:10px 14px calc(12px + env(safe-area-inset-bottom));
       background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.82) 18%, rgba(5,6,10,.98) 100%);
       backdrop-filter:blur(16px)
     }
@@ -76,7 +105,7 @@
       display:grid;grid-template-columns:1fr auto;gap:10px;
       padding:10px;border:1px solid var(--line);border-radius:24px;background:rgba(11,13,18,.95);box-shadow:var(--shadow)
     }
-    textarea{
+    textarea.chatInput{
       width:100%;resize:none;min-height:54px;max-height:180px;border:0;outline:0;
       background:transparent;color:var(--text);font:inherit;padding:12px 8px
     }
@@ -87,6 +116,9 @@
     }
     .assistant{align-self:flex-start;background:linear-gradient(180deg, #0f131c, #0a0d13);border:1px solid var(--line)}
     .user{align-self:flex-end;background:linear-gradient(180deg, #fafafa, #dfe5f1);color:#06080d;border:1px solid rgba(255,255,255,.45)}
+    @media (max-width: 850px){
+      .split{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
@@ -116,16 +148,90 @@
       <h1>OWNER MODE ACTIVE</h1>
       <p>CONSIA activo en modo Owner.</p>
 
-      <div class="grid">
-        <div class="card"><h3>FILES</h3><p>Próximo bloque.</p></div>
-        <div class="card"><h3>MEMORY</h3><p>Próximo bloque.</p></div>
-        <div class="card"><h3>ACADEMY</h3><p>Próximo bloque.</p></div>
-        <div class="card"><h3>MEDIA</h3><p>Próximo bloque.</p></div>
+      <div class="grid" id="statsGrid">
+        <div class="card"><h3>FILES</h3><p id="statFiles">0</p></div>
+        <div class="card"><h3>MEMORY</h3><p id="statMemory">0</p></div>
+        <div class="card"><h3>ACADEMY</h3><p id="statAcademy">0</p></div>
+        <div class="card"><h3>MEDIA</h3><p id="statMedia">0</p></div>
       </div>
 
-      <div class="row">
-        <button class="btn" id="logoutBtn">Cerrar sesión</button>
+      <div class="nav">
+        <button class="tab active" data-tab="home">Home</button>
+        <button class="tab" data-tab="files">Files</button>
+        <button class="tab" data-tab="memory">Memory</button>
+        <button class="tab" data-tab="academy">Academy</button>
+        <button class="tab" data-tab="media">Media</button>
+        <button class="tab" data-tab="search">Search</button>
+        <button class="tab" data-tab="settings">Settings</button>
       </div>
+
+      <section id="tab-home" class="panel">
+        <h3>Home</h3>
+        <p>Panel central Owner.</p>
+      </section>
+
+      <section id="tab-files" class="panel hidden">
+        <h3>Files</h3>
+        <div class="split">
+          <div>
+            <input class="input" id="fileInput" type="file" />
+            <div class="row">
+              <button class="btn small primary" id="uploadBtn">Subir archivo</button>
+              <button class="btn small" id="refreshFilesBtn">Actualizar</button>
+            </div>
+          </div>
+          <div>
+            <div class="list" id="filesList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-memory" class="panel hidden">
+        <h3>Memory</h3>
+        <div class="split">
+          <div>
+            <input class="input" id="memoryTitle" placeholder="Título" />
+            <div style="height:10px"></div>
+            <textarea class="textarea" id="memoryContent" placeholder="Contenido"></textarea>
+            <div style="height:10px"></div>
+            <input class="input" id="memoryTags" placeholder="tags separados por coma" />
+            <div class="row">
+              <button class="btn small primary" id="saveMemoryBtn">Guardar memoria</button>
+              <button class="btn small" id="refreshMemoryBtn">Actualizar</button>
+            </div>
+          </div>
+          <div>
+            <div class="list" id="memoryList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-academy" class="panel hidden">
+        <h3>Academy</h3>
+        <div class="list" id="academyList"></div>
+      </section>
+
+      <section id="tab-media" class="panel hidden">
+        <h3>Media</h3>
+        <div class="list" id="mediaList"></div>
+      </section>
+
+      <section id="tab-search" class="panel hidden">
+        <h3>Search</h3>
+        <input class="input" id="searchInput" placeholder="Buscar en todo CONSIA" />
+        <div class="row">
+          <button class="btn small primary" id="searchBtn">Buscar</button>
+        </div>
+        <div class="list" id="searchResults"></div>
+      </section>
+
+      <section id="tab-settings" class="panel hidden">
+        <h3>Settings</h3>
+        <div class="list" id="settingsList"></div>
+        <div class="row">
+          <button class="btn" id="logoutBtn">Cerrar sesión</button>
+        </div>
+      </section>
 
       <main class="chat" id="chat"></main>
     </section>
@@ -133,7 +239,7 @@
 
   <div class="composerWrap hidden" id="composerWrap">
     <div class="composer">
-      <textarea id="input" placeholder="Escribí..." rows="1"></textarea>
+      <textarea class="chatInput" id="input" placeholder="Escribí..." rows="1"></textarea>
       <button class="btn primary" id="sendBtn">↑</button>
     </div>
   </div>
@@ -170,10 +276,11 @@
     async function api(path, opts = {}) {
       const res = await fetch(API + path, {
         credentials: "include",
-        headers: { "content-type": "application/json", ...(opts.headers || {}) },
+        headers: { ...(opts.headers || {}) },
         ...opts
       });
-      const data = await res.json().catch(() => ({}));
+      let data = {};
+      try { data = await res.json(); } catch {}
       return { res, data };
     }
 
@@ -193,16 +300,12 @@
     async function registerPasskey() {
       const { res, data: options } = await api("/v1/auth/register-options", {
         method: "POST",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: "owner@consia.world" })
       });
 
       if (!res.ok || !options.ok) {
         alert("Error register-options: " + JSON.stringify(options));
-        return;
-      }
-
-      if (!window.PublicKeyCredential) {
-        alert("Passkeys no soportado en este dispositivo.");
         return;
       }
 
@@ -222,15 +325,11 @@
         }
       });
 
-      if (!credential) {
-        alert("No se pudo registrar Face ID.");
-        return;
-      }
-
       const credentialId = arrayBufferToBase64url(credential.rawId);
 
       const verify = await api("/v1/auth/register-verify", {
         method: "POST",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({
           credentialId,
           publicKey: "platform-passkey"
@@ -247,7 +346,8 @@
     async function loginPasskey() {
       const { res, data: options } = await api("/v1/auth/login-options", {
         method: "POST",
-        body: JSON.stringify({})
+        headers: { "content-type": "application/json" },
+        body: "{}"
       });
 
       if (!res.ok || !options.ok) {
@@ -274,6 +374,7 @@
 
       const verify = await api("/v1/auth/login-verify", {
         method: "POST",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ credentialId })
       });
 
@@ -289,9 +390,13 @@
       if (data.ok && data.owner) {
         setStatus(true, "Owner");
         showOwner(true);
-        if (!chat.children.length) {
-          add("assistant", "OWNER MODE ACTIVE\n\nCONSIA listo.");
-        }
+        if (!chat.children.length) add("assistant", "OWNER MODE ACTIVE\n\nCONSIA listo.");
+        await loadDashboard();
+        await loadFiles();
+        await loadMemory();
+        await loadAcademy();
+        await loadMedia();
+        await loadSettings();
       } else {
         setStatus(false, "Bloqueado");
         showOwner(false);
@@ -299,10 +404,174 @@
     }
 
     async function logout() {
-      await api("/v1/auth/logout", { method: "POST", body: "{}" });
+      await api("/v1/auth/logout", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
       showOwner(false);
       setStatus(false, "Bloqueado");
       chat.innerHTML = "";
+    }
+
+    async function loadDashboard() {
+      const { data } = await api("/v1/dashboard");
+      if (!data.ok) return;
+      document.getElementById("statFiles").textContent = data.cards.files;
+      document.getElementById("statMemory").textContent = data.cards.memory;
+      document.getElementById("statAcademy").textContent = data.cards.academy;
+      document.getElementById("statMedia").textContent = data.cards.media;
+    }
+
+    async function loadFiles() {
+      const { data } = await api("/v1/files/list");
+      const box = document.getElementById("filesList");
+      box.innerHTML = "";
+      (data.items || []).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div class="itemTitle">${escapeHtml(item.filename)}</div>
+          <div class="itemMeta">${formatBytes(item.size)} • ${new Date(item.created_at).toLocaleString()}</div>
+          <div class="row">
+            <button class="btn small" data-download="${item.id}">Abrir</button>
+            <button class="btn small" data-delete-file="${item.id}">Borrar</button>
+          </div>
+        `;
+        box.appendChild(div);
+      });
+
+      box.querySelectorAll("[data-download]").forEach(btn => {
+        btn.onclick = () => window.open(`${API}/v1/files/download/${btn.dataset.download}`, "_blank");
+      });
+      box.querySelectorAll("[data-delete-file]").forEach(btn => {
+        btn.onclick = async () => {
+          await api("/v1/files/delete", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ id: btn.dataset.deleteFile })
+          });
+          await loadFiles();
+          await loadDashboard();
+        };
+      });
+    }
+
+    async function uploadFile() {
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return alert("Elegí un archivo.");
+      const fd = new FormData();
+      fd.append("file", file);
+      const { data } = await api("/v1/files/upload", { method: "POST", body: fd });
+      if (!data.ok) return alert("Error upload: " + JSON.stringify(data));
+      document.getElementById("fileInput").value = "";
+      await loadFiles();
+      await loadDashboard();
+    }
+
+    async function loadMemory() {
+      const { data } = await api("/v1/memory/list");
+      const box = document.getElementById("memoryList");
+      box.innerHTML = "";
+      (data.items || []).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div class="itemTitle">${escapeHtml(item.title || "Sin título")}</div>
+          <div>${escapeHtml(item.content)}</div>
+          <div class="itemMeta">${escapeHtml(item.tags || "")} • ${new Date(item.created_at).toLocaleString()}</div>
+          <div class="row">
+            <button class="btn small" data-delete-memory="${item.id}">Borrar</button>
+          </div>
+        `;
+        box.appendChild(div);
+      });
+
+      box.querySelectorAll("[data-delete-memory]").forEach(btn => {
+        btn.onclick = async () => {
+          await api("/v1/memory/delete", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ id: btn.dataset.deleteMemory })
+          });
+          await loadMemory();
+          await loadDashboard();
+        };
+      });
+    }
+
+    async function saveMemory() {
+      const title = document.getElementById("memoryTitle").value.trim();
+      const content = document.getElementById("memoryContent").value.trim();
+      const tags = document.getElementById("memoryTags").value.trim();
+      if (!content) return alert("Escribí contenido.");
+      const { data } = await api("/v1/memory/create", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ title, content, tags })
+      });
+      if (!data.ok) return alert("Error memory: " + JSON.stringify(data));
+      document.getElementById("memoryTitle").value = "";
+      document.getElementById("memoryContent").value = "";
+      document.getElementById("memoryTags").value = "";
+      await loadMemory();
+      await loadDashboard();
+    }
+
+    async function loadAcademy() {
+      const { data } = await api("/v1/academy/list");
+      const box = document.getElementById("academyList");
+      box.innerHTML = "";
+      (data.items || []).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div class="itemTitle">${escapeHtml(item.title)}</div>
+          <div>${escapeHtml(item.description || "")}</div>
+        `;
+        box.appendChild(div);
+      });
+    }
+
+    async function loadMedia() {
+      const { data } = await api("/v1/media/list");
+      const box = document.getElementById("mediaList");
+      box.innerHTML = "";
+      (data.items || []).forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div class="itemTitle">${escapeHtml(item.title)} (${escapeHtml(item.type)})</div>
+          <div>${escapeHtml(item.description || "")}</div>
+        `;
+        box.appendChild(div);
+      });
+    }
+
+    async function runSearch() {
+      const q = document.getElementById("searchInput").value.trim();
+      const { data } = await api("/v1/search?q=" + encodeURIComponent(q));
+      const box = document.getElementById("searchResults");
+      box.innerHTML = "";
+      ["memory", "files", "academy", "media"].forEach(group => {
+        const items = data[group] || [];
+        const head = document.createElement("div");
+        head.className = "item";
+        head.innerHTML = `<div class="itemTitle">${group.toUpperCase()}</div><div>${items.length} resultados</div>`;
+        box.appendChild(head);
+        items.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.textContent = JSON.stringify(item, null, 2);
+          box.appendChild(div);
+        });
+      });
+    }
+
+    async function loadSettings() {
+      const { data } = await api("/v1/health");
+      const box = document.getElementById("settingsList");
+      box.innerHTML = `
+        <div class="item"><div class="itemTitle">API</div><div>Online</div></div>
+        <div class="item"><div class="itemTitle">DB</div><div>${data?.services?.db ? "OK" : "Error"}</div></div>
+        <div class="item"><div class="itemTitle">Storage</div><div>${data?.services?.storage ? "OK" : "No bound"}</div></div>
+      `;
     }
 
     async function sendChat() {
@@ -312,16 +581,45 @@
       add("user", message);
       const { data } = await api("/v1/chat", {
         method: "POST",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ message })
       });
       add("assistant", data.answer || "Sin respuesta.");
     }
+
+    function escapeHtml(s) {
+      return String(s ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return "0 B";
+      const units = ["B","KB","MB","GB"];
+      let i = 0, n = bytes;
+      while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+      return `${n.toFixed(i ? 1 : 0)} ${units[i]}`;
+    }
+
+    document.querySelectorAll(".tab").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        const id = btn.dataset.tab;
+        ["home","files","memory","academy","media","search","settings"].forEach(tab => {
+          document.getElementById("tab-" + tab).classList.toggle("hidden", tab !== id);
+        });
+      };
+    });
 
     document.getElementById("registerBtn").onclick = registerPasskey;
     document.getElementById("loginBtn").onclick = loginPasskey;
     document.getElementById("refreshBtn").onclick = checkMe;
     document.getElementById("logoutBtn").onclick = logout;
     document.getElementById("sendBtn").onclick = sendChat;
+    document.getElementById("uploadBtn").onclick = uploadFile;
+    document.getElementById("refreshFilesBtn").onclick = loadFiles;
+    document.getElementById("saveMemoryBtn").onclick = saveMemory;
+    document.getElementById("refreshMemoryBtn").onclick = loadMemory;
+    document.getElementById("searchBtn").onclick = runSearch;
 
     input.addEventListener("keydown", e => {
       if (e.key === "Enter" && !e.shiftKey) {
