@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>CONSIA AVATAR</title>
@@ -11,72 +11,38 @@
 
 body{
 margin:0;
-background:#020617;
+background:#050b18;
 color:white;
 font-family:system-ui;
 text-align:center;
 }
 
-.container{
-max-width:900px;
-margin:auto;
-padding:40px;
+#avatarContainer{
+width:100%;
+height:70vh;
 }
 
-h1{
-font-size:40px;
-margin-bottom:10px;
-}
-
-.avatar{
-width:260px;
-height:260px;
-margin:auto;
-border-radius:50%;
-background:radial-gradient(circle,#6d8fff,#2747b7);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:90px;
-box-shadow:0 0 60px rgba(100,140,255,.4);
-animation:pulse 4s infinite;
-}
-
-@keyframes pulse{
-0%{transform:scale(1)}
-50%{transform:scale(1.05)}
-100%{transform:scale(1)}
+#controls{
+padding:30px;
 }
 
 button{
-margin-top:25px;
-padding:16px 26px;
+padding:14px 22px;
 border:none;
-border-radius:12px;
-background:#4c6fff;
-color:white;
-font-size:18px;
+border-radius:10px;
+background:#3ddc84;
+font-weight:bold;
 cursor:pointer;
+margin:6px;
 }
 
-.chat{
-margin-top:30px;
-max-width:700px;
-margin-left:auto;
-margin-right:auto;
-text-align:left;
-}
-
-.msg{
-margin-bottom:10px;
-padding:12px;
-background:#0b1225;
-border-radius:8px;
-}
-
-.status{
-margin-top:15px;
-opacity:.7;
+input{
+width:60%;
+padding:14px;
+border-radius:10px;
+border:none;
+background:#0f1b34;
+color:white;
 }
 
 </style>
@@ -85,91 +51,120 @@ opacity:.7;
 
 <body>
 
-<div class="container">
+<h1>CONSIA Avatar</h1>
 
-<h1>CONSIA AVATAR</h1>
+<div id="avatarContainer"></div>
 
-<div class="avatar" id="avatar">
-C
-</div>
+<div id="controls">
 
-<button onclick="talk()">
-Hablar con CONSIA
-</button>
+<input id="command" placeholder="decile algo a CONSIA">
 
-<div class="status" id="status">
-Avatar ready
-</div>
+<button onclick="talk()">Hablar</button>
 
-<div class="chat" id="chat"></div>
+<button onclick="startVoice()">🎤 voz</button>
 
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
 <script>
 
-const API="https://api.consia.world"
+let scene=new THREE.Scene()
 
-const recognition = new webkitSpeechRecognition()
+let camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000)
 
-recognition.lang="es-ES"
+let renderer=new THREE.WebGLRenderer({alpha:true})
 
-recognition.continuous=false
+renderer.setSize(window.innerWidth,window.innerHeight*0.7)
 
-recognition.interimResults=false
+document.getElementById("avatarContainer").appendChild(renderer.domElement)
 
-function add(text){
+camera.position.z=3
 
-document.getElementById("chat").innerHTML+=`
+let geometry=new THREE.SphereGeometry(1,64,64)
 
-<div class="msg">${text}</div>
+let material=new THREE.MeshBasicMaterial({
+color:0x3ddc84,
+wireframe:true
+})
 
-`
+let avatar=new THREE.Mesh(geometry,material)
+
+scene.add(avatar)
+
+function animate(){
+
+requestAnimationFrame(animate)
+
+avatar.rotation.y+=0.01
+
+renderer.render(scene,camera)
 
 }
+
+animate()
+
+
+async function talk(){
+
+const text=document.getElementById("command").value
+
+const r=await fetch("/v1/autopilot/run",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+company:"CONSIA",
+
+action:"execute",
+
+input:text
+
+})
+
+})
+
+const j=await r.json()
+
+speak(j.narration)
+
+}
+
 
 function speak(text){
 
-const speech = new SpeechSynthesisUtterance(text)
+const msg=new SpeechSynthesisUtterance(text)
 
-speech.lang="es-ES"
+msg.lang="es"
 
-speechSynthesis.speak(speech)
-
-}
-
-function talk(){
-
-document.getElementById("status").innerText="Escuchando..."
-
-recognition.start()
+speechSynthesis.speak(msg)
 
 }
 
-recognition.onresult = async function(event){
 
-const text = event.results[0][0].transcript
+function startVoice(){
 
-add("👤 "+text)
+const rec=new webkitSpeechRecognition()
 
-document.getElementById("status").innerText="CONSIA pensando..."
+rec.lang="es"
 
-const res = await fetch(API+"/v1/chat",{
-method:"POST",
-headers:{
-"content-type":"application/json"
-},
-body:JSON.stringify({
-input:text
-})
-})
+rec.onresult=(e)=>{
 
-const data = await res.json()
+const text=e.results[0][0].transcript
 
-add("CONSIA: "+data.reply)
+document.getElementById("command").value=text
 
-speak(data.reply)
+talk()
 
-document.getElementById("status").innerText="Avatar ready"
+}
+
+rec.start()
 
 }
 
