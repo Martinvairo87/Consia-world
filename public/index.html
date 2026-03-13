@@ -17,8 +17,8 @@ padding:40px;
 
 .card{
 background:#141b2d;
-padding:30px;
-border-radius:12px;
+padding:25px;
+border-radius:10px;
 margin-bottom:30px;
 }
 
@@ -38,6 +38,12 @@ border-radius:8px;
 cursor:pointer;
 }
 
+pre{
+background:#0b0f19;
+padding:15px;
+border-radius:6px;
+}
+
 </style>
 
 </head>
@@ -50,7 +56,7 @@ cursor:pointer;
 
 <h2>Chat</h2>
 
-<input id="msg">
+<input id="msg" placeholder="mensaje">
 
 <button onclick="chat()">Enviar</button>
 
@@ -142,7 +148,7 @@ const API="https://api.consia.world"
 
 async function chat(){
 
-let m=msg.value
+let m=document.getElementById("msg").value
 
 let r=await fetch(API+"/chat",{
 method:"POST",
@@ -151,13 +157,13 @@ body:JSON.stringify({message:m})
 
 let j=await r.json()
 
-chat.innerText=JSON.stringify(j,null,2)
+document.getElementById("chat").innerText=JSON.stringify(j,null,2)
 
 }
 
 async function swarm(){
 
-let t=task.value
+let t=document.getElementById("task").value
 
 let r=await fetch(API+"/swarm",{
 method:"POST",
@@ -166,13 +172,13 @@ body:JSON.stringify({task:t})
 
 let j=await r.json()
 
-swarm.innerText=JSON.stringify(j,null,2)
+document.getElementById("swarm").innerText=JSON.stringify(j,null,2)
 
 }
 
 async function autopilot(){
 
-let t=auto.value
+let t=document.getElementById("auto").value
 
 let r=await fetch(API+"/autopilot",{
 method:"POST",
@@ -181,14 +187,14 @@ body:JSON.stringify({task:t})
 
 let j=await r.json()
 
-auto_result.innerText=JSON.stringify(j,null,2)
+document.getElementById("auto_result").innerText=JSON.stringify(j,null,2)
 
 }
 
 async function createAgent(){
 
-let name=agent_name.value
-let role=agent_role.value
+let name=document.getElementById("agent_name").value
+let role=document.getElementById("agent_role").value
 
 await fetch(API+"/agents/create",{
 method:"POST",
@@ -230,13 +236,13 @@ let r=await fetch(API+"/marketplace/products")
 
 let j=await r.json()
 
-products.innerText=JSON.stringify(j,null,2)
+document.getElementById("products").innerText=JSON.stringify(j,null,2)
 
 }
 
 function download(){
 
-const text=chat.innerText
+const text=document.getElementById("chat").innerText
 
 const blob=new Blob([text])
 
@@ -258,7 +264,7 @@ rec.lang="es-ES"
 
 rec.onresult=e=>{
 
-msg.value=e.results[0][0].transcript
+document.getElementById("msg").value=e.results[0][0].transcript
 
 chat()
 
