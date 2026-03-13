@@ -1,50 +1,333 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="es">
 <head>
-<meta charset="utf-8">
-<title>CONSIA</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CONSIA OWNER</title>
+  <meta name="theme-color" content="#05060a" />
+  <style>
+    :root{
+      --bg:#05060a;
+      --panel:#0b0d12;
+      --panel2:#11141c;
+      --text:#f5f7fb;
+      --muted:#9aa3b2;
+      --line:#1c2230;
+      --ok:#2dd4bf;
+      --danger:#ff6b6b;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --radius:24px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 50% -10%, #141824 0%, #08090d 50%, #040507 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    body{display:flex;justify-content:center}
+    .app{width:min(100%,920px);min-height:100dvh;display:flex;flex-direction:column;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 2px 14px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .orb{
+      width:42px;height:42px;border-radius:50%;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.5) 10%, rgba(255,255,255,.12) 18%, rgba(255,255,255,.03) 28%, rgba(255,255,255,0) 42%),
+        radial-gradient(circle at 50% 50%, #ffffff 0%, #a5b4fc 16%, #60a5fa 28%, #3b82f6 40%, #0f172a 72%, #05060a 100%);
+      box-shadow: 0 0 42px rgba(96,165,250,.35), inset 0 0 28px rgba(255,255,255,.25);
+    }
+    .t1{font-size:18px;font-weight:700;letter-spacing:.18em}
+    .t2{font-size:11px;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
+    .status{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
+    .dot{width:9px;height:9px;border-radius:50%;background:var(--danger);box-shadow:0 0 12px rgba(255,107,107,.65)}
+    .dot.ok{background:var(--ok);box-shadow:0 0 12px rgba(45,212,191,.65)}
 
-<style>
-body{
-font-family:Arial;
-background:black;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-flex-direction:column;
-}
-button{
-padding:20px;
-font-size:20px;
-cursor:pointer;
-}
-</style>
-
+    .gate,.dashboard{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:22px 18px;
+      box-shadow:var(--shadow);
+      margin-top:10px;
+    }
+    h1{margin:0 0 8px;font-size:32px;line-height:1.02;letter-spacing:-.04em}
+    p{margin:0;color:var(--muted);font-size:15px;line-height:1.45}
+    .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .btn{
+      border:1px solid var(--line);background:var(--panel2);color:var(--text);
+      min-height:54px;border-radius:18px;font-size:15px;font-weight:700;padding:0 18px
+    }
+    .btn.primary{background:#ffffff;color:#06080d}
+    .btn:active{transform:scale(.98)}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+      margin-top:18px;
+    }
+    .card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      border-radius:22px;
+      padding:16px;
+    }
+    .card h3{margin:0 0 8px;font-size:16px}
+    .card p{font-size:13px}
+    .hidden{display:none}
+    .composerWrap{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:0;width:min(100%,920px);padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+      background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.82) 18%, rgba(5,6,10,.98) 100%);
+      backdrop-filter:blur(16px)
+    }
+    .composer{
+      display:grid;grid-template-columns:1fr auto;gap:10px;
+      padding:10px;border:1px solid var(--line);border-radius:24px;background:rgba(11,13,18,.95);box-shadow:var(--shadow)
+    }
+    textarea{
+      width:100%;resize:none;min-height:54px;max-height:180px;border:0;outline:0;
+      background:transparent;color:var(--text);font:inherit;padding:12px 8px
+    }
+    .chat{display:flex;flex-direction:column;gap:12px;margin-top:18px;padding-bottom:130px}
+    .msg{
+      max-width:88%;padding:14px 15px;border-radius:18px;line-height:1.48;font-size:15px;
+      white-space:pre-wrap;word-wrap:break-word;box-shadow:var(--shadow)
+    }
+    .assistant{align-self:flex-start;background:linear-gradient(180deg, #0f131c, #0a0d13);border:1px solid var(--line)}
+    .user{align-self:flex-end;background:linear-gradient(180deg, #fafafa, #dfe5f1);color:#06080d;border:1px solid rgba(255,255,255,.45)}
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <div class="top">
+      <div class="brand">
+        <div class="orb"></div>
+        <div>
+          <div class="t1">CONSIA</div>
+          <div class="t2">Owner Core</div>
+        </div>
+      </div>
+      <div class="status"><span class="dot" id="dot"></span><span id="statusText">Verificando</span></div>
+    </div>
 
-<h1>CONSIA</h1>
+    <section class="gate" id="gate">
+      <h1>Entrar con Face ID</h1>
+      <p>Modo Owner. Acceso directo a CONSIA.</p>
+      <div class="row">
+        <button class="btn primary" id="registerBtn">Registrar Face ID</button>
+        <button class="btn primary" id="loginBtn">Entrar con Face ID</button>
+        <button class="btn" id="refreshBtn">Verificar sesión</button>
+      </div>
+    </section>
 
-<button onclick="start()">Entrar con Face ID</button>
+    <section class="dashboard hidden" id="dashboard">
+      <h1>OWNER MODE ACTIVE</h1>
+      <p>CONSIA activo en modo Owner.</p>
 
-<script>
+      <div class="grid">
+        <div class="card"><h3>FILES</h3><p>Próximo bloque.</p></div>
+        <div class="card"><h3>MEMORY</h3><p>Próximo bloque.</p></div>
+        <div class="card"><h3>ACADEMY</h3><p>Próximo bloque.</p></div>
+        <div class="card"><h3>MEDIA</h3><p>Próximo bloque.</p></div>
+      </div>
 
-async function start(){
+      <div class="row">
+        <button class="btn" id="logoutBtn">Cerrar sesión</button>
+      </div>
 
-const r = await fetch("https://api.consia.world/owner/one-tap")
+      <main class="chat" id="chat"></main>
+    </section>
+  </div>
 
-const data = await r.json()
+  <div class="composerWrap hidden" id="composerWrap">
+    <div class="composer">
+      <textarea id="input" placeholder="Escribí..." rows="1"></textarea>
+      <button class="btn primary" id="sendBtn">↑</button>
+    </div>
+  </div>
 
-alert("CONSIA OWNER MODE ACTIVADO")
+  <script>
+    const API = "https://api.consia.world";
+    const gate = document.getElementById("gate");
+    const dashboard = document.getElementById("dashboard");
+    const composerWrap = document.getElementById("composerWrap");
+    const dot = document.getElementById("dot");
+    const statusText = document.getElementById("statusText");
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("input");
 
-console.log(data)
+    function setStatus(ok, text) {
+      dot.classList.toggle("ok", !!ok);
+      statusText.textContent = text;
+    }
 
-}
+    function showOwner(on) {
+      gate.classList.toggle("hidden", !!on);
+      dashboard.classList.toggle("hidden", !on);
+      composerWrap.classList.toggle("hidden", !on);
+    }
 
-</script>
+    function add(role, text) {
+      const div = document.createElement("div");
+      div.className = "msg " + (role === "user" ? "user" : "assistant");
+      div.textContent = text;
+      chat.appendChild(div);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
 
+    async function api(path, opts = {}) {
+      const res = await fetch(API + path, {
+        credentials: "include",
+        headers: { "content-type": "application/json", ...(opts.headers || {}) },
+        ...opts
+      });
+      const data = await res.json().catch(() => ({}));
+      return { res, data };
+    }
+
+    async function registerPasskey() {
+      const { data: options } = await api("/v1/auth/register-options", {
+        method: "POST",
+        body: JSON.stringify({ email: "owner@consia.world" })
+      });
+
+      if (!options.ok) {
+        alert("Error register-options");
+        return;
+      }
+
+      if (!window.PublicKeyCredential) {
+        alert("Passkeys no soportado en este dispositivo.");
+        return;
+      }
+
+      const credential = await navigator.credentials.create({
+        publicKey: {
+          challenge: Uint8Array.from(atob(base64urlToBase64(options.challenge)), c => c.charCodeAt(0)),
+          rp: options.rp,
+          user: {
+            id: Uint8Array.from(atob(base64urlToBase64(options.user.id)), c => c.charCodeAt(0)),
+            name: options.user.name,
+            displayName: options.user.displayName
+          },
+          pubKeyCredParams: options.pubKeyCredParams,
+          timeout: options.timeout,
+          authenticatorSelection: options.authenticatorSelection,
+          attestation: options.attestation
+        }
+      });
+
+      const credentialId = arrayBufferToBase64url(credential.rawId);
+
+      const verify = await api("/v1/auth/register-verify", {
+        method: "POST",
+        body: JSON.stringify({
+          credentialId,
+          publicKey: "platform-passkey"
+        })
+      });
+
+      if (verify.data.ok) {
+        alert("Face ID registrado.");
+      } else {
+        alert("Error al registrar.");
+      }
+    }
+
+    async function loginPasskey() {
+      const { data: options } = await api("/v1/auth/login-options", {
+        method: "POST",
+        body: JSON.stringify({})
+      });
+
+      if (!options.ok) {
+        alert("Error login-options");
+        return;
+      }
+
+      const allowCredentials = (options.allowCredentials || []).map(c => ({
+        type: c.type,
+        id: Uint8Array.from(atob(base64urlToBase64(c.id)), x => x.charCodeAt(0))
+      }));
+
+      const assertion = await navigator.credentials.get({
+        publicKey: {
+          challenge: Uint8Array.from(atob(base64urlToBase64(options.challenge)), c => c.charCodeAt(0)),
+          rpId: options.rpId,
+          allowCredentials,
+          timeout: options.timeout,
+          userVerification: options.userVerification
+        }
+      });
+
+      const credentialId = arrayBufferToBase64url(assertion.rawId);
+
+      const verify = await api("/v1/auth/login-verify", {
+        method: "POST",
+        body: JSON.stringify({ credentialId })
+      });
+
+      if (verify.data.ok) {
+        await checkMe();
+      } else {
+        alert("Error al iniciar sesión.");
+      }
+    }
+
+    async function checkMe() {
+      const { data } = await api("/v1/auth/me");
+      if (data.ok && data.owner) {
+        setStatus(true, "Owner");
+        showOwner(true);
+        if (!chat.children.length) {
+          add("assistant", "OWNER MODE ACTIVE\n\nCONSIA listo.");
+        }
+      } else {
+        setStatus(false, "Bloqueado");
+        showOwner(false);
+      }
+    }
+
+    async function logout() {
+      await api("/v1/auth/logout", { method: "POST", body: "{}" });
+      showOwner(false);
+      setStatus(false, "Bloqueado");
+      chat.innerHTML = "";
+    }
+
+    async function sendChat() {
+      const message = input.value.trim();
+      if (!message) return;
+      input.value = "";
+      add("user", message);
+      const { data } = await api("/v1/chat", {
+        method: "POST",
+        body: JSON.stringify({ message })
+      });
+      add("assistant", data.answer || "Sin respuesta.");
+    }
+
+    function arrayBufferToBase64url(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let s = "";
+      for (const b of bytes) s += String.fromCharCode(b);
+      return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    function base64urlToBase64(input) {
+      let s = input.replace(/-/g, "+").replace(/_/g, "/");
+      while (s.length % 4) s += "=";
+      return s;
+    }
+
+    document.getElementById("registerBtn").onclick = registerPasskey;
+    document.getElementById("loginBtn").onclick = loginPasskey;
+    document.getElementById("refreshBtn").onclick = checkMe;
+    document.getElementById("logoutBtn").onclick = logout;
+    document.getElementById("sendBtn").onclick = sendChat;
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendChat();
+      }
+    });
+
+    checkMe();
+  </script>
 </body>
 </html>
