@@ -179,16 +179,11 @@ rec.start()
 
 }
 
-/* CHAT */
-
 async function chat(){
 
 let m=document.getElementById("msg").value
 
-let r=await fetch(API+"/chat",{
-method:"POST",
-body:JSON.stringify({message:m})
-})
+let r=await fetch(API+"/chat",{method:"POST",body:JSON.stringify({message:m})})
 
 let j=await r.json()
 
@@ -198,16 +193,11 @@ speak(j.answer)
 
 }
 
-/* SWARM */
-
 async function swarm(){
 
 let t=document.getElementById("task").value
 
-let r=await fetch(API+"/swarm",{
-method:"POST",
-body:JSON.stringify({task:t})
-})
+let r=await fetch(API+"/swarm",{method:"POST",body:JSON.stringify({task:t})})
 
 let j=await r.json()
 
@@ -217,16 +207,11 @@ speak("Swarm ejecutado")
 
 }
 
-/* AUTOPILOT */
-
 async function autopilot(){
 
 let t=document.getElementById("auto").value
 
-let r=await fetch(API+"/autopilot",{
-method:"POST",
-body:JSON.stringify({task:t})
-})
+let r=await fetch(API+"/autopilot",{method:"POST",body:JSON.stringify({task:t})})
 
 let j=await r.json()
 
@@ -236,39 +221,27 @@ speak("Autopilot ejecutado")
 
 }
 
-/* AGENT FACTORY */
-
 async function createAgent(){
 
 let name=document.getElementById("agent_name").value
 let role=document.getElementById("agent_role").value
 
-await fetch(API+"/agents/create",{
-method:"POST",
-body:JSON.stringify({name,role})
-})
+await fetch(API+"/agents/create",{method:"POST",body:JSON.stringify({name,role})})
 
 speak("Agente creado")
 
 }
-
-/* MEMORY */
 
 async function saveMemory(){
 
 let key=document.getElementById("key").value
 let value=document.getElementById("value").value
 
-await fetch(API+"/memory/save",{
-method:"POST",
-body:JSON.stringify({key,value})
-})
+await fetch(API+"/memory/save",{method:"POST",body:JSON.stringify({key,value})})
 
 speak("Memoria guardada")
 
 }
-
-/* FILE UPLOAD */
 
 async function upload(){
 
@@ -278,16 +251,11 @@ let fd=new FormData()
 
 fd.append("file",file)
 
-await fetch(API+"/files/upload",{
-method:"POST",
-body:fd
-})
+await fetch(API+"/files/upload",{method:"POST",body:fd})
 
 speak("Archivo subido")
 
 }
-
-/* MARKETPLACE */
 
 async function products(){
 
@@ -300,8 +268,6 @@ document.getElementById("products").innerText=JSON.stringify(j,null,2)
 speak("Marketplace cargado")
 
 }
-
-/* DOWNLOAD */
 
 function download(){
 
@@ -322,5 +288,4 @@ a.click()
 </script>
 
 </body>
-
 </html>
