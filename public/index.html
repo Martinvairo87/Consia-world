@@ -6,10 +6,21 @@
   <title>CONSIA</title>
   <style>
     :root{
-      --bg:#050816; --bg2:#0a1024; --card:#0f1833; --line:rgba(255,255,255,.08);
-      --text:#f3f6ff; --muted:#9aabd6; --blue:#3b5cff; --blue2:#5f7cff;
-      --ok:#19c37d; --danger:#ff5d73; --radius:22px; --shadow:0 20px 50px rgba(0,0,0,.35);
+      --bg:#050816;
+      --bg2:#0a1024;
+      --card:#0f1833;
+      --line:rgba(255,255,255,.08);
+      --text:#f3f6ff;
+      --muted:#9aabd6;
+      --ok:#19c37d;
+      --blue:#3b5cff;
+      --blue2:#5f7cff;
+      --danger:#ff5d73;
+      --warn:#ffb84d;
+      --shadow:0 20px 50px rgba(0,0,0,.35);
+      --radius:22px;
     }
+
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
     body{
@@ -17,107 +28,399 @@
       background:
         radial-gradient(circle at top left, rgba(68,98,255,.18), transparent 28%),
         radial-gradient(circle at top right, rgba(0,197,255,.14), transparent 24%),
-        linear-gradient(180deg,var(--bg),var(--bg2));
+        linear-gradient(180deg, var(--bg), var(--bg2));
       color:var(--text);
-      min-height:100vh
+      min-height:100vh;
     }
+
     .topbar{
-      position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:16px;
-      padding:18px 24px;border-bottom:1px solid var(--line);background:rgba(6,10,24,.82);backdrop-filter:blur(12px)
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      padding:18px 24px;
+      border-bottom:1px solid var(--line);
+      background:rgba(6,10,24,.82);
+      backdrop-filter:blur(12px);
     }
-    .brand{font-size:24px;font-weight:800}
-    .top-right{display:flex;gap:12px;flex-wrap:wrap}
+
+    .brand{
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:.6px;
+    }
+
+    .top-right{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
     .pill{
-      display:inline-flex;align-items:center;padding:10px 14px;border-radius:999px;border:1px solid var(--line);
-      background:rgba(255,255,255,.04);font-size:13px;color:var(--muted)
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-size:13px;
+      color:var(--muted);
     }
-    .pill.ok{background:rgba(25,195,125,.12);color:#88efba;border-color:rgba(25,195,125,.3)}
-    .pill.warn{background:rgba(255,185,0,.12);color:#ffd67a;border-color:rgba(255,185,0,.3)}
-    .layout{width:min(1450px, calc(100% - 28px));margin:22px auto 30px;display:grid;grid-template-columns:340px 1fr;gap:18px}
+
+    .pill.ok{
+      background:rgba(25,195,125,.12);
+      color:#88efba;
+      border-color:rgba(25,195,125,.3);
+    }
+
+    .pill.warn{
+      background:rgba(255,184,77,.12);
+      color:#ffd08a;
+      border-color:rgba(255,184,77,.25);
+    }
+
+    .layout{
+      width:min(1520px, calc(100% - 28px));
+      margin:22px auto 30px;
+      display:grid;
+      grid-template-columns:340px 1fr;
+      gap:18px;
+    }
+
     .panel,.card{
       background:linear-gradient(180deg, rgba(16,24,51,.92), rgba(10,17,38,.96));
-      border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
     }
-    .side{padding:18px;display:flex;flex-direction:column;gap:16px;min-height:calc(100vh - 120px)}
-    .main{display:grid;grid-template-rows:auto auto auto auto auto auto;gap:18px}
-    .section-title{font-size:15px;color:#d9e2ff;font-weight:700;margin-bottom:10px}
-    .muted{color:var(--muted);font-size:13px;line-height:1.45}
+
+    .side{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-height:calc(100vh - 120px);
+    }
+
+    .main{
+      display:grid;
+      grid-template-rows:auto auto auto auto auto auto auto;
+      gap:18px;
+    }
+
+    .section-title{
+      font-size:15px;
+      color:#d9e2ff;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
     .hero{
-      padding:26px;border-radius:var(--radius);
-      background:linear-gradient(135deg, rgba(76,102,255,.33), rgba(3,191,174,.16));
-      border:1px solid rgba(255,255,255,.09);box-shadow:var(--shadow)
+      padding:26px;
+      border-radius:var(--radius);
+      background:
+        linear-gradient(135deg, rgba(76,102,255,.33), rgba(3,191,174,.16)),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:var(--shadow);
     }
-    .hero h1{margin:0 0 10px;font-size:54px;line-height:.96}
-    .hero p{margin:0;color:#d7e3ff;font-size:22px;line-height:1.35}
-    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+    .hero h1{
+      margin:0 0 10px;
+      font-size:54px;
+      line-height:.96;
+      letter-spacing:-1.4px;
+    }
+
+    .hero p{
+      margin:0;
+      color:#d7e3ff;
+      font-size:22px;
+      line-height:1.35;
+      max-width:980px;
+    }
+
+    .grid-4{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
     .stat{
-      padding:18px;border-radius:20px;border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02))
+      padding:18px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+      min-height:112px;
     }
-    .stat .k{color:var(--muted);font-size:13px;margin-bottom:12px}
-    .stat .v{font-size:24px;font-weight:800}
-    .content-grid,.two-col{display:grid;gap:18px}
-    .content-grid{grid-template-columns:1.25fr .95fr}
+
+    .stat .k{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:12px;
+    }
+
+    .stat .v{
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:-.4px;
+    }
+
+    .content-grid,.two-col,.three-col{
+      display:grid;
+      gap:18px;
+    }
+
+    .content-grid{grid-template-columns:1.2fr .8fr}
     .two-col{grid-template-columns:1fr 1fr}
+    .three-col{grid-template-columns:1fr 1fr 1fr}
+
     .card{padding:18px}
-    .chat-card{display:grid;grid-template-rows:auto 1fr auto;min-height:620px}
+
+    .chat-card{
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      min-height:620px;
+    }
+
     .messages{
-      margin-top:10px;border:1px solid var(--line);background:rgba(4,8,24,.6);border-radius:18px;
-      padding:16px;min-height:340px;max-height:420px;overflow:auto
+      margin-top:10px;
+      border:1px solid var(--line);
+      background:rgba(4,8,24,.6);
+      border-radius:18px;
+      padding:16px;
+      min-height:340px;
+      max-height:420px;
+      overflow:auto;
     }
+
     .msg{
-      max-width:86%;padding:14px 16px;border-radius:16px;margin-bottom:12px;
-      line-height:1.45;white-space:pre-wrap;word-break:break-word
+      max-width:86%;
+      padding:14px 16px;
+      border-radius:16px;
+      margin-bottom:12px;
+      line-height:1.45;
+      white-space:pre-wrap;
+      word-break:break-word;
     }
-    .msg.user{margin-left:auto;background:linear-gradient(135deg,var(--blue),var(--blue2));color:white}
-    .msg.bot{background:rgba(255,255,255,.06)}
-    .msg.system{background:rgba(25,195,125,.10);color:#9cf0c2;border:1px solid rgba(25,195,125,.22);max-width:100%}
-    .composer{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-top:14px}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-    input,textarea,button{font:inherit}
-    input[type="text"], input[type="file"], textarea{
-      width:100%;border:none;outline:none;background:rgba(255,255,255,.06);color:white;
-      border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 15px
+
+    .msg.user{
+      margin-left:auto;
+      background:linear-gradient(135deg, var(--blue), var(--blue2));
+      color:white;
     }
-    textarea{resize:vertical;min-height:94px}
+
+    .msg.bot{
+      background:rgba(255,255,255,.06);
+      color:#f2f5ff;
+    }
+
+    .msg.system{
+      background:rgba(25,195,125,.10);
+      color:#9cf0c2;
+      border:1px solid rgba(25,195,125,.22);
+      max-width:100%;
+    }
+
+    .composer{
+      display:grid;
+      grid-template-columns:1fr auto auto;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    input, textarea, button, select{
+      font:inherit;
+    }
+
+    input[type="text"], input[type="file"], textarea, .search{
+      width:100%;
+      border:none;
+      outline:none;
+      background:rgba(255,255,255,.06);
+      color:white;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:14px 15px;
+    }
+
+    textarea{
+      resize:vertical;
+      min-height:94px;
+    }
+
     button{
-      border:none;outline:none;border-radius:16px;padding:14px 18px;font-weight:800;cursor:pointer;
-      color:white;background:linear-gradient(135deg,var(--blue),var(--blue2))
+      border:none;
+      outline:none;
+      border-radius:16px;
+      padding:14px 18px;
+      font-weight:800;
+      cursor:pointer;
+      color:white;
+      background:linear-gradient(135deg, var(--blue), var(--blue2));
+      transition:.18s transform ease,.18s opacity ease;
     }
-    button.secondary{background:rgba(255,255,255,.08)}
-    button.ghost{background:transparent;border:1px solid rgba(255,255,255,.12)}
-    button.green{background:linear-gradient(135deg,#0aa26a,#19c37d)}
-    button.red{background:linear-gradient(135deg,#d54863,#ff5d73)}
-    .side-block{padding:16px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.03)}
-    .mini-list{display:grid;gap:10px}
-    .mini-item{padding:12px 13px;border-radius:15px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03)}
-    .mini-item strong{display:block;margin-bottom:5px;font-size:15px}
-    .mini-item .sub{color:var(--muted);font-size:13px;line-height:1.35}
-    .table-wrap{margin-top:10px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(4,8,24,.55)}
-    table{width:100%;border-collapse:collapse}
-    th,td{text-align:left;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px;vertical-align:top}
-    th{color:#d9e2ff;background:rgba(255,255,255,.04);font-size:13px}
-    .scroll-box{max-height:320px;overflow:auto}
+
+    button:hover{transform:translateY(-1px)}
+    button.secondary{
+      background:rgba(255,255,255,.08);
+      color:white;
+    }
+    button.ghost{
+      background:transparent;
+      border:1px solid rgba(255,255,255,.12);
+      color:#dce5ff;
+    }
+    button.green{
+      background:linear-gradient(135deg, #0aa26a, #19c37d);
+    }
+    button.red{
+      background:linear-gradient(135deg, #d54863, #ff5d73);
+    }
+
+    .side-block{
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:rgba(255,255,255,.03);
+    }
+
+    .mini-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .mini-item{
+      padding:12px 13px;
+      border-radius:15px;
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.03);
+    }
+
+    .mini-item strong{
+      display:block;
+      margin-bottom:5px;
+      font-size:15px;
+    }
+
+    .mini-item .sub{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .table-wrap{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(4,8,24,.55);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th, td{
+      text-align:left;
+      padding:13px 14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      vertical-align:top;
+      font-size:14px;
+    }
+
+    th{
+      color:#d9e2ff;
+      background:rgba(255,255,255,.04);
+      font-size:13px;
+    }
+
+    td{
+      color:#eef3ff;
+    }
+
+    .scroll-box{
+      max-height:320px;
+      overflow:auto;
+    }
+
+    .footer-note{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
     .badge{
-      display:inline-block;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.07);color:#d8e4ff;
-      font-size:12px;border:1px solid rgba(255,255,255,.08);margin:4px 6px 0 0
+      display:inline-block;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      color:#d8e4ff;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,.08);
+      margin:4px 6px 0 0;
     }
-    .empty{color:var(--muted);font-size:14px;padding:10px 0}
+
+    .empty{
+      color:var(--muted);
+      font-size:14px;
+      padding:10px 0;
+    }
+
     .danger-text{color:#ff9cab}
     .ok-text{color:#8af0ba}
-    pre{margin:0;white-space:pre-wrap;color:#dce6ff}
-    code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px}
-    @media (max-width:1200px){
+
+    pre{
+      margin:0;
+      white-space:pre-wrap;
+      color:#dce6ff;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    code{
+      background:rgba(255,255,255,.06);
+      padding:2px 6px;
+      border-radius:8px;
+    }
+
+    @media (max-width:1250px){
       .layout{grid-template-columns:1fr}
-      .content-grid,.two-col{grid-template-columns:1fr}
+      .side{min-height:auto}
+      .content-grid,.two-col,.three-col{grid-template-columns:1fr}
       .grid-4{grid-template-columns:repeat(2,1fr)}
     }
+
     @media (max-width:760px){
-      .layout{width:min(100% - 16px,100%);margin:14px auto 24px}
+      .topbar{padding:14px}
+      .layout{width:min(100% - 16px, 100%); margin:14px auto 24px}
+      .hero{padding:22px 18px}
       .hero h1{font-size:40px}
       .hero p{font-size:18px}
       .grid-4{grid-template-columns:1fr}
       .composer{grid-template-columns:1fr}
+      .toolbar{display:grid; grid-template-columns:1fr 1fr}
     }
   </style>
 </head>
@@ -125,7 +428,7 @@
   <div class="topbar">
     <div class="brand">CONSIA</div>
     <div class="top-right">
-      <div class="pill" id="ownerStatusPill">Owner: bloqueado</div>
+      <div class="pill warn" id="ownerStatusPill">Owner: bloqueado</div>
       <div class="pill ok" id="apiStatus">API online</div>
       <div class="pill" id="serverTime">Server time: ...</div>
       <div class="pill" id="versionPill">v...</div>
@@ -136,14 +439,12 @@
     <aside class="panel side">
       <div class="side-block">
         <div class="section-title">Owner Access</div>
-        <div class="muted">Registro de passkey y desbloqueo con Face ID / Touch ID en Safari.</div>
-
+        <div class="muted">Registro passkey, Face ID y sesión owner.</div>
         <div class="toolbar">
           <button class="green" onclick="registerPasskey()">Registrar Passkey</button>
           <button class="green" onclick="loginPasskey()">Entrar con Face ID</button>
           <button class="red" onclick="revokeOwnerSession()">Cerrar owner</button>
         </div>
-
         <div class="table-wrap">
           <div class="scroll-box" style="padding:14px;">
             <pre id="ownerBox">Sin sesión owner.</pre>
@@ -174,7 +475,7 @@
       </div>
 
       <div class="side-block">
-        <div class="section-title">Agentes</div>
+        <div class="section-title">Agentes Base</div>
         <div id="agentsList" class="mini-list"></div>
       </div>
 
@@ -196,15 +497,27 @@
 
     <main class="main">
       <section class="hero panel">
-        <h1>CONSIA ACTIVE</h1>
-        <p>Centro de control final conectado a passkey owner, chat, memory, files, upload R2, swarm, marketplace y approval center.</p>
+        <h1>CONSIA CONTROL CENTER</h1>
+        <p>Centro maestro con owner, swarm, autopilot, memory, files, agent factory, avatar factory y ejecución controlada.</p>
       </section>
 
       <section class="grid-4">
-        <div class="stat panel"><div class="k">API</div><div class="v" id="apiMini">...</div></div>
-        <div class="stat panel"><div class="k">Agentes</div><div class="v" id="agentsCount">0</div></div>
-        <div class="stat panel"><div class="k">Memory</div><div class="v" id="memoryCount">0</div></div>
-        <div class="stat panel"><div class="k">Productos</div><div class="v" id="productsCount">0</div></div>
+        <div class="stat panel">
+          <div class="k">API</div>
+          <div class="v" id="apiMini">...</div>
+        </div>
+        <div class="stat panel">
+          <div class="k">Agentes</div>
+          <div class="v" id="agentsCount">0</div>
+        </div>
+        <div class="stat panel">
+          <div class="k">Memory</div>
+          <div class="v" id="memoryCount">0</div>
+        </div>
+        <div class="stat panel">
+          <div class="k">Avatar Agents</div>
+          <div class="v" id="avatarAgentsCount">0</div>
+        </div>
       </section>
 
       <section class="content-grid">
@@ -213,9 +526,11 @@
             <div class="section-title">Chat CONSIA</div>
             <div class="muted">Conectado a <code>/v1/chat</code>.</div>
           </div>
+
           <div id="messages" class="messages">
             <div class="msg system">CONSIA lista. Escribí tu mensaje.</div>
           </div>
+
           <div>
             <div class="composer">
               <input id="msgInput" type="text" placeholder="Escribí acá..." />
@@ -227,8 +542,10 @@
 
         <div class="card">
           <div class="section-title">Swarm</div>
-          <div class="muted">Ejecución rica conectada a <code>/v1/swarm/run</code>.</div>
-          <div style="margin-top:12px;"><textarea id="swarmTask" placeholder="Ejemplo: Crear un plan breve de expansión para CONSIA."></textarea></div>
+          <div class="muted">Ejecución inteligente de <code>/v1/swarm/run</code>.</div>
+          <div style="margin-top:12px;">
+            <textarea id="swarmTask" placeholder="Ejemplo: Crear estrategia comercial para Real Work."></textarea>
+          </div>
           <div class="toolbar">
             <button class="green" onclick="runSwarm()">Ejecutar swarm</button>
             <button class="ghost" onclick="loadSwarm()">Refrescar swarm</button>
@@ -243,23 +560,99 @@
 
       <section class="two-col">
         <div class="card">
+          <div class="section-title">CONSIA AUTOPILOT MASTER</div>
+          <div class="muted">Tu copiloto maestro analiza, relata y prepara ejecución.</div>
+
+          <div style="margin-top:12px;">
+            <input id="autopilotCompany" type="text" value="CONSIA" placeholder="Empresa" />
+          </div>
+          <div style="margin-top:10px;">
+            <input id="autopilotAction" type="text" value="execute" placeholder="Acción" />
+          </div>
+          <div style="margin-top:10px;">
+            <textarea id="autopilotInput" placeholder="Decile qué querés crear o ejecutar..."></textarea>
+          </div>
+
+          <div class="toolbar">
+            <button class="green" onclick="runAutopilotMaster()">Ejecutar Autopilot</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="scroll-box" style="padding:14px;">
+              <pre id="autopilotBox">Sin ejecución.</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Narración del Copiloto</div>
+          <div class="muted">Lo que CONSIA te va relatando mientras prepara el desarrollo.</div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <div class="scroll-box" style="padding:14px;">
+              <pre id="autopilotNarration">Sin narración.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="two-col">
+        <div class="card">
+          <div class="section-title">Global Memory</div>
+          <div class="muted">Guarda y recupera memoria maestra de CONSIA.</div>
+
+          <div style="margin-top:12px;">
+            <input id="globalMemoryKey" type="text" placeholder="Key, ej: consia_multiempresa_master" />
+          </div>
+          <div style="margin-top:10px;">
+            <input id="globalMemoryType" type="text" value="system" placeholder="Type" />
+          </div>
+          <div style="margin-top:10px;">
+            <textarea id="globalMemoryValue" placeholder="Valor completo..."></textarea>
+          </div>
+
+          <div class="toolbar">
+            <button class="green" onclick="saveGlobalMemory()">Guardar memoria maestra</button>
+            <button class="ghost" onclick="getGlobalMemory()">Leer memoria maestra</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="scroll-box" style="padding:14px;">
+              <pre id="globalMemoryBox">Sin lectura.</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
           <div class="section-title">Memory</div>
           <div class="muted">Lectura y alta sobre <code>/v1/memory</code>.</div>
-          <div style="margin-top:12px;"><textarea id="memoryInput" placeholder="Escribí una nota para guardar en memoria..."></textarea></div>
+
+          <div style="margin-top:12px;">
+            <textarea id="memoryInput" placeholder="Escribí una nota para guardar en memoria..."></textarea>
+          </div>
+
           <div class="toolbar">
             <button class="green" onclick="saveMemory()">Guardar memory</button>
             <button class="ghost" onclick="loadMemory()">Actualizar</button>
           </div>
+
           <div class="table-wrap">
             <div class="scroll-box">
               <table>
-                <thead><tr><th>Key</th><th>Valor</th><th>Updated</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Key</th>
+                    <th>Valor</th>
+                    <th>Updated</th>
+                  </tr>
+                </thead>
                 <tbody id="memoryTable"></tbody>
               </table>
             </div>
           </div>
         </div>
+      </section>
 
+      <section class="two-col">
         <div class="card">
           <div class="section-title">Files</div>
           <div class="muted">Upload real a R2 y lectura de archivos subidos.</div>
@@ -276,7 +669,14 @@
           <div class="table-wrap">
             <div class="scroll-box">
               <table>
-                <thead><tr><th>Nombre</th><th>Tipo</th><th>Tamaño</th><th>Acción</th></tr></thead>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Tamaño</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
                 <tbody id="filesTable"></tbody>
               </table>
             </div>
@@ -288,37 +688,10 @@
             </div>
           </div>
         </div>
-      </section>
 
-      <section class="two-col">
-        <div class="card">
-          <div class="section-title">Marketplace</div>
-          <div class="muted">Productos desde <code>/v1/marketplace/products</code>.</div>
-          <div class="table-wrap">
-            <div class="scroll-box">
-              <table>
-                <thead><tr><th>Producto</th><th>Precio</th><th>Descripción</th></tr></thead>
-                <tbody id="productsTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Health / Logs visuales</div>
-          <div class="muted">Estado del backend y respuesta del sistema.</div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="healthBox"></pre>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="two-col">
         <div class="card">
           <div class="section-title">Owner Actions</div>
-          <div class="muted">Centro de aprobación y ejecución de CONSIA. Requiere owner session.</div>
+          <div class="muted">Centro de aprobación y ejecución.</div>
 
           <div style="margin-top:12px;">
             <input id="actionType" type="text" value="cloudflare_list_workers" placeholder="action_type" />
@@ -357,15 +730,101 @@
             </div>
           </div>
         </div>
+      </section>
 
+      <section class="three-col">
+        <div class="card">
+          <div class="section-title">Agent Factory</div>
+          <div class="muted">Bootstrap, listado y ejecución de agentes.</div>
+
+          <div class="toolbar">
+            <button class="green" onclick="bootstrapAgents()">Bootstrap Agents</button>
+            <button class="ghost" onclick="loadAgentRegistry()">Actualizar</button>
+          </div>
+
+          <div style="margin-top:10px;">
+            <input id="agentRunName" type="text" placeholder="Nombre agente, ej: marketing_agent" />
+          </div>
+          <div style="margin-top:10px;">
+            <textarea id="agentRunTask" placeholder="Tarea del agente..."></textarea>
+          </div>
+
+          <div class="toolbar">
+            <button class="green" onclick="runAgent()">Run Agent</button>
+            <button class="secondary" onclick="runFactorySwarm()">Run Factory Swarm</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="scroll-box" style="padding:14px;">
+              <pre id="agentFactoryBox">Sin datos.</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Avatar Factory</div>
+          <div class="muted">Bootstrap y ejecución de avatar agents.</div>
+
+          <div class="toolbar">
+            <button class="green" onclick="bootstrapAvatarAgents()">Bootstrap Avatar Agents</button>
+            <button class="ghost" onclick="loadAvatarAgents()">Actualizar</button>
+          </div>
+
+          <div style="margin-top:10px;">
+            <input id="avatarRunName" type="text" placeholder="Nombre avatar, ej: avatar_real_estate_premium" />
+          </div>
+          <div style="margin-top:10px;">
+            <textarea id="avatarRunTask" placeholder="Tarea del avatar..."></textarea>
+          </div>
+
+          <div class="toolbar">
+            <button class="green" onclick="runAvatarAgent()">Run Avatar</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="scroll-box" style="padding:14px;">
+              <pre id="avatarFactoryBox">Sin datos.</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">GitHub Connector</div>
+          <div class="muted">Estado del repo conectado desde CONSIA.</div>
+
+          <div class="toolbar">
+            <button class="green" onclick="loadGitHubStatus()">GitHub Status</button>
+          </div>
+
+          <div class="table-wrap">
+            <div class="scroll-box" style="padding:14px;">
+              <pre id="githubBox">Sin datos.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="two-col">
         <div class="card">
           <div class="section-title">Audit / Result</div>
           <div class="muted">Resultado de la última acción ejecutada.</div>
-
           <div class="table-wrap" style="margin-top:12px;">
             <div class="scroll-box" style="padding:14px;">
               <pre id="actionResult">Sin resultado.</pre>
             </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Health / Logs visuales</div>
+          <div class="muted">Estado del backend y respuesta del sistema.</div>
+          <div class="table-wrap" style="margin-top:12px;">
+            <div class="scroll-box" style="padding:14px;">
+              <pre id="healthBox"></pre>
+            </div>
+          </div>
+          <div class="footer-note">
+            Si algo falla, mirá primero este bloque y después Workers Logs.
           </div>
         </div>
       </section>
@@ -378,12 +837,9 @@
 
     function fmtTs(ts){
       if(!ts) return "-";
-      const d = new Date(Number(ts));
-      if (isNaN(d.getTime())) {
-        const d2 = new Date(Number(ts) * 1000);
-        if (isNaN(d2.getTime())) return String(ts);
-        return d2.toLocaleString();
-      }
+      const n = Number(ts);
+      const d = new Date(n > 1000000000000 ? n : n * 1000);
+      if (isNaN(d.getTime())) return String(ts);
       return d.toLocaleString();
     }
 
@@ -403,7 +859,8 @@
     }
 
     function clearChat(){
-      document.getElementById("messages").innerHTML = '<div class="msg system">Chat limpio.</div>';
+      document.getElementById("messages").innerHTML =
+        '<div class="msg system">Chat limpio.</div>';
     }
 
     function getOwnerSession(){
@@ -438,9 +895,8 @@
 
     async function apiGet(path, ownerProtected = false){
       const headers = {};
-      if (ownerProtected && getOwnerSession()) {
-        headers["x-owner-session"] = getOwnerSession();
-      }
+      if (ownerProtected && getOwnerSession()) headers["x-owner-session"] = getOwnerSession();
+
       const res = await fetch(API + path, { headers });
       const data = await res.json();
       if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "request_failed");
@@ -449,14 +905,14 @@
 
     async function apiPost(path, payload, ownerProtected = false){
       const headers = { "Content-Type":"application/json" };
-      if (ownerProtected && getOwnerSession()) {
-        headers["x-owner-session"] = getOwnerSession();
-      }
+      if (ownerProtected && getOwnerSession()) headers["x-owner-session"] = getOwnerSession();
+
       const res = await fetch(API + path, {
         method:"POST",
         headers,
         body: JSON.stringify(payload || {})
       });
+
       const data = await res.json();
       if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "request_failed");
       return data;
@@ -578,7 +1034,9 @@
         document.getElementById("executorState").textContent = data.config?.cloudflare_executor ? "conectado" : "sin conectar";
 
         const engines = data.engines || [];
-        document.getElementById("enginesWrap").innerHTML = engines.map(x => `<span class="badge">${esc(x)}</span>`).join("");
+        document.getElementById("enginesWrap").innerHTML = engines.length
+          ? engines.map(x => `<span class="badge">${esc(x)}</span>`).join("")
+          : '<div class="empty">Sin engines.</div>';
       } catch(err){
         document.getElementById("apiStatus").textContent = "API error";
         document.getElementById("apiMini").textContent = "ERR";
@@ -592,31 +1050,17 @@
         const data = await apiGet("/agents");
         const agents = data.agents || [];
         document.getElementById("agentsCount").textContent = agents.length;
-        document.getElementById("agentsList").innerHTML = agents.map(a => `
+
+        const wrap = document.getElementById("agentsList");
+        wrap.innerHTML = agents.length ? agents.map(a => `
           <div class="mini-item">
             <strong>${esc(a.name)}</strong>
             <div class="sub">${esc(a.role)} · ${esc(a.description)}</div>
           </div>
-        `).join("");
+        `).join("") : '<div class="empty">Sin agentes.</div>';
       } catch(err){
-        document.getElementById("agentsList").innerHTML = `<div class="empty danger-text">${esc(err.message || err)}</div>`;
-      }
-    }
-
-    async function loadProducts(){
-      try{
-        const data = await apiGet("/v1/marketplace/products");
-        const items = data.items || [];
-        document.getElementById("productsCount").textContent = data.count || 0;
-        document.getElementById("productsTable").innerHTML = items.length ? items.map(p => `
-          <tr>
-            <td>${esc(p.name)}</td>
-            <td>USD ${esc(p.price_usd)}</td>
-            <td>${esc(p.description)}</td>
-          </tr>
-        `).join("") : `<tr><td colspan="3" class="muted">Sin productos.</td></tr>`;
-      } catch(err){
-        document.getElementById("productsTable").innerHTML = `<tr><td colspan="3" class="danger-text">${esc(err.message || err)}</td></tr>`;
+        document.getElementById("agentsList").innerHTML =
+          `<div class="empty danger-text">${esc(err.message || err)}</div>`;
       }
     }
 
@@ -625,7 +1069,9 @@
         const data = await apiGet("/v1/memory");
         const items = data.items || [];
         document.getElementById("memoryCount").textContent = data.count || 0;
-        document.getElementById("memoryTable").innerHTML = items.length ? items.map(m => `
+
+        const tbody = document.getElementById("memoryTable");
+        tbody.innerHTML = items.length ? items.map(m => `
           <tr>
             <td>${esc(m.key)}</td>
             <td>${esc(m.value)}</td>
@@ -633,7 +1079,8 @@
           </tr>
         `).join("") : `<tr><td colspan="3" class="muted">Sin memory.</td></tr>`;
       } catch(err){
-        document.getElementById("memoryTable").innerHTML = `<tr><td colspan="3" class="danger-text">${esc(err.message || err)}</td></tr>`;
+        document.getElementById("memoryTable").innerHTML =
+          `<tr><td colspan="3" class="danger-text">${esc(err.message || err)}</td></tr>`;
       }
     }
 
@@ -641,7 +1088,11 @@
       const value = document.getElementById("memoryInput").value.trim();
       if(!value) return;
       try{
-        await apiPost("/v1/memory", { user_id:"owner", key:"note", content:value }, true);
+        await apiPost("/v1/memory", {
+          user_id: "owner",
+          key: "note",
+          content: value
+        }, true);
         document.getElementById("memoryInput").value = "";
         await loadMemory();
         addMessage("Memory guardada correctamente.", "system");
@@ -657,11 +1108,39 @@
       await saveMemory();
     }
 
+    async function saveGlobalMemory(){
+      try{
+        const key = document.getElementById("globalMemoryKey").value.trim();
+        const type = document.getElementById("globalMemoryType").value.trim() || "system";
+        const value = document.getElementById("globalMemoryValue").value;
+
+        if(!key) throw new Error("key_required");
+
+        const data = await apiPost("/v1/memory/save", { key, type, value }, true);
+        document.getElementById("globalMemoryBox").textContent = JSON.stringify(data, null, 2);
+        addMessage("Global memory guardada.", "system");
+      } catch(err){
+        document.getElementById("globalMemoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function getGlobalMemory(){
+      try{
+        const key = document.getElementById("globalMemoryKey").value.trim();
+        if(!key) throw new Error("key_required");
+        const data = await apiGet("/v1/memory/get?key=" + encodeURIComponent(key));
+        document.getElementById("globalMemoryBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("globalMemoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
     async function loadFiles(){
       try{
         const data = await apiGet("/v1/files");
         const items = data.items || [];
-        document.getElementById("filesTable").innerHTML = items.length ? items.map(f => `
+        const tbody = document.getElementById("filesTable");
+        tbody.innerHTML = items.length ? items.map(f => `
           <tr>
             <td>${esc(f.name)}</td>
             <td>${esc(f.type)}</td>
@@ -670,7 +1149,8 @@
           </tr>
         `).join("") : `<tr><td colspan="4" class="muted">Sin files.</td></tr>`;
       } catch(err){
-        document.getElementById("filesTable").innerHTML = `<tr><td colspan="4" class="danger-text">${esc(err.message || err)}</td></tr>`;
+        document.getElementById("filesTable").innerHTML =
+          `<tr><td colspan="4" class="danger-text">${esc(err.message || err)}</td></tr>`;
       }
     }
 
@@ -689,9 +1169,7 @@
       try{
         const res = await fetch(API + "/v1/files/upload", {
           method: "POST",
-          headers: {
-            "x-owner-session": getOwnerSession()
-          },
+          headers: { "x-owner-session": getOwnerSession() },
           body: form
         });
         const data = await res.json();
@@ -718,14 +1196,17 @@
     async function loadSwarm(){
       try{
         const data = await apiGet("/v1/swarm");
-        document.getElementById("swarmState").textContent = `${data.swarm || "inactive"} · ${(data.agents || []).length} agentes`;
+        document.getElementById("swarmState").textContent =
+          `${data.swarm || "inactive"} · ${(data.agents || []).length} agentes`;
+
         document.getElementById("swarmOutput").innerHTML = `
           <div class="ok-text"><strong>Swarm:</strong> ${esc(data.swarm)}</div>
           <div style="margin-top:10px;">${(data.agents || []).map(a => `<span class="badge">${esc(a)}</span>`).join("")}</div>
         `;
       } catch(err){
         document.getElementById("swarmState").textContent = "error";
-        document.getElementById("swarmOutput").innerHTML = `<div class="danger-text">${esc(err.message || err)}</div>`;
+        document.getElementById("swarmOutput").innerHTML =
+          `<div class="danger-text">${esc(err.message || err)}</div>`;
       }
     }
 
@@ -742,10 +1223,10 @@
           <div style="margin-top:12px;"><strong>Strategy:</strong><br>${esc(data.summary?.strategy || "")}</div>
           <div style="margin-top:12px;"><strong>Execution:</strong><br>${esc(data.summary?.execution || "")}</div>
         `;
-        await loadMemory();
         addMessage("Swarm ejecutado: " + task, "system");
       } catch(err){
-        document.getElementById("swarmOutput").innerHTML = `<div class="danger-text">${esc(err.message || err)}</div>`;
+        document.getElementById("swarmOutput").innerHTML =
+          `<div class="danger-text">${esc(err.message || err)}</div>`;
       }
     }
 
@@ -754,6 +1235,31 @@
       if(!task) return;
       document.getElementById("swarmTask").value = task;
       await runSwarm();
+    }
+
+    async function runAutopilotMaster() {
+      try {
+        if (!getOwnerSession()) throw new Error("owner_session_missing");
+
+        const company = document.getElementById("autopilotCompany").value.trim() || "CONSIA";
+        const action = document.getElementById("autopilotAction").value.trim() || "execute";
+        const input = document.getElementById("autopilotInput").value.trim();
+
+        const data = await apiPost("/v1/autopilot/run", {
+          company,
+          action,
+          input
+        }, true);
+
+        document.getElementById("autopilotBox").textContent = JSON.stringify(data, null, 2);
+        document.getElementById("autopilotNarration").textContent =
+          data.narration || "CONSIA lista.";
+
+        addMessage(`AUTOPILOT MASTER ejecutado para ${company}.`, "system");
+      } catch (err) {
+        document.getElementById("autopilotBox").textContent =
+          "Error AUTOPILOT: " + (err.message || err);
+      }
     }
 
     async function sendMessage(){
@@ -850,16 +1356,95 @@
       }
     }
 
+    async function bootstrapAgents(){
+      try{
+        const data = await apiPost("/v1/agents/factory/bootstrap", {}, true);
+        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function loadAgentRegistry(){
+      try{
+        const data = await apiGet("/v1/agents/factory");
+        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function runAgent(){
+      try{
+        const name = document.getElementById("agentRunName").value.trim();
+        const task = document.getElementById("agentRunTask").value.trim();
+        const data = await apiPost("/v1/agents/factory/run", { name, task, input: {} }, true);
+        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function runFactorySwarm(){
+      try{
+        const task = document.getElementById("agentRunTask").value.trim();
+        const data = await apiPost("/v1/agents/factory/swarm", { task }, true);
+        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function bootstrapAvatarAgents(){
+      try{
+        const data = await apiPost("/v1/avatar-agents/bootstrap", {}, true);
+        document.getElementById("avatarFactoryBox").textContent = JSON.stringify(data, null, 2);
+        await loadAvatarAgents();
+      } catch(err){
+        document.getElementById("avatarFactoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function loadAvatarAgents(){
+      try{
+        const data = await apiGet("/v1/avatar-agents");
+        document.getElementById("avatarAgentsCount").textContent = data.count || 0;
+        document.getElementById("avatarFactoryBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("avatarFactoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function runAvatarAgent(){
+      try{
+        const name = document.getElementById("avatarRunName").value.trim();
+        const task = document.getElementById("avatarRunTask").value.trim();
+        const data = await apiPost("/v1/avatar-agents/run", { name, task, context: {} }, true);
+        document.getElementById("avatarFactoryBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("avatarFactoryBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
+    async function loadGitHubStatus(){
+      try{
+        const data = await apiGet("/v1/github/status", true);
+        document.getElementById("githubBox").textContent = JSON.stringify(data, null, 2);
+      } catch(err){
+        document.getElementById("githubBox").textContent = "Error: " + (err.message || err);
+      }
+    }
+
     async function refreshAll(){
       await Promise.allSettled([
         loadOwnerStatus(),
         loadHealth(),
         loadAgents(),
-        loadProducts(),
         loadMemory(),
         loadFiles(),
         loadSwarm(),
-        loadActions()
+        loadActions(),
+        loadAvatarAgents()
       ]);
     }
 
