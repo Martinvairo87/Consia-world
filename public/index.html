@@ -1,1817 +1,206 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONSIA</title>
-  <style>
-    :root{
-      --bg:#050816;
-      --bg2:#0a1024;
-      --card:#0f1833;
-      --line:rgba(255,255,255,.08);
-      --text:#f3f6ff;
-      --muted:#9aabd6;
-      --ok:#19c37d;
-      --blue:#3b5cff;
-      --blue2:#5f7cff;
-      --danger:#ff5d73;
-      --warn:#ffb84d;
-      --shadow:0 20px 50px rgba(0,0,0,.35);
-      --radius:22px;
-    }
 
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{
-      font-family:Arial,Helvetica,sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(68,98,255,.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(0,197,255,.14), transparent 24%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-      color:var(--text);
-      min-height:100vh;
-    }
-
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:20;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-      padding:18px 24px;
-      border-bottom:1px solid var(--line);
-      background:rgba(6,10,24,.82);
-      backdrop-filter:blur(12px);
-    }
-
-    .brand{
-      font-size:24px;
-      font-weight:800;
-      letter-spacing:.6px;
-    }
-
-    .top-right{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      font-size:13px;
-      color:var(--muted);
-    }
-
-    .pill.ok{
-      background:rgba(25,195,125,.12);
-      color:#88efba;
-      border-color:rgba(25,195,125,.3);
-    }
-
-    .pill.warn{
-      background:rgba(255,184,77,.12);
-      color:#ffd08a;
-      border-color:rgba(255,184,77,.25);
-    }
-
-    .layout{
-      width:min(1600px, calc(100% - 28px));
-      margin:22px auto 30px;
-      display:grid;
-      grid-template-columns:340px 1fr;
-      gap:18px;
-    }
-
-    .panel,.card{
-      background:linear-gradient(180deg, rgba(16,24,51,.92), rgba(10,17,38,.96));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-    }
-
-    .side{
-      padding:18px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      min-height:calc(100vh - 120px);
-    }
-
-    .main{
-      display:grid;
-      grid-template-rows:auto auto auto auto auto auto auto auto;
-      gap:18px;
-    }
-
-    .section-title{
-      font-size:15px;
-      color:#d9e2ff;
-      font-weight:700;
-      margin-bottom:10px;
-    }
-
-    .muted{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.45;
-    }
-
-    .hero{
-      padding:26px;
-      border-radius:var(--radius);
-      background:
-        linear-gradient(135deg, rgba(76,102,255,.33), rgba(3,191,174,.16)),
-        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-      border:1px solid rgba(255,255,255,.09);
-      box-shadow:var(--shadow);
-    }
-
-    .hero h1{
-      margin:0 0 10px;
-      font-size:54px;
-      line-height:.96;
-      letter-spacing:-1.4px;
-    }
-
-    .hero p{
-      margin:0;
-      color:#d7e3ff;
-      font-size:22px;
-      line-height:1.35;
-      max-width:1080px;
-    }
-
-    .grid-5{
-      display:grid;
-      grid-template-columns:repeat(5,1fr);
-      gap:14px;
-    }
-
-    .stat{
-      padding:18px;
-      border-radius:20px;
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      min-height:112px;
-    }
-
-    .stat .k{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:12px;
-    }
-
-    .stat .v{
-      font-size:24px;
-      font-weight:800;
-      letter-spacing:-.4px;
-    }
-
-    .content-grid,.two-col,.three-col{
-      display:grid;
-      gap:18px;
-    }
-
-    .content-grid{grid-template-columns:1.2fr .8fr}
-    .two-col{grid-template-columns:1fr 1fr}
-    .three-col{grid-template-columns:1fr 1fr 1fr}
-
-    .card{padding:18px}
-
-    .chat-card{
-      display:grid;
-      grid-template-rows:auto 1fr auto;
-      min-height:620px;
-    }
-
-    .messages{
-      margin-top:10px;
-      border:1px solid var(--line);
-      background:rgba(4,8,24,.6);
-      border-radius:18px;
-      padding:16px;
-      min-height:340px;
-      max-height:420px;
-      overflow:auto;
-    }
-
-    .msg{
-      max-width:86%;
-      padding:14px 16px;
-      border-radius:16px;
-      margin-bottom:12px;
-      line-height:1.45;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-
-    .msg.user{
-      margin-left:auto;
-      background:linear-gradient(135deg, var(--blue), var(--blue2));
-      color:white;
-    }
-
-    .msg.bot{
-      background:rgba(255,255,255,.06);
-      color:#f2f5ff;
-    }
-
-    .msg.system{
-      background:rgba(25,195,125,.10);
-      color:#9cf0c2;
-      border:1px solid rgba(25,195,125,.22);
-      max-width:100%;
-    }
-
-    .composer{
-      display:grid;
-      grid-template-columns:1fr auto auto auto;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .toolbar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:14px;
-    }
-
-    input, textarea, button, select{
-      font:inherit;
-    }
-
-    input[type="text"], input[type="file"], textarea, select{
-      width:100%;
-      border:none;
-      outline:none;
-      background:rgba(255,255,255,.06);
-      color:white;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:16px;
-      padding:14px 15px;
-    }
-
-    textarea{
-      resize:vertical;
-      min-height:94px;
-    }
-
-    button{
-      border:none;
-      outline:none;
-      border-radius:16px;
-      padding:14px 18px;
-      font-weight:800;
-      cursor:pointer;
-      color:white;
-      background:linear-gradient(135deg, var(--blue), var(--blue2));
-      transition:.18s transform ease,.18s opacity ease;
-    }
-
-    button:hover{transform:translateY(-1px)}
-    button.secondary{
-      background:rgba(255,255,255,.08);
-      color:white;
-    }
-    button.ghost{
-      background:transparent;
-      border:1px solid rgba(255,255,255,.12);
-      color:#dce5ff;
-    }
-    button.green{
-      background:linear-gradient(135deg, #0aa26a, #19c37d);
-    }
-    button.red{
-      background:linear-gradient(135deg, #d54863, #ff5d73);
-    }
-
-    .side-block{
-      padding:16px;
-      border:1px solid var(--line);
-      border-radius:20px;
-      background:rgba(255,255,255,.03);
-    }
-
-    .mini-list{
-      display:grid;
-      gap:10px;
-    }
-
-    .mini-item{
-      padding:12px 13px;
-      border-radius:15px;
-      border:1px solid rgba(255,255,255,.07);
-      background:rgba(255,255,255,.03);
-    }
-
-    .mini-item strong{
-      display:block;
-      margin-bottom:5px;
-      font-size:15px;
-    }
-
-    .mini-item .sub{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
-    }
-
-    .table-wrap{
-      margin-top:10px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      overflow:hidden;
-      background:rgba(4,8,24,.55);
-    }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-    }
-
-    th, td{
-      text-align:left;
-      padding:13px 14px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      vertical-align:top;
-      font-size:14px;
-    }
-
-    th{
-      color:#d9e2ff;
-      background:rgba(255,255,255,.04);
-      font-size:13px;
-    }
-
-    td{
-      color:#eef3ff;
-    }
-
-    .scroll-box{
-      max-height:320px;
-      overflow:auto;
-    }
-
-    .footer-note{
-      margin-top:10px;
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.45;
-    }
-
-    .badge{
-      display:inline-block;
-      padding:7px 10px;
-      border-radius:999px;
-      background:rgba(255,255,255,.07);
-      color:#d8e4ff;
-      font-size:12px;
-      border:1px solid rgba(255,255,255,.08);
-      margin:4px 6px 0 0;
-    }
-
-    .empty{
-      color:var(--muted);
-      font-size:14px;
-      padding:10px 0;
-    }
-
-    .danger-text{color:#ff9cab}
-    .ok-text{color:#8af0ba}
-    .note-box{
-      border:1px dashed rgba(255,255,255,.16);
-      border-radius:14px;
-      padding:12px;
-      color:#c8d6ff;
-      background:rgba(255,255,255,.02);
-      font-size:13px;
-      line-height:1.5;
-    }
-
-    pre{
-      margin:0;
-      white-space:pre-wrap;
-      color:#dce6ff;
-      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:12px;
-      line-height:1.45;
-    }
-
-    .media-preview{
-      width:100%;
-      max-height:360px;
-      border-radius:14px;
-      background:#08101e;
-      object-fit:contain;
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .export-bar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-
-    @media (max-width:1350px){
-      .layout{grid-template-columns:1fr}
-      .side{min-height:auto}
-      .content-grid,.two-col,.three-col{grid-template-columns:1fr}
-      .grid-5{grid-template-columns:repeat(2,1fr)}
-    }
-
-    @media (max-width:760px){
-      .topbar{padding:14px}
-      .layout{width:min(100% - 16px, 100%); margin:14px auto 24px}
-      .hero{padding:22px 18px}
-      .hero h1{font-size:40px}
-      .hero p{font-size:18px}
-      .grid-5{grid-template-columns:1fr}
-      .composer{grid-template-columns:1fr}
-      .toolbar,.export-bar{display:grid; grid-template-columns:1fr 1fr}
-    }
-  </style>
-</head>
-<body>
-  <div class="topbar">
-    <div class="brand">CONSIA</div>
-    <div class="top-right">
-      <div class="pill warn" id="ownerStatusPill">Owner: bloqueado</div>
-      <div class="pill ok" id="apiStatus">API online</div>
-      <div class="pill" id="serverTime">Server time: ...</div>
-      <div class="pill" id="versionPill">v...</div>
-    </div>
-  </div>
-
-  <div class="layout">
-    <aside class="panel side">
-      <div class="side-block">
-        <div class="section-title">Owner Access</div>
-        <div class="muted">Passkey / Face ID para desbloquear CONSIA.</div>
-        <div class="toolbar">
-          <button class="green" onclick="registerPasskey()">Registrar Passkey</button>
-          <button class="green" onclick="loginPasskey()">Entrar con Face ID</button>
-          <button class="red" onclick="revokeOwnerSession()">Cerrar owner</button>
-        </div>
-        <div class="table-wrap">
-          <div class="scroll-box" style="padding:14px;">
-            <pre id="ownerBox">Sin sesión owner.</pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="side-block">
-        <div class="section-title">Sistema</div>
-        <div class="mini-list">
-          <div class="mini-item">
-            <strong id="serviceName">CONSIA API</strong>
-            <div class="sub" id="serviceState">Cargando...</div>
-          </div>
-          <div class="mini-item">
-            <strong>Modo</strong>
-            <div class="sub">Production Live</div>
-          </div>
-          <div class="mini-item">
-            <strong>Swarm</strong>
-            <div class="sub" id="swarmState">Cargando...</div>
-          </div>
-          <div class="mini-item">
-            <strong>Executor</strong>
-            <div class="sub" id="executorState">Cargando...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="side-block">
-        <div class="section-title">Agentes Base</div>
-        <div id="agentsList" class="mini-list"></div>
-      </div>
-
-      <div class="side-block">
-        <div class="section-title">Acciones rápidas</div>
-        <div class="toolbar">
-          <button class="secondary" onclick="refreshAll()">Actualizar</button>
-          <button class="secondary" onclick="quickMemory()">Guardar nota</button>
-          <button class="secondary" onclick="runQuickSwarm()">Run swarm</button>
-          <button class="secondary" onclick="clearChat()">Limpiar chat</button>
-        </div>
-      </div>
-
-      <div class="side-block">
-        <div class="section-title">Motores</div>
-        <div id="enginesWrap"></div>
-      </div>
-    </aside>
-
-    <main class="main">
-      <section class="hero panel">
-        <h1>CONSIA CONTROL CENTER</h1>
-        <p>Centro maestro con autopilot, voz, swarm, memory, archivos, marketplace, agent factory, avatar factory, exportación avanzada y gestión owner.</p>
-      </section>
-
-      <section class="grid-5">
-        <div class="stat panel">
-          <div class="k">API</div>
-          <div class="v" id="apiMini">...</div>
-        </div>
-        <div class="stat panel">
-          <div class="k">Agentes</div>
-          <div class="v" id="agentsCount">0</div>
-        </div>
-        <div class="stat panel">
-          <div class="k">Memory</div>
-          <div class="v" id="memoryCount">0</div>
-        </div>
-        <div class="stat panel">
-          <div class="k">Avatar Agents</div>
-          <div class="v" id="avatarAgentsCount">0</div>
-        </div>
-        <div class="stat panel">
-          <div class="k">Productos</div>
-          <div class="v" id="productsCount">0</div>
-        </div>
-      </section>
-
-      <section class="content-grid">
-        <div class="card chat-card">
-          <div>
-            <div class="section-title">Chat CONSIA</div>
-            <div class="muted">Conectado a <code>/v1/chat</code>.</div>
-          </div>
-
-          <div id="messages" class="messages">
-            <div class="msg system">CONSIA lista. Escribí o hablá.</div>
-          </div>
-
-          <div>
-            <div class="composer">
-              <input id="msgInput" type="text" placeholder="Escribí acá..." />
-              <button class="secondary" onclick="startVoiceForInput('msgInput')">🎤</button>
-              <button onclick="sendMessage()">Enviar</button>
-              <button class="secondary" onclick="clearChat()">Limpiar</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Swarm</div>
-          <div class="muted">Ejecución inteligente de <code>/v1/swarm/run</code>.</div>
-          <div style="margin-top:12px;">
-            <textarea id="swarmTask" placeholder="Ejemplo: Crear estrategia comercial para Real Work."></textarea>
-          </div>
-          <div class="toolbar">
-            <button class="green" onclick="runSwarm()">Ejecutar swarm</button>
-            <button class="ghost" onclick="loadSwarm()">Refrescar swarm</button>
-          </div>
-          <div class="table-wrap" style="margin-top:14px;">
-            <div class="scroll-box" style="padding:14px;">
-              <div id="swarmOutput" class="empty">Sin ejecución todavía.</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="two-col">
-        <div class="card">
-          <div class="section-title">CONSIA AUTOPILOT MASTER</div>
-          <div class="muted">Tu copiloto maestro analiza, relata y prepara ejecución.</div>
-
-          <div style="margin-top:12px;">
-            <input id="autopilotCompany" type="text" value="CONSIA" placeholder="Empresa" />
-          </div>
-          <div style="margin-top:10px;">
-            <input id="autopilotAction" type="text" value="execute" placeholder="Acción" />
-          </div>
-          <div style="margin-top:10px;">
-            <textarea id="autopilotInput" placeholder="Decile qué querés crear, analizar o ejecutar..."></textarea>
-          </div>
-
-          <div class="toolbar">
-            <button class="secondary" onclick="startVoiceForInput('autopilotInput')">🎤 Hablar</button>
-            <button class="green" onclick="runAutopilotMaster()">Ejecutar Autopilot</button>
-            <button class="secondary" onclick="speakNarration()">🔊 Narrar</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="autopilotBox">Sin ejecución.</pre>
-            </div>
-          </div>
-
-          <div class="export-bar">
-            <button class="secondary" onclick="copyAutopilotResult()">Copiar</button>
-            <button class="secondary" onclick="downloadAutopilotAsTxt()">TXT</button>
-            <button class="secondary" onclick="downloadAutopilotAsJson()">JSON</button>
-            <button class="secondary" onclick="downloadAutopilotAsHtml()">HTML</button>
-            <button class="secondary" onclick="downloadAutopilotAsDoc()">Word</button>
-            <button class="secondary" onclick="downloadAutopilotAsXls()">Excel</button>
-            <button class="secondary" onclick="printAutopilotAsPdf()">PDF</button>
-            <button class="green" onclick="saveAutopilotToConsiaFiles()">Guardar en Files</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Narración del Copiloto</div>
-          <div class="muted">Lo que CONSIA te va relatando mientras prepara el desarrollo.</div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="autopilotNarration">Sin narración.</pre>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="two-col">
-        <div class="card">
-          <div class="section-title">Global Memory</div>
-          <div class="muted">Guarda y recupera memoria maestra de CONSIA.</div>
-
-          <div style="margin-top:12px;">
-            <input id="globalMemoryKey" type="text" placeholder="Key, ej: consia_multiempresa_master" />
-          </div>
-          <div style="margin-top:10px;">
-            <input id="globalMemoryType" type="text" value="system" placeholder="Type" />
-          </div>
-          <div style="margin-top:10px;">
-            <textarea id="globalMemoryValue" placeholder="Valor completo..."></textarea>
-          </div>
-
-          <div class="toolbar">
-            <button class="green" onclick="saveGlobalMemory()">Guardar memoria maestra</button>
-            <button class="ghost" onclick="getGlobalMemory()">Leer memoria maestra</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="globalMemoryBox">Sin lectura.</pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Memory</div>
-          <div class="muted">Lectura y alta sobre <code>/v1/memory</code>.</div>
-
-          <div style="margin-top:12px;">
-            <textarea id="memoryInput" placeholder="Escribí una nota para guardar en memoria..."></textarea>
-          </div>
-
-          <div class="toolbar">
-            <button class="green" onclick="saveMemory()">Guardar memory</button>
-            <button class="ghost" onclick="loadMemory()">Actualizar</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Key</th>
-                    <th>Valor</th>
-                    <th>Updated</th>
-                  </tr>
-                </thead>
-                <tbody id="memoryTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="two-col">
-        <div class="card">
-          <div class="section-title">Files R2</div>
-          <div class="muted">Subí, listá y previsualizá archivos dentro de CONSIA.</div>
-
-          <div style="margin-top:12px;">
-            <input id="fileUpload" type="file" />
-          </div>
-
-          <div class="toolbar">
-            <button class="green" onclick="uploadFile()">Subir a R2</button>
-            <button class="ghost" onclick="loadFiles()">Actualizar</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Tamaño</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="filesTable"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="table-wrap" style="margin-top:14px;">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="filePreview">Sin preview.</pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Media Center</div>
-          <div class="muted">Previsualizá y descargá medios desde URL tuyas o autorizadas.</div>
-
-          <div class="note-box">
-            Usá este módulo solo con archivos propios o con autorización para descarga.
-          </div>
-
-          <div style="margin-top:12px;">
-            <input id="mediaUrl" type="text" placeholder="URL del medio (imagen, audio, video, archivo)" />
-          </div>
-          <div style="margin-top:10px;">
-            <input id="mediaFilename" type="text" placeholder="Nombre sugerido, ej: video.mp4" />
-          </div>
-          <div style="margin-top:10px;">
-            <select id="mediaType">
-              <option value="auto">Auto</option>
-              <option value="image">Imagen</option>
-              <option value="audio">Audio</option>
-              <option value="video">Video</option>
-              <option value="file">Archivo</option>
-            </select>
-          </div>
-
-          <div class="toolbar">
-            <button class="green" onclick="previewMedia()">Preview</button>
-            <button class="secondary" onclick="downloadMediaFromUrl()">Descargar</button>
-            <button class="ghost" onclick="clearMediaPreview()">Limpiar</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box" style="padding:14px;">
-              <div id="mediaPreviewBox" class="empty">Sin preview.</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="two-col">
-        <div class="card">
-          <div class="section-title">Owner Actions</div>
-          <div class="muted">Centro de aprobación y ejecución.</div>
-
-          <div style="margin-top:12px;">
-            <input id="actionType" type="text" value="memory_note" placeholder="action_type" />
-          </div>
-
-          <div style="margin-top:10px;">
-            <input id="actionTarget" type="text" placeholder="target opcional" />
-          </div>
-
-          <div style="margin-top:10px;">
-            <textarea id="actionPayload" placeholder='payload JSON, ej: {"key":"note","value":"hola"}'>{"key":"note","value":"hola"}</textarea>
-          </div>
-
-          <div style="margin-top:10px;">
-            <input id="actionRisk" type="text" value="low" placeholder="risk_level" />
-          </div>
-
-          <div class="toolbar">
-            <button class="green" onclick="createAction()">Crear acción</button>
-            <button class="ghost" onclick="loadActions()">Actualizar</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box">
-              <table>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Tipo</th>
-                    <th>Status</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody id="actionsTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Marketplace</div>
-          <div class="muted">Productos desde <code>/v1/marketplace/products</code>.</div>
-
-          <div class="toolbar">
-            <button class="green" onclick="loadProducts()">Actualizar productos</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Producto</th>
-                    <th>Precio</th>
-                    <th>Descripción</th>
-                  </tr>
-                </thead>
-                <tbody id="productsTable"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="three-col">
-        <div class="card">
-          <div class="section-title">Agent Factory</div>
-          <div class="muted">Bootstrap, listado y ejecución de agentes.</div>
-
-          <div class="toolbar">
-            <button class="green" onclick="bootstrapAgents()">Bootstrap Agents</button>
-            <button class="ghost" onclick="loadAgentRegistry()">Actualizar</button>
-          </div>
-
-          <div style="margin-top:10px;">
-            <input id="agentRunName" type="text" placeholder="Nombre agente, ej: marketing_agent" />
-          </div>
-          <div style="margin-top:10px;">
-            <textarea id="agentRunTask" placeholder="Tarea del agente..."></textarea>
-          </div>
-
-          <div class="toolbar">
-            <button class="green" onclick="runAgent()">Run Agent</button>
-            <button class="secondary" onclick="runFactorySwarm()">Run Factory Swarm</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="agentFactoryBox">Sin datos.</pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Avatar Factory</div>
-          <div class="muted">Bootstrap y ejecución de avatar agents.</div>
-
-          <div class="toolbar">
-            <button class="green" onclick="bootstrapAvatarAgents()">Bootstrap Avatar Agents</button>
-            <button class="ghost" onclick="loadAvatarAgents()">Actualizar</button>
-          </div>
-
-          <div style="margin-top:10px;">
-            <input id="avatarRunName" type="text" placeholder="Nombre avatar, ej: avatar_real_estate_premium" />
-          </div>
-          <div style="margin-top:10px;">
-            <textarea id="avatarRunTask" placeholder="Tarea del avatar..."></textarea>
-          </div>
-
-          <div class="toolbar">
-            <button class="green" onclick="runAvatarAgent()">Run Avatar</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="avatarFactoryBox">Sin datos.</pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">GitHub Connector</div>
-          <div class="muted">Estado del repo conectado desde CONSIA.</div>
-
-          <div class="toolbar">
-            <button class="green" onclick="loadGitHubStatus()">GitHub Status</button>
-          </div>
-
-          <div class="table-wrap">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="githubBox">Sin datos.</pre>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="two-col">
-        <div class="card">
-          <div class="section-title">Audit / Result</div>
-          <div class="muted">Resultado de la última acción ejecutada.</div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="actionResult">Sin resultado.</pre>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="section-title">Health / Logs visuales</div>
-          <div class="muted">Estado del backend y respuesta del sistema.</div>
-          <div class="table-wrap" style="margin-top:12px;">
-            <div class="scroll-box" style="padding:14px;">
-              <pre id="healthBox"></pre>
-            </div>
-          </div>
-          <div class="footer-note">
-            Si algo falla, mirá primero este bloque y después Workers Logs.
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <script>
-    const API = "https://api.consia.world";
-    const RP_ID = "consia.world";
-
-    function fmtTs(ts){
-      if(!ts) return "-";
-      const n = Number(ts);
-      const d = new Date(n > 1000000000000 ? n : n * 1000);
-      if (isNaN(d.getTime())) return String(ts);
-      return d.toLocaleString();
-    }
-
-    function esc(v){
-      return String(v ?? "").replace(/[&<>"']/g, s => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[s]));
-    }
-
-    function addMessage(text, type="bot"){
-      const box = document.getElementById("messages");
-      const div = document.createElement("div");
-      div.className = "msg " + type;
-      div.textContent = text;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function clearChat(){
-      document.getElementById("messages").innerHTML =
-        '<div class="msg system">Chat limpio.</div>';
-    }
-
-    function getOwnerSession(){
-      return localStorage.getItem("consia_owner_session") || "";
-    }
-
-    function setOwnerSession(token, expiresAt){
-      localStorage.setItem("consia_owner_session", token);
-      if (expiresAt) localStorage.setItem("consia_owner_expires_at", String(expiresAt));
-    }
-
-    function clearOwnerSessionLocal(){
-      localStorage.removeItem("consia_owner_session");
-      localStorage.removeItem("consia_owner_expires_at");
-    }
-
-    function bufferToBase64Url(buffer) {
-      const bytes = new Uint8Array(buffer);
-      let str = "";
-      for (const byte of bytes) str += String.fromCharCode(byte);
-      return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-    }
-
-    function base64UrlToBuffer(base64url) {
-      const padding = "=".repeat((4 - base64url.length % 4) % 4);
-      const base64 = (base64url + padding).replace(/-/g, "+").replace(/_/g, "/");
-      const str = atob(base64);
-      const bytes = new Uint8Array(str.length);
-      for (let i = 0; i < str.length; i++) bytes[i] = str.charCodeAt(i);
-      return bytes.buffer;
-    }
-
-    function arrayBufferFromString(s){
-      return Uint8Array.from(s, c => c.charCodeAt(0));
-    }
-
-    async function apiGet(path, ownerProtected = false){
-      const headers = {};
-      if (ownerProtected && getOwnerSession()) headers["x-owner-session"] = getOwnerSession();
-
-      const res = await fetch(API + path, { headers });
-      const data = await res.json();
-      if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "request_failed");
-      return data;
-    }
-
-    async function apiPost(path, payload, ownerProtected = false){
-      const headers = { "Content-Type":"application/json" };
-      if (ownerProtected && getOwnerSession()) headers["x-owner-session"] = getOwnerSession();
-
-      const res = await fetch(API + path, {
-        method:"POST",
-        headers,
-        body: JSON.stringify(payload || {})
-      });
-
-      const data = await res.json();
-      if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "request_failed");
-      return data;
-    }
-
-    async function loadOwnerStatus(){
-      const pill = document.getElementById("ownerStatusPill");
-      const box = document.getElementById("ownerBox");
-
-      try{
-        const data = await apiGet("/v1/owner/status", true);
-        pill.textContent = "Owner: desbloqueado";
-        pill.className = "pill ok";
-        box.textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        pill.textContent = "Owner: bloqueado";
-        pill.className = "pill warn";
-        box.textContent = "Sin sesión owner.";
-      }
-    }
-
-    async function registerPasskey(){
-      try{
-        const data = await apiPost("/v1/passkey/register/challenge", {});
-        const publicKey = {
-          challenge: arrayBufferFromString(data.challenge),
-          rp: {
-            name: data.rp || "CONSIA",
-            id: data.rp_id || RP_ID
-          },
-          user: {
-            id: arrayBufferFromString("martin-vairo"),
-            name: "martin-vairo",
-            displayName: "Martín Vairo"
-          },
-          pubKeyCredParams: [
-            { type: "public-key", alg: -7 },
-            { type: "public-key", alg: -257 }
-          ],
-          authenticatorSelection: {
-            residentKey: "preferred",
-            userVerification: "preferred"
-          },
-          timeout: 60000,
-          attestation: "none"
-        };
-
-        const credential = await navigator.credentials.create({ publicKey });
-        if (!credential) throw new Error("passkey_not_created");
-
-        const payload = {
-          credential_id: bufferToBase64Url(credential.rawId),
-          public_key: "registered"
-        };
-
-        const verify = await apiPost("/v1/passkey/register/verify", payload);
-        document.getElementById("ownerBox").textContent = JSON.stringify(verify, null, 2);
-        addMessage("Passkey registrada correctamente.", "system");
-      } catch(err){
-        document.getElementById("ownerBox").textContent = "Error registrando passkey: " + (err.message || err);
-      }
-    }
-
-    async function loginPasskey(){
-      try{
-        const data = await apiPost("/v1/passkey/login/challenge", {});
-        const allowCredentials = (data.allow || []).map(item => ({
-          id: base64UrlToBuffer(item.credential_id),
-          type: "public-key"
-        }));
-
-        const publicKey = {
-          challenge: arrayBufferFromString(data.challenge),
-          allowCredentials,
-          userVerification: "preferred",
-          rpId: data.rp_id || RP_ID,
-          timeout: 60000
-        };
-
-        const assertion = await navigator.credentials.get({ publicKey });
-        if (!assertion) throw new Error("passkey_login_failed");
-
-        const verify = await apiPost("/v1/passkey/login/verify", {
-          credential_id: bufferToBase64Url(assertion.rawId)
-        });
-
-        setOwnerSession(verify.owner_session, verify.expires_at);
-        await loadOwnerStatus();
-        await loadActions();
-        addMessage("Owner desbloqueado con Face ID / Passkey.", "system");
-      } catch(err){
-        document.getElementById("ownerBox").textContent = "Error entrando con passkey: " + (err.message || err);
-      }
-    }
-
-    async function revokeOwnerSession(){
-      try{
-        await apiPost("/v1/owner/session/revoke", {}, true);
-      } catch(_) {}
-      clearOwnerSessionLocal();
-      await loadOwnerStatus();
-      await loadActions();
-      addMessage("Sesión owner cerrada.", "system");
-    }
-
-    async function loadHealth(){
-      try{
-        const data = await apiGet("/health");
-        document.getElementById("serviceName").textContent = data.service || "CONSIA API";
-        document.getElementById("serviceState").textContent = `${data.status || "online"} · ${data.version || ""}`;
-        document.getElementById("apiMini").textContent = data.ok ? "OK" : "ERR";
-        document.getElementById("apiStatus").textContent = data.ok ? "API online" : "API error";
-        document.getElementById("serverTime").textContent = "Server time: " + (data.time || "-");
-        document.getElementById("versionPill").textContent = data.version ? `v${data.version}` : "v-";
-        document.getElementById("healthBox").textContent = JSON.stringify(data, null, 2);
-        document.getElementById("executorState").textContent = data.config?.cloudflare_executor ? "conectado" : "sin conectar";
-
-        const engines = data.engines || [];
-        document.getElementById("enginesWrap").innerHTML = engines.length
-          ? engines.map(x => `<span class="badge">${esc(x)}</span>`).join("")
-          : '<div class="empty">Sin engines.</div>';
-      } catch(err){
-        document.getElementById("apiStatus").textContent = "API error";
-        document.getElementById("apiMini").textContent = "ERR";
-        document.getElementById("healthBox").textContent = String(err.message || err);
-        document.getElementById("executorState").textContent = "error";
-      }
-    }
-
-    async function loadAgents(){
-      try{
-        const data = await apiGet("/agents");
-        const agents = data.agents || [];
-        document.getElementById("agentsCount").textContent = agents.length;
-
-        const wrap = document.getElementById("agentsList");
-        wrap.innerHTML = agents.length ? agents.map(a => `
-          <div class="mini-item">
-            <strong>${esc(a.name)}</strong>
-            <div class="sub">${esc(a.role)} · ${esc(a.description)}</div>
-          </div>
-        `).join("") : '<div class="empty">Sin agentes.</div>';
-      } catch(err){
-        document.getElementById("agentsList").innerHTML =
-          `<div class="empty danger-text">${esc(err.message || err)}</div>`;
-      }
-    }
-
-    async function loadMemory(){
-      try{
-        const data = await apiGet("/v1/memory");
-        const items = data.items || [];
-        document.getElementById("memoryCount").textContent = data.count || 0;
-
-        const tbody = document.getElementById("memoryTable");
-        tbody.innerHTML = items.length ? items.map(m => `
-          <tr>
-            <td>${esc(m.key)}</td>
-            <td>${esc(m.value)}</td>
-            <td>${esc(fmtTs(m.updated_at))}</td>
-          </tr>
-        `).join("") : `<tr><td colspan="3" class="muted">Sin memory.</td></tr>`;
-      } catch(err){
-        document.getElementById("memoryTable").innerHTML =
-          `<tr><td colspan="3" class="danger-text">${esc(err.message || err)}</td></tr>`;
-      }
-    }
-
-    async function saveMemory(){
-      const value = document.getElementById("memoryInput").value.trim();
-      if(!value) return;
-      try{
-        await apiPost("/v1/memory", {
-          user_id: "owner",
-          key: "note",
-          content: value
-        }, true);
-        document.getElementById("memoryInput").value = "";
-        await loadMemory();
-        addMessage("Memory guardada correctamente.", "system");
-      } catch(err){
-        addMessage("Error guardando memory: " + (err.message || err), "system");
-      }
-    }
-
-    async function quickMemory(){
-      const note = prompt("Escribí la nota para guardar en memory:");
-      if(!note) return;
-      document.getElementById("memoryInput").value = note;
-      await saveMemory();
-    }
-
-    async function saveGlobalMemory(){
-      try{
-        const key = document.getElementById("globalMemoryKey").value.trim();
-        const type = document.getElementById("globalMemoryType").value.trim() || "system";
-        const value = document.getElementById("globalMemoryValue").value;
-
-        if(!key) throw new Error("key_required");
-
-        const data = await apiPost("/v1/memory/save", { key, type, value }, true);
-        document.getElementById("globalMemoryBox").textContent = JSON.stringify(data, null, 2);
-        addMessage("Global memory guardada.", "system");
-      } catch(err){
-        document.getElementById("globalMemoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function getGlobalMemory(){
-      try{
-        const key = document.getElementById("globalMemoryKey").value.trim();
-        if(!key) throw new Error("key_required");
-        const data = await apiGet("/v1/memory/get?key=" + encodeURIComponent(key));
-        document.getElementById("globalMemoryBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("globalMemoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function loadFiles(){
-      try{
-        const data = await apiGet("/v1/files");
-        const items = data.items || [];
-        const tbody = document.getElementById("filesTable");
-        tbody.innerHTML = items.length ? items.map(f => `
-          <tr>
-            <td>${esc(f.name)}</td>
-            <td>${esc(f.type)}</td>
-            <td>${esc(f.size)}</td>
-            <td><button class="secondary" onclick="readFile('${String(f.r2_key).replace(/'/g,"\\'")}')">Leer</button></td>
-          </tr>
-        `).join("") : `<tr><td colspan="4" class="muted">Sin files.</td></tr>`;
-      } catch(err){
-        document.getElementById("filesTable").innerHTML =
-          `<tr><td colspan="4" class="danger-text">${esc(err.message || err)}</td></tr>`;
-      }
-    }
-
-    async function uploadFile(){
-      const input = document.getElementById("fileUpload");
-      const file = input.files && input.files[0];
-      if(!file) return;
-      if(!getOwnerSession()) {
-        addMessage("Necesitás entrar como owner para subir archivos.", "system");
-        return;
-      }
-
-      const form = new FormData();
-      form.append("file", file);
-
-      try{
-        const res = await fetch(API + "/v1/files/upload", {
-          method: "POST",
-          headers: { "x-owner-session": getOwnerSession() },
-          body: form
-        });
-        const data = await res.json();
-        if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "upload_failed");
-
-        addMessage("Archivo subido: " + file.name, "system");
-        input.value = "";
-        await loadFiles();
-        await loadMemory();
-      } catch(err){
-        addMessage("Error subiendo archivo: " + (err.message || err), "system");
-      }
-    }
-
-    async function readFile(key){
-      try{
-        const data = await apiGet("/v1/files/read?key=" + encodeURIComponent(key));
-        document.getElementById("filePreview").textContent = data.preview || "Sin preview.";
-      } catch(err){
-        document.getElementById("filePreview").textContent = "Error leyendo archivo: " + (err.message || err);
-      }
-    }
-
-    async function loadSwarm(){
-      try{
-        const data = await apiGet("/v1/swarm");
-        document.getElementById("swarmState").textContent =
-          `${data.swarm || "inactive"} · ${(data.agents || []).length} agentes`;
-
-        document.getElementById("swarmOutput").innerHTML = `
-          <div class="ok-text"><strong>Swarm:</strong> ${esc(data.swarm)}</div>
-          <div style="margin-top:10px;">${(data.agents || []).map(a => `<span class="badge">${esc(a)}</span>`).join("")}</div>
-        `;
-      } catch(err){
-        document.getElementById("swarmState").textContent = "error";
-        document.getElementById("swarmOutput").innerHTML =
-          `<div class="danger-text">${esc(err.message || err)}</div>`;
-      }
-    }
-
-    async function runSwarm(){
-      const task = document.getElementById("swarmTask").value.trim();
-      if(!task) return;
-      try{
-        const data = await apiPost("/v1/swarm/run", { task });
-        document.getElementById("swarmOutput").innerHTML = `
-          <div class="ok-text"><strong>Swarm:</strong> ${esc(data.swarm)}</div>
-          <div style="margin-top:8px;"><strong>Tarea:</strong> ${esc(data.task || "")}</div>
-          <div style="margin-top:12px;"><strong>Research:</strong><br>${esc(data.summary?.research || "")}</div>
-          <div style="margin-top:12px;"><strong>Analysis:</strong><br>${esc(data.summary?.analysis || "")}</div>
-          <div style="margin-top:12px;"><strong>Strategy:</strong><br>${esc(data.summary?.strategy || "")}</div>
-          <div style="margin-top:12px;"><strong>Execution:</strong><br>${esc(data.summary?.execution || "")}</div>
-        `;
-        addMessage("Swarm ejecutado: " + task, "system");
-      } catch(err){
-        document.getElementById("swarmOutput").innerHTML =
-          `<div class="danger-text">${esc(err.message || err)}</div>`;
-      }
-    }
-
-    async function runQuickSwarm(){
-      const task = prompt("Tarea rápida para swarm:");
-      if(!task) return;
-      document.getElementById("swarmTask").value = task;
-      await runSwarm();
-    }
-
-    async function runAutopilotMaster() {
-      try {
-        if (!getOwnerSession()) throw new Error("owner_session_missing");
-
-        const company = document.getElementById("autopilotCompany").value.trim() || "CONSIA";
-        const action = document.getElementById("autopilotAction").value.trim() || "execute";
-        const input = document.getElementById("autopilotInput").value.trim();
-
-        const data = await apiPost("/v1/autopilot/run", {
-          company,
-          action,
-          input
-        }, true);
-
-        document.getElementById("autopilotBox").textContent = JSON.stringify(data, null, 2);
-        document.getElementById("autopilotNarration").textContent =
-          data.narration || "CONSIA lista.";
-
-        addMessage(`AUTOPILOT MASTER ejecutado para ${company}.`, "system");
-      } catch (err) {
-        document.getElementById("autopilotBox").textContent =
-          "Error AUTOPILOT: " + (err.message || err);
-      }
-    }
-
-    function getAutopilotResultText(){
-      const result = document.getElementById("autopilotBox").textContent || "";
-      const narration = document.getElementById("autopilotNarration").textContent || "";
-      return `CONSIA AUTOPILOT MASTER\n\nNarración:\n${narration}\n\nResultado:\n${result}`;
-    }
-
-    function downloadBlob(filename, content, type){
-      const blob = new Blob([content], { type });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-
-    function copyAutopilotResult(){
-      navigator.clipboard.writeText(getAutopilotResultText());
-    }
-
-    function downloadAutopilotAsTxt(){
-      downloadBlob("consia_autopilot.txt", getAutopilotResultText(), "text/plain;charset=utf-8");
-    }
-
-    function downloadAutopilotAsJson(){
-      let payload = {};
-      try {
-        payload = JSON.parse(document.getElementById("autopilotBox").textContent || "{}");
-      } catch {
-        payload = { raw: document.getElementById("autopilotBox").textContent || "" };
-      }
-      payload.narration = document.getElementById("autopilotNarration").textContent || "";
-      downloadBlob("consia_autopilot.json", JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
-    }
-
-    function downloadAutopilotAsHtml(){
-      const html = `
-<!DOCTYPE html>
-<html lang="es">
-<head>
 <meta charset="UTF-8">
-<title>CONSIA Export</title>
+<title>CONSIA AI-OS</title>
+
 <style>
-body{font-family:Arial,sans-serif;padding:32px;color:#111}
-h1{margin:0 0 16px}
-pre{white-space:pre-wrap;font-family:Consolas,monospace;background:#f5f5f5;padding:16px;border-radius:12px}
+
+body{
+background:#0b0f19;
+color:white;
+font-family:Arial;
+padding:40px;
+}
+
+.card{
+background:#141b2d;
+padding:30px;
+border-radius:14px;
+margin-bottom:30px;
+}
+
+button{
+background:#33c27f;
+border:none;
+padding:10px 18px;
+border-radius:8px;
+cursor:pointer;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border-radius:6px;
+border:none;
+}
+
 </style>
+
 </head>
+
 <body>
-<h1>CONSIA AUTOPILOT MASTER</h1>
-<h2>Narración</h2>
-<pre>${escapeHtml(document.getElementById("autopilotNarration").textContent || "")}</pre>
-<h2>Resultado</h2>
-<pre>${escapeHtml(document.getElementById("autopilotBox").textContent || "")}</pre>
+
+<h1>CONSIA AI-OS</h1>
+
+<div class="card">
+
+<h2>Chat</h2>
+
+<input id="msg" placeholder="mensaje">
+
+<button onclick="chat()">Enviar</button>
+
+<pre id="chat"></pre>
+
+</div>
+
+<div class="card">
+
+<h2>Swarm</h2>
+
+<input id="task" placeholder="task">
+
+<button onclick="swarm()">Ejecutar</button>
+
+<pre id="swarm"></pre>
+
+</div>
+
+<div class="card">
+
+<h2>Memory</h2>
+
+<input id="key" placeholder="key">
+<input id="value" placeholder="value">
+
+<button onclick="saveMemory()">Guardar</button>
+
+</div>
+
+<div class="card">
+
+<h2>Files</h2>
+
+<input type="file" id="file">
+
+<button onclick="upload()">Subir</button>
+
+</div>
+
+<div class="card">
+
+<h2>Marketplace</h2>
+
+<button onclick="products()">Listar</button>
+
+<pre id="products"></pre>
+
+</div>
+
+<div class="card">
+
+<h2>Autopilot</h2>
+
+<input id="auto" placeholder="acción">
+
+<button onclick="auto()">Ejecutar</button>
+
+<pre id="auto_result"></pre>
+
+</div>
+
+<script>
+
+const API="https://api.consia.world"
+
+async function chat(){
+
+let m=document.getElementById("msg").value
+
+let r=await fetch(API+"/chat",{
+method:"POST",
+body:JSON.stringify({message:m})
+})
+
+let j=await r.json()
+
+chat.innerText=JSON.stringify(j,null,2)
+
+}
+
+async function swarm(){
+
+let t=document.getElementById("task").value
+
+let r=await fetch(API+"/swarm",{
+method:"POST",
+body:JSON.stringify({task:t})
+})
+
+let j=await r.json()
+
+swarm.innerText=JSON.stringify(j,null,2)
+
+}
+
+async function saveMemory(){
+
+let key=document.getElementById("key").value
+let value=document.getElementById("value").value
+
+await fetch(API+"/memory/save",{
+method:"POST",
+body:JSON.stringify({key,value})
+})
+
+}
+
+async function upload(){
+
+let file=document.getElementById("file").files[0]
+
+let fd=new FormData()
+
+fd.append("file",file)
+
+await fetch(API+"/files/upload",{
+method:"POST",
+body:fd
+})
+
+}
+
+async function products(){
+
+let r=await fetch(API+"/marketplace/products")
+
+let j=await r.json()
+
+products.innerText=JSON.stringify(j,null,2)
+
+}
+
+async function auto(){
+
+let t=document.getElementById("auto").value
+
+let r=await fetch(API+"/autopilot",{
+method:"POST",
+body:JSON.stringify({task:t})
+})
+
+let j=await r.json()
+
+auto_result.innerText=JSON.stringify(j,null,2)
+
+}
+
+</script>
+
 </body>
-</html>`;
-      downloadBlob("consia_autopilot.html", html, "text/html;charset=utf-8");
-    }
 
-    function downloadAutopilotAsDoc(){
-      const html = `
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"><title>CONSIA Export</title></head>
-<body>
-<h1>CONSIA AUTOPILOT MASTER</h1>
-<h2>Narración</h2>
-<p>${escapeHtml(document.getElementById("autopilotNarration").textContent || "").replace(/\n/g,"<br>")}</p>
-<h2>Resultado</h2>
-<p>${escapeHtml(document.getElementById("autopilotBox").textContent || "").replace(/\n/g,"<br>")}</p>
-</body>
-</html>`;
-      downloadBlob("consia_autopilot.doc", html, "application/msword");
-    }
-
-    function downloadAutopilotAsXls(){
-      let payload = {};
-      try {
-        payload = JSON.parse(document.getElementById("autopilotBox").textContent || "{}");
-      } catch {
-        payload = { raw: document.getElementById("autopilotBox").textContent || "" };
-      }
-
-      const rows = [
-        ["campo", "valor"],
-        ["narration", document.getElementById("autopilotNarration").textContent || ""]
-      ];
-
-      Object.entries(payload).forEach(([k,v]) => {
-        rows.push([k, typeof v === "string" ? v : JSON.stringify(v)]);
-      });
-
-      const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(",")).join("\n");
-      downloadBlob("consia_autopilot.xls", csv, "application/vnd.ms-excel");
-    }
-
-    function printAutopilotAsPdf(){
-      const content = `
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>CONSIA PDF</title>
-<style>
-body{font-family:Arial,sans-serif;padding:32px;color:#111}
-h1{margin:0 0 16px}
-pre{white-space:pre-wrap;font-family:Consolas,monospace;background:#f5f5f5;padding:16px;border-radius:12px}
-</style>
-</head>
-<body>
-<h1>CONSIA AUTOPILOT MASTER</h1>
-<h2>Narración</h2>
-<pre>${escapeHtml(document.getElementById("autopilotNarration").textContent || "")}</pre>
-<h2>Resultado</h2>
-<pre>${escapeHtml(document.getElementById("autopilotBox").textContent || "")}</pre>
-</body>
-</html>`;
-      const w = window.open("", "_blank");
-      w.document.write(content);
-      w.document.close();
-      w.focus();
-      setTimeout(() => w.print(), 300);
-    }
-
-    async function saveAutopilotToConsiaFiles(){
-      if(!getOwnerSession()) throw new Error("owner_session_missing");
-      const content = getAutopilotResultText();
-      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-      const file = new File([blob], "consia_autopilot_export.txt", { type: "text/plain" });
-
-      const form = new FormData();
-      form.append("file", file);
-
-      const res = await fetch(API + "/v1/files/upload", {
-        method: "POST",
-        headers: { "x-owner-session": getOwnerSession() },
-        body: form
-      });
-      const data = await res.json();
-      if(!res.ok || data.ok === false) throw new Error(data.details || data.error || "upload_failed");
-      addMessage("Export guardado en CONSIA Files.", "system");
-      await loadFiles();
-    }
-
-    function escapeHtml(str){
-      return String(str || "").replace(/[&<>"']/g, s => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[s]));
-    }
-
-    function startVoiceForInput(inputId){
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if(!SR){
-        alert("Voz no soportada en este navegador.");
-        return;
-      }
-      const rec = new SR();
-      rec.lang = "es-AR";
-      rec.interimResults = false;
-      rec.continuous = false;
-      rec.onresult = (e) => {
-        const text = e.results[0][0].transcript;
-        document.getElementById(inputId).value = text;
-      };
-      rec.start();
-    }
-
-    function speakText(text){
-      if(!("speechSynthesis" in window)) return;
-      const msg = new SpeechSynthesisUtterance(text || "");
-      msg.lang = "es-AR";
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(msg);
-    }
-
-    function speakNarration(){
-      const text = document.getElementById("autopilotNarration").textContent || "";
-      speakText(text);
-    }
-
-    async function sendMessage(){
-      const input = document.getElementById("msgInput");
-      const text = input.value.trim();
-      if(!text) return;
-
-      addMessage(text, "user");
-      input.value = "";
-
-      try{
-        const data = await apiPost("/v1/chat", { message: text });
-        addMessage(data.answer || "Sin respuesta.", "bot");
-        speakText(data.answer || "");
-        await loadMemory();
-      } catch(err){
-        addMessage("Error de chat: " + (err.message || err), "system");
-      }
-    }
-
-    async function loadActions(){
-      try{
-        if(!getOwnerSession()) {
-          document.getElementById("actionsTable").innerHTML = `<tr><td colspan="4" class="muted">Entrá como owner para ver acciones.</td></tr>`;
-          return;
-        }
-
-        const data = await apiGet("/v1/actions/pending", true);
-        const items = data.items || [];
-
-        document.getElementById("actionsTable").innerHTML = items.length ? items.map(a => `
-          <tr>
-            <td>${esc(a.id)}</td>
-            <td>${esc(a.action_type)}</td>
-            <td>${esc(a.status)}</td>
-            <td>
-              <button class="secondary" onclick="approveAction('${esc(a.id)}')">Aprobar</button>
-              <button class="green" onclick="executeAction('${esc(a.id)}')">Ejecutar</button>
-            </td>
-          </tr>
-        `).join("") : `<tr><td colspan="4" class="muted">Sin acciones.</td></tr>`;
-      } catch(err){
-        document.getElementById("actionsTable").innerHTML =
-          `<tr><td colspan="4" class="danger-text">${esc(err.message || err)}</td></tr>`;
-      }
-    }
-
-    async function createAction(){
-      try{
-        if(!getOwnerSession()) throw new Error("owner_session_missing");
-
-        const action_type = document.getElementById("actionType").value.trim();
-        const target = document.getElementById("actionTarget").value.trim();
-        const risk_level = document.getElementById("actionRisk").value.trim() || "low";
-        let payload = {};
-
-        try {
-          payload = JSON.parse(document.getElementById("actionPayload").value || "{}");
-        } catch {
-          throw new Error("Payload JSON inválido");
-        }
-
-        const data = await apiPost("/v1/actions/create", {
-          action_type,
-          target,
-          payload,
-          risk_level
-        }, true);
-
-        document.getElementById("actionResult").textContent = JSON.stringify(data, null, 2);
-        await loadActions();
-      } catch(err){
-        document.getElementById("actionResult").textContent = "Error creando acción: " + (err.message || err);
-      }
-    }
-
-    async function approveAction(actionId){
-      try{
-        const data = await apiPost("/v1/actions/approve", { action_id: actionId }, true);
-        document.getElementById("actionResult").textContent = JSON.stringify(data, null, 2);
-        await loadActions();
-      } catch(err){
-        document.getElementById("actionResult").textContent = "Error aprobando acción: " + (err.message || err);
-      }
-    }
-
-    async function executeAction(actionId){
-      try{
-        const data = await apiPost("/v1/actions/execute", { action_id: actionId }, true);
-        document.getElementById("actionResult").textContent = JSON.stringify(data, null, 2);
-        await loadActions();
-        await loadMemory();
-      } catch(err){
-        document.getElementById("actionResult").textContent = "Error ejecutando acción: " + (err.message || err);
-      }
-    }
-
-    async function loadProducts(){
-      try{
-        const data = await apiGet("/v1/marketplace/products");
-        const items = data.items || [];
-        document.getElementById("productsCount").textContent = data.count || 0;
-
-        const tbody = document.getElementById("productsTable");
-        tbody.innerHTML = items.length ? items.map(p => `
-          <tr>
-            <td>${esc(p.name)}</td>
-            <td>USD ${esc(p.price_usd)}</td>
-            <td>${esc(p.description)}</td>
-          </tr>
-        `).join("") : `<tr><td colspan="3" class="muted">Sin productos.</td></tr>`;
-      } catch(err){
-        document.getElementById("productsTable").innerHTML =
-          `<tr><td colspan="3" class="danger-text">${esc(err.message || err)}</td></tr>`;
-      }
-    }
-
-    async function bootstrapAgents(){
-      try{
-        const data = await apiPost("/v1/agents/factory/bootstrap", {}, true);
-        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function loadAgentRegistry(){
-      try{
-        const data = await apiGet("/v1/agents/factory");
-        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function runAgent(){
-      try{
-        const name = document.getElementById("agentRunName").value.trim();
-        const task = document.getElementById("agentRunTask").value.trim();
-        const data = await apiPost("/v1/agents/factory/run", { name, task, input: {} }, true);
-        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function runFactorySwarm(){
-      try{
-        const task = document.getElementById("agentRunTask").value.trim();
-        const data = await apiPost("/v1/agents/factory/swarm", { task }, true);
-        document.getElementById("agentFactoryBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("agentFactoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function bootstrapAvatarAgents(){
-      try{
-        const data = await apiPost("/v1/avatar-agents/bootstrap", {}, true);
-        document.getElementById("avatarFactoryBox").textContent = JSON.stringify(data, null, 2);
-        await loadAvatarAgents();
-      } catch(err){
-        document.getElementById("avatarFactoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function loadAvatarAgents(){
-      try{
-        const data = await apiGet("/v1/avatar-agents");
-        document.getElementById("avatarAgentsCount").textContent = data.count || 0;
-        document.getElementById("avatarFactoryBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("avatarFactoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function runAvatarAgent(){
-      try{
-        const name = document.getElementById("avatarRunName").value.trim();
-        const task = document.getElementById("avatarRunTask").value.trim();
-        const data = await apiPost("/v1/avatar-agents/run", { name, task, context: {} }, true);
-        document.getElementById("avatarFactoryBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("avatarFactoryBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    async function loadGitHubStatus(){
-      try{
-        const data = await apiGet("/v1/github/status", true);
-        document.getElementById("githubBox").textContent = JSON.stringify(data, null, 2);
-      } catch(err){
-        document.getElementById("githubBox").textContent = "Error: " + (err.message || err);
-      }
-    }
-
-    function inferMediaType(url, selected){
-      if(selected && selected !== "auto") return selected;
-      const lower = (url || "").toLowerCase();
-      if(/\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?|$)/.test(lower)) return "image";
-      if(/\.(mp3|wav|ogg|m4a|aac|flac)(\?|$)/.test(lower)) return "audio";
-      if(/\.(mp4|webm|mov|m4v|ogg)(\?|$)/.test(lower)) return "video";
-      return "file";
-    }
-
-    function previewMedia(){
-      const url = document.getElementById("mediaUrl").value.trim();
-      const selected = document.getElementById("mediaType").value;
-      const box = document.getElementById("mediaPreviewBox");
-
-      if(!url){
-        box.innerHTML = "Sin preview.";
-        return;
-      }
-
-      const type = inferMediaType(url, selected);
-
-      if(type === "image"){
-        box.innerHTML = `<img class="media-preview" src="${esc(url)}" alt="preview">`;
-      } else if(type === "audio"){
-        box.innerHTML = `<audio class="media-preview" controls src="${esc(url)}"></audio>`;
-      } else if(type === "video"){
-        box.innerHTML = `<video class="media-preview" controls src="${esc(url)}"></video>`;
-      } else {
-        box.innerHTML = `<div class="note-box">Preview no disponible para este tipo. Podés descargar el archivo desde la URL.</div>`;
-      }
-    }
-
-    function clearMediaPreview(){
-      document.getElementById("mediaPreviewBox").innerHTML = "Sin preview.";
-      document.getElementById("mediaUrl").value = "";
-      document.getElementById("mediaFilename").value = "";
-      document.getElementById("mediaType").value = "auto";
-    }
-
-    function downloadMediaFromUrl(){
-      const url = document.getElementById("mediaUrl").value.trim();
-      const filename = document.getElementById("mediaFilename").value.trim() || "";
-      if(!url) return;
-
-      const a = document.createElement("a");
-      a.href = url;
-      if(filename) a.download = filename;
-      a.target = "_blank";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-
-    async function refreshAll(){
-      await Promise.allSettled([
-        loadOwnerStatus(),
-        loadHealth(),
-        loadAgents(),
-        loadMemory(),
-        loadFiles(),
-        loadSwarm(),
-        loadActions(),
-        loadAvatarAgents(),
-        loadProducts()
-      ]);
-    }
-
-    document.getElementById("msgInput").addEventListener("keydown", e => {
-      if(e.key === "Enter") sendMessage();
-    });
-
-    refreshAll();
-  </script>
-</body>
 </html>
