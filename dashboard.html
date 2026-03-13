@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CONSIA Dashboard</title>
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial,sans-serif;
+}
+.header{
+  padding:18px 24px;
+  border-bottom:1px solid #222;
+  font-size:24px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  padding:24px;
+}
+.card{
+  background:#111;
+  border:1px solid #222;
+  border-radius:14px;
+  padding:18px;
+}
+.title{
+  font-size:18px;
+  margin-bottom:10px;
+}
+.val{
+  opacity:.9;
+}
+.ok{color:#5CFF95;}
+</style>
+</head>
+<body>
+  <div class="header">CONSIA DASHBOARD</div>
+  <div class="grid">
+    <div class="card"><div class="title">CORE</div><div class="val ok">ACTIVE</div></div>
+    <div class="card"><div class="title">OWNER MODE</div><div class="val ok">READY</div></div>
+    <div class="card"><div class="title">MEMORY</div><div class="val">PENDING</div></div>
+    <div class="card"><div class="title">AGENTS</div><div class="val">PENDING</div></div>
+    <div class="card"><div class="title">EXECUTION</div><div class="val">PENDING</div></div>
+    <div class="card"><div class="title">SHIELD</div><div class="val">PENDING</div></div>
+  </div>
+</body>
+</html>
