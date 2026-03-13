@@ -3,96 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <title>CONSIA</title>
-
 <style>
-
 body{
-background:black;
-color:white;
-font-family:Arial;
-text-align:center;
-margin-top:150px;
+  background:#000;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  text-align:center;
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-
+.wrap{width:100%; max-width:720px; padding:24px;}
+h1{margin-bottom:24px;}
 button{
-padding:20px;
-font-size:20px;
-border-radius:10px;
-border:none;
-background:#00c3ff;
-color:white;
-cursor:pointer;
+  padding:20px 28px;
+  font-size:20px;
+  border-radius:12px;
+  border:none;
+  background:#00c3ff;
+  color:#fff;
+  cursor:pointer;
 }
-
 #console{
-margin-top:40px;
-font-size:14px;
-opacity:0.8;
-line-height:1.6;
+  margin-top:28px;
+  font-size:16px;
+  line-height:1.6;
+  opacity:.9;
+  min-height:120px;
 }
-
+.ok{color:#5CFF95;}
+.err{color:#FF6B6B;}
 </style>
-
 </head>
-
 <body>
-
-<h1>CONSIA</h1>
-
-<button onclick="owner()">Entrar con Face ID</button>
-
-<div id="console"></div>
+  <div class="wrap">
+    <h1>CONSIA</h1>
+    <button id="btn" onclick="owner()">Entrar con Face ID</button>
+    <div id="console"></div>
+  </div>
 
 <script>
-
-async function owner(){
-
-document.getElementById("console").innerHTML="Iniciando OWNER MODE..."
-
-try{
-
-let r=await fetch("https://api.consia.world/owner/one-tap")
-
-let j=await r.json()
-
-document.getElementById("console").innerHTML=
-"OWNER ACTIVE<br>"+
-"KEY ROTATION<br>"+
-"SESSION CLEAN<br>"+
-"CONSIA CORE BOOTING..."
-
-boot()
-
-}catch(e){
-
-document.getElementById("console").innerHTML="Error conectando con CONSIA API"
-
+function log(msg, cls=""){
+  const el = document.getElementById("console");
+  el.innerHTML += `<div class="${cls}">${msg}</div>`;
 }
 
+async function owner(){
+  const btn = document.getElementById("btn");
+  const consoleEl = document.getElementById("console");
+  consoleEl.innerHTML = "";
+  btn.disabled = true;
+  btn.textContent = "Iniciando...";
+
+  try{
+    log("Iniciando OWNER MODE...");
+    const r = await fetch("https://api.consia.world/owner/one-tap", {
+      method: "GET",
+      headers: { "accept": "application/json" }
+    });
+
+    if(!r.ok){
+      throw new Error("OWNER_ONE_TAP_ERROR_" + r.status);
+    }
+
+    const j = await r.json();
+    log("OWNER ACTIVE", "ok");
+    log("KEY ROTATION", "ok");
+    log("SESSION CLEAN", "ok");
+    log("CONSIA CORE BOOTING...", "ok");
+
+    await boot();
+  }catch(e){
+    log("Error conectando OWNER MODE", "err");
+    log(String(e.message || e), "err");
+    btn.disabled = false;
+    btn.textContent = "Entrar con Face ID";
+  }
 }
 
 async function boot(){
+  try{
+    const r = await fetch("https://api.consia.world/status", {
+      method: "GET",
+      headers: { "accept": "application/json" }
+    });
 
-try{
+    if(!r.ok){
+      throw new Error("STATUS_ERROR_" + r.status);
+    }
 
-await fetch("https://api.consia.world/status")
+    const j = await r.json();
 
-setTimeout(()=>{
+    log("CONSIA CORE ACTIVE", "ok");
+    log("OWNER MODE READY", "ok");
 
-document.getElementById("console").innerHTML+=
-"<br><br>CONSIA CORE ACTIVE"
+    setTimeout(() => {
+      window.location.href = "https://consia.world/dashboard.html";
+    }, 1200);
 
-},1000)
-
-}catch(e){
-
-document.getElementById("console").innerHTML+="<br>Error iniciando CORE"
-
+  }catch(e){
+    log("Error iniciando CORE", "err");
+    log(String(e.message || e), "err");
+    const btn = document.getElementById("btn");
+    btn.disabled = false;
+    btn.textContent = "Entrar con Face ID";
+  }
 }
-
-}
-
 </script>
-
 </body>
 </html>
