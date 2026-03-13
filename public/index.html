@@ -7,15 +7,7 @@
   <meta name="theme-color" content="#05060a" />
   <style>
     :root{
-      --bg:#05060a;
-      --panel:#0b0d12;
-      --panel2:#11141c;
-      --text:#f5f7fb;
-      --muted:#9aa3b2;
-      --line:#1c2230;
-      --ok:#2dd4bf;
-      --danger:#ff6b6b;
-      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --text:#f5f7fb; --muted:#9aa3b2; --line:#1c2230; --ok:#2dd4bf; --danger:#ff6b6b; --shadow:0 20px 60px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 50% -10%, #141824 0%, #08090d 50%, #040507 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
@@ -23,102 +15,44 @@
     .app{width:min(100%,1100px);min-height:100dvh;display:flex;flex-direction:column;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}
     .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 2px 14px}
     .brand{display:flex;align-items:center;gap:12px}
-    .orb{
-      width:42px;height:42px;border-radius:50%;
-      background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.5) 10%, rgba(255,255,255,.12) 18%, rgba(255,255,255,.03) 28%, rgba(255,255,255,0) 42%),
-        radial-gradient(circle at 50% 50%, #ffffff 0%, #a5b4fc 16%, #60a5fa 28%, #3b82f6 40%, #0f172a 72%, #05060a 100%);
-      box-shadow:0 0 42px rgba(96,165,250,.35), inset 0 0 28px rgba(255,255,255,.25);
-    }
+    .orb{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.5) 10%, rgba(255,255,255,.12) 18%, rgba(255,255,255,.03) 28%, rgba(255,255,255,0) 42%),radial-gradient(circle at 50% 50%, #ffffff 0%, #a5b4fc 16%, #60a5fa 28%, #3b82f6 40%, #0f172a 72%, #05060a 100%);box-shadow:0 0 42px rgba(96,165,250,.35), inset 0 0 28px rgba(255,255,255,.25)}
     .t1{font-size:18px;font-weight:700;letter-spacing:.18em}
     .t2{font-size:11px;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
     .status{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
     .dot{width:9px;height:9px;border-radius:50%;background:var(--danger);box-shadow:0 0 12px rgba(255,107,107,.65)}
     .dot.ok{background:var(--ok);box-shadow:0 0 12px rgba(45,212,191,.65)}
-    .gate,.dashboard{
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:28px;
-      padding:22px 18px;
-      box-shadow:var(--shadow);
-      margin-top:10px;
-    }
+    .gate,.dashboard,.panel{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:28px;padding:22px 18px;box-shadow:var(--shadow);margin-top:10px}
     h1{margin:0 0 8px;font-size:32px;line-height:1.02;letter-spacing:-.04em}
+    h3{margin:0 0 10px}
     p{margin:0;color:var(--muted);font-size:15px;line-height:1.45}
     .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-    .btn{
-      border:1px solid var(--line);background:var(--panel2);color:var(--text);
-      min-height:54px;border-radius:18px;font-size:15px;font-weight:700;padding:0 18px
-    }
+    .btn{border:1px solid var(--line);background:#11141c;color:var(--text);min-height:54px;border-radius:18px;font-size:15px;font-weight:700;padding:0 18px}
     .btn.primary{background:#ffffff;color:#06080d}
     .btn.small{min-height:42px;padding:0 14px}
     .hidden{display:none}
     .nav{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
-    .tab{
-      border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);
-      padding:12px 16px;border-radius:16px;font-weight:700
-    }
+    .tab{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);padding:12px 16px;border-radius:16px;font-weight:700}
     .tab.active{background:#fff;color:#06080d}
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:12px;
-      margin-top:18px;
-    }
-    .card{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      border-radius:22px;
-      padding:16px;
-    }
-    .card h3{margin:0 0 8px;font-size:16px}
-    .card p{font-size:13px}
-    .panel{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      border-radius:22px;
-      padding:16px;
-      margin-top:14px;
-    }
-    .input,.textarea{
-      width:100%;border:1px solid var(--line);background:#0c1017;color:var(--text);
-      border-radius:14px;padding:14px;font:inherit
-    }
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+    .card,.item{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:22px;padding:16px}
+    .card h3,.itemTitle{margin:0 0 8px;font-size:16px;font-weight:700}
+    .panel{margin-top:14px}
+    .input,.textarea{width:100%;border:1px solid var(--line);background:#0c1017;color:var(--text);border-radius:14px;padding:14px;font:inherit}
     .textarea{min-height:110px;resize:vertical}
     .list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-    .item{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.02);
-      border-radius:16px;
-      padding:14px;
-    }
-    .itemTitle{font-weight:700;margin-bottom:6px}
     .itemMeta{font-size:12px;color:var(--muted);margin-top:6px}
     .split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .composerWrap{
-      position:fixed;left:50%;transform:translateX(-50%);
-      bottom:0;width:min(100%,1100px);padding:10px 14px calc(12px + env(safe-area-inset-bottom));
-      background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.82) 18%, rgba(5,6,10,.98) 100%);
-      backdrop-filter:blur(16px)
-    }
-    .composer{
-      display:grid;grid-template-columns:1fr auto;gap:10px;
-      padding:10px;border:1px solid var(--line);border-radius:24px;background:rgba(11,13,18,.95);box-shadow:var(--shadow)
-    }
-    textarea.chatInput{
-      width:100%;resize:none;min-height:54px;max-height:180px;border:0;outline:0;
-      background:transparent;color:var(--text);font:inherit;padding:12px 8px
-    }
+    .previewWrap{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .thumb{width:130px;height:130px;object-fit:cover;border-radius:16px;border:1px solid var(--line);background:#0c1017}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word}
+    .composerWrap{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(100%,1100px);padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg, rgba(5,6,10,0) 0%, rgba(5,6,10,.82) 18%, rgba(5,6,10,.98) 100%);backdrop-filter:blur(16px)}
+    .composer{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px;border:1px solid var(--line);border-radius:24px;background:rgba(11,13,18,.95);box-shadow:var(--shadow)}
+    textarea.chatInput{width:100%;resize:none;min-height:54px;max-height:180px;border:0;outline:0;background:transparent;color:var(--text);font:inherit;padding:12px 8px}
     .chat{display:flex;flex-direction:column;gap:12px;margin-top:18px;padding-bottom:130px}
-    .msg{
-      max-width:88%;padding:14px 15px;border-radius:18px;line-height:1.48;font-size:15px;
-      white-space:pre-wrap;word-wrap:break-word;box-shadow:var(--shadow)
-    }
+    .msg{max-width:88%;padding:14px 15px;border-radius:18px;line-height:1.48;font-size:15px;white-space:pre-wrap;word-wrap:break-word;box-shadow:var(--shadow)}
     .assistant{align-self:flex-start;background:linear-gradient(180deg, #0f131c, #0a0d13);border:1px solid var(--line)}
     .user{align-self:flex-end;background:linear-gradient(180deg, #fafafa, #dfe5f1);color:#06080d;border:1px solid rgba(255,255,255,.45)}
-    @media (max-width: 850px){
-      .split{grid-template-columns:1fr}
-    }
+    @media (max-width: 850px){.split{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -126,10 +60,7 @@
     <div class="top">
       <div class="brand">
         <div class="orb"></div>
-        <div>
-          <div class="t1">CONSIA</div>
-          <div class="t2">Owner Core</div>
-        </div>
+        <div><div class="t1">CONSIA</div><div class="t2">Owner Core</div></div>
       </div>
       <div class="status"><span class="dot" id="dot"></span><span id="statusText">Verificando</span></div>
     </div>
@@ -148,7 +79,7 @@
       <h1>OWNER MODE ACTIVE</h1>
       <p>CONSIA activo en modo Owner.</p>
 
-      <div class="grid" id="statsGrid">
+      <div class="grid">
         <div class="card"><h3>FILES</h3><p id="statFiles">0</p></div>
         <div class="card"><h3>MEMORY</h3><p id="statMemory">0</p></div>
         <div class="card"><h3>ACADEMY</h3><p id="statAcademy">0</p></div>
@@ -179,6 +110,7 @@
               <button class="btn small primary" id="uploadBtn">Subir archivo</button>
               <button class="btn small" id="refreshFilesBtn">Actualizar</button>
             </div>
+            <div id="filePreviewBox" class="list"></div>
           </div>
           <div>
             <div class="list" id="filesList"></div>
@@ -195,9 +127,11 @@
             <textarea class="textarea" id="memoryContent" placeholder="Contenido"></textarea>
             <div style="height:10px"></div>
             <input class="input" id="memoryTags" placeholder="tags separados por coma" />
+            <input type="hidden" id="memoryEditId" />
             <div class="row">
               <button class="btn small primary" id="saveMemoryBtn">Guardar memoria</button>
               <button class="btn small" id="refreshMemoryBtn">Actualizar</button>
+              <button class="btn small hidden" id="cancelMemoryBtn">Cancelar edición</button>
             </div>
           </div>
           <div>
@@ -219,18 +153,14 @@
       <section id="tab-search" class="panel hidden">
         <h3>Search</h3>
         <input class="input" id="searchInput" placeholder="Buscar en todo CONSIA" />
-        <div class="row">
-          <button class="btn small primary" id="searchBtn">Buscar</button>
-        </div>
+        <div class="row"><button class="btn small primary" id="searchBtn">Buscar</button></div>
         <div class="list" id="searchResults"></div>
       </section>
 
       <section id="tab-settings" class="panel hidden">
         <h3>Settings</h3>
         <div class="list" id="settingsList"></div>
-        <div class="row">
-          <button class="btn" id="logoutBtn">Cerrar sesión</button>
-        </div>
+        <div class="row"><button class="btn" id="logoutBtn">Cerrar sesión</button></div>
       </section>
 
       <main class="chat" id="chat"></main>
@@ -297,17 +227,25 @@
       return s;
     }
 
+    function escapeHtml(s) {
+      return String(s ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return "0 B";
+      const units = ["B","KB","MB","GB"];
+      let i = 0, n = bytes;
+      while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+      return `${n.toFixed(i ? 1 : 0)} ${units[i]}`;
+    }
+
     async function registerPasskey() {
       const { res, data: options } = await api("/v1/auth/register-options", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: "owner@consia.world" })
       });
-
-      if (!res.ok || !options.ok) {
-        alert("Error register-options: " + JSON.stringify(options));
-        return;
-      }
+      if (!res.ok || !options.ok) return alert("Error register-options: " + JSON.stringify(options));
 
       const credential = await navigator.credentials.create({
         publicKey: {
@@ -330,10 +268,7 @@
       const verify = await api("/v1/auth/register-verify", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          credentialId,
-          publicKey: "platform-passkey"
-        })
+        body: JSON.stringify({ credentialId, publicKey: "platform-passkey" })
       });
 
       if (verify.data.ok) {
@@ -350,10 +285,7 @@
         body: "{}"
       });
 
-      if (!res.ok || !options.ok) {
-        alert("Error login-options: " + JSON.stringify(options));
-        return;
-      }
+      if (!res.ok || !options.ok) return alert("Error login-options: " + JSON.stringify(options));
 
       const allowCredentials = (options.allowCredentials || []).map(c => ({
         type: c.type,
@@ -404,7 +336,11 @@
     }
 
     async function logout() {
-      await api("/v1/auth/logout", { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
+      await api("/v1/auth/logout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "{}"
+      });
       showOwner(false);
       setStatus(false, "Bloqueado");
       chat.innerHTML = "";
@@ -426,12 +362,19 @@
       (data.items || []).forEach(item => {
         const div = document.createElement("div");
         div.className = "item";
+        const preview = item.is_image ? `<img class="thumb" src="${API}/v1/files/download/${item.id}" alt="">` : "";
         div.innerHTML = `
-          <div class="itemTitle">${escapeHtml(item.filename)}</div>
-          <div class="itemMeta">${formatBytes(item.size)} • ${new Date(item.created_at).toLocaleString()}</div>
-          <div class="row">
-            <button class="btn small" data-download="${item.id}">Abrir</button>
-            <button class="btn small" data-delete-file="${item.id}">Borrar</button>
+          <div class="previewWrap">
+            ${preview}
+            <div style="flex:1;min-width:220px">
+              <div class="itemTitle">${escapeHtml(item.filename)}</div>
+              <div class="itemMeta">${formatBytes(item.size)} • ${new Date(item.created_at).toLocaleString()}</div>
+              <div class="row">
+                <button class="btn small" data-download="${item.id}">Abrir</button>
+                <button class="btn small" data-preview="${item.id}">Preview</button>
+                <button class="btn small" data-delete-file="${item.id}">Borrar</button>
+              </div>
+            </div>
           </div>
         `;
         box.appendChild(div);
@@ -440,6 +383,23 @@
       box.querySelectorAll("[data-download]").forEach(btn => {
         btn.onclick = () => window.open(`${API}/v1/files/download/${btn.dataset.download}`, "_blank");
       });
+
+      box.querySelectorAll("[data-preview]").forEach(btn => {
+        btn.onclick = async () => {
+          const { data } = await api(`/v1/files/meta/${btn.dataset.preview}`);
+          if (!data.ok) return;
+          const item = data.item;
+          const box = document.getElementById("filePreviewBox");
+          box.innerHTML = `
+            <div class="item">
+              <div class="itemTitle">${escapeHtml(item.filename)}</div>
+              ${item.is_image ? `<img class="thumb" src="${item.preview_url}" alt="" style="width:220px;height:220px">` : ""}
+              <div class="itemMeta">${formatBytes(item.size)} • ${item.content_type || ""}</div>
+            </div>
+          `;
+        };
+      });
+
       box.querySelectorAll("[data-delete-file]").forEach(btn => {
         btn.onclick = async () => {
           await api("/v1/files/delete", {
@@ -477,10 +437,25 @@
           <div>${escapeHtml(item.content)}</div>
           <div class="itemMeta">${escapeHtml(item.tags || "")} • ${new Date(item.created_at).toLocaleString()}</div>
           <div class="row">
+            <button class="btn small" data-edit-memory="${item.id}">Editar</button>
             <button class="btn small" data-delete-memory="${item.id}">Borrar</button>
           </div>
         `;
         box.appendChild(div);
+      });
+
+      box.querySelectorAll("[data-edit-memory]").forEach(btn => {
+        btn.onclick = async () => {
+          const { data } = await api("/v1/memory/list");
+          const item = (data.items || []).find(x => x.id === btn.dataset.editMemory);
+          if (!item) return;
+          document.getElementById("memoryEditId").value = item.id;
+          document.getElementById("memoryTitle").value = item.title || "";
+          document.getElementById("memoryContent").value = item.content || "";
+          document.getElementById("memoryTags").value = item.tags || "";
+          document.getElementById("cancelMemoryBtn").classList.remove("hidden");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
       });
 
       box.querySelectorAll("[data-delete-memory]").forEach(btn => {
@@ -497,21 +472,32 @@
     }
 
     async function saveMemory() {
+      const id = document.getElementById("memoryEditId").value.trim();
       const title = document.getElementById("memoryTitle").value.trim();
       const content = document.getElementById("memoryContent").value.trim();
       const tags = document.getElementById("memoryTags").value.trim();
       if (!content) return alert("Escribí contenido.");
-      const { data } = await api("/v1/memory/create", {
+
+      const endpoint = id ? "/v1/memory/update" : "/v1/memory/create";
+      const { data } = await api(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ title, content, tags })
+        body: JSON.stringify({ id, title, content, tags })
       });
+
       if (!data.ok) return alert("Error memory: " + JSON.stringify(data));
+
+      clearMemoryForm();
+      await loadMemory();
+      await loadDashboard();
+    }
+
+    function clearMemoryForm() {
+      document.getElementById("memoryEditId").value = "";
       document.getElementById("memoryTitle").value = "";
       document.getElementById("memoryContent").value = "";
       document.getElementById("memoryTags").value = "";
-      await loadMemory();
-      await loadDashboard();
+      document.getElementById("cancelMemoryBtn").classList.add("hidden");
     }
 
     async function loadAcademy() {
@@ -521,10 +507,7 @@
       (data.items || []).forEach(item => {
         const div = document.createElement("div");
         div.className = "item";
-        div.innerHTML = `
-          <div class="itemTitle">${escapeHtml(item.title)}</div>
-          <div>${escapeHtml(item.description || "")}</div>
-        `;
+        div.innerHTML = `<div class="itemTitle">${escapeHtml(item.title)}</div><div>${escapeHtml(item.description || "")}</div>`;
         box.appendChild(div);
       });
     }
@@ -536,10 +519,7 @@
       (data.items || []).forEach(item => {
         const div = document.createElement("div");
         div.className = "item";
-        div.innerHTML = `
-          <div class="itemTitle">${escapeHtml(item.title)} (${escapeHtml(item.type)})</div>
-          <div>${escapeHtml(item.description || "")}</div>
-        `;
+        div.innerHTML = `<div class="itemTitle">${escapeHtml(item.title)} (${escapeHtml(item.type)})</div><div>${escapeHtml(item.description || "")}</div>`;
         box.appendChild(div);
       });
     }
@@ -549,18 +529,44 @@
       const { data } = await api("/v1/search?q=" + encodeURIComponent(q));
       const box = document.getElementById("searchResults");
       box.innerHTML = "";
-      ["memory", "files", "academy", "media"].forEach(group => {
-        const items = data[group] || [];
-        const head = document.createElement("div");
-        head.className = "item";
-        head.innerHTML = `<div class="itemTitle">${group.toUpperCase()}</div><div>${items.length} resultados</div>`;
-        box.appendChild(head);
-        items.forEach(item => {
-          const div = document.createElement("div");
-          div.className = "item";
-          div.textContent = JSON.stringify(item, null, 2);
-          box.appendChild(div);
-        });
+
+      renderSearchGroup(box, "MEMORY", data.memory || [], item => `
+        <div class="itemTitle">${escapeHtml(item.title || "Sin título")}</div>
+        <div>${escapeHtml(item.content || "")}</div>
+      `);
+
+      renderSearchGroup(box, "FILES", data.files || [], item => `
+        <div class="previewWrap">
+          ${item.is_image ? `<img class="thumb" src="${API}/v1/files/download/${item.id}" alt="">` : ""}
+          <div>
+            <div class="itemTitle">${escapeHtml(item.filename)}</div>
+            <div class="itemMeta">${formatBytes(item.size)} • ${escapeHtml(item.content_type || "")}</div>
+          </div>
+        </div>
+      `);
+
+      renderSearchGroup(box, "ACADEMY", data.academy || [], item => `
+        <div class="itemTitle">${escapeHtml(item.title)}</div>
+        <div>${escapeHtml(item.description || "")}</div>
+      `);
+
+      renderSearchGroup(box, "MEDIA", data.media || [], item => `
+        <div class="itemTitle">${escapeHtml(item.title)} (${escapeHtml(item.type)})</div>
+        <div>${escapeHtml(item.description || "")}</div>
+      `);
+    }
+
+    function renderSearchGroup(box, title, items, renderer) {
+      const head = document.createElement("div");
+      head.className = "item";
+      head.innerHTML = `<div class="itemTitle">${title}</div><div>${items.length} resultados</div>`;
+      box.appendChild(head);
+
+      items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = renderer(item);
+        box.appendChild(div);
       });
     }
 
@@ -587,18 +593,6 @@
       add("assistant", data.answer || "Sin respuesta.");
     }
 
-    function escapeHtml(s) {
-      return String(s ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    }
-
-    function formatBytes(bytes) {
-      if (!bytes) return "0 B";
-      const units = ["B","KB","MB","GB"];
-      let i = 0, n = bytes;
-      while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
-      return `${n.toFixed(i ? 1 : 0)} ${units[i]}`;
-    }
-
     document.querySelectorAll(".tab").forEach(btn => {
       btn.onclick = () => {
         document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
@@ -619,6 +613,7 @@
     document.getElementById("refreshFilesBtn").onclick = loadFiles;
     document.getElementById("saveMemoryBtn").onclick = saveMemory;
     document.getElementById("refreshMemoryBtn").onclick = loadMemory;
+    document.getElementById("cancelMemoryBtn").onclick = clearMemoryForm;
     document.getElementById("searchBtn").onclick = runSearch;
 
     input.addEventListener("keydown", e => {
