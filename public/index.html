@@ -16,7 +16,6 @@
       --ok:#2dd4bf;
       --danger:#ff6b6b;
       --shadow:0 20px 60px rgba(0,0,0,.45);
-      --radius:24px;
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 50% -10%, #141824 0%, #08090d 50%, #040507 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
@@ -29,14 +28,13 @@
       background:
         radial-gradient(circle at 35% 30%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.5) 10%, rgba(255,255,255,.12) 18%, rgba(255,255,255,.03) 28%, rgba(255,255,255,0) 42%),
         radial-gradient(circle at 50% 50%, #ffffff 0%, #a5b4fc 16%, #60a5fa 28%, #3b82f6 40%, #0f172a 72%, #05060a 100%);
-      box-shadow: 0 0 42px rgba(96,165,250,.35), inset 0 0 28px rgba(255,255,255,.25);
+      box-shadow:0 0 42px rgba(96,165,250,.35), inset 0 0 28px rgba(255,255,255,.25);
     }
     .t1{font-size:18px;font-weight:700;letter-spacing:.18em}
     .t2{font-size:11px;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
     .status{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
     .dot{width:9px;height:9px;border-radius:50%;background:var(--danger);box-shadow:0 0 12px rgba(255,107,107,.65)}
     .dot.ok{background:var(--ok);box-shadow:0 0 12px rgba(45,212,191,.65)}
-
     .gate,.dashboard{
       background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
       border:1px solid var(--line);
@@ -53,7 +51,6 @@
       min-height:54px;border-radius:18px;font-size:15px;font-weight:700;padding:0 18px
     }
     .btn.primary{background:#ffffff;color:#06080d}
-    .btn:active{transform:scale(.98)}
     .grid{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -180,14 +177,27 @@
       return { res, data };
     }
 
+    function arrayBufferToBase64url(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let s = "";
+      for (const b of bytes) s += String.fromCharCode(b);
+      return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    function base64urlToBase64(input) {
+      let s = input.replace(/-/g, "+").replace(/_/g, "/");
+      while (s.length % 4) s += "=";
+      return s;
+    }
+
     async function registerPasskey() {
-      const { data: options } = await api("/v1/auth/register-options", {
+      const { res, data: options } = await api("/v1/auth/register-options", {
         method: "POST",
         body: JSON.stringify({ email: "owner@consia.world" })
       });
 
-      if (!options.ok) {
-        alert("Error register-options");
+      if (!res.ok || !options.ok) {
+        alert("Error register-options: " + JSON.stringify(options));
         return;
       }
 
@@ -212,6 +222,11 @@
         }
       });
 
+      if (!credential) {
+        alert("No se pudo registrar Face ID.");
+        return;
+      }
+
       const credentialId = arrayBufferToBase64url(credential.rawId);
 
       const verify = await api("/v1/auth/register-verify", {
@@ -225,18 +240,18 @@
       if (verify.data.ok) {
         alert("Face ID registrado.");
       } else {
-        alert("Error al registrar.");
+        alert("Error register-verify: " + JSON.stringify(verify.data));
       }
     }
 
     async function loginPasskey() {
-      const { data: options } = await api("/v1/auth/login-options", {
+      const { res, data: options } = await api("/v1/auth/login-options", {
         method: "POST",
         body: JSON.stringify({})
       });
 
-      if (!options.ok) {
-        alert("Error login-options");
+      if (!res.ok || !options.ok) {
+        alert("Error login-options: " + JSON.stringify(options));
         return;
       }
 
@@ -265,7 +280,7 @@
       if (verify.data.ok) {
         await checkMe();
       } else {
-        alert("Error al iniciar sesión.");
+        alert("Error login-verify: " + JSON.stringify(verify.data));
       }
     }
 
@@ -302,24 +317,12 @@
       add("assistant", data.answer || "Sin respuesta.");
     }
 
-    function arrayBufferToBase64url(buffer) {
-      const bytes = new Uint8Array(buffer);
-      let s = "";
-      for (const b of bytes) s += String.fromCharCode(b);
-      return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-    }
-
-    function base64urlToBase64(input) {
-      let s = input.replace(/-/g, "+").replace(/_/g, "/");
-      while (s.length % 4) s += "=";
-      return s;
-    }
-
     document.getElementById("registerBtn").onclick = registerPasskey;
     document.getElementById("loginBtn").onclick = loginPasskey;
     document.getElementById("refreshBtn").onclick = checkMe;
     document.getElementById("logoutBtn").onclick = logout;
     document.getElementById("sendBtn").onclick = sendChat;
+
     input.addEventListener("keydown", e => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
