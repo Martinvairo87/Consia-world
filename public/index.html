@@ -1,341 +1,56 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONSIA</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body {
-      background: #0b1020;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-      position: sticky;
-      top: 0;
-      backdrop-filter: blur(12px);
-      z-index: 10;
-    }
-    .brand {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    .status {
-      font-size: 13px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: #12321d;
-      color: #89ffb0;
-      border: 1px solid #245a35;
-    }
-    .wrap {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 20px;
-      flex: 1;
-    }
-    .card {
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 20px;
-      padding: 18px;
-      backdrop-filter: blur(12px);
-    }
-    .card h2 {
-      font-size: 16px;
-      margin-bottom: 14px;
-      color: #d7e3ff;
-    }
-    .muted { color: #95a2c6; font-size: 13px; }
-    .agents {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .agent {
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-    .agent strong { display: block; margin-bottom: 4px; }
-    .main {
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      gap: 16px;
-      min-height: 75vh;
-    }
-    .hero {
-      padding: 22px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, rgba(85,122,255,.25), rgba(0,255,200,.12));
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .hero h1 {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
-    .hero p {
-      color: #c4d1f6;
-      line-height: 1.45;
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 12px;
-    }
-    .stat {
-      padding: 14px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .stat .k {
-      font-size: 12px;
-      color: #97a7d6;
-      margin-bottom: 8px;
-    }
-    .stat .v {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .chat {
-      display: flex;
-      flex-direction: column;
-      min-height: 420px;
-    }
-    .messages {
-      flex: 1;
-      overflow: auto;
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-    .msg {
-      margin-bottom: 12px;
-      max-width: 85%;
-      white-space: pre-wrap;
-      line-height: 1.45;
-      padding: 12px 14px;
-      border-radius: 16px;
-    }
-    .me {
-      margin-left: auto;
-      background: #3156ff;
-    }
-    .bot {
-      background: rgba(255,255,255,.08);
-    }
-    .composer {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    input, button {
-      border: none;
-      outline: none;
-      border-radius: 14px;
-      padding: 14px 16px;
-      font-size: 15px;
-    }
-    input {
-      background: rgba(255,255,255,.07);
-      color: white;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    button {
-      background: #3156ff;
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    button.secondary {
-      background: rgba(255,255,255,.08);
-    }
-    .footerline {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      color: #93a4d3;
-      font-size: 13px;
-    }
-    @media (max-width: 900px) {
-      .wrap { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: repeat(2,1fr); }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>CONSIA</title>
 </head>
-<body>
-  <div class="topbar">
-    <div class="brand">CONSIA</div>
-    <div class="status" id="apiStatus">API conectando...</div>
-  </div>
 
-  <div class="wrap">
-    <aside class="card">
-      <h2>Sistema</h2>
-      <div class="muted">Estado general de CONSIA</div>
-      <div class="agents" style="margin-top:16px;">
-        <div class="agent"><strong id="serviceName">CONSIA API</strong><span class="muted" id="serviceState">Cargando...</span></div>
-        <div class="agent"><strong>Modo</strong><span class="muted">Production Live</span></div>
-        <div class="agent"><strong>Marketplace</strong><span class="muted" id="marketInfo">Cargando...</span></div>
-      </div>
+<body style="background:#0b1020;color:white;font-family:Arial;padding:40px">
 
-      <h2 style="margin-top:18px;">Agentes</h2>
-      <div id="agentsList" class="agents"></div>
-    </aside>
+<h1>CONSIA SYSTEM ONLINE</h1>
 
-    <main class="main">
-      <section class="hero">
-        <h1>CONSIA ACTIVE</h1>
-        <p>Centro de control, conversación, agentes, memoria y ejecución en una sola interfaz.</p>
-      </section>
+<p>API Status:</p>
 
-      <section class="stats">
-        <div class="stat">
-          <div class="k">API</div>
-          <div class="v" id="apiMini">...</div>
-        </div>
-        <div class="stat">
-          <div class="k">Agentes</div>
-          <div class="v" id="agentsCount">0</div>
-        </div>
-        <div class="stat">
-          <div class="k">Productos</div>
-          <div class="v" id="productsCount">0</div>
-        </div>
-        <div class="stat">
-          <div class="k">Modo</div>
-          <div class="v">LIVE</div>
-        </div>
-      </section>
+<pre id="health"></pre>
 
-      <section class="card chat">
-        <h2>Chat CONSIA</h2>
-        <div id="messages" class="messages">
-          <div class="msg bot">CONSIA lista. Escribí tu mensaje.</div>
-        </div>
-        <div class="composer">
-          <input id="msg" placeholder="Escribí acá..." />
-          <button onclick="sendMessage()">Enviar</button>
-          <button class="secondary" onclick="clearChat()">Limpiar</button>
-        </div>
-      </section>
+<input id="msg" placeholder="Hablar con CONSIA">
+<button onclick="send()">Enviar</button>
 
-      <section class="footerline">
-        <div id="healthLine">Health: ...</div>
-        <div id="timeLine">Esperando...</div>
-      </section>
-    </main>
-  </div>
+<pre id="chat"></pre>
 
-  <script>
-    const API = "https://api.consia.world";
+<script>
 
-    function addMessage(text, type = "bot") {
-      const box = document.getElementById("messages");
-      const div = document.createElement("div");
-      div.className = "msg " + type;
-      div.textContent = text;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
+const API="https://api.consia.world"
 
-    function clearChat() {
-      document.getElementById("messages").innerHTML = '<div class="msg bot">Chat limpio.</div>';
-    }
+async function load(){
 
-    async function sendMessage() {
-      const input = document.getElementById("msg");
-      const text = input.value.trim();
-      if (!text) return;
+const r=await fetch(API+"/health")
+const j=await r.json()
 
-      addMessage(text, "me");
-      input.value = "";
+document.getElementById("health").innerText=
+JSON.stringify(j,null,2)
 
-      try {
-        const res = await fetch(API + "/v1/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text })
-        });
-        const data = await res.json();
-        addMessage(data.answer || "Sin respuesta.", "bot");
-      } catch (e) {
-        addMessage("Error de conexión con CONSIA.", "bot");
-      }
-    }
+}
 
-    async function loadHealth() {
-      try {
-        const res = await fetch(API + "/health");
-        const data = await res.json();
+async function send(){
 
-        document.getElementById("apiStatus").textContent = data.ok ? "API online" : "API error";
-        document.getElementById("serviceName").textContent = data.service || "CONSIA API";
-        document.getElementById("serviceState").textContent = (data.status || "online") + " · " + (data.version || "");
-        document.getElementById("apiMini").textContent = data.ok ? "OK" : "ERR";
-        document.getElementById("healthLine").textContent = "Health: " + JSON.stringify(data);
-        document.getElementById("timeLine").textContent = "Server time: " + (data.time || "-");
-      } catch (e) {
-        document.getElementById("apiStatus").textContent = "API error";
-        document.getElementById("apiMini").textContent = "ERR";
-      }
-    }
+const msg=document.getElementById("msg").value
 
-    async function loadAgents() {
-      try {
-        const res = await fetch(API + "/agents");
-        const data = await res.json();
-        const wrap = document.getElementById("agentsList");
-        wrap.innerHTML = "";
-        const agents = data.agents || [];
-        document.getElementById("agentsCount").textContent = agents.length;
+const r=await fetch(API+"/v1/chat",{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({message:msg})
+})
 
-        agents.forEach(a => {
-          const div = document.createElement("div");
-          div.className = "agent";
-          div.innerHTML = `<strong>${a.name}</strong><span class="muted">${a.role} · ${a.description}</span>`;
-          wrap.appendChild(div);
-        });
-      } catch (e) {}
-    }
+const j=await r.json()
 
-    async function loadProducts() {
-      try {
-        const res = await fetch(API + "/v1/marketplace/products");
-        const data = await res.json();
-        document.getElementById("productsCount").textContent = data.count || 0;
-        document.getElementById("marketInfo").textContent = "Productos: " + (data.count || 0);
-      } catch (e) {
-        document.getElementById("marketInfo").textContent = "Sin conexión";
-      }
-    }
+document.getElementById("chat").innerText=j.answer
 
-    document.getElementById("msg").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") sendMessage();
-    });
+}
 
-    loadHealth();
-    loadAgents();
-    loadProducts();
-  </script>
+load()
+
+</script>
+
 </body>
 </html>
