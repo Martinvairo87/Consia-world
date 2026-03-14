@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA APP</title>
+  <meta name="theme-color" content="#050b16" />
+  <style>
+    :root{
+      --bg:#050b16;
+      --bg2:#081224;
+      --panel:#0d1830cc;
+      --panel-strong:#111f3c;
+      --card:#132544;
+      --card2:#0f1e38;
+      --line:rgba(255,255,255,.08);
+      --line-2:rgba(255,255,255,.14);
+      --text:#f5f8ff;
+      --muted:#9aaecf;
+      --accent:#4de2b1;
+      --accent2:#4ca6ff;
+      --accent3:#8b7cff;
+      --ok:#3fe08f;
+      --warn:#ffc766;
+      --danger:#ff6d7a;
+      --shadow:0 12px 42px rgba(0,0,0,.35);
+      --radius:22px;
+      --radius-sm:16px;
+      --blur:16px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(76,166,255,.16), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(77,226,177,.10), transparent 22%),
+        radial-gradient(circle at 20% 20%, rgba(139,124,255,.10), transparent 18%),
+        linear-gradient(180deg, #040915 0%, #07101d 100%);
+      overflow:hidden;
+    }
+
+    .shell{
+      display:grid;
+      grid-template-columns:300px 1fr 360px;
+      gap:16px;
+      height:100vh;
+      padding:16px;
+    }
+
+    .glass{
+      background:linear-gradient(180deg, rgba(13,24,48,.88), rgba(8,18,36,.82));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      backdrop-filter:blur(var(--blur));
+      -webkit-backdrop-filter:blur(var(--blur));
+      box-shadow:var(--shadow);
+      min-height:0;
+    }
+
+    .left{
+      display:flex;
+      flex-direction:column;
+      padding:18px;
+      gap:14px;
+      overflow:auto;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:8px 6px 16px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .logo{
+      width:54px;height:54px;border-radius:16px;
+      display:grid;place-items:center;
+      background:
+        linear-gradient(135deg, rgba(76,166,255,.28), rgba(77,226,177,.26));
+      border:1px solid rgba(255,255,255,.12);
+      font-weight:800;
+      font-size:24px;
+      letter-spacing:.05em;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:24px;
+      line-height:1;
+      letter-spacing:.02em;
+    }
+
+    .brand p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .section-title{
+      font-size:11px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding:4px 4px 0;
+      margin-top:6px;
+    }
+
+    .nav{
+      display:grid;
+      gap:8px;
+    }
+
+    .nav-btn,.chip-btn,.soft-btn,.icon-btn,.ghost-btn,.cta-btn,.small-btn{
+      color:var(--text);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      cursor:pointer;
+      transition:.18s ease;
+      font:inherit;
+    }
+
+    .nav-btn{
+      width:100%;
+      border-radius:16px;
+      padding:13px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      text-align:left;
+    }
+
+    .nav-btn:hover,.chip-btn:hover,.soft-btn:hover,.icon-btn:hover,.ghost-btn:hover,.cta-btn:hover,.small-btn:hover{
+      transform:translateY(-1px);
+      border-color:var(--line-2);
+      background:rgba(255,255,255,.06);
+    }
+
+    .nav-btn.active{
+      background:linear-gradient(135deg, rgba(77,226,177,.16), rgba(76,166,255,.14));
+      border-color:rgba(77,226,177,.26);
+    }
+
+    .nav-main{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+
+    .nav-main strong{
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .nav-main span{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .badge{
+      font-size:11px;
+      color:var(--muted);
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+
+    .owner-card,.quick-card{
+      padding:16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    .owner-card{
+      background:linear-gradient(180deg, rgba(77,226,177,.08), rgba(76,166,255,.07));
+      border-color:rgba(77,226,177,.16);
+    }
+
+    .owner-card h3,.quick-card h3{
+      margin:0 0 10px;
+      font-size:15px;
+    }
+
+    .owner-card p,.quick-card p{
+      margin:0 0 12px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    .row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .chip-btn,.soft-btn,.ghost-btn,.small-btn,.cta-btn{
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+    }
+
+    .cta-btn{
+      background:linear-gradient(135deg, rgba(77,226,177,.24), rgba(76,166,255,.18));
+      border-color:rgba(77,226,177,.3);
+      font-weight:700;
+    }
+
+    .ghost-btn{
+      background:transparent;
+    }
+
+    .main{
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      min-height:0;
+      overflow:hidden;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:18px 20px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .topbar h2{
+      margin:0;
+      font-size:28px;
+      line-height:1;
+    }
+
+    .topbar p{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .topbar-right{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:var(--warn);
+      box-shadow:0 0 0 3px rgba(255,199,102,.12);
+    }
+
+    .dot.ok{
+      background:var(--ok);
+      box-shadow:0 0 0 3px rgba(63,224,143,.12);
+    }
+
+    .hero{
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:14px;
+    }
+
+    .hero-box{
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      min-height:140px;
+    }
+
+    .hero-box h3{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+
+    .hero-box p{
+      margin:0 0 12px;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:14px;
+    }
+
+    .metric-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+    }
+
+    .metric{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:rgba(255,255,255,.03);
+    }
+
+    .metric label{
+      display:block;
+      font-size:11px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .metric strong{
+      display:block;
+      margin-top:8px;
+      font-size:22px;
+    }
+
+    .workspace{
+      min-height:0;
+      overflow:hidden;
+    }
+
+    .view{
+      display:none;
+      height:100%;
+      overflow:auto;
+      padding:16px 18px 0;
+    }
+
+    .view.active{display:block}
+
+    .grid{
+      display:grid;
+      gap:14px;
+    }
+
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    .card h3,.card h4{
+      margin:0 0 8px;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .list{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .item{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px 13px;
+      background:rgba(255,255,255,.03);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .item strong{
+      display:block;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .item span,.item small{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:11px;
+      padding:8px 10px;
+      white-space:nowrap;
+    }
+
+    .chat-view{
+      display:grid;
+      grid-template-rows:1fr auto;
+      gap:14px;
+      height:calc(100vh - 292px);
+      min-height:500px;
+    }
+
+    .messages{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.018));
+      overflow:auto;
+    }
+
+    .msg{
+      display:flex;
+      gap:12px;
+      margin-bottom:16px;
+      align-items:flex-start;
+    }
+
+    .msg:last-child{margin-bottom:0}
+
+    .avatar{
+      width:40px;height:40px;border-radius:14px;
+      display:grid;place-items:center;
+      font-size:13px;
+      font-weight:800;
+      border:1px solid var(--line);
+      flex:0 0 auto;
+    }
+
+    .avatar.user{background:rgba(76,166,255,.16)}
+    .avatar.bot{background:rgba(77,226,177,.12)}
+
+    .bubble{
+      max-width:min(92%, 920px);
+      border-radius:18px;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      white-space:pre-wrap;
+      line-height:1.6;
+      font-size:14px;
+    }
+
+    .bubble.user{background:rgba(76,166,255,.12)}
+
+    .composer{
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+    }
+
+    textarea,input,select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#081324;
+      color:var(--text);
+      outline:none;
+      font:inherit;
+    }
+
+    textarea{
+      min-height:68px;
+      max-height:200px;
+      resize:vertical;
+      padding:14px;
+    }
+
+    input,select{
+      padding:12px 13px;
+    }
+
+    .composer-top{
+      display:grid;
+      grid-template-columns:1fr 180px;
+      gap:10px;
+    }
+
+    .composer-actions{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    .left-actions,.right-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .icon-btn{
+      height:44px;
+      min-width:44px;
+      padding:0 14px;
+      border-radius:14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:15px;
+      font-weight:700;
+    }
+
+    .dropzone{
+      border:1px dashed rgba(255,255,255,.16);
+      border-radius:20px;
+      padding:24px;
+      text-align:center;
+      background:rgba(255,255,255,.025);
+    }
+
+    .dropzone h3{margin:0 0 8px}
+    .dropzone p{margin:0 0 14px;color:var(--muted)}
+    input[type="file"]{display:none}
+
+    .right{
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:12px;
+      padding:14px;
+      min-height:0;
+    }
+
+    .mini{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      background:rgba(255,255,255,.03);
+      min-height:0;
+    }
+
+    .mini h4{
+      margin:0 0 10px;
+      font-size:14px;
+    }
+
+    .mini p{
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    .health-list,.console-list{
+      display:grid;
+      gap:8px;
+      max-height:100%;
+      overflow:auto;
+      padding-right:2px;
+    }
+
+    .health-row{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.03);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size:13px;
+    }
+
+    .footer{
+      padding:12px 18px 16px;
+      color:var(--muted);
+      font-size:11px;
+      text-align:center;
+      border-top:1px solid var(--line);
+    }
+
+    .hidden{display:none !important}
+
+    @media (max-width: 1380px){
+      .shell{grid-template-columns:280px 1fr 330px}
+      .hero{grid-template-columns:1fr}
+      .metric-grid{grid-template-columns:repeat(2,1fr)}
+    }
+
+    @media (max-width: 1150px){
+      body{overflow:auto}
+      .shell{
+        height:auto;
+        min-height:100vh;
+        grid-template-columns:1fr;
+        grid-template-rows:auto auto auto;
+        overflow:auto;
+      }
+      .main{min-height:70vh}
+      .chat-view{height:auto;min-height:560px}
+      .right,.left{min-height:auto}
+    }
+
+    @media (max-width: 780px){
+      .grid-2,.grid-3,.metric-grid,.composer-top{grid-template-columns:1fr}
+      .topbar{flex-direction:column;align-items:flex-start}
+      .topbar-right{justify-content:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="glass left">
+      <div class="brand">
+        <div class="logo">C</div>
+        <div>
+          <h1>CONSIA</h1>
+          <p>Ultra Premium Command Suite</p>
+        </div>
+      </div>
+
+      <div class="section-title">Control</div>
+      <div class="nav">
+        <button class="nav-btn active" data-view="chat">
+          <div class="nav-main">
+            <strong>Chat Central</strong>
+            <span>brain · voice · orchestration</span>
+          </div>
+          <span class="badge">live</span>
+        </button>
+        <button class="nav-btn" data-view="agents">
+          <div class="nav-main">
+            <strong>Agentes</strong>
+            <span>swarm · tasks · roles</span>
+          </div>
+          <span class="badge">8+</span>
+        </button>
+        <button class="nav-btn" data-view="memory">
+          <div class="nav-main">
+            <strong>Memory Vault</strong>
+            <span>global brain · local notes</span>
+          </div>
+          <span class="badge">vault</span>
+        </button>
+        <button class="nav-btn" data-view="files">
+          <div class="nav-main">
+            <strong>Infinite Files</strong>
+            <span>upload · classify · export</span>
+          </div>
+          <span class="badge">files</span>
+        </button>
+        <button class="nav-btn" data-view="market">
+          <div class="nav-main">
+            <strong>Marketplace</strong>
+            <span>plans · products · sales</span>
+          </div>
+          <span class="badge">commerce</span>
+        </button>
+        <button class="nav-btn" data-view="autopilot">
+          <div class="nav-main">
+            <strong>Autopilot</strong>
+            <span>execution · roadmaps · actions</span>
+          </div>
+          <span class="badge">auto</span>
+        </button>
+      </div>
+
+      <div class="section-title">Owner</div>
+      <div class="owner-card">
+        <h3>Owner Center</h3>
+        <p>Acciones rápidas para refrescar módulos, voz, lectura hablada y navegación directa.</p>
+        <div class="row">
+          <button class="cta-btn" id="refreshAllBtn">Refresh</button>
+          <button class="soft-btn" id="voiceToggleBtn">Voz</button>
+          <button class="soft-btn" id="speakToggleBtn">Hablar</button>
+          <button class="soft-btn" id="goChatBtn">Chat</button>
+        </div>
+      </div>
+
+      <div class="quick-card">
+        <h3>Quick Launch</h3>
+        <p>Plantillas premium para disparar tareas a máxima velocidad.</p>
+        <div class="row">
+          <button class="chip-btn quick-prompt" data-prompt="Analizá este negocio y armá un plan premium completo con ejecución real.">Plan premium</button>
+          <button class="chip-btn quick-prompt" data-prompt="Diseñá estrategia comercial, marketing, automatización y seguimiento.">Go to market</button>
+          <button class="chip-btn quick-prompt" data-prompt="Convertí esto en roadmap con fases, responsables, entregables y prioridades.">Roadmap</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="glass main">
+      <div class="topbar">
+        <div>
+          <h2>CONSIA Ultra Premium App</h2>
+          <p id="subtitle">Sistema central de conversación, ejecución, memoria, archivos y monetización.</p>
+        </div>
+        <div class="topbar-right">
+          <div class="status-pill"><span class="dot" id="dotApi"></span><span id="statusApi">API...</span></div>
+          <div class="status-pill"><span class="dot" id="dotMemory"></span><span id="statusMemory">Memory...</span></div>
+          <div class="status-pill"><span class="dot" id="dotVoice"></span><span id="statusVoice">Voice...</span></div>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div class="hero-box">
+          <h3>CONSIA AI-OS Control Plane</h3>
+          <p>
+            Interfaz premium para conversar, orquestar agentes, centralizar archivos, guardar memoria y vender módulos desde una sola cabina.
+          </p>
+          <div class="row">
+            <button class="cta-btn" id="heroOpenChat">Abrir chat</button>
+            <button class="soft-btn" id="heroAgents">Agentes</button>
+            <button class="soft-btn" id="heroFiles">Archivos</button>
+            <button class="soft-btn" id="heroMarket">Marketplace</button>
+          </div>
+        </div>
+        <div class="hero-box">
+          <div class="metric-grid">
+            <div class="metric">
+              <label>Health</label>
+              <strong id="metricHealth">--</strong>
+            </div>
+            <div class="metric">
+              <label>Agents</label>
+              <strong id="metricAgents">--</strong>
+            </div>
+            <div class="metric">
+              <label>Products</label>
+              <strong id="metricProducts">--</strong>
+            </div>
+            <div class="metric">
+              <label>Files</label>
+              <strong id="metricFiles">0</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="view active" id="view-chat">
+          <div class="chat-view">
+            <div class="messages" id="messages"></div>
+
+            <div class="composer">
+              <div class="composer-top">
+                <textarea id="chatInput" placeholder="Escribí una orden premium para CONSIA..."></textarea>
+                <div class="grid" style="grid-template-columns:1fr;gap:10px;">
+                  <select id="modeSelect">
+                    <option value="brain">Brain</option>
+                    <option value="execution">Execution</option>
+                    <option value="strategy">Strategy</option>
+                    <option value="market">Market</option>
+                    <option value="memory">Memory</option>
+                  </select>
+                  <select id="toneSelect">
+                    <option value="premium">Premium</option>
+                    <option value="executive">Executive</option>
+                    <option value="direct">Direct</option>
+                    <option value="creative">Creative</option>
+                  </select>
+                </div>
+              </div>
+              <div class="composer-actions">
+                <div class="left-actions">
+                  <label class="soft-btn" for="chatFileInput">Adjuntar</label>
+                  <input type="file" id="chatFileInput" multiple />
+                  <button class="icon-btn" id="micBtn" title="Dictado">🎙️</button>
+                  <button class="icon-btn" id="clearChatBtn" title="Limpiar">🧹</button>
+                </div>
+                <div class="right-actions">
+                  <button class="chip-btn prompt-btn" data-prompt="Dame un resumen ejecutivo con próximos pasos.">Resumen</button>
+                  <button class="chip-btn prompt-btn" data-prompt="Activa agentes y dividí esta tarea en módulos concretos.">Swarm</button>
+                  <button class="chip-btn prompt-btn" data-prompt="Diseñá una propuesta comercial premium.">Propuesta</button>
+                  <button class="cta-btn" id="sendBtn">Enviar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-agents">
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>Agent Network</h3>
+              <p>Agentes conectados al backend y listos para participar.</p>
+              <div class="list" id="agentsList"></div>
+            </div>
+            <div class="card">
+              <h3>Swarm Actions</h3>
+              <p>Convertí ideas en ejecuciones rápidas.</p>
+              <div class="row" style="margin-top:14px;">
+                <button class="chip-btn swarm-btn" data-task="Investigá a fondo este proyecto y devolvé hallazgos premium.">Research</button>
+                <button class="chip-btn swarm-btn" data-task="Analizá oportunidades, riesgos y decisión recomendada.">Analysis</button>
+                <button class="chip-btn swarm-btn" data-task="Transformá esto en ejecución paso a paso.">Execution</button>
+                <button class="chip-btn swarm-btn" data-task="Guardá todo en memoria estructurada.">Memory</button>
+                <button class="chip-btn swarm-btn" data-task="Diseñá salida comercial y pricing.">Market</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-memory">
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>Memory Core</h3>
+              <p id="memoryInfo">Verificando módulo de memoria...</p>
+              <div class="list" id="memoryList"></div>
+            </div>
+            <div class="card">
+              <h3>Session Vault</h3>
+              <p>Notas locales ultra rápidas para esta sesión.</p>
+              <textarea id="memoryNote" placeholder="Escribí decisiones, aprendizajes, ideas o pendientes..."></textarea>
+              <div class="row" style="margin-top:12px;">
+                <button class="cta-btn" id="saveMemoryBtn">Guardar</button>
+                <button class="soft-btn" id="clearMemoryBtn">Borrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-files">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="dropzone">
+                <h3>CONSIA Infinite Files</h3>
+                <p>Subí archivos para ordenar y exportar.</p>
+                <label class="cta-btn" for="filesInput">Seleccionar archivos</label>
+                <input type="file" id="filesInput" multiple />
+              </div>
+              <div class="list" id="filesList"></div>
+            </div>
+            <div class="card">
+              <h3>File Actions</h3>
+              <p id="filesInfo">Chequeando storage...</p>
+              <div class="row" style="margin-top:14px;">
+                <button class="cta-btn" id="analyzeFilesBtn">Analizar</button>
+                <button class="soft-btn" id="exportFilesBtn">Exportar</button>
+                <button class="soft-btn" id="clearFilesBtn">Vaciar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-market">
+          <div class="grid grid-2">
+            <div class="card">
+              <h3>Marketplace</h3>
+              <p>Productos detectados en el backend.</p>
+              <div class="list" id="marketList"></div>
+            </div>
+            <div class="card">
+              <h3>Commercial Actions</h3>
+              <p>Transformá productos en una propuesta o pitch inmediato.</p>
+              <div class="row" style="margin-top:14px;">
+                <button class="cta-btn" id="reloadMarketBtn">Recargar</button>
+                <button class="soft-btn" id="pitchMarketBtn">Pitch</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="view" id="view-autopilot">
+          <div class="grid grid-3">
+            <div class="card">
+              <h3>Autopilot / Growth</h3>
+              <p>Plantillas premium de crecimiento y ejecución.</p>
+              <div class="row" style="margin-top:14px;">
+                <button class="chip-btn auto-btn" data-task="Armá plan comercial premium con foco en ventas y cierre.">Plan comercial</button>
+                <button class="chip-btn auto-btn" data-task="Diseñá automatización integral de captación, seguimiento y cierre.">Automatización</button>
+                <button class="chip-btn auto-btn" data-task="Creá estrategia premium de marketing, contenido y campañas.">Marketing</button>
+                <button class="chip-btn auto-btn" data-task="Transformá esto en roadmap ejecutivo con fases y prioridades.">Roadmap</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Autopilot / Operations</h3>
+              <p>Flujos para ordenar equipos, procesos y entregables.</p>
+              <div class="row" style="margin-top:14px;">
+                <button class="chip-btn auto-btn" data-task="Diseñá SOP operativo con roles, tiempos y controles.">SOP</button>
+                <button class="chip-btn auto-btn" data-task="Construí tablero operativo con KPIs y alertas.">KPIs</button>
+                <button class="chip-btn auto-btn" data-task="Definí estructura de seguimiento semanal y reporte ejecutivo.">Seguimiento</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Autopilot / Summary</h3>
+              <p id="autopilotSummary">Listo para recibir órdenes premium y ejecutar.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">CONSIA Ultra Premium App · chat · voice · agents · memory · files · marketplace</div>
+    </main>
+
+    <aside class="glass right">
+      <div class="mini">
+        <h4>System Health</h4>
+        <div class="health-list" id="healthList"></div>
+      </div>
+
+      <div class="mini">
+        <h4>Última respuesta</h4>
+        <p id="lastResponse">Todavía no hay respuesta.</p>
+      </div>
+
+      <div class="mini" style="min-height:0;overflow:auto;">
+        <h4>Console</h4>
+        <div class="console-list" id="consoleList"></div>
+      </div>
+
+      <div class="mini">
+        <h4>Access</h4>
+        <p>
+          API:
+          <br>
+          <strong style="color:var(--text)">api.consia.world</strong>
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    const API = "https://api.consia.world";
+
+    const app = {
+      agents: [],
+      products: [],
+      files: [],
+      health: {},
+      chat: [],
+      recognition: null,
+      recognitionOn: false,
+      speakOn: false
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      messages: $("messages"),
+      chatInput: $("chatInput"),
+      modeSelect: $("modeSelect"),
+      toneSelect: $("toneSelect"),
+      sendBtn: $("sendBtn"),
+      micBtn: $("micBtn"),
+      clearChatBtn: $("clearChatBtn"),
+      chatFileInput: $("chatFileInput"),
+      filesInput: $("filesInput"),
+      filesList: $("filesList"),
+      filesInfo: $("filesInfo"),
+      analyzeFilesBtn: $("analyzeFilesBtn"),
+      exportFilesBtn: $("exportFilesBtn"),
+      clearFilesBtn: $("clearFilesBtn"),
+      agentsList: $("agentsList"),
+      memoryInfo: $("memoryInfo"),
+      memoryList: $("memoryList"),
+      memoryNote: $("memoryNote"),
+      saveMemoryBtn: $("saveMemoryBtn"),
+      clearMemoryBtn: $("clearMemoryBtn"),
+      marketList: $("marketList"),
+      reloadMarketBtn: $("reloadMarketBtn"),
+      pitchMarketBtn: $("pitchMarketBtn"),
+      healthList: $("healthList"),
+      consoleList: $("consoleList"),
+      lastResponse: $("lastResponse"),
+      metricHealth: $("metricHealth"),
+      metricAgents: $("metricAgents"),
+      metricProducts: $("metricProducts"),
+      metricFiles: $("metricFiles"),
+      statusApi: $("statusApi"),
+      statusMemory: $("statusMemory"),
+      statusVoice: $("statusVoice"),
+      dotApi: $("dotApi"),
+      dotMemory: $("dotMemory"),
+      dotVoice: $("dotVoice"),
+      subtitle: $("subtitle"),
+      refreshAllBtn: $("refreshAllBtn"),
+      voiceToggleBtn: $("voiceToggleBtn"),
+      speakToggleBtn: $("speakToggleBtn"),
+      goChatBtn: $("goChatBtn"),
+      heroOpenChat: $("heroOpenChat"),
+      heroAgents: $("heroAgents"),
+      heroFiles: $("heroFiles"),
+      heroMarket: $("heroMarket"),
+      autopilotSummary: $("autopilotSummary")
+    };
+
+    function esc(v){
+      return String(v ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function log(title, detail="", ok=true){
+      const row = document.createElement("div");
+      row.className = "health-row";
+      row.innerHTML = `
+        <div>
+          <strong style="display:block;font-size:13px;">${esc(title)}</strong>
+          <small style="color:var(--muted)">${esc(detail)}</small>
+        </div>
+        <span class="tag">${ok ? "ok" : "warn"}</span>
+      `;
+      els.consoleList.prepend(row);
+      while(els.consoleList.children.length > 18){
+        els.consoleList.removeChild(els.consoleList.lastChild);
+      }
+    }
+
+    function setStatus(dot,textEl,text,ok){
+      textEl.textContent = text;
+      dot.classList.toggle("ok", !!ok);
+    }
+
+    function setView(name){
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(v => v.classList.remove("active"));
+      const view = document.querySelector(`#view-${name}`);
+      if(view) view.classList.add("active");
+      const nav = document.querySelector(`.nav-btn[data-view="${name}"]`);
+      if(nav) nav.classList.add("active");
+
+      const subtitles = {
+        chat: "Conversación premium con CONSIA.",
+        agents: "Orquestación de agentes y swarm.",
+        memory: "Memoria estructurada y notas de sesión.",
+        files: "Carga, listado y exportación de archivos.",
+        market: "Productos, APIs y propuestas comerciales.",
+        autopilot: "Plantillas premium de crecimiento y ejecución."
+      };
+      els.subtitle.textContent = subtitles[name] || "CONSIA";
+    }
+
+    function addMessage(role, text){
+      app.chat.push({role,text,time:new Date().toISOString()});
+      const row = document.createElement("div");
+      row.className = "msg";
+      row.innerHTML = `
+        <div class="avatar ${role==="user"?"user":"bot"}">${role==="user"?"YOU":"AI"}</div>
+        <div class="bubble ${role==="user"?"user":""}">${esc(text)}</div>
+      `;
+      els.messages.appendChild(row);
+      els.messages.scrollTop = els.messages.scrollHeight;
+    }
+
+    function speak(text){
+      if(!app.speakOn || !("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "es-AR";
+      window.speechSynthesis.speak(u);
+    }
+
+    function setLastResponse(text){
+      els.lastResponse.textContent = text;
+      speak(text);
+    }
+
+    async function safeGet(path){
+      const res = await fetch(API + path, { headers: { "accept":"application/json" } });
+      const txt = await res.text();
+      try { return JSON.parse(txt); }
+      catch { return { ok:false, raw:txt }; }
+    }
+
+    function updateHealth(){
+      const map = [
+        ["API", app.health.api || "pending"],
+        ["Memory", app.health.memory || "pending"],
+        ["Voice", app.health.voice || "pending"],
+        ["Files", app.health.files || "pending"],
+        ["Agents", app.health.agents || "pending"],
+        ["Market", app.health.market || "pending"]
+      ];
+      els.healthList.innerHTML = map.map(([k,v]) => `
+        <div class="health-row">
+          <span>${esc(k)}</span>
+          <span class="tag">${esc(v)}</span>
+        </div>
+      `).join("");
+
+      els.metricHealth.textContent = app.health.apiOk ? "ONLINE" : "CHECK";
+      els.metricAgents.textContent = String(app.agents.length || 0);
+      els.metricProducts.textContent = String(app.products.length || 0);
+      els.metricFiles.textContent = String(app.files.length || 0);
+    }
+
+    async function loadHealth(){
+      try{
+        const data = await safeGet("/v1/health");
+        const ok = !!data.ok;
+        app.health.apiOk = ok;
+        app.health.api = ok ? "online" : "fallback";
+        setStatus(els.dotApi, els.statusApi, ok ? "API online" : "API fallback", ok);
+        log("health", ok ? "CONSIA API online" : "fallback detectado", ok);
+      }catch{
+        app.health.apiOk = false;
+        app.health.api = "offline";
+        setStatus(els.dotApi, els.statusApi, "API offline", false);
+      }
+      updateHealth();
+    }
+
+    async function loadMemory(){
+      try{
+        const data = await safeGet("/v1/memory/status");
+        const ok = !!data.ok;
+        app.health.memoryOk = ok;
+        app.health.memory = ok ? (data.type || "active") : "fallback";
+        setStatus(els.dotMemory, els.statusMemory, ok ? "Memory active" : "Memory fallback", ok);
+
+        els.memoryInfo.textContent = ok
+          ? `Estado ${data.memory || "active"} · ${data.type || "global-brain"}`
+          : "No se pudo leer el endpoint. Se usa nota local.";
+
+        els.memoryList.innerHTML = `
+          <div class="item">
+            <div>
+              <strong>Core</strong>
+              <span>${esc(data.memory || "active")}</span>
+            </div>
+            <span class="tag">${esc(data.type || "local")}</span>
+          </div>
+          <div class="item">
+            <div>
+              <strong>Session Vault</strong>
+              <span>Guardado local en navegador</span>
+            </div>
+            <span class="tag">local</span>
+          </div>
+        `;
+      }catch{
+        app.health.memoryOk = false;
+        app.health.memory = "offline";
+        setStatus(els.dotMemory, els.statusMemory, "Memory offline", false);
+        els.memoryInfo.textContent = "No se pudo leer el endpoint de memoria.";
+      }
+      updateHealth();
+    }
+
+    async function loadVoice(){
+      try{
+        const data = await safeGet("/v1/voice/status");
+        const ok = !!data.ok;
+        app.health.voiceOk = ok;
+        app.health.voice = ok ? "active" : "fallback";
+        setStatus(els.dotVoice, els.statusVoice, ok ? "Voice active" : "Voice fallback", ok);
+      }catch{
+        app.health.voiceOk = false;
+        app.health.voice = "offline";
+        setStatus(els.dotVoice, els.statusVoice, "Voice offline", false);
+      }
+      updateHealth();
+    }
+
+    async function loadFilesStatus(){
+      try{
+        const data = await safeGet("/v1/files/status");
+        const ok = !!data.ok;
+        app.health.filesOk = ok;
+        app.health.files = ok ? (data.module || "active") : "fallback";
+        els.filesInfo.textContent = ok
+          ? `Storage activo · ${data.module || "CONSIA Infinite Files"}`
+          : "Storage fallback local";
+      }catch{
+        app.health.filesOk = false;
+        app.health.files = "offline";
+        els.filesInfo.textContent = "No se pudo leer el módulo de archivos.";
+      }
+      updateHealth();
+    }
+
+    async function loadAgents(){
+      try{
+        const data = await safeGet("/v1/agents");
+        app.agents = Array.isArray(data.agents) ? data.agents : [];
+        app.health.agentsOk = app.agents.length > 0 || !!data.ok;
+        app.health.agents = app.agents.length ? `${app.agents.length} loaded` : "empty";
+      }catch{
+        app.agents = [];
+        app.health.agentsOk = false;
+        app.health.agents = "offline";
+      }
+
+      const fallback = [
+        { name:"research_agent", role:"research", description:"investiga información" },
+        { name:"analysis_agent", role:"analysis", description:"analiza información" },
+        { name:"execution_agent", role:"execution", description:"ejecuta tareas" },
+        { name:"memory_agent", role:"memory", description:"gestiona memoria" }
+      ];
+
+      const list = app.agents.length ? app.agents : fallback;
+      els.agentsList.innerHTML = list.map(a => `
+        <div class="item">
+          <div>
+            <strong>${esc(a.name || a)}</strong>
+            <span>${esc(a.description || a.role || "agent")}</span>
+          </div>
+          <span class="tag">${esc(a.role || "module")}</span>
+        </div>
+      `).join("");
+      updateHealth();
+    }
+
+    async function loadMarket(){
+      try{
+        const data = await safeGet("/v1/marketplace/products");
+        app.products = Array.isArray(data.items) ? data.items : [];
+        app.health.marketOk = app.products.length > 0 || !!data.ok;
+        app.health.market = app.products.length ? `${app.products.length} products` : "empty";
+      }catch{
+        app.products = [];
+        app.health.marketOk = false;
+        app.health.market = "offline";
+      }
+
+      const fallback = [
+        { id:"consia-ai-api", name:"CONSIA AI API", price_usd:10, description:"AI access product" }
+      ];
+
+      const list = app.products.length ? app.products : fallback;
+      els.marketList.innerHTML = list.map(p => `
+        <div class="item">
+          <div>
+            <strong>${esc(p.name || p.id)}</strong>
+            <span>${esc(p.description || "Producto digital")}</span>
+          </div>
+          <span class="tag">USD ${esc(p.price_usd ?? "--")}</span>
+        </div>
+      `).join("");
+      updateHealth();
+    }
+
+    function renderFiles(){
+      els.filesList.innerHTML = app.files.length ? app.files.map(f => `
+        <div class="item">
+          <div>
+            <strong>${esc(f.name)}</strong>
+            <span>${Math.round((f.size || 0)/1024)} KB · ${esc(f.type || "unknown")}</span>
+          </div>
+          <span class="tag">local</span>
+        </div>
+      `).join("") : `
+        <div class="item">
+          <div>
+            <strong>Sin archivos</strong>
+            <span>No hay archivos cargados todavía.</span>
+          </div>
+          <span class="tag">0</span>
+        </div>
+      `;
+      els.metricFiles.textContent = String(app.files.length || 0);
+    }
+
+    function handleFiles(files){
+      const arr = [...files];
+      app.files = [...app.files, ...arr].slice(0, 100);
+      renderFiles();
+      log("files", `${arr.length} archivo(s) agregado(s)`, true);
+    }
+
+    function saveMemory(){
+      localStorage.setItem("consia_session_vault", els.memoryNote.value || "");
+      log("memory", "nota local guardada", true);
+    }
+
+    function loadLocalMemory(){
+      els.memoryNote.value = localStorage.getItem("consia_session_vault") || "";
+    }
+
+    async function sendChat(){
+      const message = els.chatInput.value.trim();
+      if(!message) return;
+
+      const enriched = `[${els.modeSelect.value.toUpperCase()} | ${els.toneSelect.value.toUpperCase()}]\n${message}`;
+      addMessage("user", enriched);
+      els.chatInput.value = "";
+
+      try{
+        const res = await fetch(API + "/v1/chat", {
+          method:"POST",
+          headers:{ "content-type":"application/json" },
+          body: JSON.stringify({
+            message,
+            mode: els.modeSelect.value,
+            tone: els.toneSelect.value
+          })
+        });
+
+        const txt = await res.text();
+        let data;
+        try{ data = JSON.parse(txt); }
+        catch{ data = { answer: txt || "CONSIA CORE ACTIVE" }; }
+
+        const answer = data.answer || data.message || "CONSIA CORE ACTIVE";
+        addMessage("bot", answer);
+        setLastResponse(answer);
+        log("chat", "respuesta recibida", true);
+      }catch{
+        const fallback = "CONSIA CORE ACTIVE";
+        addMessage("bot", fallback);
+        setLastResponse(fallback);
+        log("chat", "fallback local", false);
+      }
+    }
+
+    function startVoice(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR){
+        log("voice", "SpeechRecognition no disponible", false);
+        return;
+      }
+
+      if(!app.recognition){
+        app.recognition = new SR();
+        app.recognition.lang = "es-AR";
+        app.recognition.continuous = false;
+        app.recognition.interimResults = false;
+
+        app.recognition.onstart = () => {
+          app.recognitionOn = true;
+          els.micBtn.textContent = "⏹️";
+          log("voice", "dictado iniciado", true);
+        };
+
+        app.recognition.onend = () => {
+          app.recognitionOn = false;
+          els.micBtn.textContent = "🎙️";
+        };
+
+        app.recognition.onresult = (e) => {
+          const transcript = [...e.results].map(r => r[0].transcript).join(" ");
+          els.chatInput.value = (els.chatInput.value ? els.chatInput.value + " " : "") + transcript;
+        };
+
+        app.recognition.onerror = () => {
+          app.recognitionOn = false;
+          els.micBtn.textContent = "🎙️";
+          log("voice", "error de dictado", false);
+        };
+      }
+
+      if(app.recognitionOn) app.recognition.stop();
+      else app.recognition.start();
+    }
+
+    function exportFiles(){
+      const payload = app.files.map(f => ({ name:f.name, size:f.size, type:f.type }));
+      const blob = new Blob([JSON.stringify(payload,null,2)], { type:"application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "consia-files.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      log("files", "lista exportada", true);
+    }
+
+    function marketPitch(){
+      const summary = (app.products.length ? app.products : [{name:"CONSIA AI API", price_usd:10}])
+        .map(p => `${p.name} - USD ${p.price_usd ?? "--"}`)
+        .join("\n");
+      setView("chat");
+      els.chatInput.value = `Tomá estos productos y armá un pitch comercial premium:\n${summary}`;
+    }
+
+    async function bootstrap(){
+      log("system", "inicializando CONSIA", true);
+      await Promise.all([
+        loadHealth(),
+        loadMemory(),
+        loadVoice(),
+        loadFilesStatus(),
+        loadAgents(),
+        loadMarket()
+      ]);
+      loadLocalMemory();
+      renderFiles();
+      els.autopilotSummary.textContent = "Backend sincronizado. Lista premium de módulos cargada.";
+    }
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => setView(btn.dataset.view));
+    });
+
+    document.querySelectorAll(".quick-prompt,.prompt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        setView("chat");
+        els.chatInput.value = btn.dataset.prompt || "";
+        els.chatInput.focus();
+      });
+    });
+
+    document.querySelectorAll(".swarm-btn,.auto-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        setView("chat");
+        els.chatInput.value = btn.dataset.task || "";
+        els.chatInput.focus();
+      });
+    });
+
+    els.sendBtn.addEventListener("click", sendChat);
+    els.chatInput.addEventListener("keydown", (e) => {
+      if((e.metaKey || e.ctrlKey) && e.key === "Enter") sendChat();
+    });
+
+    els.micBtn.addEventListener("click", startVoice);
+
+    els.clearChatBtn.addEventListener("click", () => {
+      app.chat = [];
+      els.messages.innerHTML = "";
+      addMessage("bot", "CONSIA Ultra Premium lista para recibir órdenes.");
+    });
+
+    els.chatFileInput.addEventListener("change", (e) => handleFiles(e.target.files || []));
+    els.filesInput.addEventListener("change", (e) => handleFiles(e.target.files || []));
+
+    els.analyzeFilesBtn.addEventListener("click", () => {
+      setView("chat");
+      els.chatInput.value = app.files.length
+        ? `Analizá estos archivos y devolvé estructura premium de trabajo:\n${app.files.map(f => "- " + f.name).join("\n")}`
+        : "No hay archivos cargados todavía.";
+    });
+
+    els.exportFilesBtn.addEventListener("click", exportFiles);
+    els.clearFilesBtn.addEventListener("click", () => {
+      app.files = [];
+      renderFiles();
+      log("files", "lista vaciada", true);
+    });
+
+    els.saveMemoryBtn.addEventListener("click", saveMemory);
+    els.clearMemoryBtn.addEventListener("click", () => {
+      els.memoryNote.value = "";
+      localStorage.removeItem("consia_session_vault");
+      log("memory", "nota local borrada", true);
+    });
+
+    els.reloadMarketBtn.addEventListener("click", loadMarket);
+    els.pitchMarketBtn.addEventListener("click", marketPitch);
+
+    els.refreshAllBtn.addEventListener("click", bootstrap);
+    els.voiceToggleBtn.addEventListener("click", () => {
+      els.voiceToggleBtn.textContent = els.voiceToggleBtn.textContent === "Voz ON" ? "Voz" : "Voz ON";
+      log("voice", "modo voz alternado", true);
+    });
+
+    els.speakToggleBtn.addEventListener("click", () => {
+      app.speakOn = !app.speakOn;
+      els.speakToggleBtn.textContent = app.speakOn ? "Hablar ON" : "Hablar";
+      log("speech", app.speakOn ? "síntesis habilitada" : "síntesis deshabilitada", true);
+    });
+
+    els.goChatBtn.addEventListener("click", () => setView("chat"));
+    els.heroOpenChat.addEventListener("click", () => setView("chat"));
+    els.heroAgents.addEventListener("click", () => setView("agents"));
+    els.heroFiles.addEventListener("click", () => setView("files"));
+    els.heroMarket.addEventListener("click", () => setView("market"));
+
+    addMessage("bot", "CONSIA Ultra Premium lista para recibir órdenes.");
+    bootstrap();
+  </script>
+</body>
+</html>
