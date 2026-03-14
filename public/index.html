@@ -1,289 +1,117 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
 
 <meta charset="UTF-8">
-<title>CONSIA AI-OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA</title>
+
+<link rel="icon" href="/favicon.ico">
 
 <style>
 
 body{
-background:#0b0f19;
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial;
+background:#0b0b0c;
 color:white;
-font-family:Arial;
-padding:40px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+text-align:center;
 }
 
-.card{
-background:#141b2d;
-padding:25px;
-border-radius:10px;
-margin-bottom:25px;
+h1{
+font-size:64px;
+margin-bottom:10px;
 }
 
-input{
-width:100%;
-padding:10px;
-margin:10px 0;
-border-radius:6px;
-border:none;
+p{
+opacity:0.6;
+font-size:18px;
 }
 
 button{
-background:#33c27f;
+margin-top:30px;
+padding:14px 28px;
+border-radius:10px;
 border:none;
-padding:10px 16px;
-border-radius:8px;
+background:white;
+color:black;
+font-weight:600;
 cursor:pointer;
-margin-right:5px;
 }
 
-pre{
-background:#0b0f19;
-padding:15px;
-border-radius:6px;
+button:hover{
+opacity:0.8;
+}
+
+#status{
+margin-top:40px;
+font-size:14px;
+opacity:0.5;
 }
 
 </style>
 
 </head>
-
 <body>
 
-<h1>CONSIA AI-OS</h1>
+<h1>CONSIA</h1>
 
-<div class="card">
+<p>Autonomous Intelligence Infrastructure</p>
 
-<h2>Chat</h2>
+<button onclick="openApp()">
+Open CONSIA
+</button>
 
-<input id="msg">
-
-<button onclick="chat()">Enviar</button>
-
-<button onclick="voiceInput('msg')">🎙</button>
-
-<pre id="chat"></pre>
-
-</div>
-
-<div class="card">
-
-<h2>Swarm</h2>
-
-<input id="task">
-
-<button onclick="swarm()">Ejecutar</button>
-
-<button onclick="voiceInput('task')">🎙</button>
-
-<pre id="swarm"></pre>
-
-</div>
-
-<div class="card">
-
-<h2>Autopilot</h2>
-
-<input id="auto">
-
-<button onclick="autopilot()">Ejecutar</button>
-
-<button onclick="voiceInput('auto')">🎙</button>
-
-<pre id="auto_result"></pre>
-
-</div>
-
-<div class="card">
-
-<h2>Agent Factory</h2>
-
-<input id="agent_name" placeholder="nombre agente">
-
-<input id="agent_role" placeholder="rol agente">
-
-<button onclick="createAgent()">Crear</button>
-
-<button onclick="voiceInput('agent_name')">🎙</button>
-
-</div>
-
-<div class="card">
-
-<h2>Memory</h2>
-
-<input id="key">
-
-<input id="value">
-
-<button onclick="saveMemory()">Guardar</button>
-
-<button onclick="voiceInput('value')">🎙</button>
-
-</div>
-
-<div class="card">
-
-<h2>Files</h2>
-
-<input type="file" id="file">
-
-<button onclick="upload()">Subir</button>
-
-</div>
-
-<div class="card">
-
-<h2>Marketplace</h2>
-
-<button onclick="products()">Listar</button>
-
-<pre id="products"></pre>
-
-</div>
-
-<div class="card">
-
-<h2>Descargar resultado</h2>
-
-<button onclick="download()">Descargar TXT</button>
-
+<div id="status">
+Checking system...
 </div>
 
 <script>
 
-const API="https://api.consia.world"
+const API = "https://api.consia.world"
 
-function speak(text){
+async function checkSystem(){
 
-const speech=new SpeechSynthesisUtterance(text)
+try{
 
-speech.lang="es-ES"
+const res = await fetch(API + "/v1/health")
 
-speechSynthesis.speak(speech)
+const data = await res.json()
 
-}
+if(data.ok){
 
-function voiceInput(id){
+document.getElementById("status").innerHTML =
+"CONSIA CORE ACTIVE"
 
-const rec=new webkitSpeechRecognition()
+}else{
 
-rec.lang="es-ES"
-
-rec.onresult=e=>{
-document.getElementById(id).value=e.results[0][0].transcript
-}
-
-rec.start()
+document.getElementById("status").innerHTML =
+"API ERROR"
 
 }
 
-async function chat(){
+}catch(e){
 
-let m=document.getElementById("msg").value
-
-let r=await fetch(API+"/chat",{method:"POST",body:JSON.stringify({message:m})})
-
-let j=await r.json()
-
-document.getElementById("chat").innerText=JSON.stringify(j,null,2)
-
-speak(j.answer)
+document.getElementById("status").innerHTML =
+"API OFFLINE"
 
 }
 
-async function swarm(){
+}
 
-let t=document.getElementById("task").value
+function openApp(){
 
-let r=await fetch(API+"/swarm",{method:"POST",body:JSON.stringify({task:t})})
-
-let j=await r.json()
-
-document.getElementById("swarm").innerText=JSON.stringify(j,null,2)
-
-speak("Swarm ejecutado")
+window.location.href = "/app"
 
 }
 
-async function autopilot(){
-
-let t=document.getElementById("auto").value
-
-let r=await fetch(API+"/autopilot",{method:"POST",body:JSON.stringify({task:t})})
-
-let j=await r.json()
-
-document.getElementById("auto_result").innerText=JSON.stringify(j,null,2)
-
-speak("Autopilot ejecutado")
-
-}
-
-async function createAgent(){
-
-let name=document.getElementById("agent_name").value
-let role=document.getElementById("agent_role").value
-
-await fetch(API+"/agents/create",{method:"POST",body:JSON.stringify({name,role})})
-
-speak("Agente creado")
-
-}
-
-async function saveMemory(){
-
-let key=document.getElementById("key").value
-let value=document.getElementById("value").value
-
-await fetch(API+"/memory/save",{method:"POST",body:JSON.stringify({key,value})})
-
-speak("Memoria guardada")
-
-}
-
-async function upload(){
-
-let file=document.getElementById("file").files[0]
-
-let fd=new FormData()
-
-fd.append("file",file)
-
-await fetch(API+"/files/upload",{method:"POST",body:fd})
-
-speak("Archivo subido")
-
-}
-
-async function products(){
-
-let r=await fetch(API+"/marketplace/products")
-
-let j=await r.json()
-
-document.getElementById("products").innerText=JSON.stringify(j,null,2)
-
-speak("Marketplace cargado")
-
-}
-
-function download(){
-
-const text=document.getElementById("chat").innerText
-
-const blob=new Blob([text])
-
-const a=document.createElement("a")
-
-a.href=URL.createObjectURL(blob)
-
-a.download="consia_result.txt"
-
-a.click()
-
-}
+checkSystem()
 
 </script>
 
