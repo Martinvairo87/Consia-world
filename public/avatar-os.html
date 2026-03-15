@@ -9,8 +9,8 @@
     :root{
       --bg:#061225;
       --bg2:#0a1830;
-      --panel:rgba(8,18,40,.80);
-      --panel2:rgba(10,23,47,.62);
+      --panel:rgba(8,18,40,.82);
+      --panel2:rgba(10,23,47,.64);
       --line:rgba(99,174,255,.20);
       --cyan:#22b7ff;
       --cyan2:#8ce2ff;
@@ -28,13 +28,13 @@
       margin:0;
       padding:0;
       min-height:100%;
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      overflow-x:hidden;
       background:
         radial-gradient(circle at 15% 10%, rgba(34,183,255,.12), transparent 25%),
         radial-gradient(circle at 85% 15%, rgba(99,102,241,.12), transparent 25%),
         linear-gradient(180deg, #041021 0%, #061225 48%, #041021 100%);
-      color:var(--text);
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      overflow-x:hidden;
     }
 
     body.scene-default{
@@ -173,7 +173,7 @@
 
     .main{
       display:grid;
-      grid-template-columns:minmax(0,1fr) 390px;
+      grid-template-columns:minmax(0,1fr) 400px;
       gap:16px;
       align-items:stretch;
     }
@@ -429,6 +429,7 @@
 
     .btn:hover{transform:translateY(-1px)}
     .btn:active{transform:translateY(0)}
+    .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
     .btn-primary{
       color:#04101f;
@@ -575,14 +576,14 @@
         <div class="orb"></div>
         <div>
           <h1 class="title">CONSIA Avatar OS</h1>
-          <p class="sub">Chat + avatar + voz + acciones automáticas desde API definitiva</p>
+          <p class="sub" id="subTitle">Chat + avatar + voz + acciones automáticas desde API definitiva</p>
         </div>
       </div>
 
       <div class="status-grid">
         <div class="pill"><span id="dotHealth" class="dot warn"></span><span id="txtHealth">Health: iniciando</span></div>
         <div class="pill"><span id="dotApi" class="dot warn"></span><span id="txtApi">Chat: esperando</span></div>
-        <div class="pill"><span id="dotVoice" class="dot warn"></span><span id="txtVoice">Voz: lista</span></div>
+        <div class="pill"><span id="dotVoice" class="dot ok"></span><span id="txtVoice">Voz: lista</span></div>
         <div class="pill"><span id="dotMic" class="dot warn"></span><span id="txtMic">Mic: off</span></div>
       </div>
     </header>
@@ -641,7 +642,7 @@
         <div class="card-head">
           <div>
             <div class="card-title">Control Center</div>
-            <div class="card-sub">Todo sale por https://api.consia.world/v1/chat y las actions se ejecutan solas.</div>
+            <div class="card-sub">Todo sale por <strong>https://api.consia.world/v1/chat</strong> y las actions se ejecutan solas.</div>
           </div>
         </div>
 
@@ -712,6 +713,7 @@
     import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/controls/OrbitControls.js";
 
     const API_BASE = "https://api.consia.world";
+    const VERSION = "avatar-os-top-final-2026-03-15-v1";
 
     const $ = (id) => document.getElementById(id);
 
@@ -754,7 +756,8 @@
       btnQuickManglar: $("btnQuickManglar"),
       btnQuickPitch: $("btnQuickPitch"),
       log: $("log"),
-      toasts: $("toasts")
+      toasts: $("toasts"),
+      subTitle: $("subTitle")
     };
 
     const state = {
@@ -768,6 +771,8 @@
       history: [],
       sending: false
     };
+
+    els.subTitle.textContent = `Chat + avatar + voz + acciones automáticas · ${VERSION}`;
 
     function setDot(el, mode){
       el.classList.remove("ok","warn","err");
@@ -791,7 +796,7 @@
       card.className = "log-card";
       card.innerHTML = `<div class="log-role"></div><div class="log-text"></div>`;
       card.querySelector(".log-role").textContent = role;
-      card.querySelector(".log-text").textContent = text;
+      card.querySelector(".log-text").textContent = typeof text === "string" ? text : JSON.stringify(text, null, 2);
       els.log.prepend(card);
     }
 
@@ -1206,6 +1211,9 @@
       if(!text || state.sending) return;
 
       state.sending = true;
+      els.btnSend.disabled = true;
+      els.btnSendQuick.disabled = true;
+
       setStatus("api","warn","Chat: procesando");
       addLog("user", text);
       showBubble("TÚ", text);
@@ -1240,7 +1248,7 @@
 
         addLog("assistant", answer);
         if(actions.length){
-          addLog("actions", JSON.stringify(actions, null, 2));
+          addLog("actions", actions);
         }
 
         setStatus("api","ok","Chat: conectado");
@@ -1254,6 +1262,8 @@
         speak(msg, "CONSIA");
       } finally {
         state.sending = false;
+        els.btnSend.disabled = false;
+        els.btnSendQuick.disabled = false;
       }
     }
 
@@ -1349,7 +1359,9 @@
       try{
         const res = await fetch(`${API_BASE}/health`);
         if(!res.ok) throw new Error();
+        const data = await res.json();
         setStatus("health","ok","Health: online");
+        addLog("health", data);
       } catch {
         setStatus("health","err","Health: error");
       }
@@ -1394,8 +1406,9 @@
 
     await healthCheck();
     await loadAvatar("consia");
-    showBubble("CONSIA", "Listo. Mandame un mensaje y ejecuto automáticamente las actions del backend.");
-    addLog("system", "CONSIA Avatar OS iniciado.");
+    showBubble("CONSIA", `Listo. API base activa: ${API_BASE}`);
+    addLog("system", `CONSIA Avatar OS iniciado · ${VERSION}`);
+    addLog("system", `API base: ${API_BASE}`);
   </script>
 </body>
 </html>
