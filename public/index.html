@@ -73,7 +73,7 @@
       gap:16px;
     }
 
-    .topbar,.hero,.command,.footer{
+    .topbar,.hero,.footer{
       border:1px solid var(--line);
       border-radius:var(--radius);
       background:linear-gradient(180deg, rgba(10,22,48,.84), rgba(7,16,35,.76));
@@ -574,7 +574,7 @@
         <div class="orb"></div>
         <div>
           <h1 class="title">CONSIA OS</h1>
-          <p class="sub" id="subTitle">Índice maestro ultra rápido · API directa · ejecución automática</p>
+          <p class="sub" id="subTitle">Índice maestro ultra rápido</p>
         </div>
       </div>
 
@@ -628,7 +628,7 @@
       <div class="hero-right">
         <div class="control-head">
           <h2 class="control-title">Control Center</h2>
-          <p class="control-sub">Todo sale por <strong>https://api.consia.world/v1/chat</strong>. Si la API demora o falla, CONSIA ejecuta fallback local inmediato.</p>
+          <p class="control-sub">Todo sale por <strong>https://api.consia.world/v1/chat</strong>. Si la API falla, CONSIA ejecuta fallback local inmediato.</p>
         </div>
 
         <div class="control-body">
@@ -705,7 +705,7 @@
 
   <script>
     const API_BASE = "https://api.consia.world";
-    const VERSION = "index-top-final-2026-03-15-v1";
+    const VERSION = "index-top-final-2026-03-15-v2";
 
     const state = {
       avatar: "CONSIA",
@@ -825,7 +825,8 @@
     function log(role, text){
       const div = document.createElement("div");
       div.className = "item";
-      div.innerHTML = `<div class="role">${escapeHtml(role)}</div><div>${escapeHtml(typeof text === "string" ? text : JSON.stringify(text, null, 2))}</div>`;
+      const content = typeof text === "string" ? text : JSON.stringify(text, null, 2);
+      div.innerHTML = `<div class="role">${escapeHtml(role)}</div><div>${escapeHtml(content)}</div>`;
       el.log.prepend(div);
     }
 
@@ -854,7 +855,7 @@
 
     function speak(text, name="CONSIA"){
       if(!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
+      try { window.speechSynthesis.cancel(); } catch {}
       const u = new SpeechSynthesisUtterance(text);
       u.lang = el.langSelect.value === "auto" ? (navigator.language || "es-AR") : el.langSelect.value;
       u.rate = 1;
@@ -874,7 +875,9 @@
     }
 
     function stopSpeech(){
-      if("speechSynthesis" in window) speechSynthesis.cancel();
+      try {
+        if("speechSynthesis" in window) speechSynthesis.cancel();
+      } catch {}
       el.speech.classList.remove("show");
       setStatus("voice","ok","Voz: lista");
     }
@@ -915,9 +918,9 @@
     function setRoute(route){
       state.route = route || "/";
       el.routeLabel.textContent = `Ruta: ${state.route}`;
-      if(state.route.startsWith("/")){
-        history.replaceState(null, "", state.route);
-      }
+      try {
+        if(state.route.startsWith("/")) history.replaceState(null, "", state.route);
+      } catch {}
     }
 
     function updateUi(){
@@ -1040,23 +1043,18 @@
       showSpeech("TÚ", msg);
       toast("Enviando", "Consultando a CONSIA API...", "info");
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4500);
-
       try{
         const res = await fetch(`${API_BASE}/v1/chat`, {
           method:"POST",
+          mode:"cors",
           headers:{ "Content-Type":"application/json" },
           body: JSON.stringify({
             message: msg,
             history: state.history.slice(-10),
             language: el.langSelect.value,
             mode: el.modeSelect.value
-          }),
-          signal: controller.signal
+          })
         });
-
-        clearTimeout(timeoutId);
 
         const raw = await res.text();
         let data = {};
@@ -1080,7 +1078,6 @@
         await runActions(actions);
         speak(answer, state.avatar);
       } catch(err){
-        clearTimeout(timeoutId);
         const fallbackActions = localInterpretation(msg);
         log("ERROR", err.message || String(err));
         setStatus("api","warn","API: fallback local");
@@ -1167,38 +1164,39 @@
 
     async function healthCheck(){
       try{
-        const res = await fetch(`${API_BASE}/health`);
+        const res = await fetch(`${API_BASE}/health`, { mode:"cors" });
         const data = await res.json();
         if(!res.ok) throw new Error("health_error");
         setStatus("health","ok","Health: online");
         log("HEALTH", data);
-      } catch {
-        setStatus("health","err","Health: error");
+      } catch(err){
+        log("HEALTH_ERROR", err.message || String(err));
+        setStatus("health","warn","Health: pendiente");
       }
     }
 
-    el.btnSendTop.onclick = () => sendChat(el.messageInput.value);
-    el.btnHello.onclick = () => sendChat("Hola CONSIA");
-    el.btnRealWork.onclick = () => {
+    el.btnSendTop.addEventListener("click", () => sendChat(el.messageInput.value));
+    el.btnHello.addEventListener("click", () => sendChat("Hola CONSIA"));
+    el.btnRealWork.addEventListener("click", () => {
       el.messageInput.value = "Abrí realwork";
       sendChat(el.messageInput.value);
-    };
-    el.btnManglar.onclick = () => {
+    });
+    el.btnManglar.addEventListener("click", () => {
       el.messageInput.value = "Abrí manglar";
       sendChat(el.messageInput.value);
-    };
-    el.btnPitch.onclick = () => {
+    });
+    el.btnPitch.addEventListener("click", () => {
       el.messageInput.value = "Activá una presentación breve";
       sendChat(el.messageInput.value);
-    };
+    });
 
-    el.btnConsia.onclick = () => setAvatar("CONSIA");
-    el.btnMartin.onclick = () => setAvatar("MARTIN");
-    el.btnFuture.onclick = () => setAvatar("MARTIN FUTURE");
-    el.btnMic.onclick = toggleMic;
-    el.btnStop.onclick = stopSpeech;
-    el.btnDemo.onclick = runDemo;
-    el.langSelect.onchange = updateUi;
+    el.btnConsia.addEventListener("click", () => setAvatar("CONSIA"));
+    el.btnMartin.addEventListener("click", () => setAvatar("MARTIN"));
+    el.btnFuture.addEventListener("click", () => setAvatar("MARTIN FUTURE"));
+    el.btnMic.addEventListener("click", toggleMic);
+    el.btnStop.addEventListener("click", stopSpeech);
+    el.btnDemo.addEventListener("click", runDemo);
+    el.langSelect.addEventListener("change", updateUi);
 
     setAvatar("CONSIA");
     setModule("dashboard","dashboard");
