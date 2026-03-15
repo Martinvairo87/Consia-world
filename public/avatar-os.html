@@ -3,36 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>CONSIA Avatar OS — Realtime</title>
+  <title>CONSIA Avatar OS</title>
   <meta name="theme-color" content="#061225" />
   <style>
     :root{
       --bg:#061225;
-      --bg2:#0b1730;
-      --panel:rgba(8,18,40,.78);
-      --panel2:rgba(8,18,40,.56);
-      --line:rgba(101,176,255,.22);
+      --bg2:#0a1830;
+      --panel:rgba(8,18,40,.80);
+      --panel2:rgba(10,23,47,.62);
+      --line:rgba(99,174,255,.20);
       --cyan:#22b7ff;
-      --cyan2:#88ddff;
-      --text:#f4f8ff;
-      --muted:#9db7d8;
+      --cyan2:#8ce2ff;
+      --text:#f5f9ff;
+      --muted:#9cb8d8;
       --ok:#34d399;
       --warn:#f59e0b;
       --err:#fb7185;
-      --shadow:0 18px 60px rgba(0,0,0,.35);
       --radius:24px;
+      --shadow:0 20px 70px rgba(0,0,0,.34);
     }
+
     *{box-sizing:border-box}
     html,body{
-      margin:0;padding:0;min-height:100%;
+      margin:0;
+      padding:0;
+      min-height:100%;
       background:
-        radial-gradient(circle at 18% 8%, rgba(34,183,255,.13), transparent 22%),
-        radial-gradient(circle at 85% 14%, rgba(74,100,255,.12), transparent 22%),
-        linear-gradient(180deg, #041021 0%, #061225 45%, #041021 100%);
+        radial-gradient(circle at 15% 10%, rgba(34,183,255,.12), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(99,102,241,.12), transparent 25%),
+        linear-gradient(180deg, #041021 0%, #061225 48%, #041021 100%);
       color:var(--text);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       overflow-x:hidden;
     }
+
+    body.scene-default{
+      background:
+        radial-gradient(circle at 15% 10%, rgba(34,183,255,.12), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(99,102,241,.12), transparent 25%),
+        linear-gradient(180deg, #041021 0%, #061225 48%, #041021 100%);
+    }
+
+    body.scene-presentation{
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,196,0,.10), transparent 24%),
+        radial-gradient(circle at 80% 15%, rgba(34,183,255,.16), transparent 24%),
+        linear-gradient(180deg, #071120 0%, #10172d 50%, #071120 100%);
+    }
+
+    body.scene-sales{
+      background:
+        radial-gradient(circle at 16% 8%, rgba(52,211,153,.12), transparent 24%),
+        radial-gradient(circle at 84% 14%, rgba(34,183,255,.12), transparent 24%),
+        linear-gradient(180deg, #051221 0%, #061a28 52%, #04111f 100%);
+    }
+
+    body.scene-alert{
+      background:
+        radial-gradient(circle at 16% 8%, rgba(251,113,133,.12), transparent 24%),
+        radial-gradient(circle at 84% 14%, rgba(245,158,11,.10), transparent 24%),
+        linear-gradient(180deg, #190812 0%, #0e1223 52%, #0a0d18 100%);
+    }
+
     .app{
       min-height:100vh;
       padding:16px;
@@ -40,58 +72,100 @@
       grid-template-rows:auto 1fr auto;
       gap:16px;
     }
-    .topbar,.stage,.side,.footer{
+
+    .topbar,.stage-card,.side-card,.footer{
       border:1px solid var(--line);
       border-radius:var(--radius);
       background:linear-gradient(180deg, rgba(10,22,48,.84), rgba(7,16,35,.76));
       backdrop-filter:blur(16px);
       box-shadow:var(--shadow);
     }
+
     .topbar{
       display:grid;
       grid-template-columns:1fr auto;
-      gap:16px;
-      padding:18px;
+      gap:18px;
       align-items:center;
+      padding:18px;
     }
+
     .brand{
-      display:flex;align-items:center;gap:16px;min-width:0;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      min-width:0;
     }
+
     .orb{
-      width:58px;height:58px;border-radius:50%;
-      position:relative;flex:0 0 auto;
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      flex:0 0 auto;
+      position:relative;
       background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.98), rgba(136,221,255,.52) 16%, rgba(34,183,255,.15) 42%, rgba(34,183,255,.04) 64%, transparent 74%),
-        radial-gradient(circle at 50% 50%, rgba(34,183,255,.28), rgba(34,183,255,.04) 62%, transparent 72%);
-      border:1px solid rgba(136,221,255,.34);
-      box-shadow:0 0 50px rgba(34,183,255,.24), inset 0 0 26px rgba(136,221,255,.14);
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.95), rgba(140,226,255,.55) 16%, rgba(34,183,255,.14) 42%, rgba(34,183,255,.04) 64%, transparent 74%),
+        radial-gradient(circle at 50% 50%, rgba(34,183,255,.30), rgba(34,183,255,.04) 62%, transparent 72%);
+      border:1px solid rgba(140,226,255,.34);
+      box-shadow:0 0 50px rgba(34,183,255,.24), inset 0 0 26px rgba(140,226,255,.14);
       overflow:hidden;
     }
+
     .orb::before{
       content:"";
-      position:absolute; inset:-25%;
+      position:absolute;
+      inset:-25%;
       background:linear-gradient(90deg, transparent 0 42%, rgba(255,255,255,.16) 50%, transparent 58% 100%);
       transform:rotate(22deg);
       animation:scan 4.2s linear infinite;
     }
+
     @keyframes scan{
       from{transform:translateX(-120%) rotate(22deg)}
       to{transform:translateX(120%) rotate(22deg)}
     }
-    .title{margin:0 0 6px 0;font-size:clamp(30px,4vw,54px);line-height:1;font-weight:900;letter-spacing:-.03em}
-    .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.4}
+
+    .title{
+      margin:0 0 6px 0;
+      font-size:clamp(30px,4vw,54px);
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+
     .status-grid{
-      display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
     }
+
     .pill{
-      display:flex;align-items:center;gap:8px;
-      min-height:42px;padding:10px 14px;border-radius:999px;
-      border:1px solid var(--line);background:rgba(8,18,40,.7);
-      color:var(--text);font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-height:42px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(8,18,40,.72);
+      font-size:14px;
+      color:var(--text);
     }
+
     .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:#6b7280;color:#6b7280;box-shadow:0 0 12px currentColor;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#6b7280;
+      color:#6b7280;
+      box-shadow:0 0 12px currentColor;
     }
     .dot.ok{background:var(--ok);color:var(--ok)}
     .dot.warn{background:var(--warn);color:var(--warn)}
@@ -99,200 +173,428 @@
 
     .main{
       display:grid;
-      grid-template-columns:minmax(0,1fr) 360px;
+      grid-template-columns:minmax(0,1fr) 390px;
       gap:16px;
       align-items:stretch;
     }
-    .stage{
-      overflow:hidden;
-      min-height:72vh;
+
+    .stage-card{
+      min-height:74vh;
       display:grid;
       grid-template-rows:auto 1fr auto;
+      overflow:hidden;
     }
-    .stage-head,.side-head{
+
+    .card-head{
       padding:16px 18px;
-      border-bottom:1px solid rgba(101,176,255,.12);
+      border-bottom:1px solid rgba(99,174,255,.12);
       background:linear-gradient(180deg, rgba(12,28,58,.52), rgba(10,20,40,.12));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
-    .stage-title,.side-title{font-size:18px;font-weight:900;letter-spacing:-.02em}
-    .stage-sub,.side-sub{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.4}
+
+    .card-title{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+
+    .card-sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
     .viewer{
       position:relative;
       min-height:460px;
+      overflow:hidden;
       background:
-        radial-gradient(circle at 50% 24%, rgba(136,221,255,.10), transparent 18%),
+        radial-gradient(circle at 50% 24%, rgba(140,226,255,.10), transparent 18%),
         radial-gradient(circle at 50% 62%, rgba(34,183,255,.08), transparent 22%),
         linear-gradient(180deg, rgba(5,16,34,.82), rgba(3,12,28,.94));
-      overflow:hidden;
     }
+
     .viewer::before{
       content:"";
-      position:absolute;inset:0;pointer-events:none;
+      position:absolute;
+      inset:0;
+      pointer-events:none;
       background:
-        linear-gradient(rgba(136,221,255,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(136,221,255,.05) 1px, transparent 1px);
+        linear-gradient(rgba(140,226,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,226,255,.05) 1px, transparent 1px);
       background-size:46px 46px;
       mask-image:radial-gradient(circle at 50% 50%, black 36%, rgba(0,0,0,.25) 72%, transparent 100%);
     }
-    .rings{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+
+    .rings{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+    }
+
     .ring{
-      position:absolute;border-radius:50%;
-      border:1px solid rgba(136,221,255,.14);
-      box-shadow:0 0 26px rgba(34,183,255,.06), inset 0 0 24px rgba(136,221,255,.03);
+      position:absolute;
+      border-radius:50%;
+      border:1px solid rgba(140,226,255,.14);
+      box-shadow:0 0 26px rgba(34,183,255,.06), inset 0 0 24px rgba(140,226,255,.03);
       animation:float 9s ease-in-out infinite;
     }
+
     .r1{width:64vmin;height:64vmin;max-width:700px;max-height:700px}
     .r2{width:48vmin;height:48vmin;max-width:520px;max-height:520px;animation-delay:-1.8s}
     .r3{width:31vmin;height:31vmin;max-width:340px;max-height:340px;animation-delay:-3.2s}
+
     @keyframes float{
       0%,100%{transform:translateY(0) scale(1)}
       50%{transform:translateY(-8px) scale(1.012)}
     }
+
     #avatarCanvas{
-      display:block;width:100%;height:min(74vh,780px);min-height:440px;position:relative;z-index:2;
+      display:block;
+      width:100%;
+      height:min(74vh,780px);
+      min-height:440px;
+      position:relative;
+      z-index:2;
       touch-action:none;
     }
+
     .speech{
-      position:absolute;left:18px;top:18px;z-index:3;
+      position:absolute;
+      left:18px;
+      top:18px;
+      z-index:3;
       max-width:min(580px,calc(100% - 36px));
       background:rgba(5,13,28,.82);
-      border:1px solid rgba(136,221,255,.18);
+      border:1px solid rgba(140,226,255,.18);
       border-radius:18px;
       padding:14px 16px;
       box-shadow:0 10px 40px rgba(0,0,0,.28);
       backdrop-filter:blur(10px);
-      opacity:0;transform:translateY(8px);transition:.25s ease;pointer-events:none;
+      opacity:0;
+      transform:translateY(8px);
+      transition:.25s ease;
+      pointer-events:none;
     }
+
     .speech.show{opacity:1;transform:translateY(0)}
+
     .speech-name{
-      font-size:12px;color:var(--cyan2);text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:6px
+      font-size:12px;
+      color:var(--cyan2);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-weight:800;
+      margin-bottom:6px;
     }
-    .speech-text{font-size:15px;line-height:1.45;white-space:pre-wrap}
+
+    .speech-text{
+      font-size:15px;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+
     .overlay{
-      position:absolute;right:18px;bottom:18px;z-index:3;
-      display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 36px)
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      z-index:3;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      max-width:calc(100% - 36px);
     }
+
     .mini{
-      border-radius:999px;background:rgba(6,16,35,.76);
-      border:1px solid rgba(136,221,255,.16);
-      padding:10px 14px;font-size:12px;color:var(--muted);
-      display:flex;align-items:center;gap:8px;backdrop-filter:blur(10px)
+      border-radius:999px;
+      background:rgba(6,16,35,.76);
+      border:1px solid rgba(140,226,255,.16);
+      padding:10px 14px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      backdrop-filter:blur(10px);
     }
-    .controls,.panel{
-      padding:16px 18px 18px;
-    }
-    .controls{
-      display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
-      border-top:1px solid rgba(101,176,255,.12);
-      background:linear-gradient(180deg, rgba(7,17,36,.16), rgba(9,20,42,.42));
-    }
-    .side{
-      display:grid;
-      grid-template-rows:auto auto 1fr;
-      min-height:72vh;
+
+    .module-shell{
+      position:absolute;
+      right:18px;
+      top:18px;
+      z-index:3;
+      width:min(340px,calc(100% - 36px));
+      background:rgba(5,13,28,.74);
+      border:1px solid rgba(140,226,255,.16);
+      border-radius:18px;
+      box-shadow:0 10px 40px rgba(0,0,0,.24);
+      backdrop-filter:blur(10px);
       overflow:hidden;
     }
-    .panel{border-bottom:1px solid rgba(101,176,255,.08)}
-    .label{
-      display:block;font-size:12px;color:var(--cyan2);text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:8px
+
+    .module-head{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(140,226,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
     }
-    .btn,.input,.select,.textarea{
-      font:inherit;
+
+    .module-title{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--cyan2);
+      font-weight:900;
     }
-    .btn{
-      border:0;border-radius:14px;padding:14px 18px;min-height:48px;
-      cursor:pointer;font-weight:800;letter-spacing:.01em;
-      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+
+    .module-body{
+      padding:14px;
+      display:grid;
+      gap:10px;
     }
-    .btn:hover{transform:translateY(-1px)}
-    .btn:active{transform:translateY(0)}
-    .btn-primary{
-      color:#04101f;background:linear-gradient(180deg, #57ceff, #1ab6ff);
-      box-shadow:0 12px 26px rgba(34,183,255,.24);
+
+    .module-card{
+      border:1px solid rgba(140,226,255,.10);
+      background:rgba(8,18,40,.54);
+      border-radius:14px;
+      padding:12px;
     }
-    .btn-dark{
-      color:var(--text);
-      background:linear-gradient(180deg, rgba(21,40,78,.95), rgba(11,24,50,.95));
-      border:1px solid rgba(136,221,255,.18);
+
+    .module-card strong{
+      display:block;
+      margin-bottom:4px;
+      font-size:14px;
     }
-    .btn-soft{
-      color:var(--text);
-      background:linear-gradient(180deg, rgba(15,29,60,.8), rgba(11,20,42,.8));
-      border:1px solid rgba(136,221,255,.16);
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      padding:16px 18px 18px;
+      border-top:1px solid rgba(99,174,255,.12);
+      background:linear-gradient(180deg, rgba(7,17,36,.16), rgba(9,20,42,.42));
     }
+
+    .side-card{
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      min-height:74vh;
+      overflow:hidden;
+    }
+
+    .panel{
+      padding:16px 18px;
+      border-bottom:1px solid rgba(99,174,255,.08);
+    }
+
     .stack{display:grid;gap:10px}
     .inline{display:flex;gap:10px}
     .inline>*{flex:1}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+    .label{
+      display:block;
+      font-size:12px;
+      color:var(--cyan2);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .btn,.input,.select,.textarea{
+      font:inherit;
+    }
+
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:14px 18px;
+      min-height:48px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.01em;
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+
+    .btn-primary{
+      color:#04101f;
+      background:linear-gradient(180deg, #57ceff, #1ab6ff);
+      box-shadow:0 12px 26px rgba(34,183,255,.24);
+    }
+
+    .btn-dark{
+      color:var(--text);
+      background:linear-gradient(180deg, rgba(21,40,78,.95), rgba(11,24,50,.95));
+      border:1px solid rgba(140,226,255,.18);
+    }
+
+    .btn-soft{
+      color:var(--text);
+      background:linear-gradient(180deg, rgba(15,29,60,.8), rgba(11,20,42,.8));
+      border:1px solid rgba(140,226,255,.16);
+    }
+
     .input,.select,.textarea{
-      width:100%;background:rgba(5,13,28,.78);color:var(--text);
-      border:1px solid rgba(136,221,255,.16);border-radius:14px;padding:14px 14px;
-      outline:none;box-shadow:inset 0 0 14px rgba(136,221,255,.03)
+      width:100%;
+      background:rgba(5,13,28,.78);
+      color:var(--text);
+      border:1px solid rgba(140,226,255,.16);
+      border-radius:14px;
+      padding:14px 14px;
+      outline:none;
+      box-shadow:inset 0 0 14px rgba(140,226,255,.03);
     }
-    .textarea{min-height:105px;resize:vertical;line-height:1.42}
+
+    .textarea{
+      min-height:98px;
+      resize:vertical;
+      line-height:1.42;
+    }
+
     .log{
-      padding:16px 18px 18px;overflow:auto;min-height:220px
+      padding:16px 18px 18px;
+      overflow:auto;
+      min-height:220px;
     }
+
     .log-card{
-      border:1px solid rgba(136,221,255,.1);background:rgba(5,13,28,.56);
-      border-radius:16px;padding:12px 13px;margin-bottom:10px;
+      border:1px solid rgba(140,226,255,.10);
+      background:rgba(5,13,28,.56);
+      border-radius:16px;
+      padding:12px 13px;
+      margin-bottom:10px;
     }
+
     .log-role{
-      font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan2);font-weight:900;margin-bottom:6px
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--cyan2);
+      font-weight:900;
+      margin-bottom:6px;
     }
+
     .log-text{
-      font-size:14px;line-height:1.45;color:#eef5ff;white-space:pre-wrap;word-break:break-word
+      font-size:14px;
+      line-height:1.45;
+      color:#eef5ff;
+      white-space:pre-wrap;
+      word-break:break-word;
     }
+
     .footer{
-      padding:14px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
-      color:var(--muted);font-size:13px;
+      padding:14px 16px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:13px;
     }
-    .footer-left,.footer-right{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+    .footer-left,.footer-right{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
     .badge{
-      border:1px solid rgba(136,221,255,.14);
+      border:1px solid rgba(140,226,255,.14);
       background:rgba(6,16,35,.6);
-      border-radius:999px;padding:9px 12px;color:#d6e9ff
+      border-radius:999px;
+      padding:9px 12px;
+      color:#d6e9ff;
     }
+
+    .toasts{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:9999;
+      display:grid;
+      gap:10px;
+      width:min(360px,calc(100vw - 32px));
+    }
+
+    .toast{
+      border-radius:16px;
+      padding:14px 14px;
+      border:1px solid rgba(140,226,255,.14);
+      background:rgba(6,16,35,.84);
+      backdrop-filter:blur(10px);
+      box-shadow:0 12px 40px rgba(0,0,0,.28);
+      animation:toast-in .18s ease;
+    }
+
+    .toast.info{border-color:rgba(34,183,255,.18)}
+    .toast.success{border-color:rgba(52,211,153,.22)}
+    .toast.warning{border-color:rgba(245,158,11,.24)}
+    .toast.error{border-color:rgba(251,113,133,.24)}
+
+    @keyframes toast-in{
+      from{opacity:0;transform:translateY(8px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
     @media (max-width:1100px){
       .main{grid-template-columns:1fr}
       .status-grid{justify-content:flex-start}
       .topbar{grid-template-columns:1fr}
-      .side{min-height:auto}
+      .side-card{min-height:auto}
     }
+
     @media (max-width:720px){
       .app{padding:12px}
       .title{white-space:normal}
       .grid2,.inline{grid-template-columns:1fr;flex-direction:column}
       #avatarCanvas{height:56vh;min-height:360px}
       .overlay{left:18px;right:18px;justify-content:flex-start}
+      .module-shell{position:relative;right:auto;top:auto;width:auto;margin:18px}
     }
   </style>
 </head>
-<body>
+<body class="scene-default">
   <div class="app">
     <header class="topbar">
       <div class="brand">
         <div class="orb"></div>
         <div>
           <h1 class="title">CONSIA Avatar OS</h1>
-          <p class="sub">Realtime WebRTC + avatar vivo + mic + texto + fallback holográfico</p>
+          <p class="sub">Chat + avatar + voz + acciones automáticas desde /v1/chat</p>
         </div>
       </div>
+
       <div class="status-grid">
         <div class="pill"><span id="dotHealth" class="dot warn"></span><span id="txtHealth">Health: iniciando</span></div>
-        <div class="pill"><span id="dotRtc" class="dot warn"></span><span id="txtRtc">Realtime: desconectado</span></div>
+        <div class="pill"><span id="dotApi" class="dot warn"></span><span id="txtApi">Chat: esperando</span></div>
+        <div class="pill"><span id="dotVoice" class="dot warn"></span><span id="txtVoice">Voz: lista</span></div>
         <div class="pill"><span id="dotMic" class="dot warn"></span><span id="txtMic">Mic: off</span></div>
-        <div class="pill"><span id="dotAudio" class="dot warn"></span><span id="txtAudio">Audio: idle</span></div>
       </div>
     </header>
 
     <main class="main">
-      <section class="stage">
-        <div class="stage-head">
+      <section class="stage-card">
+        <div class="card-head">
           <div>
-            <div class="stage-title">Realtime Avatar Stage</div>
-            <div class="stage-sub">Si existe /avatar/*.glb lo carga. Si no, usa holograma premium.</div>
+            <div class="card-title">Action Stage</div>
+            <div class="card-sub">Ejecuta automáticamente set_avatar, open_module, navigate, present, ui_notice, run_demo y set_scene</div>
           </div>
+          <div class="pill"><span id="dotAvatar" class="dot ok"></span><span id="txtAvatar">Avatar: CONSIA</span></div>
         </div>
 
         <div class="viewer">
@@ -309,88 +611,78 @@
             <div class="speech-text" id="speechText">Listo.</div>
           </div>
 
+          <div class="module-shell">
+            <div class="module-head">
+              <div class="module-title" id="moduleTitle">dashboard</div>
+              <div class="mini"><span id="sceneLabel">Escena: default</span></div>
+            </div>
+            <div class="module-body" id="moduleBody"></div>
+          </div>
+
           <div class="overlay">
             <div class="mini"><span id="renderLabel">Render: fallback holográfico</span></div>
-            <div class="mini"><span id="voiceLabel">Voice: marin</span></div>
+            <div class="mini"><span id="routeLabel">Ruta: /</span></div>
             <div class="mini"><span id="langLabel">Idioma: auto</span></div>
           </div>
         </div>
 
         <div class="controls">
-          <button class="btn btn-primary" id="btnConnect">Conectar realtime</button>
-          <button class="btn btn-dark" id="btnDisconnect">Desconectar</button>
-          <button class="btn btn-soft" id="btnMute">Mutear mic</button>
-          <button class="btn btn-soft" id="btnConsia">CONSIA</button>
-          <button class="btn btn-soft" id="btnMartin">MARTIN</button>
-          <button class="btn btn-soft" id="btnFuture">MARTIN FUTURE</button>
+          <button class="btn btn-primary" id="btnSendQuick">Enviar</button>
+          <button class="btn btn-dark" id="btnConsia">CONSIA</button>
+          <button class="btn btn-dark" id="btnMartin">MARTIN</button>
+          <button class="btn btn-dark" id="btnFuture">MARTIN FUTURE</button>
+          <button class="btn btn-soft" id="btnMic">Activar voz</button>
+          <button class="btn btn-soft" id="btnStop">Silenciar</button>
           <button class="btn btn-soft" id="btnDemo">Demo</button>
         </div>
       </section>
 
-      <aside class="side">
-        <div class="side-head">
-          <div class="side-title">Control Center</div>
-          <div class="side-sub">Sesión Realtime, texto, instrucciones y envío de eventos.</div>
+      <aside class="side-card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Control Center</div>
+            <div class="card-sub">Todo sale por /v1/chat y las actions se ejecutan solas.</div>
+          </div>
         </div>
 
         <div class="panel stack">
           <div>
-            <label class="label" for="selVoice">Voice</label>
-            <select id="selVoice" class="select">
-              <option value="marin" selected>marin</option>
-              <option value="cedar">cedar</option>
-              <option value="alloy">alloy</option>
-              <option value="ash">ash</option>
-              <option value="ballad">ballad</option>
-              <option value="coral">coral</option>
-              <option value="echo">echo</option>
-              <option value="sage">sage</option>
-              <option value="shimmer">shimmer</option>
-              <option value="verse">verse</option>
-            </select>
+            <label class="label" for="messageInput">Mensaje</label>
+            <textarea id="messageInput" class="textarea" placeholder="Ejemplo: activá el avatar futurista y abrí el módulo realwork con una presentación breve"></textarea>
           </div>
 
-          <div>
-            <label class="label" for="selLang">Idioma</label>
-            <select id="selLang" class="select">
-              <option value="auto" selected>Auto</option>
-              <option value="es-AR">Español (Argentina)</option>
-              <option value="es-ES">Español</option>
-              <option value="en-US">English (US)</option>
-              <option value="en-GB">English (UK)</option>
-              <option value="pt-BR">Português</option>
-              <option value="fr-FR">Français</option>
-              <option value="de-DE">Deutsch</option>
-              <option value="it-IT">Italiano</option>
-              <option value="ja-JP">日本語</option>
-              <option value="zh-CN">中文</option>
-              <option value="ar-SA">العربية</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="label" for="instructions">Instrucciones de sesión</label>
-            <textarea id="instructions" class="textarea">Sos CONSIA, asistente premium de Martín. Respondé directo, claro, ejecutivo y en el idioma del usuario. Si te piden presentar CONSIA, hacelo en tono presentador.</textarea>
-          </div>
-
-          <div>
-            <label class="label" for="promptText">Enviar texto a Realtime</label>
-            <input id="promptText" class="input" placeholder="Ejemplo: presentame CONSIA en 20 segundos" />
+          <div class="grid2">
+            <div>
+              <label class="label" for="langSelect">Idioma</label>
+              <select id="langSelect" class="select">
+                <option value="auto" selected>Auto</option>
+                <option value="es-AR">Español (Argentina)</option>
+                <option value="es-ES">Español</option>
+                <option value="en-US">English</option>
+                <option value="pt-BR">Português</option>
+                <option value="fr-FR">Français</option>
+              </select>
+            </div>
+            <div>
+              <label class="label" for="modeSelect">Modo</label>
+              <select id="modeSelect" class="select">
+                <option value="default" selected>default</option>
+                <option value="presentation">presentation</option>
+                <option value="sales">sales</option>
+                <option value="ops">ops</option>
+              </select>
+            </div>
           </div>
 
           <div class="inline">
-            <button class="btn btn-primary" id="btnSendText">Enviar texto</button>
-            <button class="btn btn-dark" id="btnSessionUpdate">Actualizar sesión</button>
-          </div>
-
-          <div>
-            <label class="label" for="avatarPrompt">Prompt avatar</label>
-            <textarea id="avatarPrompt" class="textarea" placeholder="Ejemplo: líder tecnológico premium, traje negro, estilo futurista, energía serena"></textarea>
-          </div>
-
-          <div class="inline">
-            <button class="btn btn-primary" id="btnGenerateAvatar">Generar avatar</button>
+            <button class="btn btn-primary" id="btnSend">Enviar a /v1/chat</button>
             <button class="btn btn-dark" id="btnHello">Saludo</button>
+          </div>
+
+          <div class="inline">
+            <button class="btn btn-dark" id="btnQuickRealwork">Real Work</button>
+            <button class="btn btn-dark" id="btnQuickManglar">Manglar</button>
+            <button class="btn btn-dark" id="btnQuickPitch">Pitch</button>
           </div>
         </div>
 
@@ -400,18 +692,19 @@
 
     <footer class="footer">
       <div class="footer-left">
+        <span class="badge" id="badgeModule">Módulo: dashboard</span>
         <span class="badge" id="badgeAvatar">Avatar: CONSIA</span>
-        <span class="badge" id="badgeRenderer">Renderer: fallback</span>
+        <span class="badge" id="badgeScene">Escena: default</span>
       </div>
       <div class="footer-right">
-        <span class="badge">/v1/realtime/session</span>
-        <span class="badge">/v1/avatar/generate</span>
-        <span class="badge">WebRTC + oai-events</span>
+        <span class="badge">POST /v1/chat</span>
+        <span class="badge">Actions Auto Router</span>
+        <span class="badge">CONSIA OS</span>
       </div>
     </footer>
   </div>
 
-  <audio id="remoteAudio" autoplay playsinline></audio>
+  <div class="toasts" id="toasts"></div>
 
   <script type="module">
     import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js";
@@ -423,56 +716,54 @@
     const els = {
       dotHealth: $("dotHealth"),
       txtHealth: $("txtHealth"),
-      dotRtc: $("dotRtc"),
-      txtRtc: $("txtRtc"),
+      dotApi: $("dotApi"),
+      txtApi: $("txtApi"),
+      dotVoice: $("dotVoice"),
+      txtVoice: $("txtVoice"),
       dotMic: $("dotMic"),
       txtMic: $("txtMic"),
-      dotAudio: $("dotAudio"),
-      txtAudio: $("txtAudio"),
+      dotAvatar: $("dotAvatar"),
+      txtAvatar: $("txtAvatar"),
       renderLabel: $("renderLabel"),
-      voiceLabel: $("voiceLabel"),
+      routeLabel: $("routeLabel"),
       langLabel: $("langLabel"),
+      sceneLabel: $("sceneLabel"),
+      moduleTitle: $("moduleTitle"),
+      moduleBody: $("moduleBody"),
+      badgeModule: $("badgeModule"),
+      badgeAvatar: $("badgeAvatar"),
+      badgeScene: $("badgeScene"),
       speech: $("speech"),
       speechName: $("speechName"),
       speechText: $("speechText"),
-      selVoice: $("selVoice"),
-      selLang: $("selLang"),
-      instructions: $("instructions"),
-      promptText: $("promptText"),
-      avatarPrompt: $("avatarPrompt"),
-      btnConnect: $("btnConnect"),
-      btnDisconnect: $("btnDisconnect"),
-      btnMute: $("btnMute"),
+      messageInput: $("messageInput"),
+      langSelect: $("langSelect"),
+      modeSelect: $("modeSelect"),
+      btnSend: $("btnSend"),
+      btnSendQuick: $("btnSendQuick"),
+      btnHello: $("btnHello"),
       btnConsia: $("btnConsia"),
       btnMartin: $("btnMartin"),
       btnFuture: $("btnFuture"),
+      btnMic: $("btnMic"),
+      btnStop: $("btnStop"),
       btnDemo: $("btnDemo"),
-      btnSendText: $("btnSendText"),
-      btnSessionUpdate: $("btnSessionUpdate"),
-      btnGenerateAvatar: $("btnGenerateAvatar"),
-      btnHello: $("btnHello"),
+      btnQuickRealwork: $("btnQuickRealwork"),
+      btnQuickManglar: $("btnQuickManglar"),
+      btnQuickPitch: $("btnQuickPitch"),
       log: $("log"),
-      badgeAvatar: $("badgeAvatar"),
-      badgeRenderer: $("badgeRenderer"),
-      remoteAudio: $("remoteAudio")
+      toasts: $("toasts")
     };
 
     const state = {
-      pc: null,
-      dc: null,
-      micStream: null,
-      micTrack: null,
-      connected: false,
-      micMuted: false,
       activeAvatar: "consia",
       rendererMode: "fallback holográfico",
-      pendingText: "",
-      currentResponseText: "",
-      audioContext: null,
-      analyser: null,
-      audioData: null,
-      audioSource: null,
-      sessionId: null
+      currentModule: "dashboard",
+      currentRoute: "/",
+      currentScene: "default",
+      micActive: false,
+      recognition: null,
+      history: []
     };
 
     function setDot(el, mode){
@@ -483,9 +774,9 @@
     function setStatus(kind, mode, text){
       const map = {
         health:[els.dotHealth, els.txtHealth],
-        rtc:[els.dotRtc, els.txtRtc],
-        mic:[els.dotMic, els.txtMic],
-        audio:[els.dotAudio, els.txtAudio]
+        api:[els.dotApi, els.txtApi],
+        voice:[els.dotVoice, els.txtVoice],
+        mic:[els.dotMic, els.txtMic]
       };
       const [dot, label] = map[kind];
       setDot(dot, mode);
@@ -501,8 +792,20 @@
       els.log.prepend(card);
     }
 
+    function toast(title, message, level="info"){
+      const node = document.createElement("div");
+      node.className = `toast ${level}`;
+      node.innerHTML = `<strong style="display:block;margin-bottom:6px">${escapeHtml(title)}</strong><div style="font-size:14px;line-height:1.42">${escapeHtml(message)}</div>`;
+      els.toasts.appendChild(node);
+      setTimeout(() => {
+        node.style.opacity = "0";
+        node.style.transform = "translateY(8px)";
+        setTimeout(() => node.remove(), 180);
+      }, 3200);
+    }
+
     let bubbleTimer = null;
-    function showBubble(name, text, sticky = false){
+    function showBubble(name, text, sticky=false){
       els.speechName.textContent = name;
       els.speechText.textContent = text;
       els.speech.classList.add("show");
@@ -512,42 +815,45 @@
       }
     }
 
-    function updateLabels(){
-      els.voiceLabel.textContent = `Voice: ${els.selVoice.value}`;
-      els.langLabel.textContent = `Idioma: ${els.selLang.value}`;
-      els.badgeAvatar.textContent = `Avatar: ${state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase()}`;
-      els.badgeRenderer.textContent = `Renderer: ${state.rendererMode}`;
-      els.renderLabel.textContent = `Render: ${state.rendererMode}`;
+    function speak(text, name="CONSIA"){
+      if(!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = els.langSelect.value === "auto" ? (navigator.language || "es-AR") : els.langSelect.value;
+      utter.rate = 1;
+      utter.pitch = 1;
+      utter.onstart = () => {
+        setStatus("voice","ok","Voz: hablando");
+        showBubble(name, text, true);
+      };
+      utter.onend = () => {
+        setStatus("voice","ok","Voz: lista");
+        els.speech.classList.remove("show");
+      };
+      utter.onerror = () => {
+        setStatus("voice","err","Voz: error");
+      };
+      speechSynthesis.speak(utter);
     }
 
-    function getPreferredLang(){
-      return els.selLang.value === "auto" ? (navigator.language || "es-AR") : els.selLang.value;
-    }
-
-    function safeJsonParse(s){
-      try { return JSON.parse(s); } catch { return null; }
-    }
-
-    function getEphemeralKey(data){
-      return data?.client_secret?.value || data?.value || data?.session?.client_secret?.value || null;
-    }
-
-    function extractTextFromResponseDone(event){
-      const out = event?.response?.output;
-      if (!Array.isArray(out)) return "";
-      const parts = [];
-      for (const item of out) {
-        if (item?.type === "message" && Array.isArray(item.content)) {
-          for (const c of item.content) {
-            if (typeof c?.text === "string") parts.push(c.text);
-            else if (typeof c?.transcript === "string") parts.push(c.transcript);
-          }
-        }
+    function stopSpeech(){
+      if("speechSynthesis" in window){
+        window.speechSynthesis.cancel();
       }
-      return parts.join("\n").trim();
+      els.speech.classList.remove("show");
+      setStatus("voice","ok","Voz: lista");
     }
 
-    // ---------- THREE / AVATAR ----------
+    function escapeHtml(v){
+      return String(v ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // ---------- THREE ----------
     const canvas = $("avatarCanvas");
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x061225);
@@ -592,10 +898,19 @@
     let mixer = null;
     const clock = new THREE.Clock();
 
+    function clearAvatar(){
+      if(currentAvatar && currentAvatar.parent){
+        currentAvatar.parent.remove(currentAvatar);
+      }
+      currentAvatar = null;
+      mixer = null;
+    }
+
     function createFallbackAvatar(){
       hologramGroup.clear();
 
       const root = new THREE.Group();
+
       const mat = new THREE.MeshPhongMaterial({
         color:0x72d8ff,
         transparent:true,
@@ -629,8 +944,8 @@
         new THREE.BoxGeometry(0.12, 0.015, 0.01),
         new THREE.MeshBasicMaterial({ color:0x9be9ff, transparent:true, opacity:.9 })
       );
-      mouth.name = "fallbackMouth";
       mouth.position.set(0, 1.43, 0.24);
+      mouth.name = "fallbackMouth";
       root.add(mouth);
 
       const core = new THREE.Mesh(
@@ -659,17 +974,8 @@
       root.userData = { mouth, core, ring1, ring2 };
       hologramGroup.add(root);
       currentAvatar = root;
-      mixer = null;
       state.rendererMode = "fallback holográfico";
-      updateLabels();
-    }
-
-    function clearAvatar(){
-      if (currentAvatar) {
-        if (currentAvatar.parent) currentAvatar.parent.remove(currentAvatar);
-      }
-      currentAvatar = null;
-      mixer = null;
+      updateUi();
     }
 
     async function loadAvatar(name){
@@ -686,55 +992,46 @@
         currentAvatar.scale.setScalar(1.32);
         scene.add(currentAvatar);
 
-        if (gltf.animations && gltf.animations.length) {
+        if(gltf.animations && gltf.animations.length){
           mixer = new THREE.AnimationMixer(currentAvatar);
           const action = mixer.clipAction(gltf.animations[0]);
           action.play();
         }
 
         state.rendererMode = "GLB real";
-        updateLabels();
+        updateUi();
         showBubble(name.toUpperCase(), `${name.toUpperCase()} cargado.`);
         addLog("system", `/avatar/${name}.glb cargado.`);
       } catch {
         state.rendererMode = "fallback holográfico";
-        updateLabels();
+        updateUi();
         showBubble("CONSIA", `No encontré /avatar/${name}.glb. Sigo en modo holograma.`);
         addLog("warning", `No se pudo cargar /avatar/${name}.glb`);
       }
     }
 
-    function getAudioLevel(){
-      if (!state.analyser || !state.audioData) return 0;
-      state.analyser.getByteFrequencyData(state.audioData);
-      let sum = 0;
-      for (let i = 0; i < state.audioData.length; i++) sum += state.audioData[i];
-      return sum / state.audioData.length / 255;
-    }
-
-    function animateFallback(delta, level){
-      if (!currentAvatar || state.rendererMode !== "fallback holográfico") return;
+    function animateFallback(delta){
+      if(!currentAvatar || state.rendererMode !== "fallback holográfico") return;
       const t = performance.now() * 0.001;
       currentAvatar.rotation.y = Math.sin(t * 0.55) * 0.18;
       const d = currentAvatar.userData || {};
-      if (d.core) d.core.scale.setScalar(1 + Math.sin(t * 2.2) * 0.08 + level * 0.18);
-      if (d.ring1) d.ring1.rotation.z += delta * (0.5 + level);
-      if (d.ring2) d.ring2.rotation.z -= delta * (0.3 + level * 0.5);
-      if (d.mouth) d.mouth.scale.y = 1 + level * 8;
+      if(d.core) d.core.scale.setScalar(1 + Math.sin(t * 2.2) * 0.08);
+      if(d.ring1) d.ring1.rotation.z += delta * 0.5;
+      if(d.ring2) d.ring2.rotation.z -= delta * 0.3;
+      if(d.mouth) d.mouth.scale.y = 1 + Math.abs(Math.sin(t * 12)) * 2.4;
     }
 
     function animate(){
       requestAnimationFrame(animate);
       const delta = clock.getDelta();
-      const level = getAudioLevel();
 
-      if (mixer) mixer.update(delta);
-      if (currentAvatar && state.rendererMode === "GLB real") {
+      if(mixer) mixer.update(delta);
+      if(currentAvatar && state.rendererMode === "GLB real"){
         currentAvatar.rotation.y += delta * 0.10;
         currentAvatar.position.y = Math.sin(performance.now() * 0.0018) * 0.02;
       }
-      animateFallback(delta, level);
 
+      animateFallback(delta);
       controls.update();
       renderer.render(scene, camera);
     }
@@ -750,348 +1047,348 @@
     window.addEventListener("resize", resize);
     resize();
 
-    // ---------- AUDIO ANALYSER ----------
-    function setupRemoteAudioAnalyser(){
-      try{
-        if (state.audioContext) return;
-        state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        state.audioSource = state.audioContext.createMediaElementSource(els.remoteAudio);
-        state.analyser = state.audioContext.createAnalyser();
-        state.analyser.fftSize = 256;
-        state.audioData = new Uint8Array(state.analyser.frequencyBinCount);
-        state.audioSource.connect(state.analyser);
-        state.analyser.connect(state.audioContext.destination);
-      } catch(e){
-        addLog("warning", "No pude crear el analizador de audio remoto.");
+    // ---------- MODULES ----------
+    const moduleTemplates = {
+      dashboard: [
+        { title:"Estado general", text:"CONSIA operativo. Acciones automáticas habilitadas." },
+        { title:"Siguiente paso", text:"Usá /v1/chat para abrir módulos, cambiar avatar o lanzar presentación." }
+      ],
+      realwork: [
+        { title:"Real Work", text:"Módulo comercial listo para leads, propiedades y presentaciones." },
+        { title:"Acción sugerida", text:"Mostrar propiedades destacadas y guion de ventas." }
+      ],
+      manglar: [
+        { title:"Manglar", text:"Módulo de desarrollos, avances, unidades y materiales." },
+        { title:"Acción sugerida", text:"Presentar proyectos y métricas clave." }
+      ],
+      sales: [
+        { title:"Sales", text:"Modo ventas activado." },
+        { title:"Acción sugerida", text:"Pitch corto, demo y cierre con CTA." }
+      ],
+      avatar: [
+        { title:"Avatar", text:"Control de identidad, escena, voz y visualización." },
+        { title:"Acción sugerida", text:"Cambiar entre CONSIA, Martín y Martín Future." }
+      ],
+      presentation: [
+        { title:"Presentation", text:"Modo presentador activo." },
+        { title:"Acción sugerida", text:"Narrativa breve, directa y premium." }
+      ],
+      marketplace: [
+        { title:"Marketplace", text:"Catálogo, productos y monetización." },
+        { title:"Acción sugerida", text:"Abrir ficha destacada y CTA de compra." }
+      ]
+    };
+
+    function renderModule(module, titleOverride=""){
+      state.currentModule = module || "dashboard";
+      const title = titleOverride || state.currentModule;
+      els.moduleTitle.textContent = title;
+      els.badgeModule.textContent = `Módulo: ${state.currentModule}`;
+
+      const cards = moduleTemplates[state.currentModule] || [
+        { title:"Módulo", text:`${state.currentModule} cargado.` }
+      ];
+
+      els.moduleBody.innerHTML = cards.map(card => `
+        <div class="module-card">
+          <strong>${escapeHtml(card.title)}</strong>
+          <div style="font-size:14px;line-height:1.42;color:#d7eaff">${escapeHtml(card.text)}</div>
+        </div>
+      `).join("");
+    }
+
+    function setScene(scene){
+      state.currentScene = scene || "default";
+      document.body.className = "";
+      document.body.classList.add(`scene-${state.currentScene}`);
+      els.sceneLabel.textContent = `Escena: ${state.currentScene}`;
+      els.badgeScene.textContent = `Escena: ${state.currentScene}`;
+      updateUi();
+    }
+
+    function setRoute(route){
+      state.currentRoute = route || "/";
+      els.routeLabel.textContent = `Ruta: ${state.currentRoute}`;
+      if(state.currentRoute.startsWith("/")){
+        history.replaceState(null, "", state.currentRoute);
       }
     }
 
-    // ---------- REALTIME / WEBRTC ----------
-    function sendDcEvent(event){
-      if (!state.dc || state.dc.readyState !== "open") {
-        addLog("warning", "Data channel no abierto.");
-        return;
-      }
-      state.dc.send(JSON.stringify(event));
+    function updateUi(){
+      els.txtAvatar.textContent = `Avatar: ${state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase()}`;
+      els.badgeAvatar.textContent = `Avatar: ${state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase()}`;
+      els.renderLabel.textContent = `Render: ${state.rendererMode}`;
+      els.langLabel.textContent = `Idioma: ${els.langSelect.value}`;
+      els.sceneLabel.textContent = `Escena: ${state.currentScene}`;
+      els.routeLabel.textContent = `Ruta: ${state.currentRoute}`;
     }
 
-    function handleServerEvent(event){
-      switch (event.type) {
-        case "session.created":
-          state.sessionId = event.session?.id || null;
-          addLog("realtime", "session.created");
+    // ---------- ACTION ROUTER ----------
+    async function runAction(action){
+      if(!action || typeof action !== "object") return;
+
+      switch(action.type){
+        case "set_avatar":
+          await loadAvatar(action.avatar || "consia");
+          toast("Avatar", `Activado ${action.avatar || "consia"}`, "success");
           break;
 
-        case "session.updated":
-          addLog("realtime", "session.updated");
+        case "open_module":
+          renderModule(action.module || "dashboard", action.title || "");
+          if(action.route) setRoute(action.route);
+          toast("Módulo", `Abierto ${action.module || "dashboard"}`, "info");
           break;
 
-        case "input_audio_buffer.speech_started":
-          setStatus("audio", "warn", "Audio: interrumpido por voz");
-          try { els.remoteAudio.pause(); } catch {}
-          break;
-
-        case "response.output_text.delta":
-          state.currentResponseText += event.delta || "";
-          showBubble(state.activeAvatar.toUpperCase(), state.currentResponseText, true);
-          break;
-
-        case "response.audio_transcript.delta":
-          state.currentResponseText += event.delta || "";
-          showBubble(state.activeAvatar.toUpperCase(), state.currentResponseText, true);
-          break;
-
-        case "response.done": {
-          const finalText = extractTextFromResponseDone(event) || state.currentResponseText || "Listo.";
-          state.currentResponseText = "";
-          addLog("assistant", finalText);
-          showBubble(state.activeAvatar.toUpperCase(), finalText);
-          setStatus("audio", "ok", "Audio: respuesta recibida");
-          break;
-        }
-
-        case "error":
-          addLog("error", JSON.stringify(event, null, 2));
-          setStatus("rtc", "err", "Realtime: error");
-          break;
-      }
-    }
-
-    async function connectRealtime(){
-      if (state.connected) return;
-
-      try{
-        setStatus("rtc", "warn", "Realtime: solicitando sesión");
-        setStatus("mic", "warn", "Mic: solicitando permiso");
-        setStatus("audio", "warn", "Audio: preparando");
-
-        const tokenRes = await fetch("/v1/realtime/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            voice: els.selVoice.value,
-            language: els.selLang.value,
-            instructions: els.instructions.value
-          })
-        });
-
-        if (!tokenRes.ok) {
-          throw new Error(`No pude crear la sesión (${tokenRes.status})`);
-        }
-
-        const tokenData = await tokenRes.json();
-        const ephemeralKey = getEphemeralKey(tokenData);
-        if (!ephemeralKey) throw new Error("No llegó client_secret.value");
-
-        setupRemoteAudioAnalyser();
-        if (state.audioContext?.state === "suspended") {
-          await state.audioContext.resume();
-        }
-
-        state.pc = new RTCPeerConnection();
-        state.pc.onconnectionstatechange = () => {
-          const s = state.pc.connectionState;
-          if (s === "connected") {
-            state.connected = true;
-            setStatus("rtc", "ok", "Realtime: conectado");
-          } else if (s === "failed" || s === "disconnected" || s === "closed") {
-            state.connected = false;
-            setStatus("rtc", s === "failed" ? "err" : "warn", `Realtime: ${s}`);
-          }
-        };
-
-        els.remoteAudio.autoplay = true;
-        els.remoteAudio.playsInline = true;
-        state.pc.ontrack = (e) => {
-          els.remoteAudio.srcObject = e.streams[0];
-          setStatus("audio", "ok", "Audio: remoto activo");
-        };
-
-        state.micStream = await navigator.mediaDevices.getUserMedia({ audio:true });
-        state.micTrack = state.micStream.getAudioTracks()[0];
-        state.pc.addTrack(state.micTrack, state.micStream);
-        setStatus("mic", "ok", "Mic: activo");
-
-        state.dc = state.pc.createDataChannel("oai-events");
-        state.dc.addEventListener("open", () => {
-          addLog("realtime", "Data channel abierto.");
-          sendSessionUpdate();
-        });
-        state.dc.addEventListener("message", (e) => {
-          const event = safeJsonParse(e.data);
-          if (!event) return;
-          handleServerEvent(event);
-        });
-
-        const offer = await state.pc.createOffer();
-        await state.pc.setLocalDescription(offer);
-
-        const sdpRes = await fetch("https://api.openai.com/v1/realtime/calls", {
-          method: "POST",
-          body: offer.sdp,
-          headers: {
-            Authorization: `Bearer ${ephemeralKey}`,
-            "Content-Type": "application/sdp"
-          }
-        });
-
-        if (!sdpRes.ok) {
-          const txt = await sdpRes.text();
-          throw new Error(`OpenAI SDP error: ${sdpRes.status} ${txt}`);
-        }
-
-        const answer = {
-          type: "answer",
-          sdp: await sdpRes.text()
-        };
-        await state.pc.setRemoteDescription(answer);
-
-        state.connected = true;
-        setStatus("rtc", "ok", "Realtime: conectado");
-        addLog("system", "WebRTC conectado.");
-        showBubble("CONSIA", "Realtime activo. Ya podés hablar.");
-      } catch (err) {
-        state.connected = false;
-        setStatus("rtc", "err", "Realtime: error");
-        setStatus("mic", "err", "Mic: error");
-        addLog("error", err.message || String(err));
-        showBubble("CONSIA", `Error realtime: ${err.message || err}`);
-      }
-    }
-
-    function disconnectRealtime(){
-      try{
-        if (state.dc) {
-          try { state.dc.close(); } catch {}
-          state.dc = null;
-        }
-        if (state.pc) {
-          try { state.pc.getSenders().forEach(s => s.track && s.track.stop()); } catch {}
-          try { state.pc.close(); } catch {}
-          state.pc = null;
-        }
-        if (state.micStream) {
-          state.micStream.getTracks().forEach(t => t.stop());
-          state.micStream = null;
-        }
-        state.micTrack = null;
-        state.connected = false;
-        state.micMuted = false;
-        setStatus("rtc", "warn", "Realtime: desconectado");
-        setStatus("mic", "warn", "Mic: off");
-        setStatus("audio", "warn", "Audio: idle");
-        addLog("system", "Realtime desconectado.");
-      } catch {}
-    }
-
-    function toggleMute(){
-      if (!state.micTrack) return;
-      state.micMuted = !state.micMuted;
-      state.micTrack.enabled = !state.micMuted;
-      els.btnMute.textContent = state.micMuted ? "Activar mic" : "Mutear mic";
-      setStatus("mic", state.micMuted ? "warn" : "ok", state.micMuted ? "Mic: muteado" : "Mic: activo");
-    }
-
-    function sendSessionUpdate(){
-      if (!state.dc || state.dc.readyState !== "open") return;
-
-      const event = {
-        type: "session.update",
-        session: {
-          type: "realtime",
-          output_modalities: ["audio", "text"],
-          instructions: els.instructions.value,
-          audio: {
-            input: {
-              turn_detection: {
-                type: "semantic_vad",
-                create_response: true,
-                interrupt_response: true,
-                eagerness: "auto"
-              }
+        case "navigate":
+          if(typeof action.url === "string" && action.url){
+            if(action.url.startsWith("/")){
+              setRoute(action.url);
+              const moduleGuess = action.url.replace(/^\//,"").split("/")[0] || "dashboard";
+              if(moduleGuess) renderModule(moduleGuess);
+              toast("Ruta", `Navegando a ${action.url}`, "info");
+            } else {
+              location.href = action.url;
             }
           }
-        }
-      };
-      sendDcEvent(event);
-      addLog("client", "session.update enviado.");
+          break;
+
+        case "present":
+          setScene("presentation");
+          renderModule("presentation", "presentación");
+          toast("Presentador", `Tema: ${action.topic || "presentación"}`, "success");
+          speak(`Presentación activada. ${action.topic || "Modo presentador activo."}`, state.activeAvatar.toUpperCase());
+          break;
+
+        case "ui_notice":
+          toast(action.title || "CONSIA", action.message || "", action.level || "info");
+          break;
+
+        case "run_demo":
+          await runDemo(action.demo || "default");
+          break;
+
+        case "set_scene":
+          setScene(action.scene || "default");
+          toast("Escena", `Escena ${action.scene || "default"} aplicada`, "info");
+          break;
+
+        case "webhook_result":
+          toast(
+            action.ok ? "Webhook OK" : "Webhook Error",
+            `${action.action_name || "action"} · status ${action.status ?? "-"}`,
+            action.ok ? "success" : "error"
+          );
+          break;
+
+        case "memory_saved":
+          toast("Memoria", `Guardado ${action.key || ""}`, "success");
+          break;
+
+        case "memory_saved_ephemeral":
+          toast("Memoria temporal", "Nota guardada en modo efímero", "warning");
+          break;
+
+        default:
+          addLog("action", `Acción no manejada: ${JSON.stringify(action)}`);
+      }
     }
 
-    function sendTextPrompt(text){
-      if (!text.trim()) return;
-      if (!state.dc || state.dc.readyState !== "open") {
-        addLog("warning", "Primero conectá realtime.");
-        return;
+    async function runActions(actions){
+      if(!Array.isArray(actions) || !actions.length) return;
+      for(const action of actions){
+        await runAction(action);
       }
+    }
 
-      state.currentResponseText = "";
+    // ---------- CHAT ----------
+    async function sendChat(message){
+      const text = String(message || "").trim();
+      if(!text) return;
+
+      setStatus("api","warn","Chat: procesando");
       addLog("user", text);
       showBubble("TÚ", text);
 
-      sendDcEvent({
-        type: "conversation.item.create",
-        item: {
-          type: "message",
-          role: "user",
-          content: [
-            {
-              type: "input_text",
-              text
-            }
-          ]
-        }
-      });
-
-      sendDcEvent({
-        type: "response.create",
-        response: {
-          output_modalities: ["audio", "text"]
-        }
-      });
-    }
-
-    async function generateAvatar(){
-      const prompt = els.avatarPrompt.value.trim();
-      if (!prompt) return;
-
-      addLog("prompt", prompt);
-      showBubble("CONSIA", "Procesando prompt de avatar...", true);
-
       try{
-        const res = await fetch("/v1/avatar/generate", {
+        const res = await fetch("/v1/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt })
+          body: JSON.stringify({
+            message: text,
+            history: state.history.slice(-12),
+            language: els.langSelect.value,
+            mode: els.modeSelect.value
+          })
         });
-        if (!res.ok) throw new Error(`Avatar generate ${res.status}`);
+
+        if(!res.ok){
+          throw new Error(`Chat ${res.status}`);
+        }
+
         const data = await res.json();
-        const slug = String(data.avatar || "consia").replace(".glb", "");
-        await loadAvatar(slug);
-        addLog("system", `Avatar generado: ${slug}`);
-        showBubble("CONSIA", `Avatar activado: ${slug.toUpperCase()}`);
-      } catch (err) {
+        const answer = data.answer || "Listo.";
+        const actions = Array.isArray(data.actions) ? data.actions : [];
+
+        state.history.push({ role:"user", content:text });
+        state.history.push({ role:"assistant", content:answer });
+        if(state.history.length > 20) state.history = state.history.slice(-20);
+
+        addLog("assistant", answer);
+        setStatus("api","ok","Chat: conectado");
+        await runActions(actions);
+        speak(answer, state.activeAvatar.toUpperCase());
+      } catch(err){
+        const fallback = "No pude conectar con /v1/chat en este momento.";
         addLog("error", err.message || String(err));
-        showBubble("CONSIA", "No pude generar avatar desde backend.");
+        toast("Error", fallback, "error");
+        setStatus("api","err","Chat: error");
+        speak(fallback, "CONSIA");
       }
     }
 
-    function runDemo(){
-      const steps = [
-        () => loadAvatar("consia"),
-        () => sendTextPrompt("Presentate en 10 segundos como CONSIA."),
-        () => loadAvatar("martin"),
-        () => sendTextPrompt("Decí: modo gemelo digital activado."),
-        () => loadAvatar("martin-futurista"),
-        () => sendTextPrompt("Decí: modo futurista activado para presentaciones premium.")
-      ];
-      let i = 0;
-      const next = () => {
-        if (i >= steps.length) return;
-        steps[i++]();
-        setTimeout(next, i % 2 === 0 ? 3200 : 900);
+    // ---------- VOICE INPUT ----------
+    function setupRecognition(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR){
+        setStatus("mic","warn","Mic: no disponible");
+        return;
+      }
+
+      const rec = new SR();
+      rec.continuous = true;
+      rec.interimResults = false;
+      rec.lang = els.langSelect.value === "auto" ? (navigator.language || "es-AR") : els.langSelect.value;
+
+      rec.onstart = () => {
+        state.micActive = true;
+        els.btnMic.textContent = "Detener voz";
+        setStatus("mic","ok","Mic: escuchando");
       };
-      next();
+
+      rec.onend = () => {
+        state.micActive = false;
+        els.btnMic.textContent = "Activar voz";
+        setStatus("mic","warn","Mic: off");
+      };
+
+      rec.onerror = () => {
+        state.micActive = false;
+        els.btnMic.textContent = "Activar voz";
+        setStatus("mic","err","Mic: error");
+      };
+
+      rec.onresult = (e) => {
+        const text = e.results[e.results.length - 1][0].transcript;
+        sendChat(text);
+      };
+
+      state.recognition = rec;
     }
 
-    async function hello(){
+    function toggleMic(){
+      if(!state.recognition){
+        setupRecognition();
+        if(!state.recognition) return;
+      }
+
+      state.recognition.lang = els.langSelect.value === "auto" ? (navigator.language || "es-AR") : els.langSelect.value;
+
+      if(state.micActive){
+        state.recognition.stop();
+      } else {
+        try{ state.recognition.start(); } catch {}
+      }
+    }
+
+    // ---------- DEMO ----------
+    async function runDemo(name="default"){
+      const demoName = String(name || "default").toLowerCase();
+
+      if(demoName.includes("sales")){
+        await loadAvatar("martin-futurista");
+        setScene("sales");
+        renderModule("sales", "sales");
+        toast("Demo", "Demo de ventas activada", "success");
+        speak("Modo ventas activado. Presentación premium lista para cierre comercial.", "MARTIN FUTURE");
+        return;
+      }
+
       await loadAvatar("consia");
-      sendTextPrompt("Saludame a Martín y decí que CONSIA Avatar OS ya está activo.");
+      renderModule("dashboard", "dashboard");
+      setScene("default");
+      setRoute("/");
+      toast("Demo", "Demo CONSIA activada", "success");
+      speak("Hola Martín. CONSIA Avatar OS está activo con acciones automáticas, módulos, escenas y control total del frontend.", "CONSIA");
+      setTimeout(async () => {
+        await loadAvatar("martin");
+        renderModule("realwork", "realwork");
+        setRoute("/realwork");
+        speak("Modo gemelo digital activado.", "MARTIN");
+      }, 2400);
+      setTimeout(async () => {
+        await loadAvatar("martin-futurista");
+        setScene("presentation");
+        renderModule("presentation", "presentación");
+        setRoute("/presentation");
+        speak("Modo futurista activado para presentaciones top nivel.", "MARTIN FUTURE");
+      }, 5000);
     }
 
+    // ---------- HEALTH ----------
     async function healthCheck(){
       try{
         const res = await fetch("/health");
-        if (!res.ok) throw new Error();
-        setStatus("health", "ok", "Health: online");
+        if(!res.ok) throw new Error();
+        setStatus("health","ok","Health: online");
       } catch {
-        setStatus("health", "warn", "Health: sin /health");
+        setStatus("health","warn","Health: sin /health");
       }
     }
 
     // ---------- EVENTS ----------
-    els.btnConnect.onclick = connectRealtime;
-    els.btnDisconnect.onclick = disconnectRealtime;
-    els.btnMute.onclick = toggleMute;
+    els.btnSend.onclick = () => sendChat(els.messageInput.value);
+    els.btnSendQuick.onclick = () => sendChat(els.messageInput.value);
+    els.btnHello.onclick = () => sendChat("Hola CONSIA");
     els.btnConsia.onclick = () => loadAvatar("consia");
     els.btnMartin.onclick = () => loadAvatar("martin");
     els.btnFuture.onclick = () => loadAvatar("martin-futurista");
-    els.btnDemo.onclick = runDemo;
-    els.btnSendText.onclick = () => sendTextPrompt(els.promptText.value);
-    els.btnSessionUpdate.onclick = sendSessionUpdate;
-    els.btnGenerateAvatar.onclick = generateAvatar;
-    els.btnHello.onclick = hello;
-    els.selVoice.onchange = () => {
-      updateLabels();
-      addLog("system", `Voice seleccionada: ${els.selVoice.value}. Conectá una sesión nueva para cambiarla si ya hubo audio.`);
+    els.btnMic.onclick = toggleMic;
+    els.btnStop.onclick = stopSpeech;
+    els.btnDemo.onclick = () => runDemo("default");
+
+    els.btnQuickRealwork.onclick = () => {
+      els.messageInput.value = "Activá el avatar martin-futurista y abrí el módulo realwork con una presentación comercial breve.";
+      sendChat(els.messageInput.value);
     };
-    els.selLang.onchange = updateLabels;
+
+    els.btnQuickManglar.onclick = () => {
+      els.messageInput.value = "Abrí el módulo manglar, cambiá la escena a presentation y mostrame una presentación corta.";
+      sendChat(els.messageInput.value);
+    };
+
+    els.btnQuickPitch.onclick = () => {
+      els.messageInput.value = "Activá presenter mode para CONSIA con una demo ejecutiva de 20 segundos.";
+      sendChat(els.messageInput.value);
+    };
+
+    els.langSelect.onchange = () => {
+      updateUi();
+    };
 
     // ---------- BOOT ----------
-    updateLabels();
+    setStatus("health","warn","Health: iniciando");
+    setStatus("api","warn","Chat: esperando");
+    setStatus("voice","ok","Voz: lista");
+    setStatus("mic","warn","Mic: off");
+    renderModule("dashboard", "dashboard");
+    setScene("default");
+    setRoute("/");
+    updateUi();
+
     await healthCheck();
     await loadAvatar("consia");
-    showBubble("CONSIA", "Listo. Conectá realtime y el avatar queda hablando en tiempo real.");
-    addLog("system", "Frontend realtime cargado.");
+    showBubble("CONSIA", "Listo. Mandame un mensaje y ejecuto automáticamente las actions del backend.");
+    addLog("system", "CONSIA Avatar OS iniciado.");
   </script>
 </body>
 </html>
