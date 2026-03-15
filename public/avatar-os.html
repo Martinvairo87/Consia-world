@@ -3,136 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>CONSIA Avatar OS</title>
+  <title>CONSIA Avatar OS — Realtime</title>
   <meta name="theme-color" content="#061225" />
   <style>
     :root{
       --bg:#061225;
-      --bg2:#091a33;
-      --panel:rgba(8,18,40,.72);
-      --panel-2:rgba(12,28,58,.62);
-      --line:rgba(91,167,255,.22);
-      --cyan:#27b7ff;
-      --cyan-2:#7ad8ff;
+      --bg2:#0b1730;
+      --panel:rgba(8,18,40,.78);
+      --panel2:rgba(8,18,40,.56);
+      --line:rgba(101,176,255,.22);
+      --cyan:#22b7ff;
+      --cyan2:#88ddff;
       --text:#f4f8ff;
-      --muted:#9ab6d8;
+      --muted:#9db7d8;
       --ok:#34d399;
       --warn:#f59e0b;
       --err:#fb7185;
-      --shadow:0 18px 60px rgba(0,0,0,.36);
-      --radius:22px;
+      --shadow:0 18px 60px rgba(0,0,0,.35);
+      --radius:24px;
     }
-
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:
-      radial-gradient(circle at 20% 10%, rgba(39,183,255,.12), transparent 26%),
-      radial-gradient(circle at 80% 18%, rgba(68,92,255,.10), transparent 24%),
-      linear-gradient(180deg, #041021 0%, #061225 40%, #041021 100%);
-      color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      min-height:100%;
+    html,body{
+      margin:0;padding:0;min-height:100%;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(34,183,255,.13), transparent 22%),
+        radial-gradient(circle at 85% 14%, rgba(74,100,255,.12), transparent 22%),
+        linear-gradient(180deg, #041021 0%, #061225 45%, #041021 100%);
+      color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       overflow-x:hidden;
     }
-
     .app{
       min-height:100vh;
-      padding:18px;
+      padding:16px;
       display:grid;
       grid-template-rows:auto 1fr auto;
       gap:16px;
     }
-
+    .topbar,.stage,.side,.footer{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(10,22,48,.84), rgba(7,16,35,.76));
+      backdrop-filter:blur(16px);
+      box-shadow:var(--shadow);
+    }
     .topbar{
       display:grid;
       grid-template-columns:1fr auto;
-      gap:14px;
-      align-items:center;
-      background:linear-gradient(180deg, rgba(10,22,48,.82), rgba(7,16,35,.76));
-      border:1px solid var(--line);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      padding:18px 18px 16px 18px;
-      backdrop-filter: blur(16px);
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
       gap:16px;
-      min-width:0;
+      padding:18px;
+      align-items:center;
     }
-
+    .brand{
+      display:flex;align-items:center;gap:16px;min-width:0;
+    }
     .orb{
       width:58px;height:58px;border-radius:50%;
       position:relative;flex:0 0 auto;
       background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.95), rgba(122,216,255,.55) 18%, rgba(39,183,255,.18) 40%, rgba(39,183,255,.04) 62%, transparent 70%),
-        radial-gradient(circle at 50% 50%, rgba(39,183,255,.32), rgba(39,183,255,.06) 60%, transparent 72%);
-      border:1px solid rgba(122,216,255,.35);
-      box-shadow:
-        0 0 50px rgba(39,183,255,.24),
-        inset 0 0 26px rgba(122,216,255,.14);
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.98), rgba(136,221,255,.52) 16%, rgba(34,183,255,.15) 42%, rgba(34,183,255,.04) 64%, transparent 74%),
+        radial-gradient(circle at 50% 50%, rgba(34,183,255,.28), rgba(34,183,255,.04) 62%, transparent 72%);
+      border:1px solid rgba(136,221,255,.34);
+      box-shadow:0 0 50px rgba(34,183,255,.24), inset 0 0 26px rgba(136,221,255,.14);
       overflow:hidden;
     }
-
     .orb::before{
       content:"";
-      position:absolute;inset:-25%;
-      background:
-        linear-gradient(90deg, transparent 0 40%, rgba(255,255,255,.16) 50%, transparent 60% 100%);
-      animation:scan 4.2s linear infinite;
+      position:absolute; inset:-25%;
+      background:linear-gradient(90deg, transparent 0 42%, rgba(255,255,255,.16) 50%, transparent 58% 100%);
       transform:rotate(22deg);
+      animation:scan 4.2s linear infinite;
     }
-
     @keyframes scan{
       from{transform:translateX(-120%) rotate(22deg)}
       to{transform:translateX(120%) rotate(22deg)}
     }
-
-    .title-wrap{min-width:0}
-    .title{
-      font-size:clamp(28px,4vw,56px);
-      font-weight:800;
-      line-height:1;
-      letter-spacing:-.03em;
-      margin:0 0 6px 0;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .subtitle{
-      margin:0;
-      color:var(--muted);
-      font-size:clamp(13px,1.5vw,18px);
-      line-height:1.35;
-    }
-
+    .title{margin:0 0 6px 0;font-size:clamp(30px,4vw,54px);line-height:1;font-weight:900;letter-spacing:-.03em}
+    .sub{margin:0;color:var(--muted);font-size:14px;line-height:1.4}
     .status-grid{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      gap:10px;
-      align-items:center;
+      display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;
     }
-
     .pill{
-      border:1px solid var(--line);
-      background:rgba(8,18,40,.68);
-      color:var(--text);
-      border-radius:999px;
-      padding:10px 14px;
-      display:flex;
-      align-items:center;
-      gap:9px;
-      min-height:42px;
-      box-shadow: inset 0 0 20px rgba(122,216,255,.04);
-      font-size:14px;
+      display:flex;align-items:center;gap:8px;
+      min-height:42px;padding:10px 14px;border-radius:999px;
+      border:1px solid var(--line);background:rgba(8,18,40,.7);
+      color:var(--text);font-size:14px;
     }
-
     .dot{
       width:10px;height:10px;border-radius:50%;
-      background:#6b7280;
-      box-shadow:0 0 14px currentColor;
-      color:#6b7280;
+      background:#6b7280;color:#6b7280;box-shadow:0 0 12px currentColor;
     }
     .dot.ok{background:var(--ok);color:var(--ok)}
     .dot.warn{background:var(--warn);color:var(--warn)}
@@ -140,339 +99,172 @@
 
     .main{
       display:grid;
-      grid-template-columns:minmax(0,1fr) 340px;
+      grid-template-columns:minmax(0,1fr) 360px;
       gap:16px;
       align-items:stretch;
     }
-
-    .stage-card,.side-card,.bottom-card{
-      border:1px solid var(--line);
-      background:
-        linear-gradient(180deg, rgba(9,20,42,.78), rgba(6,16,35,.72));
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(14px);
+    .stage{
       overflow:hidden;
-      position:relative;
-    }
-
-    .stage-card{
-      min-height:64vh;
+      min-height:72vh;
       display:grid;
       grid-template-rows:auto 1fr auto;
     }
-
-    .stage-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+    .stage-head,.side-head{
       padding:16px 18px;
-      border-bottom:1px solid rgba(91,167,255,.12);
-      background:
-        linear-gradient(180deg, rgba(12,28,58,.52), rgba(10,20,40,.18));
+      border-bottom:1px solid rgba(101,176,255,.12);
+      background:linear-gradient(180deg, rgba(12,28,58,.52), rgba(10,20,40,.12));
     }
-
-    .stage-title{
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:-.02em;
-    }
-
-    .stage-sub{
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .viewer-wrap{
+    .stage-title,.side-title{font-size:18px;font-weight:900;letter-spacing:-.02em}
+    .stage-sub,.side-sub{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.4}
+    .viewer{
       position:relative;
-      min-height:420px;
-      overflow:hidden;
+      min-height:460px;
       background:
-        radial-gradient(circle at 50% 28%, rgba(122,216,255,.14), transparent 18%),
-        radial-gradient(circle at 50% 64%, rgba(39,183,255,.09), transparent 24%),
+        radial-gradient(circle at 50% 24%, rgba(136,221,255,.10), transparent 18%),
+        radial-gradient(circle at 50% 62%, rgba(34,183,255,.08), transparent 22%),
         linear-gradient(180deg, rgba(5,16,34,.82), rgba(3,12,28,.94));
+      overflow:hidden;
     }
-
-    .viewer-wrap::before{
+    .viewer::before{
       content:"";
-      position:absolute; inset:0;
+      position:absolute;inset:0;pointer-events:none;
       background:
-        linear-gradient(rgba(122,216,255,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(122,216,255,.05) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(circle at 50% 50%, black 38%, rgba(0,0,0,.25) 72%, transparent 100%);
-      pointer-events:none;
+        linear-gradient(rgba(136,221,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(136,221,255,.05) 1px, transparent 1px);
+      background-size:46px 46px;
+      mask-image:radial-gradient(circle at 50% 50%, black 36%, rgba(0,0,0,.25) 72%, transparent 100%);
     }
-
-    .rings{
-      position:absolute; inset:0; pointer-events:none;
-      display:grid; place-items:center;
-    }
+    .rings{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
     .ring{
-      position:absolute;
-      border-radius:50%;
-      border:1px solid rgba(122,216,255,.14);
-      box-shadow:0 0 26px rgba(39,183,255,.06), inset 0 0 26px rgba(122,216,255,.03);
+      position:absolute;border-radius:50%;
+      border:1px solid rgba(136,221,255,.14);
+      box-shadow:0 0 26px rgba(34,183,255,.06), inset 0 0 24px rgba(136,221,255,.03);
       animation:float 9s ease-in-out infinite;
     }
-    .ring.r1{width:65vmin;height:65vmin;max-width:700px;max-height:700px}
-    .ring.r2{width:48vmin;height:48vmin;max-width:520px;max-height:520px;animation-delay:-1.8s}
-    .ring.r3{width:31vmin;height:31vmin;max-width:340px;max-height:340px;animation-delay:-3.2s}
+    .r1{width:64vmin;height:64vmin;max-width:700px;max-height:700px}
+    .r2{width:48vmin;height:48vmin;max-width:520px;max-height:520px;animation-delay:-1.8s}
+    .r3{width:31vmin;height:31vmin;max-width:340px;max-height:340px;animation-delay:-3.2s}
     @keyframes float{
       0%,100%{transform:translateY(0) scale(1)}
       50%{transform:translateY(-8px) scale(1.012)}
     }
-
     #avatarCanvas{
-      display:block;
-      width:100%;
-      height:min(72vh,760px);
-      min-height:420px;
-      position:relative;
-      z-index:2;
+      display:block;width:100%;height:min(74vh,780px);min-height:440px;position:relative;z-index:2;
       touch-action:none;
     }
-
-    .speech-bubble{
-      position:absolute;
-      left:18px;
-      top:18px;
-      z-index:3;
-      max-width:min(560px,calc(100% - 36px));
+    .speech{
+      position:absolute;left:18px;top:18px;z-index:3;
+      max-width:min(580px,calc(100% - 36px));
       background:rgba(5,13,28,.82);
-      border:1px solid rgba(122,216,255,.18);
+      border:1px solid rgba(136,221,255,.18);
       border-radius:18px;
       padding:14px 16px;
       box-shadow:0 10px 40px rgba(0,0,0,.28);
-      backdrop-filter: blur(10px);
-      opacity:0;
-      transform:translateY(8px);
-      transition:.25s ease;
-      pointer-events:none;
+      backdrop-filter:blur(10px);
+      opacity:0;transform:translateY(8px);transition:.25s ease;pointer-events:none;
     }
-
-    .speech-bubble.show{
-      opacity:1;
-      transform:translateY(0);
-    }
-
+    .speech.show{opacity:1;transform:translateY(0)}
     .speech-name{
-      font-size:12px;
-      color:var(--cyan-2);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      margin-bottom:6px;
-      font-weight:700;
+      font-size:12px;color:var(--cyan2);text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:6px
     }
-
-    .speech-text{
-      font-size:15px;
-      line-height:1.45;
-      color:#f1f6ff;
-      white-space:pre-wrap;
+    .speech-text{font-size:15px;line-height:1.45;white-space:pre-wrap}
+    .overlay{
+      position:absolute;right:18px;bottom:18px;z-index:3;
+      display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 36px)
     }
-
-    .viewer-overlay{
-      position:absolute;
-      right:18px;
-      bottom:18px;
-      z-index:3;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      max-width:calc(100% - 36px);
-    }
-
     .mini{
-      border-radius:999px;
-      background:rgba(6,16,35,.76);
-      border:1px solid rgba(122,216,255,.16);
-      padding:10px 14px;
-      font-size:12px;
-      color:var(--muted);
-      display:flex;
-      align-items:center;
-      gap:8px;
-      backdrop-filter: blur(10px);
+      border-radius:999px;background:rgba(6,16,35,.76);
+      border:1px solid rgba(136,221,255,.16);
+      padding:10px 14px;font-size:12px;color:var(--muted);
+      display:flex;align-items:center;gap:8px;backdrop-filter:blur(10px)
     }
-
-    .controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
+    .controls,.panel{
       padding:16px 18px 18px;
-      border-top:1px solid rgba(91,167,255,.12);
-      justify-content:center;
+    }
+    .controls{
+      display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+      border-top:1px solid rgba(101,176,255,.12);
       background:linear-gradient(180deg, rgba(7,17,36,.16), rgba(9,20,42,.42));
     }
-
-    button, .ghost-input, select, textarea{
+    .side{
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      min-height:72vh;
+      overflow:hidden;
+    }
+    .panel{border-bottom:1px solid rgba(101,176,255,.08)}
+    .label{
+      display:block;font-size:12px;color:var(--cyan2);text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:8px
+    }
+    .btn,.input,.select,.textarea{
       font:inherit;
     }
-
     .btn{
-      border:0;
-      border-radius:14px;
-      padding:14px 18px;
-      min-height:48px;
-      cursor:pointer;
-      font-weight:800;
-      letter-spacing:.01em;
-      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease, background .15s ease;
+      border:0;border-radius:14px;padding:14px 18px;min-height:48px;
+      cursor:pointer;font-weight:800;letter-spacing:.01em;
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
     }
-
     .btn:hover{transform:translateY(-1px)}
     .btn:active{transform:translateY(0)}
     .btn-primary{
-      color:#04101f;
-      background:linear-gradient(180deg, #57ceff, #1ab6ff);
-      box-shadow:0 12px 26px rgba(39,183,255,.24);
+      color:#04101f;background:linear-gradient(180deg, #57ceff, #1ab6ff);
+      box-shadow:0 12px 26px rgba(34,183,255,.24);
     }
     .btn-dark{
       color:var(--text);
       background:linear-gradient(180deg, rgba(21,40,78,.95), rgba(11,24,50,.95));
-      border:1px solid rgba(122,216,255,.18);
-      box-shadow:inset 0 0 18px rgba(122,216,255,.04);
+      border:1px solid rgba(136,221,255,.18);
     }
     .btn-soft{
       color:var(--text);
       background:linear-gradient(180deg, rgba(15,29,60,.8), rgba(11,20,42,.8));
-      border:1px solid rgba(122,216,255,.16);
+      border:1px solid rgba(136,221,255,.16);
     }
-    .btn.full{width:100%}
-
-    .side-card{
-      display:grid;
-      grid-template-rows:auto auto auto 1fr;
-      min-height:64vh;
-    }
-
-    .panel-head{
-      padding:18px 18px 14px;
-      border-bottom:1px solid rgba(91,167,255,.12);
-      background:linear-gradient(180deg, rgba(12,28,58,.48), rgba(10,20,40,.12));
-    }
-    .panel-title{font-weight:900;font-size:18px;letter-spacing:-.02em}
-    .panel-sub{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.4}
-
-    .panel-sec{
-      padding:16px 18px;
-      border-bottom:1px solid rgba(91,167,255,.08);
-    }
-
-    .label{
-      display:block;
-      font-size:12px;
-      color:var(--cyan-2);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      margin-bottom:9px;
-      font-weight:800;
-    }
-
-    .avatar-switches{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .ghost-input, .prompt-box, .select{
-      width:100%;
-      background:rgba(5,13,28,.78);
-      color:var(--text);
-      border:1px solid rgba(122,216,255,.16);
-      border-radius:14px;
-      padding:14px 14px;
-      outline:none;
-      box-shadow:inset 0 0 14px rgba(122,216,255,.03);
-    }
-
-    .prompt-box{
-      min-height:110px;
-      resize:vertical;
-      line-height:1.42;
-    }
-
     .stack{display:grid;gap:10px}
     .inline{display:flex;gap:10px}
-    .inline > *{flex:1}
-
+    .inline>*{flex:1}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .input,.select,.textarea{
+      width:100%;background:rgba(5,13,28,.78);color:var(--text);
+      border:1px solid rgba(136,221,255,.16);border-radius:14px;padding:14px 14px;
+      outline:none;box-shadow:inset 0 0 14px rgba(136,221,255,.03)
+    }
+    .textarea{min-height:105px;resize:vertical;line-height:1.42}
     .log{
-      padding:16px 18px 18px;
-      overflow:auto;
-      min-height:180px;
+      padding:16px 18px 18px;overflow:auto;min-height:220px
     }
-
     .log-card{
-      border:1px solid rgba(122,216,255,.1);
-      background:rgba(5,13,28,.56);
-      border-radius:16px;
-      padding:12px 13px;
-      margin-bottom:10px;
+      border:1px solid rgba(136,221,255,.1);background:rgba(5,13,28,.56);
+      border-radius:16px;padding:12px 13px;margin-bottom:10px;
     }
-
     .log-role{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:var(--cyan-2);
-      font-weight:900;
-      margin-bottom:6px;
+      font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--cyan2);font-weight:900;margin-bottom:6px
     }
     .log-text{
-      font-size:14px;
-      line-height:1.45;
-      color:#eef5ff;
-      white-space:pre-wrap;
-      word-break:break-word;
+      font-size:14px;line-height:1.45;color:#eef5ff;white-space:pre-wrap;word-break:break-word
     }
-
-    .bottom-card{
-      padding:14px 16px;
-      display:flex;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      color:var(--muted);
-      font-size:13px;
+    .footer{
+      padding:14px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
+      color:var(--muted);font-size:13px;
     }
-
-    .footer-left,.footer-right{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
+    .footer-left,.footer-right{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
     .badge{
-      border:1px solid rgba(122,216,255,.14);
+      border:1px solid rgba(136,221,255,.14);
       background:rgba(6,16,35,.6);
-      border-radius:999px;
-      padding:9px 12px;
-      color:#d6e9ff;
+      border-radius:999px;padding:9px 12px;color:#d6e9ff
     }
-
-    .hidden{display:none!important}
-
-    @media (max-width: 1100px){
+    @media (max-width:1100px){
       .main{grid-template-columns:1fr}
-      .side-card{min-height:auto}
       .status-grid{justify-content:flex-start}
       .topbar{grid-template-columns:1fr}
+      .side{min-height:auto}
     }
-
-    @media (max-width: 720px){
+    @media (max-width:720px){
       .app{padding:12px}
-      .topbar{padding:14px}
       .title{white-space:normal}
-      .avatar-switches{grid-template-columns:1fr}
-      .inline{flex-direction:column}
-      .controls{padding:14px}
-      .viewer-overlay{left:18px; right:18px; justify-content:flex-start}
-      #avatarCanvas{height:54vh; min-height:360px}
+      .grid2,.inline{grid-template-columns:1fr;flex-direction:column}
+      #avatarCanvas{height:56vh;min-height:360px}
+      .overlay{left:18px;right:18px;justify-content:flex-start}
     }
   </style>
 </head>
@@ -481,31 +273,29 @@
     <header class="topbar">
       <div class="brand">
         <div class="orb"></div>
-        <div class="title-wrap">
+        <div>
           <h1 class="title">CONSIA Avatar OS</h1>
-          <p class="subtitle">Avatar vivo + voz + cámara + multiidioma + modo presentador + creación por prompt</p>
+          <p class="sub">Realtime WebRTC + avatar vivo + mic + texto + fallback holográfico</p>
         </div>
       </div>
-
       <div class="status-grid">
-        <div class="pill"><span id="healthDot" class="dot warn"></span><span id="healthText">Health: iniciando</span></div>
-        <div class="pill"><span id="voiceDot" class="dot warn"></span><span id="voiceText">Voz: esperando</span></div>
-        <div class="pill"><span id="camDot" class="dot warn"></span><span id="camText">Cámara: esperando</span></div>
-        <div class="pill"><span id="chatDot" class="dot warn"></span><span id="chatText">Chat: esperando</span></div>
+        <div class="pill"><span id="dotHealth" class="dot warn"></span><span id="txtHealth">Health: iniciando</span></div>
+        <div class="pill"><span id="dotRtc" class="dot warn"></span><span id="txtRtc">Realtime: desconectado</span></div>
+        <div class="pill"><span id="dotMic" class="dot warn"></span><span id="txtMic">Mic: off</span></div>
+        <div class="pill"><span id="dotAudio" class="dot warn"></span><span id="txtAudio">Audio: idle</span></div>
       </div>
     </header>
 
     <main class="main">
-      <section class="stage-card">
+      <section class="stage">
         <div class="stage-head">
           <div>
-            <div class="stage-title">Neural Avatar Stage</div>
-            <div class="stage-sub">Con fallback holográfico si todavía no subiste los .glb</div>
+            <div class="stage-title">Realtime Avatar Stage</div>
+            <div class="stage-sub">Si existe /avatar/*.glb lo carga. Si no, usa holograma premium.</div>
           </div>
-          <div class="pill"><span id="activeAvatarDot" class="dot ok"></span><span id="activeAvatarLabel">Avatar activo: CONSIA</span></div>
         </div>
 
-        <div class="viewer-wrap">
+        <div class="viewer">
           <div class="rings">
             <div class="ring r1"></div>
             <div class="ring r2"></div>
@@ -514,56 +304,61 @@
 
           <canvas id="avatarCanvas"></canvas>
 
-          <div id="speechBubble" class="speech-bubble">
+          <div id="speech" class="speech">
             <div class="speech-name" id="speechName">CONSIA</div>
             <div class="speech-text" id="speechText">Listo.</div>
           </div>
 
-          <div class="viewer-overlay">
-            <div class="mini"><span id="renderMode">Modo render: fallback holográfico</span></div>
-            <div class="mini"><span id="langMode">Idioma: auto</span></div>
-            <div class="mini"><span id="micState">Mic: off</span></div>
+          <div class="overlay">
+            <div class="mini"><span id="renderLabel">Render: fallback holográfico</span></div>
+            <div class="mini"><span id="voiceLabel">Voice: marin</span></div>
+            <div class="mini"><span id="langLabel">Idioma: auto</span></div>
           </div>
         </div>
 
         <div class="controls">
-          <button class="btn btn-primary" id="btnConsia">CONSIA</button>
-          <button class="btn btn-dark" id="btnMartin">MARTIN</button>
-          <button class="btn btn-dark" id="btnFuture">MARTIN FUTURE</button>
-          <button class="btn btn-soft" id="btnMic">Activar voz</button>
-          <button class="btn btn-soft" id="btnCam">Activar cámara</button>
-          <button class="btn btn-soft" id="btnPresent">Presentación</button>
-          <button class="btn btn-soft" id="btnDemo">Play demo</button>
-          <button class="btn btn-soft" id="btnStopSpeech">Silenciar</button>
+          <button class="btn btn-primary" id="btnConnect">Conectar realtime</button>
+          <button class="btn btn-dark" id="btnDisconnect">Desconectar</button>
+          <button class="btn btn-soft" id="btnMute">Mutear mic</button>
+          <button class="btn btn-soft" id="btnConsia">CONSIA</button>
+          <button class="btn btn-soft" id="btnMartin">MARTIN</button>
+          <button class="btn btn-soft" id="btnFuture">MARTIN FUTURE</button>
+          <button class="btn btn-soft" id="btnDemo">Demo</button>
         </div>
       </section>
 
-      <aside class="side-card">
-        <div class="panel-head">
-          <div class="panel-title">Avatar Control Center</div>
-          <div class="panel-sub">Definí modo, prompt, idioma y lanzá generación o presentación.</div>
+      <aside class="side">
+        <div class="side-head">
+          <div class="side-title">Control Center</div>
+          <div class="side-sub">Sesión Realtime, texto, instrucciones y envío de eventos.</div>
         </div>
 
-        <div class="panel-sec">
-          <label class="label">Selector rápido</label>
-          <div class="avatar-switches">
-            <button class="btn btn-dark full" id="btnLoadConsia2">Cargar CONSIA</button>
-            <button class="btn btn-dark full" id="btnLoadMartin2">Cargar MARTIN</button>
-            <button class="btn btn-dark full" id="btnLoadFuture2">Cargar FUTURE</button>
-            <button class="btn btn-dark full" id="btnFallback">Modo holograma</button>
-          </div>
-        </div>
-
-        <div class="panel-sec stack">
+        <div class="panel stack">
           <div>
-            <label class="label" for="voiceLanguage">Idioma de respuesta</label>
-            <select id="voiceLanguage" class="select ghost-input">
+            <label class="label" for="selVoice">Voice</label>
+            <select id="selVoice" class="select">
+              <option value="marin" selected>marin</option>
+              <option value="cedar">cedar</option>
+              <option value="alloy">alloy</option>
+              <option value="ash">ash</option>
+              <option value="ballad">ballad</option>
+              <option value="coral">coral</option>
+              <option value="echo">echo</option>
+              <option value="sage">sage</option>
+              <option value="shimmer">shimmer</option>
+              <option value="verse">verse</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label" for="selLang">Idioma</label>
+            <select id="selLang" class="select">
               <option value="auto" selected>Auto</option>
               <option value="es-AR">Español (Argentina)</option>
               <option value="es-ES">Español</option>
               <option value="en-US">English (US)</option>
               <option value="en-GB">English (UK)</option>
-              <option value="pt-BR">Português (Brasil)</option>
+              <option value="pt-BR">Português</option>
               <option value="fr-FR">Français</option>
               <option value="de-DE">Deutsch</option>
               <option value="it-IT">Italiano</option>
@@ -574,22 +369,27 @@
           </div>
 
           <div>
-            <label class="label" for="promptInput">Crear avatar por imaginación</label>
-            <textarea id="promptInput" class="prompt-box" placeholder="Ejemplo: líder tecnológico hiperrealista, traje negro premium, energía serena, mirada segura, estilo CONSIA top mundial"></textarea>
-          </div>
-
-          <div class="inline">
-            <button class="btn btn-primary" id="btnGenerate">Generar avatar</button>
-            <button class="btn btn-dark" id="btnSpeakPrompt">Decir prompt</button>
+            <label class="label" for="instructions">Instrucciones de sesión</label>
+            <textarea id="instructions" class="textarea">Sos CONSIA, asistente premium de Martín. Respondé directo, claro, ejecutivo y en el idioma del usuario. Si te piden presentar CONSIA, hacelo en tono presentador.</textarea>
           </div>
 
           <div>
-            <label class="label" for="messageInput">Mensaje directo al avatar</label>
-            <input id="messageInput" class="ghost-input" placeholder="Ejemplo: presentame CONSIA en 30 segundos" />
+            <label class="label" for="promptText">Enviar texto a Realtime</label>
+            <input id="promptText" class="input" placeholder="Ejemplo: presentame CONSIA en 20 segundos" />
           </div>
 
           <div class="inline">
-            <button class="btn btn-primary" id="btnSend">Enviar</button>
+            <button class="btn btn-primary" id="btnSendText">Enviar texto</button>
+            <button class="btn btn-dark" id="btnSessionUpdate">Actualizar sesión</button>
+          </div>
+
+          <div>
+            <label class="label" for="avatarPrompt">Prompt avatar</label>
+            <textarea id="avatarPrompt" class="textarea" placeholder="Ejemplo: líder tecnológico premium, traje negro, estilo futurista, energía serena"></textarea>
+          </div>
+
+          <div class="inline">
+            <button class="btn btn-primary" id="btnGenerateAvatar">Generar avatar</button>
             <button class="btn btn-dark" id="btnHello">Saludo</button>
           </div>
         </div>
@@ -598,76 +398,81 @@
       </aside>
     </main>
 
-    <footer class="bottom-card">
+    <footer class="footer">
       <div class="footer-left">
-        <span class="badge">CONSIA Neural Avatar</span>
-        <span class="badge" id="footerAvatar">Avatar: CONSIA</span>
-        <span class="badge" id="footerRenderer">Renderer: fallback</span>
+        <span class="badge" id="badgeAvatar">Avatar: CONSIA</span>
+        <span class="badge" id="badgeRenderer">Renderer: fallback</span>
       </div>
       <div class="footer-right">
-        <span class="badge">Ruta GLB: /avatar/*.glb</span>
-        <span class="badge">API: /v1/chat</span>
+        <span class="badge">/v1/realtime/session</span>
+        <span class="badge">/v1/avatar/generate</span>
+        <span class="badge">WebRTC + oai-events</span>
       </div>
     </footer>
   </div>
+
+  <audio id="remoteAudio" autoplay playsinline></audio>
 
   <script type="module">
     import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js";
     import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/loaders/GLTFLoader.js";
     import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/controls/OrbitControls.js";
 
+    const $ = (id) => document.getElementById(id);
+
     const els = {
-      healthDot: document.getElementById("healthDot"),
-      healthText: document.getElementById("healthText"),
-      voiceDot: document.getElementById("voiceDot"),
-      voiceText: document.getElementById("voiceText"),
-      camDot: document.getElementById("camDot"),
-      camText: document.getElementById("camText"),
-      chatDot: document.getElementById("chatDot"),
-      chatText: document.getElementById("chatText"),
-      activeAvatarLabel: document.getElementById("activeAvatarLabel"),
-      renderMode: document.getElementById("renderMode"),
-      langMode: document.getElementById("langMode"),
-      micState: document.getElementById("micState"),
-      footerAvatar: document.getElementById("footerAvatar"),
-      footerRenderer: document.getElementById("footerRenderer"),
-      speechBubble: document.getElementById("speechBubble"),
-      speechName: document.getElementById("speechName"),
-      speechText: document.getElementById("speechText"),
-      promptInput: document.getElementById("promptInput"),
-      messageInput: document.getElementById("messageInput"),
-      voiceLanguage: document.getElementById("voiceLanguage"),
-      log: document.getElementById("log"),
-      btnConsia: document.getElementById("btnConsia"),
-      btnMartin: document.getElementById("btnMartin"),
-      btnFuture: document.getElementById("btnFuture"),
-      btnMic: document.getElementById("btnMic"),
-      btnCam: document.getElementById("btnCam"),
-      btnPresent: document.getElementById("btnPresent"),
-      btnDemo: document.getElementById("btnDemo"),
-      btnStopSpeech: document.getElementById("btnStopSpeech"),
-      btnLoadConsia2: document.getElementById("btnLoadConsia2"),
-      btnLoadMartin2: document.getElementById("btnLoadMartin2"),
-      btnLoadFuture2: document.getElementById("btnLoadFuture2"),
-      btnFallback: document.getElementById("btnFallback"),
-      btnGenerate: document.getElementById("btnGenerate"),
-      btnSpeakPrompt: document.getElementById("btnSpeakPrompt"),
-      btnSend: document.getElementById("btnSend"),
-      btnHello: document.getElementById("btnHello")
+      dotHealth: $("dotHealth"),
+      txtHealth: $("txtHealth"),
+      dotRtc: $("dotRtc"),
+      txtRtc: $("txtRtc"),
+      dotMic: $("dotMic"),
+      txtMic: $("txtMic"),
+      dotAudio: $("dotAudio"),
+      txtAudio: $("txtAudio"),
+      renderLabel: $("renderLabel"),
+      voiceLabel: $("voiceLabel"),
+      langLabel: $("langLabel"),
+      speech: $("speech"),
+      speechName: $("speechName"),
+      speechText: $("speechText"),
+      selVoice: $("selVoice"),
+      selLang: $("selLang"),
+      instructions: $("instructions"),
+      promptText: $("promptText"),
+      avatarPrompt: $("avatarPrompt"),
+      btnConnect: $("btnConnect"),
+      btnDisconnect: $("btnDisconnect"),
+      btnMute: $("btnMute"),
+      btnConsia: $("btnConsia"),
+      btnMartin: $("btnMartin"),
+      btnFuture: $("btnFuture"),
+      btnDemo: $("btnDemo"),
+      btnSendText: $("btnSendText"),
+      btnSessionUpdate: $("btnSessionUpdate"),
+      btnGenerateAvatar: $("btnGenerateAvatar"),
+      btnHello: $("btnHello"),
+      log: $("log"),
+      badgeAvatar: $("badgeAvatar"),
+      badgeRenderer: $("badgeRenderer"),
+      remoteAudio: $("remoteAudio")
     };
 
     const state = {
+      pc: null,
+      dc: null,
+      micStream: null,
+      micTrack: null,
+      connected: false,
+      micMuted: false,
       activeAvatar: "consia",
-      renderMode: "fallback holográfico",
-      micActive: false,
-      camActive: false,
-      currentLang: "auto",
-      avatarLoaded: false,
-      speaking: false,
-      recognition: null,
-      videoStream: null,
-      apiAvailable: false,
-      firstInteraction: false
+      rendererMode: "fallback holográfico",
+      pendingText: "",
+      currentResponseText: "",
+      audioContext: null,
+      analyser: null,
+      audioData: null,
+      audioSource: null,
+      sessionId: null
     };
 
     function setDot(el, mode){
@@ -677,10 +482,10 @@
 
     function setStatus(kind, mode, text){
       const map = {
-        health:[els.healthDot, els.healthText],
-        voice:[els.voiceDot, els.voiceText],
-        cam:[els.camDot, els.camText],
-        chat:[els.chatDot, els.chatText]
+        health:[els.dotHealth, els.txtHealth],
+        rtc:[els.dotRtc, els.txtRtc],
+        mic:[els.dotMic, els.txtMic],
+        audio:[els.dotAudio, els.txtAudio]
       };
       const [dot, label] = map[kind];
       setDot(dot, mode);
@@ -688,35 +493,62 @@
     }
 
     function addLog(role, text){
-      const wrap = document.createElement("div");
-      wrap.className = "log-card";
-      wrap.innerHTML = `<div class="log-role">${role}</div><div class="log-text"></div>`;
-      wrap.querySelector(".log-text").textContent = text;
-      els.log.prepend(wrap);
+      const card = document.createElement("div");
+      card.className = "log-card";
+      card.innerHTML = `<div class="log-role"></div><div class="log-text"></div>`;
+      card.querySelector(".log-role").textContent = role;
+      card.querySelector(".log-text").textContent = text;
+      els.log.prepend(card);
     }
 
-    let bubbleTimer;
-    function showBubble(name, text, sticky=false){
+    let bubbleTimer = null;
+    function showBubble(name, text, sticky = false){
       els.speechName.textContent = name;
       els.speechText.textContent = text;
-      els.speechBubble.classList.add("show");
+      els.speech.classList.add("show");
       clearTimeout(bubbleTimer);
       if(!sticky){
-        bubbleTimer = setTimeout(()=> els.speechBubble.classList.remove("show"), 6500);
+        bubbleTimer = setTimeout(() => els.speech.classList.remove("show"), 6000);
       }
     }
 
-    function updateUiAvatar(){
-      const label = state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase();
-      els.activeAvatarLabel.textContent = `Avatar activo: ${label}`;
-      els.footerAvatar.textContent = `Avatar: ${label}`;
-      els.renderMode.textContent = `Modo render: ${state.renderMode}`;
-      els.footerRenderer.textContent = `Renderer: ${state.renderMode}`;
-      els.langMode.textContent = `Idioma: ${state.currentLang}`;
-      els.micState.textContent = `Mic: ${state.micActive ? "on" : "off"}`;
+    function updateLabels(){
+      els.voiceLabel.textContent = `Voice: ${els.selVoice.value}`;
+      els.langLabel.textContent = `Idioma: ${els.selLang.value}`;
+      els.badgeAvatar.textContent = `Avatar: ${state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase()}`;
+      els.badgeRenderer.textContent = `Renderer: ${state.rendererMode}`;
+      els.renderLabel.textContent = `Render: ${state.rendererMode}`;
     }
 
-    const canvas = document.getElementById("avatarCanvas");
+    function getPreferredLang(){
+      return els.selLang.value === "auto" ? (navigator.language || "es-AR") : els.selLang.value;
+    }
+
+    function safeJsonParse(s){
+      try { return JSON.parse(s); } catch { return null; }
+    }
+
+    function getEphemeralKey(data){
+      return data?.client_secret?.value || data?.value || data?.session?.client_secret?.value || null;
+    }
+
+    function extractTextFromResponseDone(event){
+      const out = event?.response?.output;
+      if (!Array.isArray(out)) return "";
+      const parts = [];
+      for (const item of out) {
+        if (item?.type === "message" && Array.isArray(item.content)) {
+          for (const c of item.content) {
+            if (typeof c?.text === "string") parts.push(c.text);
+            else if (typeof c?.transcript === "string") parts.push(c.transcript);
+          }
+        }
+      }
+      return parts.join("\n").trim();
+    }
+
+    // ---------- THREE / AVATAR ----------
+    const canvas = $("avatarCanvas");
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x061225);
 
@@ -734,14 +566,13 @@
     controls.maxDistance = 5.5;
     controls.target.set(0, 1.12, 0);
 
-    const hemi = new THREE.HemisphereLight(0xdff5ff, 0x102040, 1.7);
-    scene.add(hemi);
+    scene.add(new THREE.HemisphereLight(0xdff5ff, 0x102040, 1.7));
 
     const dir = new THREE.DirectionalLight(0xffffff, 1.2);
     dir.position.set(2.8, 4, 3.4);
     scene.add(dir);
 
-    const fill = new THREE.DirectionalLight(0x5ccaff, 0.5);
+    const fill = new THREE.DirectionalLight(0x5ccaff, 0.45);
     fill.position.set(-3, 2, 2);
     scene.add(fill);
 
@@ -761,50 +592,28 @@
     let mixer = null;
     const clock = new THREE.Clock();
 
-    function clearAvatar(){
-      if(currentAvatar){
-        scene.remove(currentAvatar);
-        currentAvatar.traverse(obj=>{
-          if(obj.geometry) obj.geometry.dispose?.();
-          if(obj.material){
-            if(Array.isArray(obj.material)) obj.material.forEach(m=>m.dispose?.());
-            else obj.material.dispose?.();
-          }
-        });
-        currentAvatar = null;
-      }
-      mixer = null;
-    }
-
     function createFallbackAvatar(){
       hologramGroup.clear();
 
       const root = new THREE.Group();
-
-      const bodyMat = new THREE.MeshPhongMaterial({
+      const mat = new THREE.MeshPhongMaterial({
         color:0x72d8ff,
         transparent:true,
         opacity:.17,
         emissive:0x1ab6ff,
-        emissiveIntensity:.22,
+        emissiveIntensity:.24,
         shininess:90
       });
 
-      const lineMat = new THREE.MeshBasicMaterial({
-        color:0x99e7ff,
-        transparent:true,
-        opacity:.75
-      });
-
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 32, 32), bodyMat.clone());
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 32, 32), mat.clone());
       head.position.set(0, 1.52, 0);
       root.add(head);
 
-      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.14, 16), bodyMat.clone());
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.14, 16), mat.clone());
       neck.position.set(0, 1.28, 0);
       root.add(neck);
 
-      const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.8, 8, 18), bodyMat.clone());
+      const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.8, 8, 18), mat.clone());
       torso.position.set(0, 0.65, 0);
       root.add(torso);
 
@@ -847,105 +656,84 @@
       ring2.position.set(0, 1.02, 0);
       root.add(ring2);
 
-      root.userData = { eyeL, eyeR, mouth, core, ring1, ring2 };
+      root.userData = { mouth, core, ring1, ring2 };
       hologramGroup.add(root);
       currentAvatar = root;
-      state.renderMode = "fallback holográfico";
-      state.avatarLoaded = false;
-      updateUiAvatar();
+      mixer = null;
+      state.rendererMode = "fallback holográfico";
+      updateLabels();
     }
 
-    createFallbackAvatar();
-
-    function setActiveButton(name){
-      const buttons = [
-        [els.btnConsia,"consia"], [els.btnMartin,"martin"], [els.btnFuture,"martin-futurista"]
-      ];
-      buttons.forEach(([btn, key])=>{
-        btn.className = "btn " + (name===key ? "btn-primary" : "btn-dark");
-      });
+    function clearAvatar(){
+      if (currentAvatar) {
+        if (currentAvatar.parent) currentAvatar.parent.remove(currentAvatar);
+      }
+      currentAvatar = null;
+      mixer = null;
     }
 
     async function loadAvatar(name){
       state.activeAvatar = name;
-      setActiveButton(name);
-      updateUiAvatar();
-
-      const path = `/avatar/${name}.glb`;
       clearAvatar();
       createFallbackAvatar();
       showBubble("CONSIA", `Cargando ${name.toUpperCase()}...`, true);
 
       try{
-        const gltf = await loader.loadAsync(path);
+        const gltf = await loader.loadAsync(`/avatar/${name}.glb`);
         hologramGroup.clear();
         currentAvatar = gltf.scene;
         currentAvatar.position.set(0, 0, 0);
         currentAvatar.scale.setScalar(1.32);
-
-        currentAvatar.traverse(obj=>{
-          if(obj.isMesh){
-            obj.castShadow = false;
-            obj.receiveShadow = false;
-          }
-        });
-
         scene.add(currentAvatar);
 
-        if(gltf.animations && gltf.animations.length){
+        if (gltf.animations && gltf.animations.length) {
           mixer = new THREE.AnimationMixer(currentAvatar);
-          const clip = gltf.animations[0];
-          const action = mixer.clipAction(clip);
+          const action = mixer.clipAction(gltf.animations[0]);
           action.play();
-        } else {
-          mixer = null;
         }
 
-        state.renderMode = "GLB real";
-        state.avatarLoaded = true;
-        updateUiAvatar();
-        showBubble(name.toUpperCase(), `${name.toUpperCase()} cargado correctamente.`);
-        addLog("system", `${path} cargado.`);
-      } catch(err){
-        state.renderMode = "fallback holográfico";
-        state.avatarLoaded = false;
-        updateUiAvatar();
-        showBubble("CONSIA", `No encontré ${path}. Uso modo holograma hasta que subas el archivo .glb.`);
-        addLog("warning", `No se pudo cargar ${path}. Fallback activado.`);
+        state.rendererMode = "GLB real";
+        updateLabels();
+        showBubble(name.toUpperCase(), `${name.toUpperCase()} cargado.`);
+        addLog("system", `/avatar/${name}.glb cargado.`);
+      } catch {
+        state.rendererMode = "fallback holográfico";
+        updateLabels();
+        showBubble("CONSIA", `No encontré /avatar/${name}.glb. Sigo en modo holograma.`);
+        addLog("warning", `No se pudo cargar /avatar/${name}.glb`);
       }
     }
 
-    function animateFallback(delta){
-      if(!currentAvatar || state.avatarLoaded) return;
+    function getAudioLevel(){
+      if (!state.analyser || !state.audioData) return 0;
+      state.analyser.getByteFrequencyData(state.audioData);
+      let sum = 0;
+      for (let i = 0; i < state.audioData.length; i++) sum += state.audioData[i];
+      return sum / state.audioData.length / 255;
+    }
+
+    function animateFallback(delta, level){
+      if (!currentAvatar || state.rendererMode !== "fallback holográfico") return;
       const t = performance.now() * 0.001;
       currentAvatar.rotation.y = Math.sin(t * 0.55) * 0.18;
-
       const d = currentAvatar.userData || {};
-      if(d.core){
-        d.core.scale.setScalar(1 + Math.sin(t * 2.2) * 0.08);
-      }
-      if(d.ring1){
-        d.ring1.rotation.z += delta * 0.5;
-      }
-      if(d.ring2){
-        d.ring2.rotation.z -= delta * 0.3;
-      }
-      if(d.mouth && state.speaking){
-        d.mouth.scale.y = 1 + Math.abs(Math.sin(t * 18)) * 3.4;
-      } else if(d.mouth){
-        d.mouth.scale.y = 1;
-      }
+      if (d.core) d.core.scale.setScalar(1 + Math.sin(t * 2.2) * 0.08 + level * 0.18);
+      if (d.ring1) d.ring1.rotation.z += delta * (0.5 + level);
+      if (d.ring2) d.ring2.rotation.z -= delta * (0.3 + level * 0.5);
+      if (d.mouth) d.mouth.scale.y = 1 + level * 8;
     }
 
     function animate(){
       requestAnimationFrame(animate);
       const delta = clock.getDelta();
+      const level = getAudioLevel();
 
-      if(mixer) mixer.update(delta);
-      if(currentAvatar && state.avatarLoaded){
-        currentAvatar.rotation.y += delta * 0.12;
+      if (mixer) mixer.update(delta);
+      if (currentAvatar && state.rendererMode === "GLB real") {
+        currentAvatar.rotation.y += delta * 0.10;
+        currentAvatar.position.y = Math.sin(performance.now() * 0.0018) * 0.02;
       }
-      animateFallback(delta);
+      animateFallback(delta, level);
 
       controls.update();
       renderer.render(scene, camera);
@@ -962,324 +750,348 @@
     window.addEventListener("resize", resize);
     resize();
 
-    function getPreferredLang(){
-      const v = els.voiceLanguage.value;
-      if(v !== "auto") return v;
-      return navigator.language || "es-AR";
+    // ---------- AUDIO ANALYSER ----------
+    function setupRemoteAudioAnalyser(){
+      try{
+        if (state.audioContext) return;
+        state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        state.audioSource = state.audioContext.createMediaElementSource(els.remoteAudio);
+        state.analyser = state.audioContext.createAnalyser();
+        state.analyser.fftSize = 256;
+        state.audioData = new Uint8Array(state.analyser.frequencyBinCount);
+        state.audioSource.connect(state.analyser);
+        state.analyser.connect(state.audioContext.destination);
+      } catch(e){
+        addLog("warning", "No pude crear el analizador de audio remoto.");
+      }
     }
 
-    function speak(text, who="CONSIA"){
-      if(!("speechSynthesis" in window)){
-        addLog("error", "SpeechSynthesis no disponible en este navegador.");
+    // ---------- REALTIME / WEBRTC ----------
+    function sendDcEvent(event){
+      if (!state.dc || state.dc.readyState !== "open") {
+        addLog("warning", "Data channel no abierto.");
+        return;
+      }
+      state.dc.send(JSON.stringify(event));
+    }
+
+    function handleServerEvent(event){
+      switch (event.type) {
+        case "session.created":
+          state.sessionId = event.session?.id || null;
+          addLog("realtime", "session.created");
+          break;
+
+        case "session.updated":
+          addLog("realtime", "session.updated");
+          break;
+
+        case "input_audio_buffer.speech_started":
+          setStatus("audio", "warn", "Audio: interrumpido por voz");
+          try { els.remoteAudio.pause(); } catch {}
+          break;
+
+        case "response.output_text.delta":
+          state.currentResponseText += event.delta || "";
+          showBubble(state.activeAvatar.toUpperCase(), state.currentResponseText, true);
+          break;
+
+        case "response.audio_transcript.delta":
+          state.currentResponseText += event.delta || "";
+          showBubble(state.activeAvatar.toUpperCase(), state.currentResponseText, true);
+          break;
+
+        case "response.done": {
+          const finalText = extractTextFromResponseDone(event) || state.currentResponseText || "Listo.";
+          state.currentResponseText = "";
+          addLog("assistant", finalText);
+          showBubble(state.activeAvatar.toUpperCase(), finalText);
+          setStatus("audio", "ok", "Audio: respuesta recibida");
+          break;
+        }
+
+        case "error":
+          addLog("error", JSON.stringify(event, null, 2));
+          setStatus("rtc", "err", "Realtime: error");
+          break;
+      }
+    }
+
+    async function connectRealtime(){
+      if (state.connected) return;
+
+      try{
+        setStatus("rtc", "warn", "Realtime: solicitando sesión");
+        setStatus("mic", "warn", "Mic: solicitando permiso");
+        setStatus("audio", "warn", "Audio: preparando");
+
+        const tokenRes = await fetch("/v1/realtime/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            voice: els.selVoice.value,
+            language: els.selLang.value,
+            instructions: els.instructions.value
+          })
+        });
+
+        if (!tokenRes.ok) {
+          throw new Error(`No pude crear la sesión (${tokenRes.status})`);
+        }
+
+        const tokenData = await tokenRes.json();
+        const ephemeralKey = getEphemeralKey(tokenData);
+        if (!ephemeralKey) throw new Error("No llegó client_secret.value");
+
+        setupRemoteAudioAnalyser();
+        if (state.audioContext?.state === "suspended") {
+          await state.audioContext.resume();
+        }
+
+        state.pc = new RTCPeerConnection();
+        state.pc.onconnectionstatechange = () => {
+          const s = state.pc.connectionState;
+          if (s === "connected") {
+            state.connected = true;
+            setStatus("rtc", "ok", "Realtime: conectado");
+          } else if (s === "failed" || s === "disconnected" || s === "closed") {
+            state.connected = false;
+            setStatus("rtc", s === "failed" ? "err" : "warn", `Realtime: ${s}`);
+          }
+        };
+
+        els.remoteAudio.autoplay = true;
+        els.remoteAudio.playsInline = true;
+        state.pc.ontrack = (e) => {
+          els.remoteAudio.srcObject = e.streams[0];
+          setStatus("audio", "ok", "Audio: remoto activo");
+        };
+
+        state.micStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+        state.micTrack = state.micStream.getAudioTracks()[0];
+        state.pc.addTrack(state.micTrack, state.micStream);
+        setStatus("mic", "ok", "Mic: activo");
+
+        state.dc = state.pc.createDataChannel("oai-events");
+        state.dc.addEventListener("open", () => {
+          addLog("realtime", "Data channel abierto.");
+          sendSessionUpdate();
+        });
+        state.dc.addEventListener("message", (e) => {
+          const event = safeJsonParse(e.data);
+          if (!event) return;
+          handleServerEvent(event);
+        });
+
+        const offer = await state.pc.createOffer();
+        await state.pc.setLocalDescription(offer);
+
+        const sdpRes = await fetch("https://api.openai.com/v1/realtime/calls", {
+          method: "POST",
+          body: offer.sdp,
+          headers: {
+            Authorization: `Bearer ${ephemeralKey}`,
+            "Content-Type": "application/sdp"
+          }
+        });
+
+        if (!sdpRes.ok) {
+          const txt = await sdpRes.text();
+          throw new Error(`OpenAI SDP error: ${sdpRes.status} ${txt}`);
+        }
+
+        const answer = {
+          type: "answer",
+          sdp: await sdpRes.text()
+        };
+        await state.pc.setRemoteDescription(answer);
+
+        state.connected = true;
+        setStatus("rtc", "ok", "Realtime: conectado");
+        addLog("system", "WebRTC conectado.");
+        showBubble("CONSIA", "Realtime activo. Ya podés hablar.");
+      } catch (err) {
+        state.connected = false;
+        setStatus("rtc", "err", "Realtime: error");
+        setStatus("mic", "err", "Mic: error");
+        addLog("error", err.message || String(err));
+        showBubble("CONSIA", `Error realtime: ${err.message || err}`);
+      }
+    }
+
+    function disconnectRealtime(){
+      try{
+        if (state.dc) {
+          try { state.dc.close(); } catch {}
+          state.dc = null;
+        }
+        if (state.pc) {
+          try { state.pc.getSenders().forEach(s => s.track && s.track.stop()); } catch {}
+          try { state.pc.close(); } catch {}
+          state.pc = null;
+        }
+        if (state.micStream) {
+          state.micStream.getTracks().forEach(t => t.stop());
+          state.micStream = null;
+        }
+        state.micTrack = null;
+        state.connected = false;
+        state.micMuted = false;
+        setStatus("rtc", "warn", "Realtime: desconectado");
+        setStatus("mic", "warn", "Mic: off");
+        setStatus("audio", "warn", "Audio: idle");
+        addLog("system", "Realtime desconectado.");
+      } catch {}
+    }
+
+    function toggleMute(){
+      if (!state.micTrack) return;
+      state.micMuted = !state.micMuted;
+      state.micTrack.enabled = !state.micMuted;
+      els.btnMute.textContent = state.micMuted ? "Activar mic" : "Mutear mic";
+      setStatus("mic", state.micMuted ? "warn" : "ok", state.micMuted ? "Mic: muteado" : "Mic: activo");
+    }
+
+    function sendSessionUpdate(){
+      if (!state.dc || state.dc.readyState !== "open") return;
+
+      const event = {
+        type: "session.update",
+        session: {
+          type: "realtime",
+          output_modalities: ["audio", "text"],
+          instructions: els.instructions.value,
+          audio: {
+            input: {
+              turn_detection: {
+                type: "semantic_vad",
+                create_response: true,
+                interrupt_response: true,
+                eagerness: "auto"
+              }
+            }
+          }
+        }
+      };
+      sendDcEvent(event);
+      addLog("client", "session.update enviado.");
+    }
+
+    function sendTextPrompt(text){
+      if (!text.trim()) return;
+      if (!state.dc || state.dc.readyState !== "open") {
+        addLog("warning", "Primero conectá realtime.");
         return;
       }
 
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      const lang = getPreferredLang();
-      utter.lang = lang;
-      utter.rate = 1;
-      utter.pitch = 1;
-
-      const voices = speechSynthesis.getVoices();
-      const preferred = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0,2)));
-      if(preferred) utter.voice = preferred;
-
-      utter.onstart = () => {
-        state.speaking = true;
-        setStatus("voice","ok","Voz: hablando");
-        showBubble(who, text, true);
-      };
-      utter.onend = () => {
-        state.speaking = false;
-        setStatus("voice", state.micActive ? "ok" : "warn", state.micActive ? "Voz: lista" : "Voz: disponible");
-        els.speechBubble.classList.remove("show");
-      };
-      utter.onerror = () => {
-        state.speaking = false;
-        setStatus("voice","err","Voz: error");
-      };
-
-      speechSynthesis.speak(utter);
-    }
-
-    async function checkApiHealth(){
-      try{
-        const res = await fetch("https://api.consia.world/v1/chat", {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ message:"ping" })
-        });
-        if(!res.ok) throw new Error("bad_status");
-        state.apiAvailable = true;
-        setStatus("chat","ok","Chat: conectado");
-        setStatus("health","ok","Health: online");
-      } catch {
-        state.apiAvailable = false;
-        setStatus("chat","warn","Chat: fallback local");
-        setStatus("health","ok","Health: online");
-      }
-    }
-
-    async function sendToConsia(text){
+      state.currentResponseText = "";
       addLog("user", text);
       showBubble("TÚ", text);
 
-      try{
-        const res = await fetch("https://api.consia.world/v1/chat",{
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ message:text })
-        });
+      sendDcEvent({
+        type: "conversation.item.create",
+        item: {
+          type: "message",
+          role: "user",
+          content: [
+            {
+              type: "input_text",
+              text
+            }
+          ]
+        }
+      });
 
-        if(!res.ok) throw new Error("bad_status");
-        const data = await res.json();
-        const answer = data.answer || data.message || "Listo.";
-        addLog("consia", answer);
-        speak(answer, state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase());
-        setStatus("chat","ok","Chat: conectado");
-      } catch {
-        const fallback = buildLocalFallback(text);
-        addLog("consia", fallback);
-        speak(fallback, "CONSIA");
-        setStatus("chat","warn","Chat: fallback local");
-      }
-    }
-
-    function buildLocalFallback(text){
-      const t = text.toLowerCase();
-
-      if(t.includes("present") || t.includes("consia")){
-        return "Hola. Soy CONSIA Avatar OS. Estoy activo con voz, cámara, selector de avatar, modo holograma, prompt de creación y conexión preparada al backend.";
-      }
-      if(t.includes("manglar")){
-        return "Manglar queda listo para integrarse como modo presentador con métricas, proyectos y ventas dentro de CONSIA.";
-      }
-      if(t.includes("real work")){
-        return "Real Work puede entrar como presentador comercial con propiedades, leads y automatización de atención.";
-      }
-      if(t.includes("hola")){
-        return "Hola Martín. Ya estoy activo. Podemos seguir escalando el sistema de avatar de CONSIA.";
-      }
-      return "Recibido. El backend no respondió en este momento, así que te respondo en modo local. La interfaz quedó lista para seguir potenciando CONSIA.";
-    }
-
-    function setupSpeechRecognition(){
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if(!SpeechRecognition){
-        setStatus("voice","warn","Voz: navegador sin reconocimiento");
-        els.btnMic.disabled = true;
-        return;
-      }
-
-      const rec = new SpeechRecognition();
-      rec.continuous = true;
-      rec.interimResults = false;
-      rec.lang = getPreferredLang();
-
-      rec.onstart = () => {
-        state.micActive = true;
-        els.btnMic.textContent = "Detener voz";
-        setStatus("voice","ok","Voz: escuchando");
-        updateUiAvatar();
-      };
-
-      rec.onend = () => {
-        state.micActive = false;
-        els.btnMic.textContent = "Activar voz";
-        setStatus("voice","warn","Voz: detenida");
-        updateUiAvatar();
-      };
-
-      rec.onerror = () => {
-        state.micActive = false;
-        els.btnMic.textContent = "Activar voz";
-        setStatus("voice","err","Voz: error");
-        updateUiAvatar();
-      };
-
-      rec.onresult = (e) => {
-        const text = e.results[e.results.length - 1][0].transcript;
-        sendToConsia(text);
-      };
-
-      state.recognition = rec;
-      setStatus("voice","ok","Voz: lista");
-    }
-
-    function toggleMic(){
-      if(!state.recognition){
-        setupSpeechRecognition();
-        if(!state.recognition) return;
-      }
-      state.recognition.lang = getPreferredLang();
-
-      if(state.micActive) state.recognition.stop();
-      else {
-        try { state.recognition.start(); }
-        catch {}
-      }
-    }
-
-    async function toggleCamera(){
-      if(state.camActive && state.videoStream){
-        state.videoStream.getTracks().forEach(t => t.stop());
-        state.videoStream = null;
-        state.camActive = false;
-        els.btnCam.textContent = "Activar cámara";
-        setStatus("cam","warn","Cámara: detenida");
-        return;
-      }
-
-      try{
-        const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
-        state.videoStream = stream;
-        state.camActive = true;
-        els.btnCam.textContent = "Detener cámara";
-        setStatus("cam","ok","Cámara: activa");
-      } catch {
-        state.camActive = false;
-        setStatus("cam","err","Cámara: permiso denegado");
-      }
+      sendDcEvent({
+        type: "response.create",
+        response: {
+          output_modalities: ["audio", "text"]
+        }
+      });
     }
 
     async function generateAvatar(){
-      const prompt = els.promptInput.value.trim();
-      if(!prompt){
-        speak("Escribí primero cómo querés el avatar.", "CONSIA");
-        return;
-      }
+      const prompt = els.avatarPrompt.value.trim();
+      if (!prompt) return;
 
       addLog("prompt", prompt);
       showBubble("CONSIA", "Procesando prompt de avatar...", true);
 
       try{
-        const res = await fetch("https://api.consia.world/v1/avatar/generate",{
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
+        const res = await fetch("/v1/avatar/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt })
         });
-        if(!res.ok) throw new Error("bad_status");
+        if (!res.ok) throw new Error(`Avatar generate ${res.status}`);
         const data = await res.json();
-
-        if(data.avatar){
-          await loadAvatar(String(data.avatar).replace(".glb",""));
-          speak("Avatar generado y cargado.", "CONSIA");
-          addLog("system", `Avatar generado: ${data.avatar}`);
-        } else {
-          throw new Error("no_avatar");
-        }
-      } catch {
-        const fallbackName = prompt.toLowerCase().includes("martin") ? "martin" :
-                             prompt.toLowerCase().includes("future") || prompt.toLowerCase().includes("futur") ? "martin-futurista" :
-                             "consia";
-        await loadAvatar(fallbackName);
-        speak("No llegó un modelo nuevo desde el backend. Activé la mejor coincidencia local.", "CONSIA");
+        const slug = String(data.avatar || "consia").replace(".glb", "");
+        await loadAvatar(slug);
+        addLog("system", `Avatar generado: ${slug}`);
+        showBubble("CONSIA", `Avatar activado: ${slug.toUpperCase()}`);
+      } catch (err) {
+        addLog("error", err.message || String(err));
+        showBubble("CONSIA", "No pude generar avatar desde backend.");
       }
     }
 
-    function runPresentation(){
-      const name = state.activeAvatar === "martin-futurista" ? "Martín Future" : state.activeAvatar === "martin" ? "Martín" : "CONSIA";
-      const text = `${name} activo. Bienvenido a CONSIA Avatar OS. Este sistema ya integra escenario visual, voz, cámara, selector de identidades, prompt de creación y conexión preparada para backend, ventas, demos y automatizaciones multiempresa.`;
-      addLog("presentation", text);
-      speak(text, name.toUpperCase());
-    }
-
     function runDemo(){
-      const seq = [
+      const steps = [
         () => loadAvatar("consia"),
-        () => speak("Hola Martín. Soy CONSIA. Estoy listo para operar como avatar vivo dentro de tu sistema.", "CONSIA"),
+        () => sendTextPrompt("Presentate en 10 segundos como CONSIA."),
         () => loadAvatar("martin"),
-        () => speak("Modo gemelo digital activado.", "MARTIN"),
+        () => sendTextPrompt("Decí: modo gemelo digital activado."),
         () => loadAvatar("martin-futurista"),
-        () => speak("Modo futurista activado. Preparado para presentaciones top nivel.", "MARTIN FUTURE")
+        () => sendTextPrompt("Decí: modo futurista activado para presentaciones premium.")
       ];
-
       let i = 0;
       const next = () => {
-        if(i >= seq.length) return;
-        seq[i++]();
-        setTimeout(next, i % 2 === 0 ? 2200 : 900);
+        if (i >= steps.length) return;
+        steps[i++]();
+        setTimeout(next, i % 2 === 0 ? 3200 : 900);
       };
       next();
     }
 
-    function sayHello(){
-      const hello = "Hola Martín. CONSIA Avatar OS está activo y listo para seguir escalando.";
-      addLog("consia", hello);
-      speak(hello, "CONSIA");
+    async function hello(){
+      await loadAvatar("consia");
+      sendTextPrompt("Saludame a Martín y decí que CONSIA Avatar OS ya está activo.");
     }
 
-    function primeSpeech(){
-      if(state.firstInteraction) return;
-      state.firstInteraction = true;
-      speechSynthesis.getVoices();
-    }
-
-    els.btnConsia.onclick = async () => { primeSpeech(); await loadAvatar("consia"); };
-    els.btnMartin.onclick = async () => { primeSpeech(); await loadAvatar("martin"); };
-    els.btnFuture.onclick = async () => { primeSpeech(); await loadAvatar("martin-futurista"); };
-
-    els.btnLoadConsia2.onclick = async () => { primeSpeech(); await loadAvatar("consia"); };
-    els.btnLoadMartin2.onclick = async () => { primeSpeech(); await loadAvatar("martin"); };
-    els.btnLoadFuture2.onclick = async () => { primeSpeech(); await loadAvatar("martin-futurista"); };
-    els.btnFallback.onclick = () => {
-      clearAvatar();
-      createFallbackAvatar();
-      state.renderMode = "fallback holográfico";
-      updateUiAvatar();
-      showBubble("CONSIA", "Modo holograma activado.");
-    };
-
-    els.btnMic.onclick = () => { primeSpeech(); toggleMic(); };
-    els.btnCam.onclick = () => toggleCamera();
-    els.btnPresent.onclick = () => { primeSpeech(); runPresentation(); };
-    els.btnDemo.onclick = () => { primeSpeech(); runDemo(); };
-    els.btnStopSpeech.onclick = () => {
-      speechSynthesis.cancel();
-      state.speaking = false;
-      setStatus("voice", state.micActive ? "ok" : "warn", state.micActive ? "Voz: escuchando" : "Voz: lista");
-      els.speechBubble.classList.remove("show");
-    };
-
-    els.btnGenerate.onclick = () => { primeSpeech(); generateAvatar(); };
-    els.btnSpeakPrompt.onclick = () => {
-      primeSpeech();
-      const prompt = els.promptInput.value.trim() || "Todavía no hay prompt cargado.";
-      speak(prompt, "CONSIA");
-    };
-    els.btnSend.onclick = () => {
-      primeSpeech();
-      const msg = els.messageInput.value.trim();
-      if(msg) sendToConsia(msg);
-    };
-    els.btnHello.onclick = () => { primeSpeech(); sayHello(); };
-
-    els.voiceLanguage.onchange = () => {
-      state.currentLang = els.voiceLanguage.value;
-      updateUiAvatar();
-      if(state.recognition && state.micActive){
-        try{ state.recognition.stop(); } catch {}
+    async function healthCheck(){
+      try{
+        const res = await fetch("/health");
+        if (!res.ok) throw new Error();
+        setStatus("health", "ok", "Health: online");
+      } catch {
+        setStatus("health", "warn", "Health: sin /health");
       }
+    }
+
+    // ---------- EVENTS ----------
+    els.btnConnect.onclick = connectRealtime;
+    els.btnDisconnect.onclick = disconnectRealtime;
+    els.btnMute.onclick = toggleMute;
+    els.btnConsia.onclick = () => loadAvatar("consia");
+    els.btnMartin.onclick = () => loadAvatar("martin");
+    els.btnFuture.onclick = () => loadAvatar("martin-futurista");
+    els.btnDemo.onclick = runDemo;
+    els.btnSendText.onclick = () => sendTextPrompt(els.promptText.value);
+    els.btnSessionUpdate.onclick = sendSessionUpdate;
+    els.btnGenerateAvatar.onclick = generateAvatar;
+    els.btnHello.onclick = hello;
+    els.selVoice.onchange = () => {
+      updateLabels();
+      addLog("system", `Voice seleccionada: ${els.selVoice.value}. Conectá una sesión nueva para cambiarla si ya hubo audio.`);
     };
+    els.selLang.onchange = updateLabels;
 
-    document.addEventListener("click", primeSpeech, { once:true });
-
-    speechSynthesis.onvoiceschanged = () => {};
-
-    setStatus("health","warn","Health: iniciando");
-    setStatus("voice","warn","Voz: iniciando");
-    setStatus("cam","warn","Cámara: esperando");
-    setStatus("chat","warn","Chat: verificando");
-    state.currentLang = els.voiceLanguage.value;
-    updateUiAvatar();
-
-    await checkApiHealth();
-    setupSpeechRecognition();
+    // ---------- BOOT ----------
+    updateLabels();
+    await healthCheck();
     await loadAvatar("consia");
-    showBubble("CONSIA", "Avatar OS activo. Si todavía no ves modelo 3D, subí /avatar/consia.glb, /avatar/martin.glb y /avatar/martin-futurista.glb.");
-    addLog("system", "CONSIA Avatar OS iniciado.");
-    addLog("system", "Listo para voz, cámara, prompt y presentación.");
+    showBubble("CONSIA", "Listo. Conectá realtime y el avatar queda hablando en tiempo real.");
+    addLog("system", "Frontend realtime cargado.");
   </script>
 </body>
 </html>
