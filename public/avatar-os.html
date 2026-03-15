@@ -575,7 +575,7 @@
         <div class="orb"></div>
         <div>
           <h1 class="title">CONSIA Avatar OS</h1>
-          <p class="sub">Chat + avatar + voz + acciones automáticas desde /v1/chat</p>
+          <p class="sub">Chat + avatar + voz + acciones automáticas desde API definitiva</p>
         </div>
       </div>
 
@@ -641,14 +641,14 @@
         <div class="card-head">
           <div>
             <div class="card-title">Control Center</div>
-            <div class="card-sub">Todo sale por /v1/chat y las actions se ejecutan solas.</div>
+            <div class="card-sub">Todo sale por https://api.consia.world/v1/chat y las actions se ejecutan solas.</div>
           </div>
         </div>
 
         <div class="panel stack">
           <div>
             <label class="label" for="messageInput">Mensaje</label>
-            <textarea id="messageInput" class="textarea" placeholder="Ejemplo: activá el avatar futurista y abrí el módulo realwork con una presentación breve"></textarea>
+            <textarea id="messageInput" class="textarea" placeholder="Ejemplo: activá el avatar futurista, abrí realwork y hacé una presentación breve"></textarea>
           </div>
 
           <div class="grid2">
@@ -697,7 +697,7 @@
         <span class="badge" id="badgeScene">Escena: default</span>
       </div>
       <div class="footer-right">
-        <span class="badge">POST /v1/chat</span>
+        <span class="badge">POST https://api.consia.world/v1/chat</span>
         <span class="badge">Actions Auto Router</span>
         <span class="badge">CONSIA OS</span>
       </div>
@@ -710,6 +710,8 @@
     import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js";
     import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/loaders/GLTFLoader.js";
     import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/controls/OrbitControls.js";
+
+    const API_BASE = "https://api.consia.world";
 
     const $ = (id) => document.getElementById(id);
 
@@ -763,7 +765,8 @@
       currentScene: "default",
       micActive: false,
       recognition: null,
-      history: []
+      history: [],
+      sending: false
     };
 
     function setDot(el, mode){
@@ -853,7 +856,6 @@
         .replaceAll("'","&#039;");
     }
 
-    // ---------- THREE ----------
     const canvas = $("avatarCanvas");
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x061225);
@@ -1047,11 +1049,10 @@
     window.addEventListener("resize", resize);
     resize();
 
-    // ---------- MODULES ----------
     const moduleTemplates = {
       dashboard: [
         { title:"Estado general", text:"CONSIA operativo. Acciones automáticas habilitadas." },
-        { title:"Siguiente paso", text:"Usá /v1/chat para abrir módulos, cambiar avatar o lanzar presentación." }
+        { title:"Siguiente paso", text:"Usá el chat para abrir módulos, cambiar avatar o lanzar presentación." }
       ],
       realwork: [
         { title:"Real Work", text:"Módulo comercial listo para leads, propiedades y presentaciones." },
@@ -1115,15 +1116,15 @@
     }
 
     function updateUi(){
-      els.txtAvatar.textContent = `Avatar: ${state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase()}`;
-      els.badgeAvatar.textContent = `Avatar: ${state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase()}`;
+      const avatarLabel = state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase();
+      els.txtAvatar.textContent = `Avatar: ${avatarLabel}`;
+      els.badgeAvatar.textContent = `Avatar: ${avatarLabel}`;
       els.renderLabel.textContent = `Render: ${state.rendererMode}`;
       els.langLabel.textContent = `Idioma: ${els.langSelect.value}`;
       els.sceneLabel.textContent = `Escena: ${state.currentScene}`;
       els.routeLabel.textContent = `Ruta: ${state.currentRoute}`;
     }
 
-    // ---------- ACTION ROUTER ----------
     async function runAction(action){
       if(!action || typeof action !== "object") return;
 
@@ -1144,7 +1145,7 @@
             if(action.url.startsWith("/")){
               setRoute(action.url);
               const moduleGuess = action.url.replace(/^\//,"").split("/")[0] || "dashboard";
-              if(moduleGuess) renderModule(moduleGuess);
+              renderModule(moduleGuess);
               toast("Ruta", `Navegando a ${action.url}`, "info");
             } else {
               location.href = action.url;
@@ -1200,17 +1201,18 @@
       }
     }
 
-    // ---------- CHAT ----------
     async function sendChat(message){
       const text = String(message || "").trim();
-      if(!text) return;
+      if(!text || state.sending) return;
 
+      state.sending = true;
       setStatus("api","warn","Chat: procesando");
       addLog("user", text);
       showBubble("TÚ", text);
+      toast("Enviando", "Consultando a CONSIA API...", "info");
 
       try{
-        const res = await fetch("/v1/chat", {
+        const res = await fetch(`${API_BASE}/v1/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -1221,11 +1223,14 @@
           })
         });
 
+        const raw = await res.text();
+        let data = {};
+        try { data = raw ? JSON.parse(raw) : {}; } catch {}
+
         if(!res.ok){
-          throw new Error(`Chat ${res.status}`);
+          throw new Error(data?.message || data?.details || `Chat ${res.status}`);
         }
 
-        const data = await res.json();
         const answer = data.answer || "Listo.";
         const actions = Array.isArray(data.actions) ? data.actions : [];
 
@@ -1234,19 +1239,24 @@
         if(state.history.length > 20) state.history = state.history.slice(-20);
 
         addLog("assistant", answer);
+        if(actions.length){
+          addLog("actions", JSON.stringify(actions, null, 2));
+        }
+
         setStatus("api","ok","Chat: conectado");
         await runActions(actions);
         speak(answer, state.activeAvatar.toUpperCase());
       } catch(err){
-        const fallback = "No pude conectar con /v1/chat en este momento.";
-        addLog("error", err.message || String(err));
-        toast("Error", fallback, "error");
+        const msg = err.message || "No pude conectar con /v1/chat";
+        addLog("error", msg);
+        toast("Error", msg, "error");
         setStatus("api","err","Chat: error");
-        speak(fallback, "CONSIA");
+        speak(msg, "CONSIA");
+      } finally {
+        state.sending = false;
       }
     }
 
-    // ---------- VOICE INPUT ----------
     function setupRecognition(){
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if(!SR){
@@ -1296,11 +1306,10 @@
       if(state.micActive){
         state.recognition.stop();
       } else {
-        try{ state.recognition.start(); } catch {}
+        try { state.recognition.start(); } catch {}
       }
     }
 
-    // ---------- DEMO ----------
     async function runDemo(name="default"){
       const demoName = String(name || "default").toLowerCase();
 
@@ -1319,12 +1328,14 @@
       setRoute("/");
       toast("Demo", "Demo CONSIA activada", "success");
       speak("Hola Martín. CONSIA Avatar OS está activo con acciones automáticas, módulos, escenas y control total del frontend.", "CONSIA");
+
       setTimeout(async () => {
         await loadAvatar("martin");
         renderModule("realwork", "realwork");
         setRoute("/realwork");
         speak("Modo gemelo digital activado.", "MARTIN");
       }, 2400);
+
       setTimeout(async () => {
         await loadAvatar("martin-futurista");
         setScene("presentation");
@@ -1334,18 +1345,16 @@
       }, 5000);
     }
 
-    // ---------- HEALTH ----------
     async function healthCheck(){
       try{
-        const res = await fetch("/health");
+        const res = await fetch(`${API_BASE}/health`);
         if(!res.ok) throw new Error();
         setStatus("health","ok","Health: online");
       } catch {
-        setStatus("health","warn","Health: sin /health");
+        setStatus("health","err","Health: error");
       }
     }
 
-    // ---------- EVENTS ----------
     els.btnSend.onclick = () => sendChat(els.messageInput.value);
     els.btnSendQuick.onclick = () => sendChat(els.messageInput.value);
     els.btnHello.onclick = () => sendChat("Hola CONSIA");
@@ -1371,15 +1380,13 @@
       sendChat(els.messageInput.value);
     };
 
-    els.langSelect.onchange = () => {
-      updateUi();
-    };
+    els.langSelect.onchange = () => updateUi();
 
-    // ---------- BOOT ----------
     setStatus("health","warn","Health: iniciando");
     setStatus("api","warn","Chat: esperando");
     setStatus("voice","ok","Voz: lista");
     setStatus("mic","warn","Mic: off");
+
     renderModule("dashboard", "dashboard");
     setScene("default");
     setRoute("/");
