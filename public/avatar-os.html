@@ -4,747 +4,217 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>CONSIA Avatar OS</title>
-  <meta name="theme-color" content="#061225" />
   <style>
     :root{
-      --bg:#061225;
-      --bg2:#0a1830;
-      --panel:rgba(8,18,40,.82);
-      --panel2:rgba(10,23,47,.64);
-      --line:rgba(99,174,255,.20);
-      --cyan:#22b7ff;
-      --cyan2:#8ce2ff;
-      --text:#f5f9ff;
-      --muted:#9cb8d8;
-      --ok:#34d399;
-      --warn:#f59e0b;
-      --err:#fb7185;
-      --radius:24px;
-      --shadow:0 20px 70px rgba(0,0,0,.34);
+      --bg:#061225; --panel:rgba(8,18,40,.82); --line:rgba(99,174,255,.20);
+      --cyan:#22b7ff; --text:#f5f9ff; --muted:#9cb8d8; --ok:#34d399; --warn:#f59e0b; --err:#fb7185;
     }
-
     *{box-sizing:border-box}
     html,body{
-      margin:0;
-      padding:0;
-      min-height:100%;
-      color:var(--text);
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      overflow-x:hidden;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(34,183,255,.12), transparent 25%),
-        radial-gradient(circle at 85% 15%, rgba(99,102,241,.12), transparent 25%),
-        linear-gradient(180deg, #041021 0%, #061225 48%, #041021 100%);
+      margin:0; padding:0; min-height:100%;
+      background:linear-gradient(180deg,#041021 0%,#061225 48%,#041021 100%);
+      color:var(--text); font-family:Inter,system-ui,Arial,sans-serif;
     }
-
-    body.scene-default{
-      background:
-        radial-gradient(circle at 15% 10%, rgba(34,183,255,.12), transparent 25%),
-        radial-gradient(circle at 85% 15%, rgba(99,102,241,.12), transparent 25%),
-        linear-gradient(180deg, #041021 0%, #061225 48%, #041021 100%);
-    }
-
-    body.scene-presentation{
-      background:
-        radial-gradient(circle at 20% 10%, rgba(255,196,0,.10), transparent 24%),
-        radial-gradient(circle at 80% 15%, rgba(34,183,255,.16), transparent 24%),
-        linear-gradient(180deg, #071120 0%, #10172d 50%, #071120 100%);
-    }
-
-    body.scene-sales{
-      background:
-        radial-gradient(circle at 16% 8%, rgba(52,211,153,.12), transparent 24%),
-        radial-gradient(circle at 84% 14%, rgba(34,183,255,.12), transparent 24%),
-        linear-gradient(180deg, #051221 0%, #061a28 52%, #04111f 100%);
-    }
-
-    body.scene-alert{
-      background:
-        radial-gradient(circle at 16% 8%, rgba(251,113,133,.12), transparent 24%),
-        radial-gradient(circle at 84% 14%, rgba(245,158,11,.10), transparent 24%),
-        linear-gradient(180deg, #190812 0%, #0e1223 52%, #0a0d18 100%);
-    }
-
-    .app{
-      min-height:100vh;
-      padding:16px;
-      display:grid;
-      grid-template-rows:auto 1fr auto;
-      gap:16px;
-    }
-
-    .topbar,.stage-card,.side-card,.footer{
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      background:linear-gradient(180deg, rgba(10,22,48,.84), rgba(7,16,35,.76));
-      backdrop-filter:blur(16px);
-      box-shadow:var(--shadow);
-    }
-
-    .topbar{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:18px;
-      align-items:center;
-      padding:18px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:16px;
-      min-width:0;
-    }
-
-    .orb{
-      width:58px;
-      height:58px;
-      border-radius:50%;
-      flex:0 0 auto;
-      position:relative;
-      background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.95), rgba(140,226,255,.55) 16%, rgba(34,183,255,.14) 42%, rgba(34,183,255,.04) 64%, transparent 74%),
-        radial-gradient(circle at 50% 50%, rgba(34,183,255,.30), rgba(34,183,255,.04) 62%, transparent 72%);
-      border:1px solid rgba(140,226,255,.34);
-      box-shadow:0 0 50px rgba(34,183,255,.24), inset 0 0 26px rgba(140,226,255,.14);
-      overflow:hidden;
-    }
-
-    .orb::before{
-      content:"";
-      position:absolute;
-      inset:-25%;
-      background:linear-gradient(90deg, transparent 0 42%, rgba(255,255,255,.16) 50%, transparent 58% 100%);
-      transform:rotate(22deg);
-      animation:scan 4.2s linear infinite;
-    }
-
-    @keyframes scan{
-      from{transform:translateX(-120%) rotate(22deg)}
-      to{transform:translateX(120%) rotate(22deg)}
-    }
-
-    .title{
-      margin:0 0 6px 0;
-      font-size:clamp(30px,4vw,54px);
-      line-height:1;
-      font-weight:900;
-      letter-spacing:-.03em;
-    }
-
-    .sub{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.4;
-    }
-
-    .status-grid{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:flex-end;
-    }
-
-    .pill{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      min-height:42px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(8,18,40,.72);
-      font-size:14px;
-      color:var(--text);
-    }
-
-    .dot{
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background:#6b7280;
-      color:#6b7280;
-      box-shadow:0 0 12px currentColor;
-    }
-    .dot.ok{background:var(--ok);color:var(--ok)}
-    .dot.warn{background:var(--warn);color:var(--warn)}
-    .dot.err{background:var(--err);color:var(--err)}
-
-    .main{
-      display:grid;
-      grid-template-columns:minmax(0,1fr) 400px;
-      gap:16px;
-      align-items:stretch;
-    }
-
-    .stage-card{
-      min-height:74vh;
-      display:grid;
-      grid-template-rows:auto 1fr auto;
-      overflow:hidden;
-    }
-
-    .card-head{
-      padding:16px 18px;
-      border-bottom:1px solid rgba(99,174,255,.12);
-      background:linear-gradient(180deg, rgba(12,28,58,.52), rgba(10,20,40,.12));
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-
-    .card-title{
-      font-size:18px;
-      font-weight:900;
-      letter-spacing:-.02em;
-    }
-
-    .card-sub{
-      margin-top:6px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.4;
-    }
-
-    .viewer{
-      position:relative;
-      min-height:460px;
-      overflow:hidden;
-      background:
-        radial-gradient(circle at 50% 24%, rgba(140,226,255,.10), transparent 18%),
-        radial-gradient(circle at 50% 62%, rgba(34,183,255,.08), transparent 22%),
-        linear-gradient(180deg, rgba(5,16,34,.82), rgba(3,12,28,.94));
-    }
-
-    .viewer::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(rgba(140,226,255,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(140,226,255,.05) 1px, transparent 1px);
+    .app{min-height:100vh;padding:16px;display:grid;grid-template-rows:auto 1fr auto;gap:16px}
+    .box{border:1px solid var(--line);border-radius:22px;background:var(--panel);backdrop-filter:blur(16px)}
+    .top{padding:18px}
+    .title{font-size:34px;font-weight:900;margin:0 0 8px}
+    .sub{margin:0;color:var(--muted)}
+    .main{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px}
+    .stage{overflow:hidden}
+    .head{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    .viewer{min-height:520px;position:relative;background:
+      radial-gradient(circle at 50% 35%, rgba(34,183,255,.12), transparent 20%),
+      linear-gradient(180deg, rgba(5,16,34,.82), rgba(3,12,28,.94));}
+    .viewer-grid{
+      position:absolute;inset:0;opacity:.25;
+      background-image:
+        linear-gradient(rgba(140,226,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,226,255,.08) 1px, transparent 1px);
       background-size:46px 46px;
-      mask-image:radial-gradient(circle at 50% 50%, black 36%, rgba(0,0,0,.25) 72%, transparent 100%);
     }
-
-    .rings{
-      position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      pointer-events:none;
+    .avatar-center{
+      position:absolute;inset:0;display:grid;place-items:center;
+      font-size:22px;font-weight:800;color:#9fdfff;
     }
-
-    .ring{
-      position:absolute;
-      border-radius:50%;
-      border:1px solid rgba(140,226,255,.14);
-      box-shadow:0 0 26px rgba(34,183,255,.06), inset 0 0 24px rgba(140,226,255,.03);
-      animation:float 9s ease-in-out infinite;
-    }
-
-    .r1{width:64vmin;height:64vmin;max-width:700px;max-height:700px}
-    .r2{width:48vmin;height:48vmin;max-width:520px;max-height:520px;animation-delay:-1.8s}
-    .r3{width:31vmin;height:31vmin;max-width:340px;max-height:340px;animation-delay:-3.2s}
-
-    @keyframes float{
-      0%,100%{transform:translateY(0) scale(1)}
-      50%{transform:translateY(-8px) scale(1.012)}
-    }
-
-    #avatarCanvas{
-      display:block;
-      width:100%;
-      height:min(74vh,780px);
-      min-height:440px;
-      position:relative;
-      z-index:2;
-      touch-action:none;
-    }
-
     .speech{
-      position:absolute;
-      left:18px;
-      top:18px;
-      z-index:3;
-      max-width:min(580px,calc(100% - 36px));
-      background:rgba(5,13,28,.82);
-      border:1px solid rgba(140,226,255,.18);
-      border-radius:18px;
-      padding:14px 16px;
-      box-shadow:0 10px 40px rgba(0,0,0,.28);
-      backdrop-filter:blur(10px);
-      opacity:0;
-      transform:translateY(8px);
-      transition:.25s ease;
-      pointer-events:none;
+      position:absolute;left:18px;top:18px;max-width:420px;
+      background:rgba(5,13,28,.82);border:1px solid var(--line);border-radius:16px;padding:12px 14px;
+      display:none;
     }
-
-    .speech.show{opacity:1;transform:translateY(0)}
-
-    .speech-name{
-      font-size:12px;
-      color:var(--cyan2);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      font-weight:800;
-      margin-bottom:6px;
+    .module{
+      position:absolute;right:18px;top:18px;width:300px;background:rgba(5,13,28,.78);
+      border:1px solid var(--line);border-radius:18px;overflow:hidden;
     }
-
-    .speech-text{
-      font-size:15px;
-      line-height:1.45;
-      white-space:pre-wrap;
+    .module h3{margin:0;padding:14px 16px;border-bottom:1px solid var(--line);font-size:14px;letter-spacing:.12em}
+    .module .body{padding:14px 16px;color:#d5e8ff;font-size:14px;line-height:1.45}
+    .chips{position:absolute;right:18px;bottom:18px;display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:10px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(6,16,35,.76);color:var(--muted);font-size:12px}
+    .controls{padding:16px;display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line)}
+    .side .content{padding:16px}
+    .label{font-size:12px;color:#8ce2ff;letter-spacing:.12em;font-weight:800;margin:0 0 8px}
+    textarea,select,input{
+      width:100%;background:rgba(5,13,28,.78);color:var(--text);border:1px solid var(--line);
+      border-radius:14px;padding:14px;outline:none;font:inherit;
     }
-
-    .overlay{
-      position:absolute;
-      right:18px;
-      bottom:18px;
-      z-index:3;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      max-width:calc(100% - 36px);
-    }
-
-    .mini{
-      border-radius:999px;
-      background:rgba(6,16,35,.76);
-      border:1px solid rgba(140,226,255,.16);
-      padding:10px 14px;
-      font-size:12px;
-      color:var(--muted);
-      display:flex;
-      align-items:center;
-      gap:8px;
-      backdrop-filter:blur(10px);
-    }
-
-    .module-shell{
-      position:absolute;
-      right:18px;
-      top:18px;
-      z-index:3;
-      width:min(340px,calc(100% - 36px));
-      background:rgba(5,13,28,.74);
-      border:1px solid rgba(140,226,255,.16);
-      border-radius:18px;
-      box-shadow:0 10px 40px rgba(0,0,0,.24);
-      backdrop-filter:blur(10px);
-      overflow:hidden;
-    }
-
-    .module-head{
-      padding:12px 14px;
-      border-bottom:1px solid rgba(140,226,255,.10);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-
-    .module-title{
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:var(--cyan2);
-      font-weight:900;
-    }
-
-    .module-body{
-      padding:14px;
-      display:grid;
-      gap:10px;
-    }
-
-    .module-card{
-      border:1px solid rgba(140,226,255,.10);
-      background:rgba(8,18,40,.54);
-      border-radius:14px;
-      padding:12px;
-    }
-
-    .module-card strong{
-      display:block;
-      margin-bottom:4px;
-      font-size:14px;
-    }
-
-    .controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:center;
-      padding:16px 18px 18px;
-      border-top:1px solid rgba(99,174,255,.12);
-      background:linear-gradient(180deg, rgba(7,17,36,.16), rgba(9,20,42,.42));
-    }
-
-    .side-card{
-      display:grid;
-      grid-template-rows:auto auto 1fr;
-      min-height:74vh;
-      overflow:hidden;
-    }
-
-    .panel{
-      padding:16px 18px;
-      border-bottom:1px solid rgba(99,174,255,.08);
-    }
-
-    .stack{display:grid;gap:10px}
-    .inline{display:flex;gap:10px}
-    .inline>*{flex:1}
+    textarea{min-height:110px;resize:vertical}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-    .label{
-      display:block;
-      font-size:12px;
-      color:var(--cyan2);
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      font-weight:800;
-      margin-bottom:8px;
+    .row{display:flex;gap:10px}
+    .row > *{flex:1}
+    button{
+      border:0;border-radius:14px;padding:14px 18px;min-height:48px;cursor:pointer;font:inherit;font-weight:800;
+      background:linear-gradient(180deg, rgba(21,40,78,.95), rgba(11,24,50,.95));color:white;border:1px solid rgba(140,226,255,.18);
     }
-
-    .btn,.input,.select,.textarea{
-      font:inherit;
-    }
-
-    .btn{
-      border:0;
-      border-radius:14px;
-      padding:14px 18px;
-      min-height:48px;
-      cursor:pointer;
-      font-weight:800;
-      letter-spacing:.01em;
-      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
-    }
-
-    .btn:hover{transform:translateY(-1px)}
-    .btn:active{transform:translateY(0)}
-    .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-
-    .btn-primary{
-      color:#04101f;
-      background:linear-gradient(180deg, #57ceff, #1ab6ff);
-      box-shadow:0 12px 26px rgba(34,183,255,.24);
-    }
-
-    .btn-dark{
-      color:var(--text);
-      background:linear-gradient(180deg, rgba(21,40,78,.95), rgba(11,24,50,.95));
-      border:1px solid rgba(140,226,255,.18);
-    }
-
-    .btn-soft{
-      color:var(--text);
-      background:linear-gradient(180deg, rgba(15,29,60,.8), rgba(11,20,42,.8));
-      border:1px solid rgba(140,226,255,.16);
-    }
-
-    .input,.select,.textarea{
-      width:100%;
-      background:rgba(5,13,28,.78);
-      color:var(--text);
-      border:1px solid rgba(140,226,255,.16);
-      border-radius:14px;
-      padding:14px 14px;
-      outline:none;
-      box-shadow:inset 0 0 14px rgba(140,226,255,.03);
-    }
-
-    .textarea{
-      min-height:98px;
-      resize:vertical;
-      line-height:1.42;
-    }
-
-    .log{
-      padding:16px 18px 18px;
-      overflow:auto;
-      min-height:220px;
-    }
-
-    .log-card{
-      border:1px solid rgba(140,226,255,.10);
-      background:rgba(5,13,28,.56);
-      border-radius:16px;
-      padding:12px 13px;
-      margin-bottom:10px;
-    }
-
-    .log-role{
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:var(--cyan2);
-      font-weight:900;
-      margin-bottom:6px;
-    }
-
-    .log-text{
-      font-size:14px;
-      line-height:1.45;
-      color:#eef5ff;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
-
-    .footer{
-      padding:14px 16px;
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:space-between;
-      gap:12px;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .footer-left,.footer-right{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-    }
-
-    .badge{
-      border:1px solid rgba(140,226,255,.14);
-      background:rgba(6,16,35,.6);
-      border-radius:999px;
-      padding:9px 12px;
-      color:#d6e9ff;
-    }
-
-    .toasts{
-      position:fixed;
-      right:16px;
-      bottom:16px;
-      z-index:9999;
-      display:grid;
-      gap:10px;
-      width:min(360px,calc(100vw - 32px));
-    }
-
-    .toast{
-      border-radius:16px;
-      padding:14px 14px;
-      border:1px solid rgba(140,226,255,.14);
-      background:rgba(6,16,35,.84);
-      backdrop-filter:blur(10px);
-      box-shadow:0 12px 40px rgba(0,0,0,.28);
-      animation:toast-in .18s ease;
-    }
-
-    .toast.info{border-color:rgba(34,183,255,.18)}
-    .toast.success{border-color:rgba(52,211,153,.22)}
-    .toast.warning{border-color:rgba(245,158,11,.24)}
-    .toast.error{border-color:rgba(251,113,133,.24)}
-
-    @keyframes toast-in{
-      from{opacity:0;transform:translateY(8px)}
-      to{opacity:1;transform:translateY(0)}
-    }
-
-    @media (max-width:1100px){
-      .main{grid-template-columns:1fr}
-      .status-grid{justify-content:flex-start}
-      .topbar{grid-template-columns:1fr}
-      .side-card{min-height:auto}
-    }
-
-    @media (max-width:720px){
-      .app{padding:12px}
-      .title{white-space:normal}
-      .grid2,.inline{grid-template-columns:1fr;flex-direction:column}
-      #avatarCanvas{height:56vh;min-height:360px}
-      .overlay{left:18px;right:18px;justify-content:flex-start}
-      .module-shell{position:relative;right:auto;top:auto;width:auto;margin:18px}
-    }
+    button.primary{background:linear-gradient(180deg, #57ceff, #1ab6ff);color:#04101f}
+    .log{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;max-height:240px;overflow:auto}
+    .item{border:1px solid rgba(140,226,255,.10);background:rgba(5,13,28,.56);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+    .role{font-size:11px;letter-spacing:.12em;color:#8ce2ff;font-weight:900;margin-bottom:6px}
+    .footer{padding:14px 16px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+    .badge{padding:8px 12px;border:1px solid var(--line);border-radius:999px}
+    @media (max-width:1100px){.main{grid-template-columns:1fr}}
   </style>
 </head>
-<body class="scene-default">
+<body>
   <div class="app">
-    <header class="topbar">
-      <div class="brand">
-        <div class="orb"></div>
-        <div>
-          <h1 class="title">CONSIA Avatar OS</h1>
-          <p class="sub" id="subTitle">Chat + avatar + voz + acciones automáticas desde API definitiva</p>
-        </div>
-      </div>
+    <div class="box top">
+      <h1 class="title">CONSIA Avatar OS</h1>
+      <p class="sub">Modo seguro · botones vivos · chat directo a API · log visible</p>
+    </div>
 
-      <div class="status-grid">
-        <div class="pill"><span id="dotHealth" class="dot warn"></span><span id="txtHealth">Health: iniciando</span></div>
-        <div class="pill"><span id="dotApi" class="dot warn"></span><span id="txtApi">Chat: esperando</span></div>
-        <div class="pill"><span id="dotVoice" class="dot ok"></span><span id="txtVoice">Voz: lista</span></div>
-        <div class="pill"><span id="dotMic" class="dot warn"></span><span id="txtMic">Mic: off</span></div>
-      </div>
-    </header>
-
-    <main class="main">
-      <section class="stage-card">
-        <div class="card-head">
+    <div class="main">
+      <div class="box stage">
+        <div class="head">
           <div>
-            <div class="card-title">Action Stage</div>
-            <div class="card-sub">Ejecuta automáticamente set_avatar, open_module, navigate, present, ui_notice, run_demo y set_scene</div>
+            <div style="font-size:18px;font-weight:900">Action Stage</div>
+            <div style="color:var(--muted);font-size:13px">Control total del frontend desde CONSIA</div>
           </div>
-          <div class="pill"><span id="dotAvatar" class="dot ok"></span><span id="txtAvatar">Avatar: CONSIA</span></div>
+          <div id="avatarBadge" class="badge">Avatar: CONSIA</div>
         </div>
 
         <div class="viewer">
-          <div class="rings">
-            <div class="ring r1"></div>
-            <div class="ring r2"></div>
-            <div class="ring r3"></div>
-          </div>
-
-          <canvas id="avatarCanvas"></canvas>
+          <div class="viewer-grid"></div>
+          <div id="avatarCenter" class="avatar-center">CONSIA HOLOGRÁFICO</div>
 
           <div id="speech" class="speech">
-            <div class="speech-name" id="speechName">CONSIA</div>
-            <div class="speech-text" id="speechText">Listo.</div>
+            <div id="speechName" style="font-size:12px;color:#8ce2ff;font-weight:800;letter-spacing:.12em;margin-bottom:6px">CONSIA</div>
+            <div id="speechText">Listo.</div>
           </div>
 
-          <div class="module-shell">
-            <div class="module-head">
-              <div class="module-title" id="moduleTitle">dashboard</div>
-              <div class="mini"><span id="sceneLabel">Escena: default</span></div>
-            </div>
-            <div class="module-body" id="moduleBody"></div>
+          <div class="module">
+            <h3 id="moduleTitle">DASHBOARD</h3>
+            <div id="moduleBody" class="body">CONSIA operativo. Esperando comandos.</div>
           </div>
 
-          <div class="overlay">
-            <div class="mini"><span id="renderLabel">Render: fallback holográfico</span></div>
-            <div class="mini"><span id="routeLabel">Ruta: /</span></div>
-            <div class="mini"><span id="langLabel">Idioma: auto</span></div>
+          <div class="chips">
+            <div id="renderChip" class="chip">Render: seguro</div>
+            <div id="routeChip" class="chip">Ruta: /</div>
+            <div id="sceneChip" class="chip">Escena: default</div>
           </div>
         </div>
 
         <div class="controls">
-          <button class="btn btn-primary" id="btnSendQuick">Enviar</button>
-          <button class="btn btn-dark" id="btnConsia">CONSIA</button>
-          <button class="btn btn-dark" id="btnMartin">MARTIN</button>
-          <button class="btn btn-dark" id="btnFuture">MARTIN FUTURE</button>
-          <button class="btn btn-soft" id="btnMic">Activar voz</button>
-          <button class="btn btn-soft" id="btnStop">Silenciar</button>
-          <button class="btn btn-soft" id="btnDemo">Demo</button>
+          <button class="primary" id="btnSendBottom">Enviar</button>
+          <button id="btnConsia">CONSIA</button>
+          <button id="btnMartin">MARTIN</button>
+          <button id="btnFuture">MARTIN FUTURE</button>
+          <button id="btnMic">Activar voz</button>
+          <button id="btnStop">Silenciar</button>
+          <button id="btnDemo">Demo</button>
         </div>
-      </section>
+      </div>
 
-      <aside class="side-card">
-        <div class="card-head">
+      <div class="box side">
+        <div class="head">
           <div>
-            <div class="card-title">Control Center</div>
-            <div class="card-sub">Todo sale por <strong>https://api.consia.world/v1/chat</strong> y las actions se ejecutan solas.</div>
+            <div style="font-size:18px;font-weight:900">Control Center</div>
+            <div style="color:var(--muted);font-size:13px">Todo sale por https://api.consia.world/v1/chat</div>
           </div>
         </div>
 
-        <div class="panel stack">
-          <div>
-            <label class="label" for="messageInput">Mensaje</label>
-            <textarea id="messageInput" class="textarea" placeholder="Ejemplo: activá el avatar futurista, abrí realwork y hacé una presentación breve"></textarea>
-          </div>
+        <div class="content">
+          <div class="label">MENSAJE</div>
+          <textarea id="messageInput">activá el avatar futurista</textarea>
 
-          <div class="grid2">
+          <div class="grid2" style="margin-top:10px">
             <div>
-              <label class="label" for="langSelect">Idioma</label>
-              <select id="langSelect" class="select">
-                <option value="auto" selected>Auto</option>
+              <div class="label">IDIOMA</div>
+              <select id="langSelect">
+                <option value="auto">Auto</option>
                 <option value="es-AR">Español (Argentina)</option>
                 <option value="es-ES">Español</option>
                 <option value="en-US">English</option>
-                <option value="pt-BR">Português</option>
-                <option value="fr-FR">Français</option>
               </select>
             </div>
             <div>
-              <label class="label" for="modeSelect">Modo</label>
-              <select id="modeSelect" class="select">
-                <option value="default" selected>default</option>
+              <div class="label">MODO</div>
+              <select id="modeSelect">
+                <option value="default">default</option>
                 <option value="presentation">presentation</option>
                 <option value="sales">sales</option>
-                <option value="ops">ops</option>
               </select>
             </div>
           </div>
 
-          <div class="inline">
-            <button class="btn btn-primary" id="btnSend">Enviar a /v1/chat</button>
-            <button class="btn btn-dark" id="btnHello">Saludo</button>
+          <div class="row" style="margin-top:10px">
+            <button class="primary" id="btnSendTop">Enviar a /v1/chat</button>
+            <button id="btnHello">Saludo</button>
           </div>
 
-          <div class="inline">
-            <button class="btn btn-dark" id="btnQuickRealwork">Real Work</button>
-            <button class="btn btn-dark" id="btnQuickManglar">Manglar</button>
-            <button class="btn btn-dark" id="btnQuickPitch">Pitch</button>
+          <div class="row" style="margin-top:10px">
+            <button id="btnRealWork">Real Work</button>
+            <button id="btnManglar">Manglar</button>
+            <button id="btnPitch">Pitch</button>
           </div>
+
+          <div class="log" id="log"></div>
         </div>
-
-        <div class="log" id="log"></div>
-      </aside>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-left">
-        <span class="badge" id="badgeModule">Módulo: dashboard</span>
-        <span class="badge" id="badgeAvatar">Avatar: CONSIA</span>
-        <span class="badge" id="badgeScene">Escena: default</span>
       </div>
-      <div class="footer-right">
-        <span class="badge">POST https://api.consia.world/v1/chat</span>
-        <span class="badge">Actions Auto Router</span>
-        <span class="badge">CONSIA OS</span>
-      </div>
-    </footer>
+    </div>
+
+    <div class="box footer">
+      <div class="badge" id="healthBadge">Health: iniciando</div>
+      <div class="badge" id="apiBadge">API: esperando</div>
+      <div class="badge" id="voiceBadge">Voz: lista</div>
+      <div class="badge" id="micBadge">Mic: off</div>
+    </div>
   </div>
 
-  <div class="toasts" id="toasts"></div>
-
-  <script type="module">
-    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js";
-    import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/loaders/GLTFLoader.js";
-    import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/controls/OrbitControls.js";
-
+  <script>
     const API_BASE = "https://api.consia.world";
-    const VERSION = "avatar-os-top-final-2026-03-15-v1";
+    const state = {
+      avatar: "CONSIA",
+      module: "dashboard",
+      route: "/",
+      scene: "default",
+      micActive: false,
+      sending: false,
+      recognition: null,
+      history: []
+    };
 
     const $ = (id) => document.getElementById(id);
 
-    const els = {
-      dotHealth: $("dotHealth"),
-      txtHealth: $("txtHealth"),
-      dotApi: $("dotApi"),
-      txtApi: $("txtApi"),
-      dotVoice: $("dotVoice"),
-      txtVoice: $("txtVoice"),
-      dotMic: $("dotMic"),
-      txtMic: $("txtMic"),
-      dotAvatar: $("dotAvatar"),
-      txtAvatar: $("txtAvatar"),
-      renderLabel: $("renderLabel"),
-      routeLabel: $("routeLabel"),
-      langLabel: $("langLabel"),
-      sceneLabel: $("sceneLabel"),
-      moduleTitle: $("moduleTitle"),
-      moduleBody: $("moduleBody"),
-      badgeModule: $("badgeModule"),
-      badgeAvatar: $("badgeAvatar"),
-      badgeScene: $("badgeScene"),
+    const el = {
+      avatarBadge: $("avatarBadge"),
+      avatarCenter: $("avatarCenter"),
       speech: $("speech"),
       speechName: $("speechName"),
       speechText: $("speechText"),
+      moduleTitle: $("moduleTitle"),
+      moduleBody: $("moduleBody"),
+      renderChip: $("renderChip"),
+      routeChip: $("routeChip"),
+      sceneChip: $("sceneChip"),
       messageInput: $("messageInput"),
       langSelect: $("langSelect"),
       modeSelect: $("modeSelect"),
-      btnSend: $("btnSend"),
-      btnSendQuick: $("btnSendQuick"),
+      log: $("log"),
+      healthBadge: $("healthBadge"),
+      apiBadge: $("apiBadge"),
+      voiceBadge: $("voiceBadge"),
+      micBadge: $("micBadge"),
+      btnSendTop: $("btnSendTop"),
+      btnSendBottom: $("btnSendBottom"),
       btnHello: $("btnHello"),
       btnConsia: $("btnConsia"),
       btnMartin: $("btnMartin"),
@@ -752,482 +222,158 @@
       btnMic: $("btnMic"),
       btnStop: $("btnStop"),
       btnDemo: $("btnDemo"),
-      btnQuickRealwork: $("btnQuickRealwork"),
-      btnQuickManglar: $("btnQuickManglar"),
-      btnQuickPitch: $("btnQuickPitch"),
-      log: $("log"),
-      toasts: $("toasts"),
-      subTitle: $("subTitle")
+      btnRealWork: $("btnRealWork"),
+      btnManglar: $("btnManglar"),
+      btnPitch: $("btnPitch")
     };
 
-    const state = {
-      activeAvatar: "consia",
-      rendererMode: "fallback holográfico",
-      currentModule: "dashboard",
-      currentRoute: "/",
-      currentScene: "default",
-      micActive: false,
-      recognition: null,
-      history: [],
-      sending: false
-    };
-
-    els.subTitle.textContent = `Chat + avatar + voz + acciones automáticas · ${VERSION}`;
-
-    function setDot(el, mode){
-      el.classList.remove("ok","warn","err");
-      el.classList.add(mode);
+    function log(role, text){
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `<div class="role">${role}</div><div>${String(text).replaceAll("<","&lt;")}</div>`;
+      el.log.prepend(div);
     }
 
-    function setStatus(kind, mode, text){
-      const map = {
-        health:[els.dotHealth, els.txtHealth],
-        api:[els.dotApi, els.txtApi],
-        voice:[els.dotVoice, els.txtVoice],
-        mic:[els.dotMic, els.txtMic]
-      };
-      const [dot, label] = map[kind];
-      setDot(dot, mode);
-      label.textContent = text;
-    }
-
-    function addLog(role, text){
-      const card = document.createElement("div");
-      card.className = "log-card";
-      card.innerHTML = `<div class="log-role"></div><div class="log-text"></div>`;
-      card.querySelector(".log-role").textContent = role;
-      card.querySelector(".log-text").textContent = typeof text === "string" ? text : JSON.stringify(text, null, 2);
-      els.log.prepend(card);
-    }
-
-    function toast(title, message, level="info"){
-      const node = document.createElement("div");
-      node.className = `toast ${level}`;
-      node.innerHTML = `<strong style="display:block;margin-bottom:6px">${escapeHtml(title)}</strong><div style="font-size:14px;line-height:1.42">${escapeHtml(message)}</div>`;
-      els.toasts.appendChild(node);
-      setTimeout(() => {
-        node.style.opacity = "0";
-        node.style.transform = "translateY(8px)";
-        setTimeout(() => node.remove(), 180);
-      }, 3200);
-    }
-
-    let bubbleTimer = null;
-    function showBubble(name, text, sticky=false){
-      els.speechName.textContent = name;
-      els.speechText.textContent = text;
-      els.speech.classList.add("show");
-      clearTimeout(bubbleTimer);
-      if(!sticky){
-        bubbleTimer = setTimeout(() => els.speech.classList.remove("show"), 6000);
-      }
+    function showSpeech(name, text){
+      el.speechName.textContent = name;
+      el.speechText.textContent = text;
+      el.speech.style.display = "block";
+      clearTimeout(window.__speechTimer);
+      window.__speechTimer = setTimeout(() => el.speech.style.display = "none", 5000);
     }
 
     function speak(text, name="CONSIA"){
-      if(!("speechSynthesis" in window)) return;
+      if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = els.langSelect.value === "auto" ? (navigator.language || "es-AR") : els.langSelect.value;
-      utter.rate = 1;
-      utter.pitch = 1;
-      utter.onstart = () => {
-        setStatus("voice","ok","Voz: hablando");
-        showBubble(name, text, true);
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = el.langSelect.value === "auto" ? (navigator.language || "es-AR") : el.langSelect.value;
+      u.onstart = () => {
+        el.voiceBadge.textContent = "Voz: hablando";
+        showSpeech(name, text);
       };
-      utter.onend = () => {
-        setStatus("voice","ok","Voz: lista");
-        els.speech.classList.remove("show");
+      u.onend = () => {
+        el.voiceBadge.textContent = "Voz: lista";
       };
-      utter.onerror = () => {
-        setStatus("voice","err","Voz: error");
-      };
-      speechSynthesis.speak(utter);
+      speechSynthesis.speak(u);
     }
 
-    function stopSpeech(){
-      if("speechSynthesis" in window){
-        window.speechSynthesis.cancel();
-      }
-      els.speech.classList.remove("show");
-      setStatus("voice","ok","Voz: lista");
+    function setAvatar(name){
+      state.avatar = name;
+      el.avatarBadge.textContent = `Avatar: ${name}`;
+      el.avatarCenter.textContent = `${name} HOLOGRÁFICO`;
     }
 
-    function escapeHtml(v){
-      return String(v ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    const canvas = $("avatarCanvas");
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x061225);
-
-    const camera = new THREE.PerspectiveCamera(38, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-    camera.position.set(0, 1.34, 3.1);
-
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:"high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.enablePan = false;
-    controls.minDistance = 1.8;
-    controls.maxDistance = 5.5;
-    controls.target.set(0, 1.12, 0);
-
-    scene.add(new THREE.HemisphereLight(0xdff5ff, 0x102040, 1.7));
-
-    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
-    dir.position.set(2.8, 4, 3.4);
-    scene.add(dir);
-
-    const fill = new THREE.DirectionalLight(0x5ccaff, 0.45);
-    fill.position.set(-3, 2, 2);
-    scene.add(fill);
-
-    const floor = new THREE.Mesh(
-      new THREE.CircleGeometry(1.15, 64),
-      new THREE.MeshBasicMaterial({ color:0x1f6fff, transparent:true, opacity:.08 })
-    );
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -0.02;
-    scene.add(floor);
-
-    const hologramGroup = new THREE.Group();
-    scene.add(hologramGroup);
-
-    const loader = new GLTFLoader();
-    let currentAvatar = null;
-    let mixer = null;
-    const clock = new THREE.Clock();
-
-    function clearAvatar(){
-      if(currentAvatar && currentAvatar.parent){
-        currentAvatar.parent.remove(currentAvatar);
-      }
-      currentAvatar = null;
-      mixer = null;
-    }
-
-    function createFallbackAvatar(){
-      hologramGroup.clear();
-
-      const root = new THREE.Group();
-
-      const mat = new THREE.MeshPhongMaterial({
-        color:0x72d8ff,
-        transparent:true,
-        opacity:.17,
-        emissive:0x1ab6ff,
-        emissiveIntensity:.24,
-        shininess:90
-      });
-
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 32, 32), mat.clone());
-      head.position.set(0, 1.52, 0);
-      root.add(head);
-
-      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.14, 16), mat.clone());
-      neck.position.set(0, 1.28, 0);
-      root.add(neck);
-
-      const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.8, 8, 18), mat.clone());
-      torso.position.set(0, 0.65, 0);
-      root.add(torso);
-
-      const eyeGeo = new THREE.SphereGeometry(0.026, 16, 16);
-      const eyeMat = new THREE.MeshBasicMaterial({ color:0xc7f3ff, transparent:true, opacity:.95 });
-      const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
-      const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
-      eyeL.position.set(-0.09, 1.56, 0.24);
-      eyeR.position.set(0.09, 1.56, 0.24);
-      root.add(eyeL, eyeR);
-
-      const mouth = new THREE.Mesh(
-        new THREE.BoxGeometry(0.12, 0.015, 0.01),
-        new THREE.MeshBasicMaterial({ color:0x9be9ff, transparent:true, opacity:.9 })
-      );
-      mouth.position.set(0, 1.43, 0.24);
-      mouth.name = "fallbackMouth";
-      root.add(mouth);
-
-      const core = new THREE.Mesh(
-        new THREE.SphereGeometry(0.09, 24, 24),
-        new THREE.MeshBasicMaterial({ color:0xdfffff, transparent:true, opacity:.9 })
-      );
-      core.position.set(0, 0.84, 0.28);
-      root.add(core);
-
-      const ring1 = new THREE.Mesh(
-        new THREE.TorusGeometry(0.58, 0.004, 12, 100),
-        new THREE.MeshBasicMaterial({ color:0x59cfff, transparent:true, opacity:.35 })
-      );
-      ring1.rotation.x = Math.PI / 2;
-      ring1.position.set(0, 0.78, 0);
-      root.add(ring1);
-
-      const ring2 = new THREE.Mesh(
-        new THREE.TorusGeometry(0.96, 0.004, 12, 120),
-        new THREE.MeshBasicMaterial({ color:0x59cfff, transparent:true, opacity:.18 })
-      );
-      ring2.rotation.x = Math.PI / 2;
-      ring2.position.set(0, 1.02, 0);
-      root.add(ring2);
-
-      root.userData = { mouth, core, ring1, ring2 };
-      hologramGroup.add(root);
-      currentAvatar = root;
-      state.rendererMode = "fallback holográfico";
-      updateUi();
-    }
-
-    async function loadAvatar(name){
-      state.activeAvatar = name;
-      clearAvatar();
-      createFallbackAvatar();
-      showBubble("CONSIA", `Cargando ${name.toUpperCase()}...`, true);
-
-      try{
-        const gltf = await loader.loadAsync(`/avatar/${name}.glb`);
-        hologramGroup.clear();
-        currentAvatar = gltf.scene;
-        currentAvatar.position.set(0, 0, 0);
-        currentAvatar.scale.setScalar(1.32);
-        scene.add(currentAvatar);
-
-        if(gltf.animations && gltf.animations.length){
-          mixer = new THREE.AnimationMixer(currentAvatar);
-          const action = mixer.clipAction(gltf.animations[0]);
-          action.play();
-        }
-
-        state.rendererMode = "GLB real";
-        updateUi();
-        showBubble(name.toUpperCase(), `${name.toUpperCase()} cargado.`);
-        addLog("system", `/avatar/${name}.glb cargado.`);
-      } catch {
-        state.rendererMode = "fallback holográfico";
-        updateUi();
-        showBubble("CONSIA", `No encontré /avatar/${name}.glb. Sigo en modo holograma.`);
-        addLog("warning", `No se pudo cargar /avatar/${name}.glb`);
-      }
-    }
-
-    function animateFallback(delta){
-      if(!currentAvatar || state.rendererMode !== "fallback holográfico") return;
-      const t = performance.now() * 0.001;
-      currentAvatar.rotation.y = Math.sin(t * 0.55) * 0.18;
-      const d = currentAvatar.userData || {};
-      if(d.core) d.core.scale.setScalar(1 + Math.sin(t * 2.2) * 0.08);
-      if(d.ring1) d.ring1.rotation.z += delta * 0.5;
-      if(d.ring2) d.ring2.rotation.z -= delta * 0.3;
-      if(d.mouth) d.mouth.scale.y = 1 + Math.abs(Math.sin(t * 12)) * 2.4;
-    }
-
-    function animate(){
-      requestAnimationFrame(animate);
-      const delta = clock.getDelta();
-
-      if(mixer) mixer.update(delta);
-      if(currentAvatar && state.rendererMode === "GLB real"){
-        currentAvatar.rotation.y += delta * 0.10;
-        currentAvatar.position.y = Math.sin(performance.now() * 0.0018) * 0.02;
-      }
-
-      animateFallback(delta);
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    function resize(){
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      renderer.setSize(w, h, false);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    const moduleTemplates = {
-      dashboard: [
-        { title:"Estado general", text:"CONSIA operativo. Acciones automáticas habilitadas." },
-        { title:"Siguiente paso", text:"Usá el chat para abrir módulos, cambiar avatar o lanzar presentación." }
-      ],
-      realwork: [
-        { title:"Real Work", text:"Módulo comercial listo para leads, propiedades y presentaciones." },
-        { title:"Acción sugerida", text:"Mostrar propiedades destacadas y guion de ventas." }
-      ],
-      manglar: [
-        { title:"Manglar", text:"Módulo de desarrollos, avances, unidades y materiales." },
-        { title:"Acción sugerida", text:"Presentar proyectos y métricas clave." }
-      ],
-      sales: [
-        { title:"Sales", text:"Modo ventas activado." },
-        { title:"Acción sugerida", text:"Pitch corto, demo y cierre con CTA." }
-      ],
-      avatar: [
-        { title:"Avatar", text:"Control de identidad, escena, voz y visualización." },
-        { title:"Acción sugerida", text:"Cambiar entre CONSIA, Martín y Martín Future." }
-      ],
-      presentation: [
-        { title:"Presentation", text:"Modo presentador activo." },
-        { title:"Acción sugerida", text:"Narrativa breve, directa y premium." }
-      ],
-      marketplace: [
-        { title:"Marketplace", text:"Catálogo, productos y monetización." },
-        { title:"Acción sugerida", text:"Abrir ficha destacada y CTA de compra." }
-      ]
-    };
-
-    function renderModule(module, titleOverride=""){
-      state.currentModule = module || "dashboard";
-      const title = titleOverride || state.currentModule;
-      els.moduleTitle.textContent = title;
-      els.badgeModule.textContent = `Módulo: ${state.currentModule}`;
-
-      const cards = moduleTemplates[state.currentModule] || [
-        { title:"Módulo", text:`${state.currentModule} cargado.` }
-      ];
-
-      els.moduleBody.innerHTML = cards.map(card => `
-        <div class="module-card">
-          <strong>${escapeHtml(card.title)}</strong>
-          <div style="font-size:14px;line-height:1.42;color:#d7eaff">${escapeHtml(card.text)}</div>
-        </div>
-      `).join("");
+    function setModule(module, title=""){
+      state.module = module;
+      el.moduleTitle.textContent = (title || module).toUpperCase();
+      el.moduleBody.textContent = `${module} cargado. CONSIA listo para operar.`;
     }
 
     function setScene(scene){
-      state.currentScene = scene || "default";
-      document.body.className = "";
-      document.body.classList.add(`scene-${state.currentScene}`);
-      els.sceneLabel.textContent = `Escena: ${state.currentScene}`;
-      els.badgeScene.textContent = `Escena: ${state.currentScene}`;
-      updateUi();
+      state.scene = scene;
+      document.body.className = `scene-${scene}`;
+      el.sceneChip.textContent = `Escena: ${scene}`;
     }
 
     function setRoute(route){
-      state.currentRoute = route || "/";
-      els.routeLabel.textContent = `Ruta: ${state.currentRoute}`;
-      if(state.currentRoute.startsWith("/")){
-        history.replaceState(null, "", state.currentRoute);
-      }
-    }
-
-    function updateUi(){
-      const avatarLabel = state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase();
-      els.txtAvatar.textContent = `Avatar: ${avatarLabel}`;
-      els.badgeAvatar.textContent = `Avatar: ${avatarLabel}`;
-      els.renderLabel.textContent = `Render: ${state.rendererMode}`;
-      els.langLabel.textContent = `Idioma: ${els.langSelect.value}`;
-      els.sceneLabel.textContent = `Escena: ${state.currentScene}`;
-      els.routeLabel.textContent = `Ruta: ${state.currentRoute}`;
+      state.route = route;
+      el.routeChip.textContent = `Ruta: ${route}`;
     }
 
     async function runAction(action){
-      if(!action || typeof action !== "object") return;
+      if (!action || typeof action !== "object") return;
 
-      switch(action.type){
-        case "set_avatar":
-          await loadAvatar(action.avatar || "consia");
-          toast("Avatar", `Activado ${action.avatar || "consia"}`, "success");
-          break;
-
-        case "open_module":
-          renderModule(action.module || "dashboard", action.title || "");
-          if(action.route) setRoute(action.route);
-          toast("Módulo", `Abierto ${action.module || "dashboard"}`, "info");
-          break;
-
-        case "navigate":
-          if(typeof action.url === "string" && action.url){
-            if(action.url.startsWith("/")){
-              setRoute(action.url);
-              const moduleGuess = action.url.replace(/^\//,"").split("/")[0] || "dashboard";
-              renderModule(moduleGuess);
-              toast("Ruta", `Navegando a ${action.url}`, "info");
-            } else {
-              location.href = action.url;
-            }
-          }
-          break;
-
-        case "present":
-          setScene("presentation");
-          renderModule("presentation", "presentación");
-          toast("Presentador", `Tema: ${action.topic || "presentación"}`, "success");
-          speak(`Presentación activada. ${action.topic || "Modo presentador activo."}`, state.activeAvatar.toUpperCase());
-          break;
-
-        case "ui_notice":
-          toast(action.title || "CONSIA", action.message || "", action.level || "info");
-          break;
-
-        case "run_demo":
-          await runDemo(action.demo || "default");
-          break;
-
-        case "set_scene":
-          setScene(action.scene || "default");
-          toast("Escena", `Escena ${action.scene || "default"} aplicada`, "info");
-          break;
-
-        case "webhook_result":
-          toast(
-            action.ok ? "Webhook OK" : "Webhook Error",
-            `${action.action_name || "action"} · status ${action.status ?? "-"}`,
-            action.ok ? "success" : "error"
-          );
-          break;
-
-        case "memory_saved":
-          toast("Memoria", `Guardado ${action.key || ""}`, "success");
-          break;
-
-        case "memory_saved_ephemeral":
-          toast("Memoria temporal", "Nota guardada en modo efímero", "warning");
-          break;
-
-        default:
-          addLog("action", `Acción no manejada: ${JSON.stringify(action)}`);
+      if (action.type === "set_avatar") {
+        if (action.avatar === "martin-futurista") setAvatar("MARTIN FUTURE");
+        else setAvatar(String(action.avatar || "CONSIA").toUpperCase());
       }
+
+      if (action.type === "open_module") {
+        setModule(action.module || "dashboard", action.title || "");
+        if (action.route) setRoute(action.route);
+      }
+
+      if (action.type === "navigate") {
+        if (typeof action.url === "string" && action.url.startsWith("/")) {
+          setRoute(action.url);
+        }
+      }
+
+      if (action.type === "present") {
+        setScene("presentation");
+        setModule("presentation", "presentación");
+      }
+
+      if (action.type === "set_scene") {
+        setScene(action.scene || "default");
+      }
+
+      if (action.type === "run_demo") {
+        await runDemo();
+      }
+
+      if (action.type === "ui_notice") {
+        speak(action.message || "Notificación.", "CONSIA");
+      }
+
+      log("ACTION", JSON.stringify(action));
     }
 
     async function runActions(actions){
-      if(!Array.isArray(actions) || !actions.length) return;
-      for(const action of actions){
+      if (!Array.isArray(actions)) return;
+      for (const action of actions) {
         await runAction(action);
       }
     }
 
-    async function sendChat(message){
-      const text = String(message || "").trim();
-      if(!text || state.sending) return;
+    function localInterpretation(text){
+      const t = String(text).toLowerCase();
+
+      const actions = [];
+
+      if (t.includes("futur")) {
+        actions.push({ type:"set_avatar", avatar:"martin-futurista" });
+      } else if (t.includes("martin")) {
+        actions.push({ type:"set_avatar", avatar:"martin" });
+      } else if (t.includes("consia")) {
+        actions.push({ type:"set_avatar", avatar:"consia" });
+      }
+
+      if (t.includes("realwork") || t.includes("real work")) {
+        actions.push({ type:"open_module", module:"realwork", route:"/realwork", title:"realwork" });
+      }
+
+      if (t.includes("manglar")) {
+        actions.push({ type:"open_module", module:"manglar", route:"/manglar", title:"manglar" });
+      }
+
+      if (t.includes("present")) {
+        actions.push({ type:"present", topic:"presentación" });
+      }
+
+      return actions;
+    }
+
+    async function sendChat(text){
+      const msg = String(text || "").trim();
+      if (!msg || state.sending) return;
 
       state.sending = true;
-      els.btnSend.disabled = true;
-      els.btnSendQuick.disabled = true;
+      el.apiBadge.textContent = "API: procesando";
+      el.btnSendTop.disabled = true;
+      el.btnSendBottom.disabled = true;
 
-      setStatus("api","warn","Chat: procesando");
-      addLog("user", text);
-      showBubble("TÚ", text);
-      toast("Enviando", "Consultando a CONSIA API...", "info");
+      log("USER", msg);
 
-      try{
+      try {
         const res = await fetch(`${API_BASE}/v1/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: text,
-            history: state.history.slice(-12),
-            language: els.langSelect.value,
-            mode: els.modeSelect.value
+            message: msg,
+            history: state.history.slice(-10),
+            language: el.langSelect.value,
+            mode: el.modeSelect.value
           })
         });
 
@@ -1235,68 +381,59 @@
         let data = {};
         try { data = raw ? JSON.parse(raw) : {}; } catch {}
 
-        if(!res.ok){
-          throw new Error(data?.message || data?.details || `Chat ${res.status}`);
-        }
+        if (!res.ok) throw new Error(data?.message || data?.details || `Chat ${res.status}`);
 
         const answer = data.answer || "Listo.";
         const actions = Array.isArray(data.actions) ? data.actions : [];
 
-        state.history.push({ role:"user", content:text });
-        state.history.push({ role:"assistant", content:answer });
-        if(state.history.length > 20) state.history = state.history.slice(-20);
+        state.history.push({ role:"user", content: msg });
+        state.history.push({ role:"assistant", content: answer });
 
-        addLog("assistant", answer);
-        if(actions.length){
-          addLog("actions", actions);
-        }
+        log("ASSISTANT", answer);
+        if (actions.length) log("ACTIONS", JSON.stringify(actions, null, 2));
 
-        setStatus("api","ok","Chat: conectado");
+        el.apiBadge.textContent = "API: conectada";
         await runActions(actions);
-        speak(answer, state.activeAvatar.toUpperCase());
-      } catch(err){
-        const msg = err.message || "No pude conectar con /v1/chat";
-        addLog("error", msg);
-        toast("Error", msg, "error");
-        setStatus("api","err","Chat: error");
-        speak(msg, "CONSIA");
+        speak(answer, state.avatar);
+      } catch (err) {
+        const fallbackActions = localInterpretation(msg);
+        log("ERROR", err.message || String(err));
+        el.apiBadge.textContent = "API: fallback local";
+        await runActions(fallbackActions);
+        speak("Activé modo local de respaldo y ejecuté la mejor coincidencia posible.", "CONSIA");
       } finally {
         state.sending = false;
-        els.btnSend.disabled = false;
-        els.btnSendQuick.disabled = false;
+        el.btnSendTop.disabled = false;
+        el.btnSendBottom.disabled = false;
       }
     }
 
-    function setupRecognition(){
+    function setupMic(){
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if(!SR){
-        setStatus("mic","warn","Mic: no disponible");
+      if (!SR) {
+        el.micBadge.textContent = "Mic: no disponible";
         return;
       }
-
       const rec = new SR();
       rec.continuous = true;
       rec.interimResults = false;
-      rec.lang = els.langSelect.value === "auto" ? (navigator.language || "es-AR") : els.langSelect.value;
+      rec.lang = el.langSelect.value === "auto" ? (navigator.language || "es-AR") : el.langSelect.value;
 
       rec.onstart = () => {
         state.micActive = true;
-        els.btnMic.textContent = "Detener voz";
-        setStatus("mic","ok","Mic: escuchando");
+        el.micBadge.textContent = "Mic: escuchando";
+        el.btnMic.textContent = "Detener voz";
       };
-
       rec.onend = () => {
         state.micActive = false;
-        els.btnMic.textContent = "Activar voz";
-        setStatus("mic","warn","Mic: off");
+        el.micBadge.textContent = "Mic: off";
+        el.btnMic.textContent = "Activar voz";
       };
-
       rec.onerror = () => {
         state.micActive = false;
-        els.btnMic.textContent = "Activar voz";
-        setStatus("mic","err","Mic: error");
+        el.micBadge.textContent = "Mic: error";
+        el.btnMic.textContent = "Activar voz";
       };
-
       rec.onresult = (e) => {
         const text = e.results[e.results.length - 1][0].transcript;
         sendChat(text);
@@ -1306,109 +443,81 @@
     }
 
     function toggleMic(){
-      if(!state.recognition){
-        setupRecognition();
-        if(!state.recognition) return;
-      }
+      if (!state.recognition) setupMic();
+      if (!state.recognition) return;
 
-      state.recognition.lang = els.langSelect.value === "auto" ? (navigator.language || "es-AR") : els.langSelect.value;
-
-      if(state.micActive){
-        state.recognition.stop();
-      } else {
+      if (state.micActive) state.recognition.stop();
+      else {
         try { state.recognition.start(); } catch {}
       }
     }
 
-    async function runDemo(name="default"){
-      const demoName = String(name || "default").toLowerCase();
-
-      if(demoName.includes("sales")){
-        await loadAvatar("martin-futurista");
-        setScene("sales");
-        renderModule("sales", "sales");
-        toast("Demo", "Demo de ventas activada", "success");
-        speak("Modo ventas activado. Presentación premium lista para cierre comercial.", "MARTIN FUTURE");
-        return;
-      }
-
-      await loadAvatar("consia");
-      renderModule("dashboard", "dashboard");
+    async function runDemo(){
+      setAvatar("CONSIA");
+      setModule("dashboard","dashboard");
       setScene("default");
       setRoute("/");
-      toast("Demo", "Demo CONSIA activada", "success");
-      speak("Hola Martín. CONSIA Avatar OS está activo con acciones automáticas, módulos, escenas y control total del frontend.", "CONSIA");
+      speak("Hola Martín. CONSIA Avatar OS está activo.", "CONSIA");
 
-      setTimeout(async () => {
-        await loadAvatar("martin");
-        renderModule("realwork", "realwork");
+      setTimeout(() => {
+        setAvatar("MARTIN");
+        setModule("realwork","realwork");
         setRoute("/realwork");
         speak("Modo gemelo digital activado.", "MARTIN");
-      }, 2400);
+      }, 1800);
 
-      setTimeout(async () => {
-        await loadAvatar("martin-futurista");
+      setTimeout(() => {
+        setAvatar("MARTIN FUTURE");
         setScene("presentation");
-        renderModule("presentation", "presentación");
+        setModule("presentation","presentación");
         setRoute("/presentation");
-        speak("Modo futurista activado para presentaciones top nivel.", "MARTIN FUTURE");
-      }, 5000);
+        speak("Modo futurista activado para presentaciones.", "MARTIN FUTURE");
+      }, 4200);
     }
 
     async function healthCheck(){
-      try{
+      try {
         const res = await fetch(`${API_BASE}/health`);
-        if(!res.ok) throw new Error();
         const data = await res.json();
-        setStatus("health","ok","Health: online");
-        addLog("health", data);
+        if (!res.ok) throw new Error("health_error");
+        el.healthBadge.textContent = "Health: online";
+        log("HEALTH", JSON.stringify(data, null, 2));
       } catch {
-        setStatus("health","err","Health: error");
+        el.healthBadge.textContent = "Health: error";
       }
     }
 
-    els.btnSend.onclick = () => sendChat(els.messageInput.value);
-    els.btnSendQuick.onclick = () => sendChat(els.messageInput.value);
-    els.btnHello.onclick = () => sendChat("Hola CONSIA");
-    els.btnConsia.onclick = () => loadAvatar("consia");
-    els.btnMartin.onclick = () => loadAvatar("martin");
-    els.btnFuture.onclick = () => loadAvatar("martin-futurista");
-    els.btnMic.onclick = toggleMic;
-    els.btnStop.onclick = stopSpeech;
-    els.btnDemo.onclick = () => runDemo("default");
+    el.btnSendTop.onclick = () => sendChat(el.messageInput.value);
+    el.btnSendBottom.onclick = () => sendChat(el.messageInput.value);
+    el.btnHello.onclick = () => sendChat("Hola CONSIA");
+    el.btnConsia.onclick = () => setAvatar("CONSIA");
+    el.btnMartin.onclick = () => setAvatar("MARTIN");
+    el.btnFuture.onclick = () => setAvatar("MARTIN FUTURE");
+    el.btnMic.onclick = toggleMic;
+    el.btnStop.onclick = () => speechSynthesis.cancel();
+    el.btnDemo.onclick = runDemo;
 
-    els.btnQuickRealwork.onclick = () => {
-      els.messageInput.value = "Activá el avatar martin-futurista y abrí el módulo realwork con una presentación comercial breve.";
-      sendChat(els.messageInput.value);
+    el.btnRealWork.onclick = () => {
+      el.messageInput.value = "Abrí realwork";
+      sendChat(el.messageInput.value);
     };
 
-    els.btnQuickManglar.onclick = () => {
-      els.messageInput.value = "Abrí el módulo manglar, cambiá la escena a presentation y mostrame una presentación corta.";
-      sendChat(els.messageInput.value);
+    el.btnManglar.onclick = () => {
+      el.messageInput.value = "Abrí manglar";
+      sendChat(el.messageInput.value);
     };
 
-    els.btnQuickPitch.onclick = () => {
-      els.messageInput.value = "Activá presenter mode para CONSIA con una demo ejecutiva de 20 segundos.";
-      sendChat(els.messageInput.value);
+    el.btnPitch.onclick = () => {
+      el.messageInput.value = "Activá una presentación breve";
+      sendChat(el.messageInput.value);
     };
 
-    els.langSelect.onchange = () => updateUi();
-
-    setStatus("health","warn","Health: iniciando");
-    setStatus("api","warn","Chat: esperando");
-    setStatus("voice","ok","Voz: lista");
-    setStatus("mic","warn","Mic: off");
-
-    renderModule("dashboard", "dashboard");
+    setAvatar("CONSIA");
+    setModule("dashboard","dashboard");
     setScene("default");
     setRoute("/");
-    updateUi();
-
-    await healthCheck();
-    await loadAvatar("consia");
-    showBubble("CONSIA", `Listo. API base activa: ${API_BASE}`);
-    addLog("system", `CONSIA Avatar OS iniciado · ${VERSION}`);
-    addLog("system", `API base: ${API_BASE}`);
+    healthCheck();
+    log("SYSTEM", `CONSIA Avatar OS iniciado. API base: ${API_BASE}`);
   </script>
 </body>
 </html>
