@@ -1,129 +1,341 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>CONSIA CONTROL CENTER</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 
 body{
-background:#0a0a0a;
-color:white;
-font-family:Arial;
-padding:30px;
+background:#020612;
+color:#00f2ff;
+font-family:Arial,Helvetica,sans-serif;
+margin:0;
+overflow:hidden;
 }
 
-h1{
-font-size:28px;
+#topbar{
+height:60px;
+background:#061326;
+display:flex;
+align-items:center;
+padding-left:20px;
+font-weight:bold;
+letter-spacing:2px;
+}
+
+#container{
+display:flex;
+height:calc(100vh - 60px);
+}
+
+#left{
+width:320px;
+background:#061326;
+padding:15px;
+overflow:auto;
+}
+
+#center{
+flex:1;
+position:relative;
+}
+
+#right{
+width:320px;
+background:#061326;
+padding:15px;
+overflow:auto;
 }
 
 .panel{
-background:#151515;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
+border:1px solid #00f2ff44;
+padding:12px;
+margin-bottom:12px;
+border-radius:8px;
 }
 
 button{
-padding:10px 16px;
-margin-top:10px;
+background:#00f2ff22;
+color:#00f2ff;
+border:1px solid #00f2ff66;
+padding:8px 10px;
+border-radius:6px;
 cursor:pointer;
 }
 
-pre{
-background:black;
-padding:10px;
+button:hover{
+background:#00f2ff44;
+}
+
+#chat{
+height:220px;
 overflow:auto;
+font-size:14px;
+}
+
+#chatInput{
+width:100%;
+margin-top:8px;
+background:#020612;
+color:#00f2ff;
+border:1px solid #00f2ff66;
+padding:8px;
+}
+
+canvas{
+width:100%;
+height:100%;
+}
+
+.agent{
+font-size:13px;
+margin-bottom:4px;
 }
 
 </style>
 </head>
 
+
 <body>
 
-<h1>CONSIA CONTROL CENTER</h1>
+<div id="topbar">
+CONSIA CONTROL CENTER
+</div>
+
+<div id="container">
+
+<div id="left">
 
 <div class="panel">
-<h3>System Status</h3>
-<button onclick="status()">Check</button>
-<pre id="status"></pre>
+<b>SYSTEM</b><br>
+<div id="systemStatus">loading...</div>
 </div>
 
 <div class="panel">
-<h3>Agents</h3>
-<button onclick="agents()">List Agents</button>
-<pre id="agents"></pre>
+<b>AGENTS</b>
+<div id="agents"></div>
 </div>
 
 <div class="panel">
-<h3>Memory</h3>
-<button onclick="memory()">Load Memory</button>
-<pre id="memory"></pre>
+<b>AUTOPILOT</b><br>
+<button onclick="runAutopilot()">RUN</button>
 </div>
 
 <div class="panel">
-<h3>Autopilot</h3>
-
-<input id="goal" placeholder="goal">
-
-<button onclick="autopilot()">Run</button>
-
-<pre id="auto"></pre>
+<b>MEMORY</b><br>
+<button onclick="loadMemory()">LIST</button>
+<div id="memory"></div>
+</div>
 
 </div>
+
+
+<div id="center">
+
+<canvas id="map"></canvas>
+
+</div>
+
+
+<div id="right">
+
+<div class="panel">
+<b>CONSIA CHAT</b>
+<div id="chat"></div>
+<input id="chatInput" placeholder="mensaje...">
+</div>
+
+<div class="panel">
+<b>VOICE</b><br>
+<button onclick="startVoice()">🎤 hablar</button>
+</div>
+
+</div>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 
 const API="https://api.consia.world"
 
-async function status(){
 
-const r=await fetch(API+"/v1/system/status")
+
+
+async function loadSystem(){
+
+const r=await fetch(API)
 const j=await r.json()
 
-document.getElementById("status").innerText=
-JSON.stringify(j,null,2)
+document.getElementById("systemStatus").innerHTML=
+"CORE: "+j.core+"<br>"+
+"CHAT: "+j.chat+"<br>"+
+"AGENTS: "+j.agents+"<br>"+
+"MEMORY: "+j.memory+"<br>"+
+"AUTOPILOT: "+j.autopilot
 
 }
 
-async function agents(){
+
+
+async function loadAgents(){
 
 const r=await fetch(API+"/v1/agents")
 const j=await r.json()
 
-document.getElementById("agents").innerText=
-JSON.stringify(j,null,2)
+const box=document.getElementById("agents")
+box.innerHTML=""
+
+j.agents.forEach(a=>{
+const div=document.createElement("div")
+div.className="agent"
+div.innerText=a
+box.appendChild(div)
+})
 
 }
 
-async function memory(){
 
-const r=await fetch(API+"/v1/memory/read")
+
+async function runAutopilot(){
+
+const r=await fetch(API+"/v1/autopilot/run")
 const j=await r.json()
 
-document.getElementById("memory").innerText=
-JSON.stringify(j,null,2)
+alert("jobs:"+j.jobs)
 
 }
 
-async function autopilot(){
 
-const goal=document.getElementById("goal").value
 
-const r=await fetch(API+"/v1/autopilot/start",{
+async function loadMemory(){
+
+const r=await fetch(API+"/v1/memory/get?key=martin")
+const j=await r.json()
+
+document.getElementById("memory").innerText=j.value
+
+}
+
+
+
+document.getElementById("chatInput").addEventListener("keypress",async e=>{
+
+if(e.key==="Enter"){
+
+const msg=e.target.value
+e.target.value=""
+
+addChat("YOU",msg)
+
+const r=await fetch(API+"/v1/chat",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({goal})
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:msg})
 })
 
 const j=await r.json()
 
-document.getElementById("auto").innerText=
-JSON.stringify(j,null,2)
+addChat("CONSIA",j.answer)
 
 }
+
+})
+
+
+
+function addChat(u,m){
+
+const c=document.getElementById("chat")
+
+const div=document.createElement("div")
+div.innerHTML="<b>"+u+":</b> "+m
+
+c.appendChild(div)
+c.scrollTop=c.scrollHeight
+
+}
+
+
+
+
+function startVoice(){
+
+const r=new webkitSpeechRecognition()
+
+r.onresult=async e=>{
+
+const text=e.results[0][0].transcript
+
+document.getElementById("chatInput").value=text
+
+const event=new KeyboardEvent("keypress",{key:"Enter"})
+document.getElementById("chatInput").dispatchEvent(event)
+
+}
+
+r.start()
+
+}
+
+
+
+const scene=new THREE.Scene()
+
+const camera=new THREE.PerspectiveCamera(
+60,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
+
+const renderer=new THREE.WebGLRenderer({
+canvas:document.getElementById("map"),
+alpha:true
+})
+
+renderer.setSize(
+document.getElementById("center").clientWidth,
+document.getElementById("center").clientHeight
+)
+
+camera.position.z=5
+
+
+const geometry=new THREE.IcosahedronGeometry(2,1)
+
+const material=new THREE.MeshBasicMaterial({
+wireframe:true,
+color:0x00ffff
+})
+
+const sphere=new THREE.Mesh(geometry,material)
+
+scene.add(sphere)
+
+
+
+function animate(){
+
+requestAnimationFrame(animate)
+
+sphere.rotation.x+=0.002
+sphere.rotation.y+=0.003
+
+renderer.render(scene,camera)
+
+}
+
+animate()
+
+
+
+loadSystem()
+loadAgents()
 
 </script>
 
