@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
-<title>CONSIA CORE ULTRA</title>
+<title>CONSIA CORE OMEGA</title>
 
 <style>
 
@@ -12,13 +13,13 @@ margin:0;
 background:#02040a;
 color:#00eaff;
 font-family:Arial;
+overflow:hidden;
 }
 
 header{
 background:#050a14;
 padding:20px;
 border-bottom:1px solid #00eaff33;
-letter-spacing:2px;
 }
 
 .container{
@@ -44,30 +45,30 @@ cursor:pointer;
 }
 
 .main{
-padding:20px;
+position:relative;
 }
 
-.panel{
+#output{
+position:absolute;
+top:10px;
+left:10px;
 background:#060a14;
 border:1px solid #00eaff33;
 padding:15px;
-margin-bottom:15px;
-}
-
-canvas{
-width:100%;
-height:250px;
-background:#000;
+width:280px;
+z-index:10;
 }
 
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
 </head>
 
 <body>
 
 <header>
-CONSIA CORE ULTRA
+CONSIA CORE OMEGA
 </header>
 
 <div class="container">
@@ -75,20 +76,21 @@ CONSIA CORE ULTRA
 <div class="sidebar">
 
 <button onclick="status()">System</button>
-<button onclick="agents()">Agents</button>
-<button onclick="projects()">Projects</button>
+<button onclick="swarm()">Agent Swarm</button>
+<button onclick="startup()">Create Startup</button>
+<button onclick="simulate()">World Simulation</button>
+<button onclick="multiverse()">Multiverse</button>
+<button onclick="learn()">Learning</button>
 <button onclick="memory()">Memory</button>
-<button onclick="start()">Autopilot</button>
+<button onclick="autopilot()">Autopilot</button>
 
 </div>
 
 <div class="main">
 
-<div id="output" class="panel">
+<div id="output">
 CONSIA READY
 </div>
-
-<canvas id="map"></canvas>
 
 </div>
 
@@ -96,71 +98,97 @@ CONSIA READY
 
 <script>
 
-const API="https://api.consia.world";
+const API="https://api.consia.world"
 
 async function status(){
-const r=await fetch(API+"/v1/health");
-show(await r.json());
+const r=await fetch(API+"/v1/health")
+show(await r.json())
 }
 
-async function agents(){
-const r=await fetch(API+"/v1/agents");
-show(await r.json());
+async function swarm(){
+const r=await fetch(API+"/v1/swarm")
+show(await r.json())
 }
 
-async function projects(){
-const r=await fetch(API+"/v1/projects");
-show(await r.json());
+async function startup(){
+const r=await fetch(API+"/v1/startup/create")
+show(await r.json())
+}
+
+async function simulate(){
+const r=await fetch(API+"/v1/world/simulate")
+show(await r.json())
+}
+
+async function multiverse(){
+const r=await fetch(API+"/v1/multiverse")
+show(await r.json())
+}
+
+async function learn(){
+const r=await fetch(API+"/v1/learning/update")
+show(await r.json())
 }
 
 async function memory(){
-const r=await fetch(API+"/v1/memory");
-show(await r.json());
+const r=await fetch(API+"/v1/memory")
+show(await r.json())
 }
 
-async function start(){
-const r=await fetch(API+"/v1/autopilot/start");
-show(await r.json());
+async function autopilot(){
+const r=await fetch(API+"/v1/autopilot/start")
+show(await r.json())
 }
 
 function show(d){
 document.getElementById("output").innerText=
-JSON.stringify(d,null,2);
+JSON.stringify(d,null,2)
 }
 
-/* simple network map */
+/* 3D MAP */
 
-const c=document.getElementById("map");
-const ctx=c.getContext("2d");
+const scene=new THREE.Scene()
 
-function draw(){
+const camera=new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
 
-ctx.fillStyle="black";
-ctx.fillRect(0,0,c.width,c.height);
+const renderer=new THREE.WebGLRenderer({antialias:true})
 
-for(let i=0;i<30;i++){
+renderer.setSize(window.innerWidth,window.innerHeight)
 
-ctx.fillStyle="#00eaff";
+document.body.appendChild(renderer.domElement)
 
-ctx.beginPath();
+const geometry=new THREE.SphereGeometry(5,64,64)
 
-ctx.arc(
-Math.random()*c.width,
-Math.random()*c.height,
-2,
-0,
-6.28
-);
+const material=new THREE.MeshBasicMaterial({
+color:0x00eaff,
+wireframe:true
+})
 
-ctx.fill();
+const globe=new THREE.Mesh(geometry,material)
+
+scene.add(globe)
+
+camera.position.z=12
+
+function animate(){
+
+requestAnimationFrame(animate)
+
+globe.rotation.y+=0.002
+
+renderer.render(scene,camera)
 
 }
 
-}
-
-setInterval(draw,1000);
+animate()
 
 </script>
 
 </body>
+
 </html>
