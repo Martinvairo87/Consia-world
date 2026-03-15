@@ -1,259 +1,215 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>CONSIA GLOBAL COMMAND CENTER</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <style>
+
 body{
 margin:0;
-background:#000;
-color:#00f7ff;
+background:#02040a;
 font-family:Arial;
+color:white;
+overflow:hidden;
 }
 
-#topbar{
-height:60px;
-background:#031821;
-display:flex;
-align-items:center;
-padding-left:20px;
-font-size:20px;
-letter-spacing:2px;
-}
-
-#layout{
-display:flex;
-height:calc(100vh - 60px);
-}
-
-#sidebar{
-width:260px;
-background:#041c26;
-padding:20px;
-}
-
-#content{
-flex:1;
-padding:20px;
-overflow:auto;
+#scene{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
 }
 
 .panel{
-border:1px solid #00f7ff33;
-padding:15px;
-margin-bottom:20px;
+position:absolute;
+top:20px;
+left:20px;
+background:rgba(0,20,40,0.8);
+padding:16px;
+border-radius:10px;
+backdrop-filter:blur(8px);
 }
 
 button{
-background:#052a33;
-border:1px solid #00f7ff44;
-color:#00f7ff;
-padding:10px;
-width:100%;
-margin-top:10px;
+background:#00e5ff;
+border:none;
+padding:10px 18px;
+margin:4px;
+border-radius:8px;
 cursor:pointer;
 }
 
-#brain{
-width:100%;
-height:300px;
-background:#000;
-border:1px solid #00f7ff33;
+#chat{
+position:absolute;
+right:20px;
+bottom:20px;
+width:320px;
+background:#000b1f;
+border-radius:10px;
+padding:10px;
 }
 
-#status{
-white-space:pre;
-font-size:12px;
+#messages{
+height:200px;
+overflow:auto;
+font-size:13px;
 }
+
+#input{
+width:100%;
+padding:8px;
+margin-top:6px;
+background:black;
+color:white;
+border:1px solid #333;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<div id="topbar">
-CONSIA GLOBAL COMMAND CENTER
-</div>
-
-<div id="layout">
-
-<div id="sidebar">
-
-<h3>CONSIA</h3>
-
-<button onclick="system()">System</button>
-<button onclick="agents()">Agents</button>
-<button onclick="projects()">Projects</button>
-<button onclick="users()">Users</button>
-<button onclick="economy()">Economy</button>
-<button onclick="autopilot()">Autopilot</button>
-
-</div>
-
-<div id="content">
+<div id="scene"></div>
 
 <div class="panel">
 
-<h3>System Status</h3>
+<h3>CONSIA COMMAND CENTER</h3>
 
-<div id="status"></div>
-
-</div>
-
-<div class="panel">
-
-<h3>Global Brain</h3>
-
-<canvas id="brain"></canvas>
+<button onclick="systemStatus()">SYSTEM STATUS</button>
+<button onclick="launchAgents()">AGENT SWARM</button>
+<button onclick="autopilot()">AUTOPILOT</button>
+<button onclick="memory()">GLOBAL MEMORY</button>
+<button onclick="avatar()">AVATAR</button>
 
 </div>
 
-</div>
+<div id="chat">
+
+<div id="messages"></div>
+
+<input id="input" placeholder="Ask CONSIA...">
 
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
 <script>
 
-const API="https://api.consia.world"
+const scene = new THREE.Scene()
 
-const canvas=document.getElementById("brain")
-const ctx=canvas.getContext("2d")
+const camera = new THREE.PerspectiveCamera(
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+1000
+)
 
-canvas.width=canvas.offsetWidth
-canvas.height=300
+const renderer = new THREE.WebGLRenderer()
 
-let nodes=[]
+renderer.setSize(window.innerWidth,window.innerHeight)
 
-for(let i=0;i<80;i++){
+document.getElementById("scene").appendChild(renderer.domElement)
 
-nodes.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-vx:(Math.random()-0.5),
-vy:(Math.random()-0.5)
+const geometry = new THREE.SphereGeometry(2,64,64)
+
+const material = new THREE.MeshBasicMaterial({
+color:0x00ffff,
+wireframe:true
 })
 
-}
+const sphere = new THREE.Mesh(geometry,material)
 
-function draw(){
+scene.add(sphere)
 
-ctx.fillStyle="black"
-ctx.fillRect(0,0,canvas.width,canvas.height)
+camera.position.z=5
 
-ctx.strokeStyle="#00f7ff22"
+function animate(){
 
-for(let i=0;i<nodes.length;i++){
+requestAnimationFrame(animate)
 
-for(let j=i+1;j<nodes.length;j++){
+sphere.rotation.y+=0.002
 
-const dx=nodes[i].x-nodes[j].x
-const dy=nodes[i].y-nodes[j].y
-const dist=Math.sqrt(dx*dx+dy*dy)
-
-if(dist<120){
-
-ctx.beginPath()
-ctx.moveTo(nodes[i].x,nodes[i].y)
-ctx.lineTo(nodes[j].x,nodes[j].y)
-ctx.stroke()
+renderer.render(scene,camera)
 
 }
 
-}
+animate()
 
-}
+</script>
 
-ctx.fillStyle="#00f7ff"
+<script>
 
-nodes.forEach(n=>{
+const messages=document.getElementById("messages")
+const input=document.getElementById("input")
 
-n.x+=n.vx
-n.y+=n.vy
+input.addEventListener("keypress",async(e)=>{
 
-if(n.x<0||n.x>canvas.width) n.vx*=-1
-if(n.y<0||n.y>canvas.height) n.vy*=-1
+if(e.key==="Enter"){
 
-ctx.beginPath()
-ctx.arc(n.x,n.y,2,0,Math.PI*2)
-ctx.fill()
+const text=input.value
+input.value=""
 
-})
+messages.innerHTML+=`<div>YOU: ${text}</div>`
 
-requestAnimationFrame(draw)
-
-}
-
-draw()
-
-async function system(){
-
-const r=await fetch(API)
-const j=await r.json()
-
-document.getElementById("status").innerText=
-JSON.stringify(j,null,2)
-
-}
-
-async function agents(){
-
-const r=await fetch(API+"/v1/agents")
-const j=await r.json()
-
-document.getElementById("status").innerText=
-"Agents: "+j.agents.length
-
-}
-
-async function projects(){
-
-const r=await fetch(API+"/v1/projects")
-const j=await r.json()
-
-document.getElementById("status").innerText=
-"Projects: "+j.projects.length
-
-}
-
-async function users(){
-
-const r=await fetch(API+"/v1/network/users")
-const j=await r.json()
-
-document.getElementById("status").innerText=
-"Users: "+j.users
-
-}
-
-async function economy(){
-
-const r=await fetch(API+"/v1/economy/products")
-const j=await r.json()
-
-document.getElementById("status").innerText=
-"Products: "+j.products.length
-
-}
-
-async function autopilot(){
-
-const idea=prompt("Idea de negocio")
-
-const r=await fetch(API+"/v1/autopilot/create",{
-
+const r=await fetch("https://api.consia.world/v1/chat",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({idea})
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({message:text})
+})
+
+const data=await r.json()
+
+messages.innerHTML+=`<div>CONSIA: ${data.reply || data.message}</div>`
+
+messages.scrollTop=messages.scrollHeight
+
+}
 
 })
 
-const j=await r.json()
+function systemStatus(){
 
-document.getElementById("status").innerText=
-JSON.stringify(j,null,2)
+alert("CONSIA CORE ACTIVE")
+
+}
+
+function launchAgents(){
+
+fetch("https://api.consia.world/v1/actions/dispatch",{
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({
+action:"launch_agents"
+})
+})
+
+alert("Agent Swarm Activated")
+
+}
+
+function autopilot(){
+
+alert("CONSIA AUTOPILOT READY")
+
+}
+
+function memory(){
+
+fetch("https://api.consia.world/v1/memory/status")
+.then(r=>r.json())
+.then(d=>alert(JSON.stringify(d,null,2)))
+
+}
+
+function avatar(){
+
+alert("CONSIA AVATAR ONLINE")
 
 }
 
