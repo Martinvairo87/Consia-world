@@ -4,7 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-<title>CONSIA CORE OMEGA</title>
+<title>CONSIA OS</title>
 
 <style>
 
@@ -18,13 +18,14 @@ overflow:hidden;
 
 header{
 background:#050a14;
-padding:20px;
+padding:18px;
 border-bottom:1px solid #00eaff33;
+font-size:18px;
 }
 
 .container{
 display:grid;
-grid-template-columns:220px 1fr;
+grid-template-columns:240px 1fr;
 height:100vh;
 }
 
@@ -35,28 +36,50 @@ padding:15px;
 }
 
 .sidebar button{
+
 width:100%;
-padding:10px;
+padding:12px;
 margin-bottom:10px;
 background:#0c1424;
 border:1px solid #00eaff33;
 color:#00eaff;
 cursor:pointer;
+font-size:14px;
+
+}
+
+.sidebar button:hover{
+
+background:#0f1c33;
+
 }
 
 .main{
+
 position:relative;
+
 }
 
 #output{
+
 position:absolute;
 top:10px;
 left:10px;
 background:#060a14;
 border:1px solid #00eaff33;
 padding:15px;
-width:280px;
+width:300px;
 z-index:10;
+font-size:12px;
+
+}
+
+canvas{
+
+position:absolute;
+top:0;
+left:0;
+
 }
 
 </style>
@@ -68,28 +91,35 @@ z-index:10;
 <body>
 
 <header>
-CONSIA CORE OMEGA
+
+CONSIA CONTROL CENTER
+
 </header>
 
 <div class="container">
 
 <div class="sidebar">
 
-<button onclick="status()">System</button>
-<button onclick="swarm()">Agent Swarm</button>
-<button onclick="startup()">Create Startup</button>
-<button onclick="simulate()">World Simulation</button>
-<button onclick="multiverse()">Multiverse</button>
-<button onclick="learn()">Learning</button>
+<button onclick="health()">System Status</button>
+
 <button onclick="memory()">Memory</button>
-<button onclick="autopilot()">Autopilot</button>
+
+<button onclick="projects()">Projects</button>
+
+<button onclick="autopilot()">Start Autopilot</button>
+
+<button onclick="autopilotStatus()">Autopilot Status</button>
+
+<button onclick="create()">Create Project</button>
 
 </div>
 
 <div class="main">
 
 <div id="output">
+
 CONSIA READY
+
 </div>
 
 </div>
@@ -100,60 +130,74 @@ CONSIA READY
 
 const API="https://api.consia.world"
 
-async function status(){
+async function health(){
+
 const r=await fetch(API+"/v1/health")
-show(await r.json())
-}
 
-async function swarm(){
-const r=await fetch(API+"/v1/swarm")
 show(await r.json())
-}
 
-async function startup(){
-const r=await fetch(API+"/v1/startup/create")
-show(await r.json())
-}
-
-async function simulate(){
-const r=await fetch(API+"/v1/world/simulate")
-show(await r.json())
-}
-
-async function multiverse(){
-const r=await fetch(API+"/v1/multiverse")
-show(await r.json())
-}
-
-async function learn(){
-const r=await fetch(API+"/v1/learning/update")
-show(await r.json())
 }
 
 async function memory(){
-const r=await fetch(API+"/v1/memory")
+
+const r=await fetch(API+"/v1/memory/status")
+
 show(await r.json())
+
+}
+
+async function projects(){
+
+const r=await fetch(API+"/v1/projects/status")
+
+show(await r.json())
+
 }
 
 async function autopilot(){
+
 const r=await fetch(API+"/v1/autopilot/start")
+
 show(await r.json())
+
+}
+
+async function autopilotStatus(){
+
+const r=await fetch(API+"/v1/autopilot/status")
+
+show(await r.json())
+
+}
+
+async function create(){
+
+const r=await fetch(API+"/v1/project/create")
+
+show(await r.json())
+
 }
 
 function show(d){
-document.getElementById("output").innerText=
-JSON.stringify(d,null,2)
-}
 
-/* 3D MAP */
+document.getElementById("output").innerText=
+
+JSON.stringify(d,null,2)
+
+}
 
 const scene=new THREE.Scene()
 
 const camera=new THREE.PerspectiveCamera(
+
 75,
+
 window.innerWidth/window.innerHeight,
+
 0.1,
+
 1000
+
 )
 
 const renderer=new THREE.WebGLRenderer({antialias:true})
@@ -165,8 +209,11 @@ document.body.appendChild(renderer.domElement)
 const geometry=new THREE.SphereGeometry(5,64,64)
 
 const material=new THREE.MeshBasicMaterial({
+
 color:0x00eaff,
+
 wireframe:true
+
 })
 
 const globe=new THREE.Mesh(geometry,material)
