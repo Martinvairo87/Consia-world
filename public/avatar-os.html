@@ -1,174 +1,66 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>CONSIA AVATAR OS</title>
+<title>CONSIA Avatar OS</title>
 
 <style>
-
 body{
 margin:0;
-background:#050f1c;
-font-family:system-ui;
+background:#07111f;
 color:white;
+font-family:sans-serif;
 text-align:center;
 }
 
-header{
-padding:20px;
-}
-
-canvas{
+#avatarCanvas{
 width:100%;
 height:70vh;
 }
 
 button{
-padding:12px 20px;
+padding:12px 18px;
 margin:6px;
 border-radius:12px;
 border:none;
 background:#0ea5e9;
 color:white;
-font-weight:600;
+font-weight:700;
 }
-
-.avatar-selector{
-margin-top:10px;
-}
-
 </style>
-
 </head>
 
 <body>
 
-<header>
+<h1>CONSIA AVATAR</h1>
 
-<h2>CONSIA AVATAR OS</h2>
+<canvas id="avatarCanvas"></canvas>
 
-<div class="avatar-selector">
+<div>
 
-<button onclick="loadAvatar('consia')">CONSIA</button>
-
-<button onclick="loadAvatar('martin')">MARTIN</button>
-
-<button onclick="loadAvatar('future')">MARTIN FUTURE</button>
+<button onclick="loadCONSIA('consia')">CONSIA</button>
+<button onclick="loadCONSIA('martin')">MARTIN</button>
+<button onclick="loadCONSIA('martin-futurista')">MARTIN FUTURE</button>
 
 </div>
 
-</header>
+<script type="module">
 
-<canvas id="scene"></canvas>
+import {
+initAvatar,
+loadAvatar,
+startListening,
+startCamera
+} from "/avatar/consia-avatar-engine-v3.js";
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160/build/three.min.js"></script>
+initAvatar("avatarCanvas");
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160/examples/js/loaders/GLTFLoader.js"></script>
+loadAvatar("consia");
 
-<script>
+startListening();
+startCamera();
 
-let scene=new THREE.Scene()
-
-let camera=new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000)
-
-let renderer=new THREE.WebGLRenderer({canvas:document.getElementById("scene"),alpha:true})
-
-renderer.setSize(window.innerWidth,window.innerHeight)
-
-camera.position.z=3
-
-let light=new THREE.HemisphereLight(0xffffff,0x444444,1)
-
-scene.add(light)
-
-let loader=new THREE.GLTFLoader()
-
-let avatar
-
-function loadAvatar(type){
-
-if(avatar) scene.remove(avatar)
-
-let model
-
-if(type==="consia"){
-
-model="/avatar/consia.glb"
-
-}
-
-if(type==="martin"){
-
-model="/avatar/martin.glb"
-
-}
-
-if(type==="future"){
-
-model="/avatar/martin-futurista.glb"
-
-}
-
-loader.load(model,function(gltf){
-
-avatar=gltf.scene
-
-scene.add(avatar)
-
-})
-
-}
-
-function animate(){
-
-requestAnimationFrame(animate)
-
-renderer.render(scene,camera)
-
-}
-
-animate()
-
-</script>
-
-<script>
-
-async function startCamera(){
-
-let stream=await navigator.mediaDevices.getUserMedia({video:true})
-
-}
-
-startCamera()
-
-</script>
-
-<script>
-
-const recognition=new webkitSpeechRecognition()
-
-recognition.continuous=true
-
-recognition.start()
-
-recognition.onresult=(e)=>{
-
-let text=e.results[e.results.length-1][0].transcript
-
-fetch("https://api.consia.world/v1/chat",{
-
-method:"POST",
-
-headers:{"Content-Type":"application/json"},
-
-body:JSON.stringify({message:text})
-
-})
-
-}
+window.loadCONSIA = loadAvatar;
 
 </script>
 
