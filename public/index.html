@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
-<title>CONSIA GLOBAL INTELLIGENCE MAP</title>
+<title>CONSIA UNIVERSE MAP</title>
 
 <style>
 
@@ -72,8 +73,8 @@ z-index:10;
 position:absolute;
 bottom:25px;
 right:25px;
-width:200px;
-height:200px;
+width:220px;
+height:220px;
 border-radius:50%;
 border:2px solid #00eaff;
 background:radial-gradient(#00eaff55,#02040a);
@@ -100,7 +101,7 @@ left:0;
 
 <header>
 
-CONSIA GLOBAL INTELLIGENCE MAP
+CONSIA UNIVERSE MAP
 
 </header>
 
@@ -121,7 +122,7 @@ CONSIA GLOBAL INTELLIGENCE MAP
 
 <div id="panel">
 
-CONSIA GLOBAL NETWORK READY
+CONSIA UNIVERSE READY
 
 </div>
 
@@ -212,7 +213,7 @@ speechSynthesis.speak(s)
 
 }
 
-/* THREE.JS */
+/* THREE */
 
 const scene=new THREE.Scene()
 
@@ -227,37 +228,42 @@ const renderer=new THREE.WebGLRenderer({antialias:true})
 renderer.setSize(window.innerWidth,window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-camera.position.z=18
+camera.position.z=22
 
-/* EARTH */
+/* PLANET */
 
-const geometry=new THREE.SphereGeometry(7,64,64)
+const geo=new THREE.SphereGeometry(7,64,64)
 
-const material=new THREE.MeshBasicMaterial({
+const mat=new THREE.MeshBasicMaterial({
 
 color:0x00eaff,
 wireframe:true
 
 })
 
-const earth=new THREE.Mesh(geometry,material)
+const planet=new THREE.Mesh(geo,mat)
 
-scene.add(earth)
+scene.add(planet)
 
-/* INTELLIGENCE NODES */
+/* UNIVERSE NODES */
 
 const nodes=[]
 
-for(let i=0;i<80;i++){
+for(let i=0;i<120;i++){
 
 const g=new THREE.SphereGeometry(.12,8,8)
-const m=new THREE.MeshBasicMaterial({color:0xffffff})
+
+const m=new THREE.MeshBasicMaterial({
+
+color:0xffffff
+
+})
 
 const node=new THREE.Mesh(g,m)
 
-node.position.x=(Math.random()-0.5)*18
-node.position.y=(Math.random()-0.5)*18
-node.position.z=(Math.random()-0.5)*18
+node.position.x=(Math.random()-0.5)*25
+node.position.y=(Math.random()-0.5)*25
+node.position.z=(Math.random()-0.5)*25
 
 scene.add(node)
 
@@ -271,7 +277,7 @@ for(let i=0;i<nodes.length;i++){
 
 for(let j=i+1;j<nodes.length;j++){
 
-if(Math.random()<0.02){
+if(Math.random()<0.015){
 
 const material=new THREE.LineBasicMaterial({color:0x00eaff})
 
@@ -298,7 +304,7 @@ function animate(){
 
 requestAnimationFrame(animate)
 
-earth.rotation.y+=0.002
+planet.rotation.y+=0.002
 
 nodes.forEach(n=>{
 
@@ -315,4 +321,5 @@ animate()
 </script>
 
 </body>
+
 </html>
