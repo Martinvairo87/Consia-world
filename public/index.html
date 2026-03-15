@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <meta charset="UTF-8">
-<title>CONSIA OS</title>
+<title>CONSIA CONTROL CENTER V2</title>
 
 <style>
 
@@ -18,14 +16,14 @@ overflow:hidden;
 
 header{
 background:#050a14;
-padding:18px;
+padding:16px;
 border-bottom:1px solid #00eaff33;
 font-size:18px;
 }
 
 .container{
 display:grid;
-grid-template-columns:240px 1fr;
+grid-template-columns:260px 1fr;
 height:100vh;
 }
 
@@ -49,18 +47,14 @@ font-size:14px;
 }
 
 .sidebar button:hover{
-
-background:#0f1c33;
-
+background:#102040;
 }
 
 .main{
-
 position:relative;
-
 }
 
-#output{
+#panel{
 
 position:absolute;
 top:10px;
@@ -68,18 +62,36 @@ left:10px;
 background:#060a14;
 border:1px solid #00eaff33;
 padding:15px;
-width:300px;
-z-index:10;
+width:320px;
 font-size:12px;
+z-index:20;
+
+}
+
+#avatar{
+
+position:absolute;
+bottom:20px;
+right:20px;
+width:140px;
+height:140px;
+border-radius:50%;
+border:2px solid #00eaff;
+background:radial-gradient(#00eaff33,#02040a);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:12px;
+text-align:center;
 
 }
 
 canvas{
-
 position:absolute;
 top:0;
 left:0;
-
 }
 
 </style>
@@ -92,7 +104,7 @@ left:0;
 
 <header>
 
-CONSIA CONTROL CENTER
+CONSIA CONTROL CENTER V2
 
 </header>
 
@@ -106,19 +118,27 @@ CONSIA CONTROL CENTER
 
 <button onclick="projects()">Projects</button>
 
+<button onclick="create()">Create Project</button>
+
 <button onclick="autopilot()">Start Autopilot</button>
 
 <button onclick="autopilotStatus()">Autopilot Status</button>
 
-<button onclick="create()">Create Project</button>
+<button onclick="voice()">Voice Command</button>
 
 </div>
 
 <div class="main">
 
-<div id="output">
+<div id="panel">
 
 CONSIA READY
+
+</div>
+
+<div id="avatar">
+
+CONSIA<br>Guide
 
 </div>
 
@@ -129,6 +149,16 @@ CONSIA READY
 <script>
 
 const API="https://api.consia.world"
+
+function show(data){
+
+document.getElementById("panel").innerText=
+
+JSON.stringify(data,null,2)
+
+}
+
+/* API */
 
 async function health(){
 
@@ -154,11 +184,21 @@ show(await r.json())
 
 }
 
+async function create(){
+
+const r=await fetch(API+"/v1/project/create")
+
+show(await r.json())
+
+}
+
 async function autopilot(){
 
 const r=await fetch(API+"/v1/autopilot/start")
 
 show(await r.json())
+
+speak("Autopilot activated")
 
 }
 
@@ -170,21 +210,37 @@ show(await r.json())
 
 }
 
-async function create(){
+/* VOICE */
 
-const r=await fetch(API+"/v1/project/create")
+function voice(){
 
-show(await r.json())
+const rec=new webkitSpeechRecognition()
+
+rec.lang="en-US"
+
+rec.onresult=e=>{
+
+const text=e.results[0][0].transcript
+
+document.getElementById("panel").innerText="VOICE: "+text
 
 }
 
-function show(d){
-
-document.getElementById("output").innerText=
-
-JSON.stringify(d,null,2)
+rec.start()
 
 }
+
+/* SPEECH */
+
+function speak(text){
+
+const s=new SpeechSynthesisUtterance(text)
+
+speechSynthesis.speak(s)
+
+}
+
+/* 3D MAP */
 
 const scene=new THREE.Scene()
 
