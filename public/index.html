@@ -1,50 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>CONSIA OS</title>
+<title>CONSIA OS v2</title>
 
 <style>
 
-/* GLOBAL */
+/* ===== GLOBAL ===== */
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
 background:#050a16;
-color:white;
+color:#fff;
 }
 
-/* LAYOUT */
+/* ===== LAYOUT ===== */
 
 .app{
 display:grid;
-grid-template-columns:260px 1fr 340px;
+grid-template-columns:260px 1fr 360px;
 gap:20px;
 padding:20px;
 min-height:100vh;
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 
 .sidebar{
 background:#0e1a32;
-padding:20px;
 border-radius:18px;
+padding:20px;
 }
 
 .logo{
-font-size:20px;
-font-weight:bold;
+font-size:22px;
+font-weight:600;
 margin-bottom:20px;
 }
 
@@ -55,15 +48,20 @@ gap:10px;
 }
 
 .menu button{
-background:#16264a;
+background:#15264a;
 border:none;
+color:white;
 padding:12px;
 border-radius:10px;
-color:white;
 cursor:pointer;
+transition:.2s;
 }
 
-/* MAIN */
+.menu button:hover{
+background:#1e3a8a;
+}
+
+/* ===== MAIN ===== */
 
 .main{
 display:flex;
@@ -71,43 +69,42 @@ flex-direction:column;
 gap:20px;
 }
 
-/* PANELS */
+/* ===== PANELS ===== */
 
 .panel{
 background:#0b1630;
 border-radius:18px;
 padding:20px;
-border:1px solid rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,.05);
 }
 
-/* STATUS */
+/* ===== STATUS ===== */
 
 .status-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:12px;
-margin-top:10px;
+gap:10px;
 }
 
 .status{
-background:#0a1428;
-padding:16px;
-border-radius:12px;
+background:#081428;
+padding:14px;
+border-radius:10px;
 }
 
-/* COMMAND */
+/* ===== COMMAND ===== */
 
 .command{
 width:100%;
 padding:16px;
+background:#040c20;
 border:none;
 border-radius:10px;
-background:#061024;
 color:white;
 margin-top:10px;
 }
 
-/* BUTTON GRID */
+/* ===== BUTTONS ===== */
 
 .grid{
 display:grid;
@@ -125,12 +122,59 @@ color:white;
 cursor:pointer;
 }
 
-/* TIMELINE */
+/* ===== RADAR ===== */
+
+.radar{
+height:260px;
+border-radius:50%;
+background:radial-gradient(circle,#1b2e5a,#040914);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:13px;
+}
+
+/* ===== AGENT SWARM ===== */
+
+.swarm{
+display:grid;
+grid-template-columns:repeat(10,1fr);
+gap:6px;
+margin-top:10px;
+}
+
+.agent{
+width:8px;
+height:8px;
+background:#4c7cff;
+border-radius:50%;
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:.3}
+50%{opacity:1}
+100%{opacity:.3}
+}
+
+/* ===== EXECUTION GRAPH ===== */
+
+.graph{
+height:180px;
+background:#050d22;
+border-radius:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:13px;
+}
+
+/* ===== TIMELINE ===== */
 
 .timeline{
 display:flex;
 flex-direction:column;
-gap:10px;
+gap:8px;
 max-height:300px;
 overflow:auto;
 }
@@ -139,9 +183,10 @@ overflow:auto;
 background:#081428;
 padding:12px;
 border-radius:10px;
+font-size:13px;
 }
 
-/* CONSOLE */
+/* ===== CONSOLE ===== */
 
 .console{
 background:#0e1a32;
@@ -149,11 +194,11 @@ border-radius:18px;
 padding:20px;
 display:flex;
 flex-direction:column;
-gap:12px;
+gap:10px;
 }
 
 .output{
-background:#030712;
+background:#020712;
 padding:14px;
 border-radius:10px;
 font-family:monospace;
@@ -161,19 +206,7 @@ max-height:400px;
 overflow:auto;
 }
 
-/* RADAR */
-
-.radar{
-height:200px;
-background:radial-gradient(circle,#1a2c55,#050a16);
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:14px;
-}
-
-/* RESPONSIVE */
+/* ===== RESPONSIVE ===== */
 
 @media(max-width:1100px){
 
@@ -189,27 +222,17 @@ display:none;
 
 @media(max-width:640px){
 
-.app{
-padding:10px;
-gap:10px;
+.grid{
+grid-template-columns:1fr 1fr;
 }
 
 .status-grid{
 grid-template-columns:1fr 1fr;
 }
 
-.grid{
-grid-template-columns:1fr 1fr;
-}
-
-.timeline{
-max-height:200px;
-}
-
 }
 
 </style>
-
 </head>
 
 <body>
@@ -244,24 +267,24 @@ max-height:200px;
 
 <div class="panel">
 
-<h2>System Status</h2>
+<h3>System Status</h3>
 
 <div class="status-grid">
 
-<div class="status">API<br><b>30.0.0</b></div>
-<div class="status">Agents<br><b>240</b></div>
-<div class="status">Memory<br><b>active</b></div>
-<div class="status">World Model<br><b>active</b></div>
+<div class="status">API 30.0.0</div>
+<div class="status">Agents 240</div>
+<div class="status">Memory Active</div>
+<div class="status">World Model Active</div>
 
 </div>
 
 </div>
 
-<!-- JARVIS COMMAND -->
+<!-- COMMAND -->
 
 <div class="panel">
 
-<h2>Jarvis Command</h2>
+<h3>Jarvis Command</h3>
 
 <input class="command"
 placeholder="Ej: scan global opportunities">
@@ -285,11 +308,45 @@ placeholder="Ej: scan global opportunities">
 
 <div class="panel">
 
-<h2>Global Radar</h2>
+<h3>Global Radar</h3>
 
 <div class="radar">
 
-Market Scanner Active
+market scanner active
+
+</div>
+
+</div>
+
+<!-- AGENT SWARM -->
+
+<div class="panel">
+
+<h3>Agent Swarm</h3>
+
+<div class="swarm">
+
+<script>
+
+for(let i=0;i<240;i++){
+document.write('<div class="agent"></div>')
+}
+
+</script>
+
+</div>
+
+</div>
+
+<!-- EXECUTION GRAPH -->
+
+<div class="panel">
+
+<h3>Execution Graph</h3>
+
+<div class="graph">
+
+mission → agents → workflows → results
 
 </div>
 
@@ -299,13 +356,13 @@ Market Scanner Active
 
 <div class="panel">
 
-<h2>Realtime Timeline</h2>
+<h3>Realtime Timeline</h3>
 
 <div class="timeline">
 
-<div class="event">Agent Swarm iniciado</div>
-<div class="event">Autopilot ejecutado</div>
-<div class="event">Global market scan</div>
+<div class="event">Autopilot iniciado</div>
+<div class="event">Agent swarm activo</div>
+<div class="event">Global opportunity scan</div>
 <div class="event">Memory actualizada</div>
 
 </div>
@@ -318,16 +375,15 @@ Market Scanner Active
 
 <div class="console">
 
-<h2>Console</h2>
+<h3>Console</h3>
 
 <div class="output">
 
 {
-"ok": true,
-"consia_os": "active",
+"consia_os": "v2",
 "agents": 240,
-"world_model": "active",
-"autopilot": "enabled"
+"autopilot": "active",
+"world_model": "enabled"
 }
 
 </div>
@@ -337,5 +393,4 @@ Market Scanner Active
 </div>
 
 </body>
-
 </html>
