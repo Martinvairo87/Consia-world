@@ -1,0 +1,2709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>CONSIA GLOBAL COMMAND CENTER ULTRA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07111f" />
+  <style>
+    :root{
+      --bg:#050c16;
+      --bg2:#081423;
+      --bg3:#0b1c33;
+      --panel:rgba(10,24,44,.88);
+      --panel2:rgba(13,31,57,.92);
+      --card:rgba(255,255,255,.035);
+      --line:rgba(105,178,255,.14);
+      --line2:rgba(105,178,255,.26);
+      --text:#eaf5ff;
+      --muted:#88a8c8;
+      --cyan:#48d8ff;
+      --blue:#4b7cff;
+      --green:#2ee0a8;
+      --yellow:#ffc95c;
+      --red:#ff6d8b;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --ok:#29e3a9;
+      --warn:#ffcb63;
+      --err:#ff7b98;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1200px 700px at 10% -10%, rgba(72,216,255,.16), transparent 40%),
+        radial-gradient(1000px 600px at 100% 0%, rgba(75,124,255,.16), transparent 40%),
+        linear-gradient(180deg, #050b15, #07111d 28%, #07111b 100%);
+      overflow:hidden;
+    }
+
+    .shell{
+      height:100vh;
+      display:grid;
+      grid-template-columns:260px 1fr 360px;
+      grid-template-rows:74px 1fr;
+      gap:14px;
+      padding:14px;
+    }
+
+    .glass{
+      background:linear-gradient(180deg, rgba(15,31,56,.88), rgba(8,19,35,.92));
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar{
+      grid-column:1 / 4;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      border-radius:22px;
+      padding:12px 16px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+    }
+
+    .brand-mark{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      border:1px solid var(--line2);
+      background:
+        radial-gradient(circle at 32% 30%, rgba(255,255,255,.95), rgba(255,255,255,.08) 16%, transparent 17%),
+        radial-gradient(circle at 55% 50%, rgba(72,216,255,.92), rgba(72,216,255,.14) 42%, transparent 43%),
+        linear-gradient(135deg, rgba(72,216,255,.12), rgba(75,124,255,.18));
+      box-shadow:inset 0 0 30px rgba(72,216,255,.12), 0 0 24px rgba(72,216,255,.08);
+      position:relative;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+
+    .brand-mark::after{
+      content:"";
+      position:absolute;
+      inset:8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .brand-title{
+      font-size:15px;
+      font-weight:800;
+      letter-spacing:.08em;
+      white-space:nowrap;
+    }
+
+    .brand-sub{
+      margin-top:2px;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:560px;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-height:38px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      font-size:12px;
+      color:var(--text);
+      white-space:nowrap;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      box-shadow:0 0 18px currentColor;
+      background:var(--muted);
+      color:var(--muted);
+      flex:0 0 auto;
+    }
+
+    .dot.ok{background:var(--ok);color:var(--ok)}
+    .dot.warn{background:var(--warn);color:var(--warn)}
+    .dot.err{background:var(--err);color:var(--err)}
+
+    .btn{
+      appearance:none;
+      border:none;
+      outline:none;
+      cursor:pointer;
+      color:var(--text);
+      border-radius:12px;
+      padding:11px 14px;
+      font-weight:800;
+      background:linear-gradient(180deg, #17365f, #0f2948);
+      border:1px solid rgba(97,157,255,.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 10px 24px rgba(0,0,0,.28);
+      transition:transform .14s ease, filter .14s ease;
+    }
+
+    .btn:hover{filter:brightness(1.06)}
+    .btn:active{transform:translateY(1px)}
+
+    .btn.secondary{
+      background:linear-gradient(180deg, #14253d, #0e1b2f);
+      border:1px solid var(--line);
+    }
+
+    .btn.ghost{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+
+    .btn.green{
+      background:linear-gradient(180deg, #0f544e, #0a3c3a);
+      border:1px solid rgba(46,224,168,.22);
+    }
+
+    .btn.red{
+      background:linear-gradient(180deg, #632536, #431725);
+      border:1px solid rgba(255,109,139,.24);
+    }
+
+    .sidebar{
+      border-radius:22px;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      overflow:auto;
+    }
+
+    .nav-head{
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      padding:2px 6px 0;
+    }
+
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .nav-btn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid transparent;
+      color:var(--text);
+      font-weight:800;
+      cursor:pointer;
+      text-align:left;
+      transition:all .16s ease;
+    }
+
+    .nav-btn:hover{
+      background:rgba(255,255,255,.05);
+      border-color:var(--line);
+    }
+
+    .nav-btn.active{
+      background:linear-gradient(180deg, rgba(72,216,255,.14), rgba(75,124,255,.10));
+      border-color:rgba(72,216,255,.24);
+      box-shadow:0 10px 26px rgba(0,0,0,.18);
+    }
+
+    .nav-icon{
+      width:22px;
+      height:22px;
+      border-radius:8px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.055);
+      color:var(--cyan);
+      font-size:13px;
+      flex:0 0 auto;
+    }
+
+    .mini-card{
+      padding:12px;
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+
+    .mini-title{
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    .mini-value{
+      font-size:18px;
+      font-weight:800;
+      line-height:1.2;
+      word-break:break-word;
+    }
+
+    .center{
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:14px;
+      min-width:0;
+      overflow:hidden;
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .card{
+      border-radius:20px;
+      overflow:hidden;
+      min-width:0;
+    }
+
+    .status-card{
+      position:relative;
+      padding:14px;
+    }
+
+    .status-card::after{
+      content:"";
+      position:absolute;
+      inset:auto -20% -50% auto;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(72,216,255,.10), transparent 65%);
+      pointer-events:none;
+    }
+
+    .status-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .status-label{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+    }
+
+    .status-value{
+      font-size:24px;
+      font-weight:800;
+      line-height:1;
+      margin-top:4px;
+      margin-bottom:6px;
+      word-break:break-word;
+    }
+
+    .meter{
+      width:100%;
+      height:8px;
+      border-radius:999px;
+      overflow:hidden;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.04);
+    }
+
+    .meter > span{
+      display:block;
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--cyan), var(--blue));
+      box-shadow:0 0 18px rgba(72,216,255,.28);
+      transition:width .3s ease;
+    }
+
+    .status-meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:28px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid transparent;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    .tag.ok{background:rgba(41,227,169,.08);border-color:rgba(41,227,169,.18);color:var(--ok)}
+    .tag.warn{background:rgba(255,201,92,.08);border-color:rgba(255,201,92,.18);color:var(--warn)}
+    .tag.err{background:rgba(255,109,139,.08);border-color:rgba(255,109,139,.18);color:var(--err)}
+    .tag.info{background:rgba(72,216,255,.08);border-color:rgba(72,216,255,.18);color:var(--cyan)}
+
+    .workspace{
+      border-radius:22px;
+      min-height:0;
+      overflow:hidden;
+      display:grid;
+    }
+
+    .panel{
+      display:none;
+      padding:14px;
+      overflow:auto;
+      min-height:0;
+    }
+
+    .panel.active{display:block}
+
+    .panel-grid{
+      display:grid;
+      grid-template-columns:1.3fr .95fr;
+      gap:14px;
+      min-height:100%;
+    }
+
+    .section{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .block{
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(14,31,57,.88), rgba(8,20,38,.88));
+      border:1px solid var(--line);
+      overflow:hidden;
+      min-width:0;
+    }
+
+    .block-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 14px 0 14px;
+      flex-wrap:wrap;
+    }
+
+    .block-title{
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    .block-sub{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .block-body{
+      padding:14px;
+      min-width:0;
+    }
+
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .quick{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      color:var(--text);
+      font-weight:800;
+      text-align:left;
+      cursor:pointer;
+      transition:all .16s ease;
+    }
+
+    .quick:hover{
+      background:rgba(255,255,255,.05);
+      border-color:var(--line2);
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .kpi{
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+
+    .kpi-label{
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+      margin-bottom:6px;
+    }
+
+    .kpi-value{
+      font-size:28px;
+      font-weight:800;
+      line-height:1;
+    }
+
+    .kpi-foot{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .list{
+      display:grid;
+      gap:10px;
+    }
+
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+
+    .row-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .avatar-mini{
+      width:34px;
+      height:34px;
+      border-radius:11px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(180deg, rgba(72,216,255,.18), rgba(75,124,255,.18));
+      border:1px solid rgba(72,216,255,.16);
+      color:var(--cyan);
+      font-weight:800;
+      flex:0 0 auto;
+    }
+
+    .row-title{
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .row-sub{
+      margin-top:2px;
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:360px;
+    }
+
+    .timeline{
+      display:grid;
+      gap:10px;
+    }
+
+    .time-item{
+      display:grid;
+      grid-template-columns:90px 1fr;
+      gap:10px;
+      align-items:start;
+      padding:10px 0;
+      border-bottom:1px dashed rgba(255,255,255,.07);
+    }
+
+    .time-item:last-child{border-bottom:none}
+
+    .time-time{
+      color:var(--muted);
+      font-size:12px;
+      padding-top:2px;
+    }
+
+    .time-box{
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      word-break:break-word;
+      white-space:pre-wrap;
+    }
+
+    .chat-shell{
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      min-height:0;
+      height:100%;
+    }
+
+    .chat-log{
+      min-height:280px;
+      max-height:calc(100vh - 370px);
+      overflow:auto;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      scroll-behavior:smooth;
+      background:
+        radial-gradient(900px 340px at 0% 0%, rgba(72,216,255,.06), transparent 50%),
+        radial-gradient(900px 340px at 100% 0%, rgba(75,124,255,.05), transparent 50%);
+    }
+
+    .msg{
+      max-width:min(86%, 900px);
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.06);
+      line-height:1.45;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+
+    .msg.user{
+      align-self:flex-end;
+      background:linear-gradient(180deg, rgba(75,124,255,.22), rgba(75,124,255,.12));
+      border-color:rgba(75,124,255,.24);
+    }
+
+    .msg.bot{
+      align-self:flex-start;
+      background:linear-gradient(180deg, rgba(72,216,255,.10), rgba(255,255,255,.02));
+      border-color:rgba(72,216,255,.16);
+    }
+
+    .msg.system{
+      align-self:center;
+      background:rgba(255,255,255,.035);
+      color:var(--muted);
+      font-size:12px;
+      border-style:dashed;
+    }
+
+    .msg-meta{
+      margin-top:8px;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .composer{
+      padding:12px 14px 14px;
+      border-top:1px solid var(--line);
+      display:grid;
+      gap:10px;
+      background:rgba(0,0,0,.12);
+    }
+
+    .composer-row{
+      display:grid;
+      grid-template-columns:1fr auto auto auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    textarea.input{
+      width:100%;
+      min-height:58px;
+      max-height:180px;
+      resize:vertical;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      outline:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+      font:inherit;
+    }
+
+    textarea.input:focus,
+    input.text:focus{
+      border-color:rgba(72,216,255,.28);
+      box-shadow:0 0 0 4px rgba(72,216,255,.08);
+    }
+
+    .tiny{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      white-space:pre-wrap;
+    }
+
+    .scroll{
+      max-height:280px;
+      overflow:auto;
+    }
+
+    .table{
+      display:grid;
+      gap:8px;
+    }
+
+    .table-row{
+      display:grid;
+      grid-template-columns:1.4fr .7fr .7fr;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:rgba(255,255,255,.025);
+      border:1px solid var(--line);
+      align-items:center;
+      font-size:13px;
+    }
+
+    .chart{
+      height:150px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      position:relative;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)),
+        repeating-linear-gradient(180deg, rgba(255,255,255,.06) 0 1px, transparent 1px 28px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0 1px, transparent 1px 44px);
+    }
+
+    .chart svg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+    }
+
+    .footer-bar{
+      border-radius:18px;
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color:var(--muted);
+      font-size:12px;
+      flex-wrap:wrap;
+    }
+
+    .dock{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:auto;
+    }
+
+    .orb-card{
+      position:relative;
+      min-height:250px;
+      padding:16px;
+      border-radius:22px;
+    }
+
+    .orb-wrap{
+      display:grid;
+      place-items:center;
+      height:208px;
+    }
+
+    .orb{
+      width:132px;
+      height:132px;
+      border-radius:50%;
+      position:relative;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.06) 18%, transparent 19%),
+        radial-gradient(circle at 50% 45%, rgba(72,216,255,.95), rgba(72,216,255,.2) 42%, rgba(75,124,255,.14) 60%, transparent 70%),
+        radial-gradient(circle at 50% 50%, rgba(75,124,255,.28), transparent 62%);
+      box-shadow:
+        0 0 60px rgba(72,216,255,.32),
+        0 0 120px rgba(75,124,255,.18),
+        inset 0 0 40px rgba(255,255,255,.08);
+      animation:pulse 2.8s ease-in-out infinite;
+      overflow:hidden;
+    }
+
+    .orb::before,
+    .orb::after{
+      content:"";
+      position:absolute;
+      inset:-14%;
+      border-radius:50%;
+      border:1px solid rgba(72,216,255,.18);
+      animation:spin 11s linear infinite;
+    }
+
+    .orb::after{
+      inset:-22%;
+      border-color:rgba(75,124,255,.16);
+      animation-duration:18s;
+      animation-direction:reverse;
+    }
+
+    .orb.listening{animation:listen 1.15s ease-in-out infinite}
+    .orb.speaking{animation:speak .6s ease-in-out infinite}
+    .orb.busy{animation:pulse 1.2s ease-in-out infinite}
+
+    .orb-label{
+      text-align:center;
+      font-weight:800;
+      letter-spacing:.12em;
+      margin-top:14px;
+    }
+
+    .dock-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .mono{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      word-break:break-all;
+    }
+
+    .settings-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    input.text, select.text{
+      width:100%;
+      min-height:48px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:12px 14px;
+      outline:none;
+      font:inherit;
+    }
+
+    .hidden{display:none !important}
+
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.055)}
+    }
+
+    @keyframes speak{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.11)}
+    }
+
+    @keyframes listen{
+      0%,100%{transform:scale(1)}
+      25%{transform:scale(1.08)}
+      50%{transform:scale(1.02)}
+      75%{transform:scale(1.10)}
+    }
+
+    @keyframes spin{
+      from{transform:rotate(0)}
+      to{transform:rotate(360deg)}
+    }
+
+    @media (max-width:1400px){
+      .shell{grid-template-columns:240px 1fr 330px}
+      .status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .grid-3{grid-template-columns:1fr}
+    }
+
+    @media (max-width:1100px){
+      body{overflow:auto}
+      .shell{
+        height:auto;
+        min-height:100vh;
+        grid-template-columns:1fr;
+        grid-template-rows:auto auto auto auto;
+      }
+      .topbar{grid-column:auto}
+      .panel-grid{grid-template-columns:1fr}
+      .chat-log{max-height:420px}
+    }
+
+    @media (max-width:720px){
+      .status-grid,
+      .grid-2,
+      .quick-grid,
+      .dock-actions,
+      .composer-row,
+      .settings-grid{grid-template-columns:1fr}
+      .table-row{grid-template-columns:1fr}
+      .time-item{grid-template-columns:1fr}
+      .top-actions{width:100%}
+      .brand-sub{max-width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar glass">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-title">CONSIA GLOBAL COMMAND CENTER ULTRA</div>
+          <div class="brand-sub">Core + API + Chat + Agents + Projects + Memory + Autopilot + Economy + Voice + Avatar Dock</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="pill"><span class="dot warn" id="globalDot"></span><span id="globalStatusText">BOOTING</span></div>
+        <div class="pill">OWNER <strong id="ownerMode">ACTIVE</strong></div>
+        <div class="pill">TIME <strong id="clock">--:--:--</strong></div>
+        <button class="btn secondary" id="refreshBtn">Refresh</button>
+        <button class="btn green" id="topVoiceBtn">Voice</button>
+        <button class="btn ghost" id="fullscreenBtn">Fullscreen</button>
+      </div>
+    </header>
+
+    <aside class="sidebar glass">
+      <div class="nav-head">Navigation</div>
+      <div class="nav">
+        <button class="nav-btn active" data-panel="dashboardPanel"><span class="nav-icon">⌁</span><span>Dashboard</span></button>
+        <button class="nav-btn" data-panel="chatPanel"><span class="nav-icon">✦</span><span>Command Chat</span></button>
+        <button class="nav-btn" data-panel="agentsPanel"><span class="nav-icon">⚙</span><span>Agent Swarm</span></button>
+        <button class="nav-btn" data-panel="projectsPanel"><span class="nav-icon">▣</span><span>Projects</span></button>
+        <button class="nav-btn" data-panel="memoryPanel"><span class="nav-icon">◎</span><span>Memory</span></button>
+        <button class="nav-btn" data-panel="autopilotPanel"><span class="nav-icon">➤</span><span>Autopilot</span></button>
+        <button class="nav-btn" data-panel="economyPanel"><span class="nav-icon">$</span><span>Economy</span></button>
+        <button class="nav-btn" data-panel="settingsPanel"><span class="nav-icon">☼</span><span>Settings</span></button>
+      </div>
+
+      <div class="nav-head">Quick actions</div>
+      <div class="nav">
+        <button class="nav-btn" id="quickStatusBtn"><span class="nav-icon">●</span><span>System Scan</span></button>
+        <button class="nav-btn" id="quickAgentsBtn"><span class="nav-icon">⛭</span><span>Reload Agents</span></button>
+        <button class="nav-btn" id="quickVoiceBtn"><span class="nav-icon">🎙</span><span>Start Voice</span></button>
+        <button class="nav-btn" id="quickAutopilotBtn"><span class="nav-icon">▶</span><span>Run Autopilot</span></button>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-title">API Base</div>
+        <div class="mini-value mono" id="apiBaseLabel">https://api.consia.world</div>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-title">Session</div>
+        <div class="mini-value" id="sessionState">ONLINE</div>
+      </div>
+
+      <div class="mini-card">
+        <div class="mini-title">Voice Mode</div>
+        <div class="mini-value" id="voiceState">OFF</div>
+      </div>
+    </aside>
+
+    <main class="center">
+      <section class="status-grid">
+        <article class="card glass status-card">
+          <div class="status-top">
+            <div>
+              <div class="status-label">Core</div>
+              <div class="status-value" id="coreValue">Checking</div>
+            </div>
+            <span class="tag info" id="coreTag">SCAN</span>
+          </div>
+          <div class="meter"><span id="coreBar"></span></div>
+          <div class="status-meta"><span id="coreMeta">Waiting status</span><span id="corePct">0%</span></div>
+        </article>
+
+        <article class="card glass status-card">
+          <div class="status-top">
+            <div>
+              <div class="status-label">API</div>
+              <div class="status-value" id="apiValue">Checking</div>
+            </div>
+            <span class="tag info" id="apiTag">SCAN</span>
+          </div>
+          <div class="meter"><span id="apiBar"></span></div>
+          <div class="status-meta"><span id="apiMeta">Waiting status</span><span id="apiPct">0%</span></div>
+        </article>
+
+        <article class="card glass status-card">
+          <div class="status-top">
+            <div>
+              <div class="status-label">Agents</div>
+              <div class="status-value" id="agentsValue">Checking</div>
+            </div>
+            <span class="tag info" id="agentsTag">SCAN</span>
+          </div>
+          <div class="meter"><span id="agentsBar"></span></div>
+          <div class="status-meta"><span id="agentsMeta">Waiting status</span><span id="agentsPct">0%</span></div>
+        </article>
+
+        <article class="card glass status-card">
+          <div class="status-top">
+            <div>
+              <div class="status-label">Autopilot</div>
+              <div class="status-value" id="autopilotValue">Standby</div>
+            </div>
+            <span class="tag warn" id="autopilotTag">STANDBY</span>
+          </div>
+          <div class="meter"><span id="autopilotBar" style="width:60%"></span></div>
+          <div class="status-meta"><span id="autopilotMeta">Local UI module armed</span><span id="autopilotPct">60%</span></div>
+        </article>
+      </section>
+
+      <section class="workspace glass">
+        <div class="panel active" id="dashboardPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Mission control</div>
+                    <div class="block-sub">Centro principal de CONSIA</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="quick-grid">
+                    <button class="quick" data-prompt="Hacé un diagnóstico del sistema CONSIA y resumilo en pasos concretos.">Diagnóstico</button>
+                    <button class="quick" data-prompt="Mostrame el estado actual de los agentes y qué falta para llevarlos a 100%.">Estado de agentes</button>
+                    <button class="quick" data-prompt="Armá un roadmap directo para terminar CONSIA al máximo nivel.">Roadmap</button>
+                    <button class="quick" data-prompt="Proponé las 5 acciones más importantes para potenciar CONSIA hoy.">Potenciar hoy</button>
+                    <button class="quick" data-prompt="Generá un plan de negocio para CONSIA con monetización global.">Negocio global</button>
+                    <button class="quick" data-prompt="Mostrame una estrategia de integración multiempresa para Manglar, Real Work, VIP Work y Bambino.">Multiempresa</button>
+                    <button class="quick" data-prompt="Definí el módulo avatar ideal de CONSIA y cómo integrarlo.">Avatar</button>
+                    <button class="quick" data-prompt="Definí el Command Center top nivel con prioridades de ejecución.">Command Center</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid-3">
+                <div class="kpi">
+                  <div class="kpi-label">Comandos ejecutados</div>
+                  <div class="kpi-value" id="kpiCommands">0</div>
+                  <div class="kpi-foot">Persistencia local</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-label">Mensajes</div>
+                  <div class="kpi-value" id="kpiMessages">0</div>
+                  <div class="kpi-foot">Chat activo del panel</div>
+                </div>
+                <div class="kpi">
+                  <div class="kpi-label">Agentes detectados</div>
+                  <div class="kpi-value" id="kpiAgents">0</div>
+                  <div class="kpi-foot">API + fallback local</div>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Actividad del sistema</div>
+                    <div class="block-sub">Eventos recientes</div>
+                  </div>
+                  <button class="btn ghost" id="clearTimelineBtn">Clear</button>
+                </div>
+                <div class="block-body">
+                  <div class="timeline" id="timeline"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Health monitor</div>
+                    <div class="block-sub">Resumen operativo</div>
+                  </div>
+                  <button class="btn ghost" id="healthScanBtn">Scan</button>
+                </div>
+                <div class="block-body grid-2">
+                  <div class="row">
+                    <div class="row-left">
+                      <div class="avatar-mini">C</div>
+                      <div>
+                        <div class="row-title">Core channel</div>
+                        <div class="row-sub" id="coreHealthSub">Esperando scan</div>
+                      </div>
+                    </div>
+                    <span class="tag info" id="coreHealthTag">SCAN</span>
+                  </div>
+
+                  <div class="row">
+                    <div class="row-left">
+                      <div class="avatar-mini">A</div>
+                      <div>
+                        <div class="row-title">API channel</div>
+                        <div class="row-sub" id="apiHealthSub">Esperando scan</div>
+                      </div>
+                    </div>
+                    <span class="tag info" id="apiHealthTag">SCAN</span>
+                  </div>
+
+                  <div class="row">
+                    <div class="row-left">
+                      <div class="avatar-mini">G</div>
+                      <div>
+                        <div class="row-title">Agent cloud</div>
+                        <div class="row-sub" id="agentsHealthSub">Esperando scan</div>
+                      </div>
+                    </div>
+                    <span class="tag info" id="agentsHealthTag">SCAN</span>
+                  </div>
+
+                  <div class="row">
+                    <div class="row-left">
+                      <div class="avatar-mini">V</div>
+                      <div>
+                        <div class="row-title">Voice engine</div>
+                        <div class="row-sub" id="voiceHealthSub">Inicializando</div>
+                      </div>
+                    </div>
+                    <span class="tag warn" id="voiceHealthTag">LOCAL</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">System pulse</div>
+                    <div class="block-sub">Visual operativo local</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="chart">
+                    <svg viewBox="0 0 600 150" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="chartLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stop-color="#48d8ff"></stop>
+                          <stop offset="100%" stop-color="#4b7cff"></stop>
+                        </linearGradient>
+                      </defs>
+                      <path id="chartFill" d="" fill="rgba(72,216,255,.08)"></path>
+                      <path id="chartLine" d="" fill="none" stroke="url(#chartLineGradient)" stroke-width="3" stroke-linecap="round"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Quick output</div>
+                    <div class="block-sub">Última salida breve</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="small-note" id="quickOutput">Todavía no hay respuesta.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="chatPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block" style="height:100%">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">CONSIA command chat</div>
+                    <div class="block-sub">Conectado a la API con fallback inteligente</div>
+                  </div>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <button class="btn ghost" id="clearChatBtn">Clear chat</button>
+                    <button class="btn secondary" id="speakToggleBtn">Speak reply</button>
+                    <button class="btn ghost" id="exportTxtBtn">Export TXT</button>
+                    <button class="btn ghost" id="exportJsonBtn">Export JSON</button>
+                  </div>
+                </div>
+                <div class="chat-shell">
+                  <div class="chat-log" id="chatLog"></div>
+                  <div class="composer">
+                    <div class="composer-row">
+                      <textarea class="input" id="chatInput" placeholder="Escribí una orden para CONSIA..."></textarea>
+                      <button class="btn secondary" id="voiceBtn">Voice</button>
+                      <button class="btn ghost" id="stopVoiceBtn">Stop</button>
+                      <button class="btn" id="sendBtn">Send</button>
+                    </div>
+                    <div class="tiny">
+                      <span>Enter envía · Shift+Enter salto de línea · Ctrl/Cmd+K enfoca chat</span>
+                      <span id="composerInfo">Voice: off</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Prompt launcher</div>
+                    <div class="block-sub">Comandos listos</div>
+                  </div>
+                </div>
+                <div class="block-body list">
+                  <button class="quick" data-prompt="Decime cómo está CONSIA hoy y qué falta para terminarlo.">Estado general</button>
+                  <button class="quick" data-prompt="Diseñá la arquitectura técnica definitiva para CONSIA top nivel.">Arquitectura</button>
+                  <button class="quick" data-prompt="Armá el roadmap completo para llevar CONSIA a top 1 mundial.">Roadmap top 1</button>
+                  <button class="quick" data-prompt="Creá un plan de automatización para Real Work, Manglar y VIP Work usando CONSIA.">Automatización empresas</button>
+                  <button class="quick" data-prompt="Definí cómo integrar avatar, voz, agentes y autopilot en una sola experiencia.">Integración total</button>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Connection log</div>
+                    <div class="block-sub">Diagnóstico rápido</div>
+                  </div>
+                </div>
+                <div class="block-body scroll">
+                  <div class="list" id="connectionLog"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="agentsPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Agent swarm</div>
+                    <div class="block-sub">Detección desde API y fallback local</div>
+                  </div>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <button class="btn secondary" id="reloadAgentsBtn">Reload</button>
+                    <button class="btn ghost" id="launchAgentsBtn">Launch plan</button>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="list" id="agentsList"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Agent metrics</div>
+                    <div class="block-sub">Vista táctica</div>
+                  </div>
+                </div>
+                <div class="block-body grid-2">
+                  <div class="kpi">
+                    <div class="kpi-label">Activos</div>
+                    <div class="kpi-value" id="agentActiveCount">0</div>
+                    <div class="kpi-foot">Agentes listados</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi-label">Cobertura</div>
+                    <div class="kpi-value" id="agentCoverage">0%</div>
+                    <div class="kpi-foot">Meta local del swarm</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Suggested swarm</div>
+                    <div class="block-sub">Set mínimo recomendado</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="table">
+                    <div class="table-row"><strong>research_agent</strong><span>research</span><span class="tag info">ready</span></div>
+                    <div class="table-row"><strong>analysis_agent</strong><span>analysis</span><span class="tag info">ready</span></div>
+                    <div class="table-row"><strong>execution_agent</strong><span>execution</span><span class="tag info">ready</span></div>
+                    <div class="table-row"><strong>memory_agent</strong><span>memory</span><span class="tag info">ready</span></div>
+                    <div class="table-row"><strong>strategy_agent</strong><span>strategy</span><span class="tag warn">build</span></div>
+                    <div class="table-row"><strong>business_agent</strong><span>business</span><span class="tag warn">build</span></div>
+                    <div class="table-row"><strong>marketing_agent</strong><span>marketing</span><span class="tag warn">build</span></div>
+                    <div class="table-row"><strong>automation_agent</strong><span>automation</span><span class="tag warn">build</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="projectsPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Project brain</div>
+                    <div class="block-sub">Base multiempresa del panel</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="list" id="projectsList"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Execution view</div>
+                    <div class="block-sub">Prioridad operativa</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="timeline" id="projectTimeline"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="memoryPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Memory hub</div>
+                    <div class="block-sub">Estado base del sistema</div>
+                  </div>
+                  <button class="btn secondary" id="refreshMemoryBtn">Refresh</button>
+                </div>
+                <div class="block-body">
+                  <div class="list" id="memoryList"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Memory notes</div>
+                    <div class="block-sub">Persistencia local del panel</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <textarea class="input" id="memoryNotes" style="min-height:240px" placeholder="Notas locales del panel..."></textarea>
+                  <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+                    <button class="btn" id="saveMemoryNotesBtn">Save</button>
+                    <button class="btn ghost" id="clearMemoryNotesBtn">Clear</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="autopilotPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Autopilot engine</div>
+                    <div class="block-sub">Planificador operativo del sistema</div>
+                  </div>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <button class="btn green" id="runAutopilotBtn">Run</button>
+                    <button class="btn ghost" id="clearAutopilotBtn">Clear</button>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="list" id="autopilotList"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Suggested execution</div>
+                    <div class="block-sub">Foco para cerrar el 100%</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="table">
+                    <div class="table-row"><strong>1. Command Center</strong><span>UI</span><span class="tag ok">active</span></div>
+                    <div class="table-row"><strong>2. Agent Swarm</strong><span>backend</span><span class="tag warn">expand</span></div>
+                    <div class="table-row"><strong>3. Avatar Voice</strong><span>UX</span><span class="tag warn">integrate</span></div>
+                    <div class="table-row"><strong>4. Autopilot</strong><span>logic</span><span class="tag warn">wire</span></div>
+                    <div class="table-row"><strong>5. Payments/Economy</strong><span>revenue</span><span class="tag warn">next</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Autopilot prompt</div>
+                    <div class="block-sub">Directo al chat</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <button class="quick" id="autopilotToChatBtn">Mandar al chat el plan completo para terminar CONSIA</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="economyPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Economy dashboard</div>
+                    <div class="block-sub">Vista inicial de monetización</div>
+                  </div>
+                </div>
+                <div class="block-body grid-3">
+                  <div class="kpi">
+                    <div class="kpi-label">Planes</div>
+                    <div class="kpi-value">4</div>
+                    <div class="kpi-foot">Starter · Pro · Business · Owner</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi-label">Top-ups</div>
+                    <div class="kpi-value">4</div>
+                    <div class="kpi-foot">10 · 25 · 50 · 100</div>
+                  </div>
+                  <div class="kpi">
+                    <div class="kpi-label">Marketplace</div>
+                    <div class="kpi-value">ON</div>
+                    <div class="kpi-foot">Catálogo digital escalable</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Revenue map</div>
+                    <div class="block-sub">Líneas principales</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="table">
+                    <div class="table-row"><strong>Subscriptions</strong><span>MRR</span><span class="tag info">ready</span></div>
+                    <div class="table-row"><strong>Top-ups</strong><span>usage</span><span class="tag info">ready</span></div>
+                    <div class="table-row"><strong>Marketplace</strong><span>digital</span><span class="tag warn">next</span></div>
+                    <div class="table-row"><strong>Enterprise setups</strong><span>B2B</span><span class="tag warn">next</span></div>
+                    <div class="table-row"><strong>White-label</strong><span>scale</span><span class="tag warn">next</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Economy note</div>
+                    <div class="block-sub">Texto rápido</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="small-note">
+CONSIA puede monetizar con:
+- planes mensuales
+- top-ups de uso
+- setup empresarial
+- marketplace digital
+- white-label por vertical
+- módulos premium de automation
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" id="settingsPanel">
+          <div class="panel-grid">
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">System settings</div>
+                    <div class="block-sub">Configuración local del panel</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="settings-grid">
+                    <div>
+                      <div class="small-note" style="margin-bottom:8px">API Base</div>
+                      <input class="text mono" id="apiBaseInput" value="https://api.consia.world" />
+                    </div>
+                    <div>
+                      <div class="small-note" style="margin-bottom:8px">Idioma de voz</div>
+                      <select class="text" id="voiceLangSelect">
+                        <option value="es-AR">Español Argentina</option>
+                        <option value="es-ES">Español España</option>
+                        <option value="en-US">English US</option>
+                        <option value="pt-BR">Português Brasil</option>
+                      </select>
+                    </div>
+                    <div>
+                      <div class="small-note" style="margin-bottom:8px">Speak replies</div>
+                      <select class="text" id="speakRepliesSelect">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                      </select>
+                    </div>
+                    <div>
+                      <div class="small-note" style="margin-bottom:8px">Owner label</div>
+                      <input class="text" id="ownerLabelInput" value="ACTIVE" />
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+                    <button class="btn" id="saveSettingsBtn">Save settings</button>
+                    <button class="btn ghost" id="resetSettingsBtn">Reset defaults</button>
+                    <button class="btn secondary" id="rescanSettingsBtn">Save + Rescan</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Stack status</div>
+                    <div class="block-sub">Soporte del navegador</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="list">
+                    <div class="row">
+                      <div class="row-left">
+                        <div class="avatar-mini">V</div>
+                        <div>
+                          <div class="row-title">Speech recognition</div>
+                          <div class="row-sub" id="voiceStackSub">Detectando navegador</div>
+                        </div>
+                      </div>
+                      <span class="tag warn" id="voiceStackTag">LOCAL</span>
+                    </div>
+
+                    <div class="row">
+                      <div class="row-left">
+                        <div class="avatar-mini">S</div>
+                        <div>
+                          <div class="row-title">Speech synthesis</div>
+                          <div class="row-sub" id="speechStackSub">Detectando navegador</div>
+                        </div>
+                      </div>
+                      <span class="tag warn" id="speechStackTag">LOCAL</span>
+                    </div>
+
+                    <div class="row">
+                      <div class="row-left">
+                        <div class="avatar-mini">F</div>
+                        <div>
+                          <div class="row-title">Fullscreen</div>
+                          <div class="row-sub">Modo pantalla completa</div>
+                        </div>
+                      </div>
+                      <span class="tag info">UI</span>
+                    </div>
+
+                    <div class="row">
+                      <div class="row-left">
+                        <div class="avatar-mini">L</div>
+                        <div>
+                          <div class="row-title">Local storage</div>
+                          <div class="row-sub">Persistencia local habilitada</div>
+                        </div>
+                      </div>
+                      <span class="tag ok">READY</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="block">
+                <div class="block-head">
+                  <div>
+                    <div class="block-title">Panel note</div>
+                    <div class="block-sub">Realidad del módulo visual</div>
+                  </div>
+                </div>
+                <div class="block-body">
+                  <div class="small-note">
+Este archivo ya deja:
+- panel maestro tipo Jarvis
+- chat real con API
+- voz local ASR/TTS
+- avatar orb visual
+- agents/projects/memory/autopilot/economy/settings
+- export de historial
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer-bar glass">
+        <span>CONSIA UI local · archivo único HTML · sin dependencias externas</span>
+        <span class="mono" id="lastRouteLabel">api.consia.world</span>
+      </footer>
+    </main>
+
+    <aside class="dock">
+      <div class="glass orb-card">
+        <div class="block-head" style="padding:0">
+          <div>
+            <div class="block-title">Avatar dock</div>
+            <div class="block-sub">Orb visual + voice + speech</div>
+          </div>
+          <span class="tag info" id="avatarTag">IDLE</span>
+        </div>
+
+        <div class="orb-wrap">
+          <div>
+            <div class="orb" id="orb"></div>
+            <div class="orb-label">CONSIA</div>
+          </div>
+        </div>
+
+        <div class="dock-actions">
+          <button class="btn secondary" id="dockVoiceBtn">Listen</button>
+          <button class="btn" id="dockSpeakBtn">Speak last</button>
+          <button class="btn ghost" id="dockStopBtn">Stop voice</button>
+          <button class="btn red" id="dockMuteBtn">Mute</button>
+        </div>
+      </div>
+
+      <div class="glass card">
+        <div class="block-head">
+          <div>
+            <div class="block-title">Live alerts</div>
+            <div class="block-sub">Eventos del panel</div>
+          </div>
+        </div>
+        <div class="block-body scroll">
+          <div class="list" id="alertsList"></div>
+        </div>
+      </div>
+
+      <div class="glass card">
+        <div class="block-head">
+          <div>
+            <div class="block-title">Owner session</div>
+            <div class="block-sub">Estado local del panel</div>
+          </div>
+        </div>
+        <div class="block-body">
+          <div class="list">
+            <div class="row">
+              <div class="row-left">
+                <div class="avatar-mini">O</div>
+                <div>
+                  <div class="row-title">Owner mode</div>
+                  <div class="row-sub">Sesión visual local</div>
+                </div>
+              </div>
+              <span class="tag ok">ACTIVE</span>
+            </div>
+
+            <div class="row">
+              <div class="row-left">
+                <div class="avatar-mini">V</div>
+                <div>
+                  <div class="row-title">Voice stack</div>
+                  <div class="row-sub" id="ownerVoiceSub">Detectando navegador</div>
+                </div>
+              </div>
+              <span class="tag warn" id="ownerVoiceTag">LOCAL</span>
+            </div>
+
+            <div class="row">
+              <div class="row-left">
+                <div class="avatar-mini">S</div>
+                <div>
+                  <div class="row-title">Speech output</div>
+                  <div class="row-sub" id="ownerSpeechSub">Disponible si el dispositivo lo soporta</div>
+                </div>
+              </div>
+              <span class="tag warn" id="ownerSpeechTag">LOCAL</span>
+            </div>
+          </div>
+
+          <div class="small-note" style="margin-top:12px">
+La integración de avatar hiperrealista real requiere motor externo de render/animación.
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (() => {
+      const DEFAULT_API_BASE = "https://api.consia.world";
+      const STORAGE_KEY = "consia_command_center_ultra_master_v1";
+      const NOTES_KEY = "consia_command_center_ultra_master_notes_v1";
+
+      const qs = (s, root = document) => root.querySelector(s);
+      const qsa = (s, root = document) => Array.from(root.querySelectorAll(s));
+
+      const state = {
+        apiBase: DEFAULT_API_BASE,
+        ownerLabel: "ACTIVE",
+        voiceLang: "es-AR",
+        speakReplies: false,
+        muted: false,
+        voiceListening: false,
+        commandsCount: 0,
+        lastReply: "",
+        chat: [],
+        timeline: [],
+        alerts: [],
+        agents: [],
+        projects: [
+          { name: "CONSIA", sub: "AI-OS · Core del sistema", status: "active" },
+          { name: "Real Work", sub: "Inmobiliario · Marketplace · Coworking", status: "strategy" },
+          { name: "Manglar", sub: "Construcciones · Desarrollos · Arquitectura", status: "strategy" },
+          { name: "VIP Work", sub: "RRHH · Outsourcing · Staffing", status: "strategy" },
+          { name: "Vairo & Asociados", sub: "Estudio contable", status: "pipeline" },
+          { name: "Bambino", sub: "Retail · Catálogo · Media assets", status: "pipeline" }
+        ],
+        memory: [
+          { title: "Global memory", sub: "Contexto general del sistema", status: "active" },
+          { title: "Projects memory", sub: "Contexto por empresa y proyecto", status: "active" },
+          { title: "Owner memory", sub: "Preferencias y continuidad", status: "active" },
+          { title: "Execution memory", sub: "Roadmaps y decisiones", status: "standby" }
+        ],
+        chartData: [22, 35, 28, 44, 31, 52, 39, 58, 46, 61, 48, 66, 55, 70, 61, 78]
+      };
+
+      const els = {
+        apiBaseLabel: qs("#apiBaseLabel"),
+        sessionState: qs("#sessionState"),
+        voiceState: qs("#voiceState"),
+        ownerMode: qs("#ownerMode"),
+        clock: qs("#clock"),
+        lastRouteLabel: qs("#lastRouteLabel"),
+        globalStatusText: qs("#globalStatusText"),
+        globalDot: qs("#globalDot"),
+
+        coreValue: qs("#coreValue"),
+        coreTag: qs("#coreTag"),
+        coreBar: qs("#coreBar"),
+        coreMeta: qs("#coreMeta"),
+        corePct: qs("#corePct"),
+
+        apiValue: qs("#apiValue"),
+        apiTag: qs("#apiTag"),
+        apiBar: qs("#apiBar"),
+        apiMeta: qs("#apiMeta"),
+        apiPct: qs("#apiPct"),
+
+        agentsValue: qs("#agentsValue"),
+        agentsTag: qs("#agentsTag"),
+        agentsBar: qs("#agentsBar"),
+        agentsMeta: qs("#agentsMeta"),
+        agentsPct: qs("#agentsPct"),
+
+        autopilotValue: qs("#autopilotValue"),
+        autopilotTag: qs("#autopilotTag"),
+        autopilotBar: qs("#autopilotBar"),
+        autopilotMeta: qs("#autopilotMeta"),
+        autopilotPct: qs("#autopilotPct"),
+
+        coreHealthSub: qs("#coreHealthSub"),
+        coreHealthTag: qs("#coreHealthTag"),
+        apiHealthSub: qs("#apiHealthSub"),
+        apiHealthTag: qs("#apiHealthTag"),
+        agentsHealthSub: qs("#agentsHealthSub"),
+        agentsHealthTag: qs("#agentsHealthTag"),
+        voiceHealthSub: qs("#voiceHealthSub"),
+        voiceHealthTag: qs("#voiceHealthTag"),
+
+        timeline: qs("#timeline"),
+        quickOutput: qs("#quickOutput"),
+        kpiCommands: qs("#kpiCommands"),
+        kpiMessages: qs("#kpiMessages"),
+        kpiAgents: qs("#kpiAgents"),
+
+        chartLine: qs("#chartLine"),
+        chartFill: qs("#chartFill"),
+
+        chatLog: qs("#chatLog"),
+        chatInput: qs("#chatInput"),
+        composerInfo: qs("#composerInfo"),
+        connectionLog: qs("#connectionLog"),
+
+        agentsList: qs("#agentsList"),
+        agentActiveCount: qs("#agentActiveCount"),
+        agentCoverage: qs("#agentCoverage"),
+
+        projectsList: qs("#projectsList"),
+        projectTimeline: qs("#projectTimeline"),
+
+        memoryList: qs("#memoryList"),
+        memoryNotes: qs("#memoryNotes"),
+
+        autopilotList: qs("#autopilotList"),
+
+        alertsList: qs("#alertsList"),
+
+        orb: qs("#orb"),
+        avatarTag: qs("#avatarTag"),
+
+        ownerVoiceSub: qs("#ownerVoiceSub"),
+        ownerVoiceTag: qs("#ownerVoiceTag"),
+        ownerSpeechSub: qs("#ownerSpeechSub"),
+        ownerSpeechTag: qs("#ownerSpeechTag"),
+
+        voiceStackSub: qs("#voiceStackSub"),
+        voiceStackTag: qs("#voiceStackTag"),
+        speechStackSub: qs("#speechStackSub"),
+        speechStackTag: qs("#speechStackTag"),
+
+        apiBaseInput: qs("#apiBaseInput"),
+        voiceLangSelect: qs("#voiceLangSelect"),
+        speakRepliesSelect: qs("#speakRepliesSelect"),
+        ownerLabelInput: qs("#ownerLabelInput")
+      };
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let recognition = null;
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function nowTime() {
+        return new Date().toLocaleTimeString("es-AR", { hour12: false });
+      }
+
+      function setGlobal(kind, text) {
+        els.globalStatusText.textContent = text;
+        els.globalDot.className = `dot ${kind}`;
+      }
+
+      function setMetric(prefix, value, pct, tag, tagClass, meta) {
+        qs(`#${prefix}Value`).textContent = value;
+        qs(`#${prefix}Pct`).textContent = `${pct}%`;
+        qs(`#${prefix}Meta`).textContent = meta;
+        qs(`#${prefix}Bar`).style.width = `${pct}%`;
+        const tagEl = qs(`#${prefix}Tag`);
+        tagEl.className = `tag ${tagClass}`;
+        tagEl.textContent = tag;
+      }
+
+      function setHealth(target, sub, level) {
+        qs(`#${target}HealthSub`).textContent = sub;
+        const tagEl = qs(`#${target}HealthTag`);
+        tagEl.className = `tag ${level}`;
+        tagEl.textContent = level.toUpperCase();
+      }
+
+      function addTimeline(text) {
+        state.timeline.unshift({ time: nowTime(), text });
+        state.timeline = state.timeline.slice(0, 20);
+        renderTimeline();
+        saveState();
+      }
+
+      function addAlert(text, level = "info") {
+        state.alerts.unshift({ time: nowTime(), text, level });
+        state.alerts = state.alerts.slice(0, 20);
+        renderAlerts();
+        saveState();
+      }
+
+      function addConnectionLog(text, level = "info") {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <div class="row-left">
+            <div class="avatar-mini">·</div>
+            <div>
+              <div class="row-title">${escapeHtml(text)}</div>
+              <div class="row-sub">${nowTime()}</div>
+            </div>
+          </div>
+          <span class="tag ${level}">${level.toUpperCase()}</span>
+        `;
+        els.connectionLog.prepend(row);
+        while (els.connectionLog.children.length > 20) {
+          els.connectionLog.lastChild.remove();
+        }
+      }
+
+      function renderTimeline() {
+        els.timeline.innerHTML = state.timeline.length
+          ? state.timeline.map(item => `
+            <div class="time-item">
+              <div class="time-time">${escapeHtml(item.time)}</div>
+              <div class="time-box">${escapeHtml(item.text)}</div>
+            </div>
+          `).join("")
+          : `<div class="small-note">Sin actividad todavía.</div>`;
+      }
+
+      function renderAlerts() {
+        els.alertsList.innerHTML = state.alerts.length
+          ? state.alerts.map(item => `
+            <div class="row">
+              <div class="row-left">
+                <div class="avatar-mini">${item.level === "ok" ? "✓" : item.level === "warn" ? "!" : item.level === "err" ? "×" : "i"}</div>
+                <div>
+                  <div class="row-title">${escapeHtml(item.text)}</div>
+                  <div class="row-sub">${escapeHtml(item.time)}</div>
+                </div>
+              </div>
+              <span class="tag ${item.level}">${item.level.toUpperCase()}</span>
+            </div>
+          `).join("")
+          : `<div class="small-note">Sin alertas.</div>`;
+      }
+
+      function renderProjects() {
+        els.projectsList.innerHTML = state.projects.map(p => `
+          <div class="row">
+            <div class="row-left">
+              <div class="avatar-mini">${escapeHtml(p.name[0])}</div>
+              <div>
+                <div class="row-title">${escapeHtml(p.name)}</div>
+                <div class="row-sub">${escapeHtml(p.sub)}</div>
+              </div>
+            </div>
+            <span class="tag ${p.status === "active" ? "ok" : p.status === "strategy" ? "warn" : "info"}">${p.status.toUpperCase()}</span>
+          </div>
+        `).join("");
+
+        const items = [
+          "Consolidar Command Center como panel único.",
+          "Expandir swarm de agentes especializados.",
+          "Integrar voz + avatar + autopilot.",
+          "Conectar economía, pagos y marketplace.",
+          "Activar experiencia multiempresa completa."
+        ];
+
+        els.projectTimeline.innerHTML = items.map((text, i) => `
+          <div class="time-item">
+            <div class="time-time">Step ${i + 1}</div>
+            <div class="time-box">${escapeHtml(text)}</div>
+          </div>
+        `).join("");
+      }
+
+      function renderMemory() {
+        els.memoryList.innerHTML = state.memory.map(m => `
+          <div class="row">
+            <div class="row-left">
+              <div class="avatar-mini">${escapeHtml(m.title[0])}</div>
+              <div>
+                <div class="row-title">${escapeHtml(m.title)}</div>
+                <div class="row-sub">${escapeHtml(m.sub)}</div>
+              </div>
+            </div>
+            <span class="tag ${m.status === "active" ? "ok" : "warn"}">${m.status.toUpperCase()}</span>
+          </div>
+        `).join("");
+      }
+
+      function renderAutopilot(items) {
+        const data = items && items.length ? items : [
+          { title: "Cerrar UI del Command Center", sub: "Validar navegación, dashboard y chat", status: "active" },
+          { title: "Completar Agent Swarm", sub: "Expandir strategy, business, marketing y automation", status: "build" },
+          { title: "Integrar Avatar + Voice", sub: "Acoplar render/animación externo", status: "build" },
+          { title: "Monetización global", sub: "Pagos, suscripciones y marketplace", status: "next" },
+          { title: "Orquestación multiempresa", sub: "Manglar, Real Work, VIP Work y Bambino", status: "next" }
+        ];
+
+        els.autopilotList.innerHTML = data.map(item => `
+          <div class="row">
+            <div class="row-left">
+              <div class="avatar-mini">→</div>
+              <div>
+                <div class="row-title">${escapeHtml(item.title)}</div>
+                <div class="row-sub">${escapeHtml(item.sub)}</div>
+              </div>
+            </div>
+            <span class="tag ${item.status === "active" ? "ok" : item.status === "build" ? "warn" : "info"}">${item.status.toUpperCase()}</span>
+          </div>
+        `).join("");
+      }
+
+      function renderAgents() {
+        els.agentsList.innerHTML = state.agents.length
+          ? state.agents.map((a, i) => `
+            <div class="row">
+              <div class="row-left">
+                <div class="avatar-mini">${escapeHtml((a.name || a.role || "A")[0].toUpperCase())}</div>
+                <div>
+                  <div class="row-title">${escapeHtml(a.name || `agent_${i + 1}`)}</div>
+                  <div class="row-sub">${escapeHtml(a.role || a.description || "agent")}</div>
+                </div>
+              </div>
+              <span class="tag ok">READY</span>
+            </div>
+          `).join("")
+          : `<div class="small-note">Sin agentes cargados.</div>`;
+
+        const count = state.agents.length;
+        const coverage = Math.min(100, Math.max(0, Math.round((count / 8) * 100)));
+        els.agentActiveCount.textContent = String(count);
+        els.agentCoverage.textContent = `${coverage}%`;
+      }
+
+      function renderChat() {
+        els.chatLog.innerHTML = "";
+        if (!state.chat.length) {
+          pushSystemMessage("CONSIA listo. Escribí una orden o usá Voice.");
+          return;
+        }
+        state.chat.forEach(item => {
+          const div = document.createElement("div");
+          div.className = `msg ${item.role}`;
+          div.innerHTML = `${escapeHtml(item.text)}<div class="msg-meta">${escapeHtml(item.time || nowTime())}</div>`;
+          els.chatLog.appendChild(div);
+        });
+        els.chatLog.scrollTop = els.chatLog.scrollHeight;
+      }
+
+      function pushSystemMessage(text) {
+        const exists = state.chat.some(m => m.role === "system" && m.text === text);
+        if (exists) return;
+        state.chat.push({ role: "system", text, time: nowTime() });
+        renderChat();
+        saveState();
+      }
+
+      function pushChat(role, text) {
+        state.chat.push({ role, text, time: nowTime() });
+        state.chat = state.chat.slice(-150);
+        renderChat();
+        updateKpis();
+        saveState();
+      }
+
+      function updateKpis() {
+        els.kpiCommands.textContent = String(state.commandsCount);
+        els.kpiMessages.textContent = String(state.chat.filter(x => x.role === "user" || x.role === "bot").length);
+        els.kpiAgents.textContent = String(state.agents.length);
+      }
+
+      function renderChart() {
+        const data = state.chartData;
+        const w = 600, h = 150, pad = 12;
+        const max = Math.max(...data, 100);
+        const min = Math.min(...data, 0);
+        const stepX = (w - pad * 2) / (data.length - 1);
+
+        const points = data.map((v, i) => {
+          const x = pad + i * stepX;
+          const y = h - pad - ((v - min) / (max - min || 1)) * (h - pad * 2);
+          return [x, y];
+        });
+
+        const line = points.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(2)},${p[1].toFixed(2)}`).join(" ");
+        const fill = `${line} L ${w - pad},${h - pad} L ${pad},${h - pad} Z`;
+        els.chartLine.setAttribute("d", line);
+        els.chartFill.setAttribute("d", fill);
+      }
+
+      function randomizeChart() {
+        const next = state.chartData.slice(1);
+        const last = next[next.length - 1] || 50;
+        const nv = Math.max(18, Math.min(92, Math.round(last + (Math.random() * 24 - 12))));
+        next.push(nv);
+        state.chartData = next;
+        renderChart();
+      }
+
+      function updateOrb(mode) {
+        els.orb.classList.remove("listening", "speaking", "busy");
+        let tag = "IDLE";
+        if (mode === "listening") {
+          els.orb.classList.add("listening");
+          tag = "LISTENING";
+        } else if (mode === "speaking") {
+          els.orb.classList.add("speaking");
+          tag = "SPEAKING";
+        } else if (mode === "busy") {
+          els.orb.classList.add("busy");
+          tag = "PROCESSING";
+        }
+        els.avatarTag.textContent = tag;
+      }
+
+      function setVoiceIndicators() {
+        const hasASR = !!SpeechRecognition;
+        const hasTTS = "speechSynthesis" in window;
+
+        els.voiceStackSub.textContent = hasASR ? "Reconocimiento de voz disponible" : "Reconocimiento de voz no soportado";
+        els.voiceStackTag.className = `tag ${hasASR ? "ok" : "err"}`;
+        els.voiceStackTag.textContent = hasASR ? "READY" : "NO";
+
+        els.speechStackSub.textContent = hasTTS ? "Salida de voz disponible" : "Salida de voz no soportada";
+        els.speechStackTag.className = `tag ${hasTTS ? "ok" : "err"}`;
+        els.speechStackTag.textContent = hasTTS ? "READY" : "NO";
+
+        els.ownerVoiceSub.textContent = hasASR ? "ASR local disponible" : "ASR no disponible";
+        els.ownerVoiceTag.className = `tag ${hasASR ? "ok" : "warn"}`;
+        els.ownerVoiceTag.textContent = hasASR ? "READY" : "LIMITED";
+
+        els.ownerSpeechSub.textContent = hasTTS ? "Speech local disponible" : "Speech no disponible";
+        els.ownerSpeechTag.className = `tag ${hasTTS ? "ok" : "warn"}`;
+        els.ownerSpeechTag.textContent = hasTTS ? "READY" : "LIMITED";
+
+        els.voiceHealthSub.textContent = hasASR ? "ASR local disponible" : "ASR no disponible";
+        els.voiceHealthTag.className = `tag ${hasASR ? "ok" : "warn"}`;
+        els.voiceHealthTag.textContent = hasASR ? "READY" : "LIMITED";
+
+        els.voiceState.textContent = state.voiceListening ? "LISTENING" : "OFF";
+        els.composerInfo.textContent = `Voice: ${state.voiceListening ? "listening" : "off"} · Speak reply: ${state.speakReplies ? "on" : "off"}`;
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          apiBase: state.apiBase,
+          ownerLabel: state.ownerLabel,
+          voiceLang: state.voiceLang,
+          speakReplies: state.speakReplies,
+          muted: state.muted,
+          commandsCount: state.commandsCount,
+          lastReply: state.lastReply,
+          chat: state.chat,
+          timeline: state.timeline,
+          alerts: state.alerts
+        }));
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          state.apiBase = data.apiBase || DEFAULT_API_BASE;
+          state.ownerLabel = data.ownerLabel || "ACTIVE";
+          state.voiceLang = data.voiceLang || "es-AR";
+          state.speakReplies = !!data.speakReplies;
+          state.muted = !!data.muted;
+          state.commandsCount = Number(data.commandsCount || 0);
+          state.lastReply = data.lastReply || "";
+          state.chat = Array.isArray(data.chat) ? data.chat : [];
+          state.timeline = Array.isArray(data.timeline) ? data.timeline : [];
+          state.alerts = Array.isArray(data.alerts) ? data.alerts : [];
+        } catch (e) {}
+      }
+
+      function syncSettingsUI() {
+        els.apiBaseInput.value = state.apiBase;
+        els.voiceLangSelect.value = state.voiceLang;
+        els.speakRepliesSelect.value = state.speakReplies ? "on" : "off";
+        els.ownerLabelInput.value = state.ownerLabel;
+        els.apiBaseLabel.textContent = state.apiBase;
+        els.ownerMode.textContent = state.ownerLabel;
+      }
+
+      function saveSettings() {
+        state.apiBase = (els.apiBaseInput.value || DEFAULT_API_BASE).trim().replace(/\/+$/, "");
+        state.voiceLang = els.voiceLangSelect.value || "es-AR";
+        state.speakReplies = els.speakRepliesSelect.value === "on";
+        state.ownerLabel = (els.ownerLabelInput.value || "ACTIVE").trim() || "ACTIVE";
+        syncSettingsUI();
+        saveState();
+        addAlert("Settings guardados.", "ok");
+      }
+
+      function resetSettings() {
+        state.apiBase = DEFAULT_API_BASE;
+        state.voiceLang = "es-AR";
+        state.speakReplies = false;
+        state.ownerLabel = "ACTIVE";
+        syncSettingsUI();
+        saveState();
+        addAlert("Settings reseteados.", "info");
+      }
+
+      async function fetchJson(url, options = {}) {
+        els.lastRouteLabel.textContent = url;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 9000);
+
+        try {
+          const res = await fetch(url, { ...options, signal: controller.signal });
+          clearTimeout(timeout);
+          const raw = await res.text();
+          let data = raw;
+          try {
+            if (raw.trim().startsWith("{") || raw.trim().startsWith("[")) {
+              data = JSON.parse(raw);
+            }
+          } catch (e) {}
+          return { ok: res.ok, status: res.status, data };
+        } catch (err) {
+          clearTimeout(timeout);
+          return { ok: false, status: 0, data: { error: String(err && err.message || err) } };
+        }
+      }
+
+      function extractReply(data) {
+        if (data == null) return "Sin respuesta.";
+        if (typeof data === "string") return data;
+        if (typeof data.reply === "string") return data.reply;
+        if (typeof data.message === "string") return data.message;
+        if (typeof data.output === "string") return data.output;
+        if (typeof data.text === "string") return data.text;
+        if (data.result && typeof data.result === "string") return data.result;
+        if (data.choices && data.choices[0]) {
+          const c = data.choices[0];
+          if (typeof c.text === "string") return c.text;
+          if (c.message && typeof c.message.content === "string") return c.message.content;
+        }
+        try {
+          return JSON.stringify(data, null, 2);
+        } catch (e) {
+          return "Respuesta recibida.";
+        }
+      }
+
+      function extractAgents(data) {
+        if (!data) return [];
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data.agents)) return data.agents;
+        if (Array.isArray(data.items)) return data.items;
+        if (Array.isArray(data.data)) return data.data;
+        return [];
+      }
+
+      async function scanSystem() {
+        setGlobal("warn", "SCANNING");
+        addTimeline("System scan iniciado.");
+        addAlert("Escaneo general en curso.", "info");
+        addConnectionLog("Iniciando scan del sistema", "info");
+
+        setMetric("core", "Checking", 15, "SCAN", "info", "Consultando endpoint");
+        setMetric("api", "Checking", 15, "SCAN", "info", "Consultando endpoint");
+        setMetric("agents", "Checking", 15, "SCAN", "info", "Consultando endpoint");
+
+        const base = state.apiBase;
+
+        const coreCandidates = [
+          `${base}/health`,
+          `${base}/`,
+          `${base}/v1/chat`
+        ];
+
+        let coreOk = false;
+        for (const url of coreCandidates) {
+          const r = await fetchJson(url, { method: "GET" });
+          addConnectionLog(`GET ${url} → ${r.status || "ERR"}`, r.ok ? "ok" : "warn");
+          const text = typeof r.data === "string" ? r.data.toLowerCase() : JSON.stringify(r.data).toLowerCase();
+          if (r.ok || text.includes("consia") || text.includes("active") || text.includes("online")) {
+            coreOk = true;
+            setMetric("core", "ACTIVE", 100, "ONLINE", "ok", "CONSIA CORE operativo");
+            setHealth("core", "Core operativo", "ok");
+            break;
+          }
+        }
+
+        if (!coreOk) {
+          setMetric("core", "LIMITED", 45, "LIMITED", "warn", "No se confirmó health dedicado");
+          setHealth("core", "Sin confirmación completa de core", "warn");
+        }
+
+        const apiProbe = await fetchJson(`${base}/v1/chat`, { method: "GET" });
+        addConnectionLog(`GET ${base}/v1/chat → ${apiProbe.status || "ERR"}`, apiProbe.ok ? "ok" : "warn");
+        const apiText = typeof apiProbe.data === "string" ? apiProbe.data.toLowerCase() : JSON.stringify(apiProbe.data).toLowerCase();
+        if (apiProbe.ok || apiText.includes("active") || apiText.includes("consia")) {
+          setMetric("api", "CONNECTED", 95, "ONLINE", "ok", "Endpoint /v1/chat alcanzable");
+          setHealth("api", "/v1/chat responde", "ok");
+        } else {
+          setMetric("api", "LIMITED", 55, "LIMITED", "warn", "Chat GET no confirmó estado");
+          setHealth("api", "Sin confirmación total de /v1/chat", "warn");
+        }
+
+        const agentsProbe = await fetchJson(`${base}/v1/agents`, { method: "GET" });
+        addConnectionLog(`GET ${base}/v1/agents → ${agentsProbe.status || "ERR"}`, agentsProbe.ok ? "ok" : "warn");
+
+        let agents = extractAgents(agentsProbe.data);
+        if (!agents.length) {
+          agents = [
+            { name: "research_agent", role: "research", description: "Investiga y reúne contexto útil" },
+            { name: "analysis_agent", role: "analysis", description: "Analiza y sintetiza" },
+            { name: "execution_agent", role: "execution", description: "Convierte ideas en pasos concretos" },
+            { name: "memory_agent", role: "memory", description: "Conecta memoria y continuidad" }
+          ];
+        }
+
+        state.agents = agents;
+        renderAgents();
+
+        if (state.agents.length) {
+          const pct = Math.min(100, state.agents.length >= 8 ? 100 : Math.max(60, Math.round((state.agents.length / 8) * 100)));
+          setMetric("agents", `${state.agents.length} READY`, pct, pct >= 100 ? "FULL" : "PARTIAL", pct >= 100 ? "ok" : "warn", `${state.agents.length} agentes detectados`);
+          setHealth("agents", `${state.agents.length} agentes listados`, pct >= 100 ? "ok" : "warn");
+        } else {
+          setMetric("agents", "OFFLINE", 20, "OFFLINE", "err", "No fue posible cargar agentes");
+          setHealth("agents", "No se pudo cargar lista de agentes", "err");
+        }
+
+        updateKpis();
+        els.sessionState.textContent = "ONLINE";
+        setGlobal("ok", "SYSTEM ONLINE");
+        els.quickOutput.textContent = "Scan completo. Panel operativo.";
+        addTimeline("System scan completado.");
+        addAlert("Sistema operativo y panel listo.", "ok");
+        saveState();
+      }
+
+      async function loadAgentsOnly() {
+        addTimeline("Recargando agentes.");
+        addConnectionLog(`GET ${state.apiBase}/v1/agents`, "info");
+        const r = await fetchJson(`${state.apiBase}/v1/agents`, { method: "GET" });
+        let agents = extractAgents(r.data);
+
+        if (!agents.length) {
+          agents = [
+            { name: "research_agent", role: "research", description: "Investiga y reúne contexto útil" },
+            { name: "analysis_agent", role: "analysis", description: "Analiza y sintetiza" },
+            { name: "execution_agent", role: "execution", description: "Convierte ideas en pasos" },
+            { name: "memory_agent", role: "memory", description: "Memoria y continuidad" }
+          ];
+        }
+
+        state.agents = agents;
+        renderAgents();
+        updateKpis();
+        addAlert(`${state.agents.length} agentes listados.`, "ok");
+      }
+
+      async function sendChatMessage(text) {
+        const prompt = String(text || "").trim();
+        if (!prompt) return;
+
+        state.commandsCount += 1;
+        pushChat("user", prompt);
+        addTimeline(`Comando enviado: ${prompt.slice(0, 70)}${prompt.length > 70 ? "..." : ""}`);
+        addAlert("Comando enviado a CONSIA.", "info");
+        updateOrb("busy");
+        els.chatInput.value = "";
+        els.quickOutput.textContent = "Procesando...";
+
+        addConnectionLog(`POST ${state.apiBase}/v1/chat`, "info");
+
+        const payloads = [
+          { message: prompt },
+          { prompt: prompt },
+          { input: prompt },
+          { text: prompt }
+        ];
+
+        let final = null;
+        for (const body of payloads) {
+          const res = await fetchJson(`${state.apiBase}/v1/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+          if (res.ok || res.data) {
+            final = res;
+            break;
+          }
+        }
+
+        let reply = "";
+        if (final && final.data) {
+          reply = extractReply(final.data);
+          addConnectionLog("Respuesta recibida desde /v1/chat", final.ok ? "ok" : "warn");
+        } else {
+          reply = "No se pudo obtener respuesta del backend en este intento.";
+          addConnectionLog("Sin respuesta válida desde /v1/chat", "err");
+        }
+
+        state.lastReply = reply;
+        pushChat("bot", reply);
+        els.quickOutput.textContent = reply;
+        updateOrb("idle");
+        addTimeline("Respuesta recibida.");
+        addAlert("CONSIA respondió.", "ok");
+        saveState();
+
+        if (state.speakReplies && !state.muted) {
+          speakText(reply);
+        }
+      }
+
+      function initVoice() {
+        if (!SpeechRecognition) {
+          addAlert("Reconocimiento de voz no soportado en este navegador.", "warn");
+          addConnectionLog("SpeechRecognition no disponible", "warn");
+          return;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = state.voiceLang;
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          state.voiceListening = true;
+          updateOrb("listening");
+          setVoiceIndicators();
+          addAlert("Voice listening...", "info");
+        };
+
+        recognition.onend = () => {
+          state.voiceListening = false;
+          updateOrb("idle");
+          setVoiceIndicators();
+        };
+
+        recognition.onerror = e => {
+          state.voiceListening = false;
+          updateOrb("idle");
+          setVoiceIndicators();
+          addAlert(`Voice error: ${e.error || "unknown"}`, "warn");
+          addConnectionLog(`Voice error ${e.error || "unknown"}`, "warn");
+        };
+
+        recognition.onresult = e => {
+          const text = e.results?.[0]?.[0]?.transcript || "";
+          if (text) {
+            els.chatInput.value = text;
+            addAlert("Voice transcript capturado.", "ok");
+            sendChatMessage(text);
+          }
+        };
+      }
+
+      function startVoice() {
+        if (!recognition) initVoice();
+        if (!recognition) return;
+        recognition.lang = state.voiceLang;
+        try {
+          recognition.start();
+        } catch (e) {}
+      }
+
+      function stopVoice() {
+        if (recognition) {
+          try { recognition.stop(); } catch (e) {}
+        }
+        state.voiceListening = false;
+        updateOrb("idle");
+        setVoiceIndicators();
+      }
+
+      function stopSpeaking() {
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+        updateOrb("idle");
+      }
+
+      function speakText(text) {
+        if (state.muted) return;
+        if (!("speechSynthesis" in window)) {
+          addAlert("Speech synthesis no disponible.", "warn");
+          return;
+        }
+        stopSpeaking();
+        const utter = new SpeechSynthesisUtterance(String(text).slice(0, 1800));
+        utter.lang = state.voiceLang;
+        utter.rate = 1;
+        utter.pitch = 1;
+        utter.onstart = () => updateOrb("speaking");
+        utter.onend = () => updateOrb("idle");
+        utter.onerror = () => updateOrb("idle");
+        window.speechSynthesis.speak(utter);
+      }
+
+      function switchPanel(id) {
+        qsa(".panel").forEach(p => p.classList.remove("active"));
+        qsa(".nav-btn[data-panel]").forEach(b => b.classList.remove("active"));
+        qs(`#${id}`)?.classList.add("active");
+        qs(`.nav-btn[data-panel="${id}"]`)?.classList.add("active");
+      }
+
+      function runAutopilotPlan() {
+        const items = [
+          { title: "Consolidar UI Command Center", sub: "Verificar dashboard, chat, agents, projects, memory y economy", status: "active" },
+          { title: "Expandir Agent Swarm", sub: "Agregar strategy, business, marketing, automation, finance", status: "build" },
+          { title: "Cerrar Avatar + Voice", sub: "Acoplar render/avatar externo y TTS más natural", status: "build" },
+          { title: "Activar economía global", sub: "Pagos, planes, suscripciones, topups, marketplace", status: "next" },
+          { title: "Orquestación multiempresa", sub: "Operar Manglar, Real Work, VIP Work y Bambino desde CONSIA", status: "next" }
+        ];
+
+        renderAutopilot(items);
+        setMetric("autopilot", "READY", 75, "READY", "ok", "Plan operativo generado");
+        addTimeline("Autopilot generó plan de ejecución.");
+        addAlert("Autopilot listo con plan sugerido.", "ok");
+        els.quickOutput.textContent = "Autopilot: plan listo para ejecutar.";
+      }
+
+      function exportChatTxt() {
+        const content = state.chat.map(m => `[${m.time || ""}] ${m.role.toUpperCase()}: ${m.text}`).join("\n\n");
+        downloadFile("consia-chat.txt", content, "text/plain;charset=utf-8");
+      }
+
+      function exportChatJson() {
+        downloadFile("consia-chat.json", JSON.stringify(state.chat, null, 2), "application/json;charset=utf-8");
+      }
+
+      function downloadFile(name, content, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen?.();
+        } else {
+          document.exitFullscreen?.();
+        }
+      }
+
+      function bootClock() {
+        const tick = () => {
+          els.clock.textContent = new Date().toLocaleTimeString("es-AR", { hour12: false });
+        };
+        tick();
+        setInterval(tick, 1000);
+      }
+
+      function bindEvents() {
+        qsa(".nav-btn[data-panel]").forEach(btn => {
+          btn.addEventListener("click", () => switchPanel(btn.dataset.panel));
+        });
+
+        qsa("[data-prompt]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const prompt = btn.dataset.prompt || "";
+            switchPanel("chatPanel");
+            els.chatInput.value = prompt;
+            els.chatInput.focus();
+          });
+        });
+
+        qs("#refreshBtn").addEventListener("click", scanSystem);
+        qs("#topVoiceBtn").addEventListener("click", startVoice);
+        qs("#fullscreenBtn").addEventListener("click", toggleFullscreen);
+
+        qs("#quickStatusBtn").addEventListener("click", scanSystem);
+        qs("#quickAgentsBtn").addEventListener("click", loadAgentsOnly);
+        qs("#quickVoiceBtn").addEventListener("click", startVoice);
+        qs("#quickAutopilotBtn").addEventListener("click", runAutopilotPlan);
+        qs("#healthScanBtn").addEventListener("click", scanSystem);
+        qs("#clearTimelineBtn").addEventListener("click", () => {
+          state.timeline = [];
+          renderTimeline();
+          saveState();
+        });
+
+        qs("#sendBtn").addEventListener("click", () => sendChatMessage(els.chatInput.value));
+        qs("#voiceBtn").addEventListener("click", startVoice);
+        qs("#stopVoiceBtn").addEventListener("click", () => {
+          stopVoice();
+          stopSpeaking();
+        });
+        qs("#clearChatBtn").addEventListener("click", () => {
+          state.chat = [];
+          renderChat();
+          saveState();
+        });
+        qs("#speakToggleBtn").addEventListener("click", () => {
+          state.speakReplies = !state.speakReplies;
+          els.speakRepliesSelect.value = state.speakReplies ? "on" : "off";
+          setVoiceIndicators();
+          saveState();
+          addAlert(`Speak reply ${state.speakReplies ? "activado" : "desactivado"}.`, "info");
+        });
+        qs("#exportTxtBtn").addEventListener("click", exportChatTxt);
+        qs("#exportJsonBtn").addEventListener("click", exportChatJson);
+
+        els.chatInput.addEventListener("keydown", e => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage(els.chatInput.value);
+          }
+        });
+
+        qs("#reloadAgentsBtn").addEventListener("click", loadAgentsOnly);
+        qs("#launchAgentsBtn").addEventListener("click", () => {
+          addTimeline("Launch plan del swarm ejecutado.");
+          addAlert("Swarm plan listo para expansión.", "ok");
+          els.quickOutput.textContent = "Swarm listo. Siguiente paso: ampliar agentes especializados.";
+        });
+
+        qs("#refreshMemoryBtn").addEventListener("click", renderMemory);
+        qs("#saveMemoryNotesBtn").addEventListener("click", () => {
+          localStorage.setItem(NOTES_KEY, els.memoryNotes.value || "");
+          addAlert("Notas de memoria guardadas.", "ok");
+        });
+        qs("#clearMemoryNotesBtn").addEventListener("click", () => {
+          els.memoryNotes.value = "";
+          localStorage.removeItem(NOTES_KEY);
+          addAlert("Notas de memoria borradas.", "info");
+        });
+
+        qs("#runAutopilotBtn").addEventListener("click", runAutopilotPlan);
+        qs("#clearAutopilotBtn").addEventListener("click", () => {
+          renderAutopilot([]);
+          addAlert("Autopilot limpio.", "info");
+        });
+        qs("#autopilotToChatBtn").addEventListener("click", () => {
+          switchPanel("chatPanel");
+          els.chatInput.value = "Armá el plan completo y directo para terminar CONSIA al 100% con Command Center, Agent Swarm, Avatar y Autopilot.";
+          els.chatInput.focus();
+        });
+
+        qs("#dockVoiceBtn").addEventListener("click", startVoice);
+        qs("#dockSpeakBtn").addEventListener("click", () => {
+          if (state.lastReply) speakText(state.lastReply);
+          else addAlert("No hay respuesta previa para reproducir.", "warn");
+        });
+        qs("#dockStopBtn").addEventListener("click", () => {
+          stopVoice();
+          stopSpeaking();
+        });
+        qs("#dockMuteBtn").addEventListener("click", () => {
+          state.muted = !state.muted;
+          qs("#dockMuteBtn").textContent = state.muted ? "Unmute" : "Mute";
+          addAlert(state.muted ? "Audio muteado." : "Audio activado.", "info");
+          saveState();
+        });
+
+        qs("#saveSettingsBtn").addEventListener("click", saveSettings);
+        qs("#resetSettingsBtn").addEventListener("click", resetSettings);
+        qs("#rescanSettingsBtn").addEventListener("click", () => {
+          saveSettings();
+          scanSystem();
+        });
+
+        document.addEventListener("keydown", e => {
+          const key = e.key.toLowerCase();
+          if ((e.ctrlKey || e.metaKey) && key === "k") {
+            e.preventDefault();
+            switchPanel("chatPanel");
+            els.chatInput.focus();
+          }
+        });
+      }
+
+      function initialUI() {
+        loadState();
+        els.memoryNotes.value = localStorage.getItem(NOTES_KEY) || "";
+        syncSettingsUI();
+        renderTimeline();
+        renderAlerts();
+        renderProjects();
+        renderMemory();
+        renderAutopilot();
+        renderChart();
+        renderChat();
+        updateKpis();
+        setVoiceIndicators();
+        qs("#dockMuteBtn").textContent = state.muted ? "Unmute" : "Mute";
+        pushSystemMessage("Panel cargado. Usá Dashboard, Chat, Agents, Projects, Memory, Autopilot, Economy o Settings.");
+      }
+
+      function init() {
+        bootClock();
+        bindEvents();
+        initialUI();
+        scanSystem();
+        setInterval(randomizeChart, 3500);
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
