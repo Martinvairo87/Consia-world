@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CONSIA CONTROL CENTER</title>
+
+<style>
+
+body{
+background:#0a0a0a;
+color:white;
+font-family:Arial;
+padding:30px;
+}
+
+h1{
+font-size:28px;
+}
+
+.panel{
+background:#151515;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+button{
+padding:10px 16px;
+margin-top:10px;
+cursor:pointer;
+}
+
+pre{
+background:black;
+padding:10px;
+overflow:auto;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>CONSIA CONTROL CENTER</h1>
+
+<div class="panel">
+<h3>System Status</h3>
+<button onclick="status()">Check</button>
+<pre id="status"></pre>
+</div>
+
+<div class="panel">
+<h3>Agents</h3>
+<button onclick="agents()">List Agents</button>
+<pre id="agents"></pre>
+</div>
+
+<div class="panel">
+<h3>Memory</h3>
+<button onclick="memory()">Load Memory</button>
+<pre id="memory"></pre>
+</div>
+
+<div class="panel">
+<h3>Autopilot</h3>
+
+<input id="goal" placeholder="goal">
+
+<button onclick="autopilot()">Run</button>
+
+<pre id="auto"></pre>
+
+</div>
+
+<script>
+
+const API="https://api.consia.world"
+
+async function status(){
+
+const r=await fetch(API+"/v1/system/status")
+const j=await r.json()
+
+document.getElementById("status").innerText=
+JSON.stringify(j,null,2)
+
+}
+
+async function agents(){
+
+const r=await fetch(API+"/v1/agents")
+const j=await r.json()
+
+document.getElementById("agents").innerText=
+JSON.stringify(j,null,2)
+
+}
+
+async function memory(){
+
+const r=await fetch(API+"/v1/memory/read")
+const j=await r.json()
+
+document.getElementById("memory").innerText=
+JSON.stringify(j,null,2)
+
+}
+
+async function autopilot(){
+
+const goal=document.getElementById("goal").value
+
+const r=await fetch(API+"/v1/autopilot/start",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({goal})
+})
+
+const j=await r.json()
+
+document.getElementById("auto").innerText=
+JSON.stringify(j,null,2)
+
+}
+
+</script>
+
+</body>
+</html>
