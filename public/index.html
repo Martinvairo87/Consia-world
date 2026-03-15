@@ -1,193 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=/app.html">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CONSIA</title>
-</head>
-
-<body style="
-background:#050b16;
-color:white;
-font-family:system-ui;
-display:flex;
-align-items:center;
-justify-content:center;
-height:100vh;
-margin:0;
-">
-
-Cargando CONSIA...
-
-</body>
-</html>
-  <meta name="theme-color" content="#07111f" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA WORLD · v30</title>
+  <meta name="theme-color" content="#0b1220" />
   <style>
     :root{
-      --bg:#06101d;
-      --bg-2:#0b1728;
-      --card:#0f1d33;
-      --card-2:#132540;
-      --line:rgba(255,255,255,.08);
-      --text:#f4f7fb;
-      --muted:#9eb0c8;
-      --accent:#4de2b1;
-      --accent-2:#3aa6ff;
-      --danger:#ff6b6b;
+      --bg:#07101d;
+      --bg2:#0b1424;
+      --panel:#101b2f;
+      --panel2:#0d1627;
+      --line:#24324a;
+      --line2:#1b2740;
+      --text:#eef4ff;
+      --muted:#93a6c7;
+      --accent:#5ea0ff;
+      --accent2:#7ee7d6;
+      --ok:#37d67a;
       --warn:#ffcc66;
-      --shadow:0 10px 40px rgba(0,0,0,.28);
-      --radius:18px;
+      --danger:#ff6b6b;
+      --shadow:0 14px 40px rgba(0,0,0,.35);
+      --radius:20px;
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
+    html,body{
       margin:0;
+      padding:0;
       background:
-        radial-gradient(circle at top right, rgba(58,166,255,.14), transparent 28%),
-        radial-gradient(circle at bottom left, rgba(77,226,177,.10), transparent 24%),
-        linear-gradient(180deg, #07111f 0%, #07101b 100%);
+        radial-gradient(circle at top left, rgba(50,90,160,.22), transparent 28%),
+        radial-gradient(circle at top right, rgba(0,160,160,.12), transparent 20%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
       color:var(--text);
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      overflow:hidden;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Inter,Roboto,sans-serif;
+      min-height:100%;
     }
-
+    body{overflow:hidden}
     .app{
       display:grid;
-      grid-template-columns: 280px 1fr 360px;
-      height:100vh;
-      gap:16px;
-      padding:16px;
+      grid-template-columns:320px 1fr 340px;
+      min-height:100vh;
+      gap:0;
     }
-
-    .panel{
-      background:linear-gradient(180deg, rgba(15,29,51,.96), rgba(10,20,35,.96));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      min-height:0;
+    .sidebar,.rightbar{
+      background:rgba(8,15,28,.88);
+      backdrop-filter: blur(16px);
+      border-right:1px solid var(--line2);
+      overflow:auto;
     }
-
-    .sidebar{
-      display:flex;
-      flex-direction:column;
-      padding:16px;
-      gap:14px;
+    .rightbar{
+      border-right:none;
+      border-left:1px solid var(--line2);
     }
-
+    .main{
+      overflow:auto;
+      padding:22px;
+    }
+    .section{
+      padding:20px;
+      border-bottom:1px solid var(--line2);
+    }
     .brand{
       display:flex;
       align-items:center;
       gap:12px;
-      padding:8px 8px 14px;
-      border-bottom:1px solid var(--line);
+      margin-bottom:8px;
     }
-
-    .brand-badge{
-      width:48px;height:48px;border-radius:14px;
-      background:linear-gradient(135deg, rgba(58,166,255,.24), rgba(77,226,177,.24));
+    .brand-mark{
+      width:44px;height:44px;border-radius:14px;
       display:grid;place-items:center;
-      border:1px solid rgba(255,255,255,.12);
-      font-weight:800;
-      letter-spacing:.04em;
-      font-size:22px;
+      background:linear-gradient(180deg,#173454,#0f243f);
+      border:1px solid #2a4260;
+      font-weight:900;font-size:22px;color:#dff4ff;
+      box-shadow: var(--shadow);
     }
-
-    .brand h1{
-      margin:0;
-      font-size:22px;
-      line-height:1;
+    .brand-title{
+      font-size:26px;
+      font-weight:900;
+      letter-spacing:.06em;
     }
-
-    .brand p{
-      margin:4px 0 0;
+    .brand-sub{
       color:var(--muted);
+      font-size:13px;
+      margin-top:3px;
+    }
+    .nav-title{
+      color:#afc0dc;
       font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin:18px 0 10px;
     }
-
-    .nav{
-      display:grid;
-      gap:8px;
-    }
-
-    .nav-btn, .quick-btn, .action-btn, .pill-btn, .send-btn, .icon-btn, .upload-btn{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      color:var(--text);
+    .nav-btn,.mini-btn,.ghost-btn,.primary-btn,.danger-btn,.success-btn{
+      appearance:none;
+      border:none;
+      outline:none;
       cursor:pointer;
-      transition:.18s ease;
+      color:var(--text);
+      transition:.16s ease;
+      font:inherit;
     }
-
     .nav-btn{
       width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      font-size:14px;
+      text-align:left;
+      background:linear-gradient(180deg,#111d33,#0c1525);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px 16px;
+      margin-bottom:10px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
     }
-
-    .nav-btn:hover,.quick-btn:hover,.action-btn:hover,.pill-btn:hover,.send-btn:hover,.icon-btn:hover,.upload-btn:hover{
+    .nav-btn:hover,.mini-btn:hover,.ghost-btn:hover,.primary-btn:hover,.danger-btn:hover,.success-btn:hover{
       transform:translateY(-1px);
-      background:rgba(255,255,255,.06);
-      border-color:rgba(255,255,255,.14);
+      filter:brightness(1.03);
     }
-
-    .nav-btn.active{
-      background:linear-gradient(135deg, rgba(58,166,255,.18), rgba(77,226,177,.12));
-      border-color:rgba(77,226,177,.34);
+    .nav-btn .label{
+      display:block;
+      font-size:15px;
+      font-weight:700;
+      margin-bottom:4px;
     }
-
-    .nav-btn small{
-      color:var(--muted);
-      font-size:11px;
-    }
-
-    .owner-box{
-      margin-top:auto;
-      padding:14px;
-      border-radius:16px;
-      background:linear-gradient(180deg, rgba(77,226,177,.08), rgba(58,166,255,.08));
-      border:1px solid rgba(77,226,177,.16);
-    }
-
-    .owner-box h3{
-      margin:0 0 8px;
-      font-size:14px;
-    }
-
-    .owner-box p{
-      margin:0 0 12px;
+    .nav-btn .desc{
+      display:block;
       color:var(--muted);
       font-size:12px;
-      line-height:1.45;
     }
-
-    .quick-row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .quick-btn,.pill-btn,.action-btn,.upload-btn{
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:13px;
-    }
-
-    .quick-btn.primary,.send-btn.primary,.action-btn.primary{
-      background:linear-gradient(135deg, rgba(77,226,177,.24), rgba(58,166,255,.18));
-      border-color:rgba(77,226,177,.32);
-    }
-
-    .main{
-      display:grid;
-      grid-template-rows:auto auto 1fr auto;
-      min-height:0;
-      overflow:hidden;
+    .nav-btn .tag{
+      float:right;
+      padding:4px 10px;
+      font-size:11px;
+      color:#b9c7df;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#101a2c;
     }
 
     .topbar{
@@ -195,755 +140,627 @@ Cargando CONSIA...
       align-items:center;
       justify-content:space-between;
       gap:14px;
-      padding:16px 18px;
-      border-bottom:1px solid var(--line);
+      margin-bottom:16px;
     }
-
-    .title-wrap h2{
+    .top-left h1{
       margin:0;
-      font-size:26px;
-      letter-spacing:.01em;
+      font-size:34px;
+      line-height:1;
     }
-
-    .title-wrap p{
-      margin:6px 0 0;
+    .top-left p{
+      margin:8px 0 0;
       color:var(--muted);
-      font-size:13px;
+      font-size:14px;
     }
-
-    .status-row{
+    .badge-row{
       display:flex;
       align-items:center;
-      gap:8px;
+      gap:10px;
       flex-wrap:wrap;
     }
-
-    .chip{
+    .status-pill{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:8px 12px;
+      border:1px solid var(--line);
       border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      font-size:12px;
-      color:var(--muted);
+      padding:9px 12px;
+      background:#0c1728;
+      color:#d5e1f4;
+      font-size:13px;
     }
-
     .dot{
-      width:8px;height:8px;border-radius:50%;
-      background:var(--warn);
-      box-shadow:0 0 0 3px rgba(255,204,102,.12);
+      width:9px;height:9px;border-radius:999px;background:var(--ok);
+      box-shadow:0 0 0 4px rgba(55,214,122,.13);
     }
-
-    .dot.ok{
-      background:var(--accent);
-      box-shadow:0 0 0 3px rgba(77,226,177,.12);
-    }
-
-    .hero{
+    .grid{
       display:grid;
-      grid-template-columns:1.15fr .85fr;
+      grid-template-columns:repeat(12,1fr);
       gap:16px;
-      padding:16px;
-      border-bottom:1px solid var(--line);
     }
-
-    .hero-card{
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+    .panel{
+      background:
+        linear-gradient(180deg, rgba(20,31,52,.94), rgba(10,18,31,.96));
       border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      min-height:140px;
-    }
-
-    .hero-card h3{
-      margin:0 0 10px;
-      font-size:18px;
-    }
-
-    .hero-card p{
-      margin:0 0 14px;
-      color:var(--muted);
-      line-height:1.55;
-      font-size:14px;
-    }
-
-    .metrics{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-    }
-
-    .metric{
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-    }
-
-    .metric .label{
-      font-size:11px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.06em;
-    }
-
-    .metric .value{
-      margin-top:8px;
-      font-size:22px;
-      font-weight:700;
-    }
-
-    .workspace{
-      display:grid;
-      grid-template-columns:1fr;
-      min-height:0;
+      border-radius:24px;
+      box-shadow: var(--shadow);
       overflow:hidden;
     }
-
-    .view{
-      display:none;
-      min-height:0;
-      padding:16px;
-      overflow:auto;
-    }
-
-    .view.active{display:block}
-
-    .chat-layout{
-      display:grid;
-      grid-template-rows:1fr auto;
-      gap:14px;
-      min-height:calc(100vh - 330px);
-    }
-
-    .messages{
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-      padding:18px;
-      overflow:auto;
-      min-height:0;
-    }
-
-    .msg{
+    .panel-head{
       display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap:12px;
-      margin-bottom:16px;
-      align-items:flex-start;
+      padding:18px 18px 0 18px;
     }
+    .panel-head h2{
+      margin:0;
+      font-size:18px;
+    }
+    .panel-body{padding:18px}
+    .span-12{grid-column:span 12}
+    .span-8{grid-column:span 8}
+    .span-6{grid-column:span 6}
+    .span-4{grid-column:span 4}
+    .span-3{grid-column:span 3}
 
-    .msg:last-child{margin-bottom:0}
-
-    .avatar{
-      width:38px;height:38px;border-radius:12px;
-      display:grid;place-items:center;
-      font-size:14px;font-weight:700;
-      flex:0 0 auto;
+    .metric-grid{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:14px;
+    }
+    .metric{
+      background:linear-gradient(180deg,#101a2d,#0b1320);
       border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
     }
-
-    .avatar.user{background:rgba(58,166,255,.16)}
-    .avatar.bot{background:rgba(77,226,177,.12)}
-
-    .bubble{
-      max-width:min(92%, 860px);
-      padding:14px 16px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      white-space:pre-wrap;
-      line-height:1.55;
-      font-size:14px;
+    .metric .k{
+      font-size:13px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:8px;
     }
-
-    .bubble.user{
-      background:rgba(58,166,255,.12);
+    .metric .v{
+      font-size:18px;
+      font-weight:800;
     }
-
-    .composer{
+    .metric .v.big{
+      font-size:22px;
+    }
+    .metric .v.ok{color:var(--ok)}
+    .cmd-box{
+      display:grid;
+      grid-template-columns:1fr 300px;
+      gap:16px;
+    }
+    .input, .textarea, .select{
+      width:100%;
+      background:#081220;
       border:1px solid var(--line);
       border-radius:18px;
-      padding:14px;
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-    }
-
-    .composer-top{
-      display:flex;
-      gap:10px;
-      align-items:flex-end;
-    }
-
-    textarea{
-      width:100%;
-      min-height:58px;
-      max-height:180px;
-      resize:vertical;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#0a1423;
       color:var(--text);
-      padding:14px;
+      padding:15px 16px;
       outline:none;
       font:inherit;
     }
-
-    .composer-actions{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
+    .textarea{
+      min-height:110px;
+      resize:vertical;
+    }
+    .input:focus,.textarea:focus,.select:focus{
+      border-color:#4a6b9c;
+      box-shadow:0 0 0 4px rgba(94,160,255,.08);
+    }
+    .stack{display:flex;flex-direction:column;gap:12px}
+    .action-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
       gap:12px;
       margin-top:12px;
-      flex-wrap:wrap;
+    }
+    .mini-btn,.ghost-btn,.primary-btn,.danger-btn,.success-btn{
+      padding:13px 14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#111d33;
+      font-weight:700;
+    }
+    .primary-btn{
+      background:linear-gradient(180deg,#4d84ff,#2d66df);
+      border-color:#416ede;
+    }
+    .success-btn{
+      background:linear-gradient(180deg,#29bb73,#14985a);
+      border-color:#209f60;
+    }
+    .danger-btn{
+      background:linear-gradient(180deg,#ff7e7e,#e95c5c);
+      border-color:#db6464;
+    }
+    .ghost-btn{
+      background:#0b1424;
     }
 
-    .left-actions,.right-actions{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .icon-btn,.send-btn{
-      border-radius:12px;
-      height:44px;
-      min-width:44px;
-      padding:0 14px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      font-size:14px;
-      font-weight:600;
-    }
-
-    .send-btn.primary{
-      min-width:120px;
-    }
-
-    .grid{
-      display:grid;
-      gap:14px;
-    }
-
-    .cards-2{
-      grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-
-    .cards-3{
-      grid-template-columns:repeat(3,minmax(0,1fr));
-    }
-
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+    .output{
+      min-height:260px;
+      max-height:560px;
+      overflow:auto;
+      background:#08111d;
       border:1px solid var(--line);
       border-radius:18px;
       padding:16px;
     }
-
-    .card h3,.card h4{
-      margin:0 0 8px;
-    }
-
-    .card p{
+    pre{
       margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.55;
-    }
-
-    .agent-list,.memory-list,.market-list,.file-list{
-      display:grid;
-      gap:10px;
-      margin-top:12px;
-    }
-
-    .row-item{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
-      padding:12px 13px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-    }
-
-    .row-item strong{
-      display:block;
-      font-size:14px;
-      margin-bottom:4px;
-    }
-
-    .row-item span,.row-item small{
-      color:var(--muted);
-      font-size:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
       line-height:1.45;
-    }
-
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-      font-size:11px;
-      color:var(--muted);
-      white-space:nowrap;
-    }
-
-    .dropzone{
-      border:1px dashed rgba(255,255,255,.16);
-      border-radius:18px;
-      padding:22px;
-      text-align:center;
-      background:rgba(255,255,255,.025);
-    }
-
-    .dropzone h3{
-      margin:0 0 10px;
-    }
-
-    .dropzone p{
-      margin:0 0 14px;
-      color:var(--muted);
-    }
-
-    .hidden{display:none !important}
-    input[type="file"]{display:none}
-
-    .rightbar{
-      display:grid;
-      grid-template-rows:auto auto 1fr;
-      min-height:0;
-      gap:12px;
-      padding:14px;
-    }
-
-    .mini-card{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:14px;
-      background:rgba(255,255,255,.03);
-    }
-
-    .mini-card h4{
-      margin:0 0 10px;
-      font-size:14px;
-    }
-
-    .mini-card p{
-      margin:0;
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.5;
-    }
-
-    .health{
-      display:grid;
-      gap:8px;
-      max-height:100%;
-      overflow:auto;
-      padding-right:2px;
-    }
-
-    .health-item{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
+      color:#dce7fb;
       font-size:13px;
     }
-
+    .timeline{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:520px;
+      overflow:auto;
+    }
+    .event{
+      background:#0b1422;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px 13px;
+    }
+    .event .time{
+      font-size:12px;color:var(--muted);margin-bottom:5px;
+    }
+    .event .title{
+      font-weight:800;
+      margin-bottom:4px;
+    }
+    .event .text{
+      color:#d9e5fa;
+      font-size:13px;
+    }
+    .voice-box{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .console-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .console-item{
+      border:1px solid var(--line);
+      background:#0d1524;
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+    .console-item .name{font-weight:700}
+    .console-item .sub{font-size:12px;color:var(--muted)}
+    .ok-tag,.muted-tag{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:12px;
+    }
+    .ok-tag{color:#c9ffe3;background:rgba(55,214,122,.08)}
+    .muted-tag{color:#d8e3f9;background:#0d1728}
     .footer-note{
-      font-size:11px;
       color:var(--muted);
+      font-size:12px;
       text-align:center;
-      margin-top:8px;
+      margin-top:14px;
+    }
+    .test-ribbon{
+      position:fixed;
+      top:10px;
+      right:14px;
+      z-index:99999;
+      background:#ff3b30;
+      color:#fff;
+      font-weight:900;
+      letter-spacing:.08em;
+      border-radius:12px;
+      padding:9px 12px;
+      box-shadow:0 8px 25px rgba(255,59,48,.35);
+      border:1px solid rgba(255,255,255,.18);
     }
 
-    @media (max-width: 1320px){
-      .app{grid-template-columns:250px 1fr 320px}
-      .hero{grid-template-columns:1fr}
-      .cards-3{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:1400px){
+      .app{grid-template-columns:290px 1fr 300px}
+      .metric-grid{grid-template-columns:repeat(3,1fr)}
+      .cmd-box{grid-template-columns:1fr}
     }
-
-    @media (max-width: 1100px){
-      .app{
-        grid-template-columns:1fr;
-        grid-template-rows:auto 1fr auto;
-        overflow:auto;
-        height:auto;
-        min-height:100vh;
-      }
-      .sidebar,.rightbar{min-height:auto}
-      .main{min-height:70vh}
+    @media (max-width:1180px){
+      .app{grid-template-columns:1fr}
+      .sidebar,.rightbar{display:none}
       body{overflow:auto}
+      .main{overflow:visible}
+      .metric-grid{grid-template-columns:repeat(2,1fr)}
+      .action-grid{grid-template-columns:repeat(2,1fr)}
+      .voice-box{grid-template-columns:1fr}
+      .span-8,.span-6,.span-4,.span-3{grid-column:span 12}
     }
-
-    @media (max-width: 720px){
-      .metrics,.cards-2,.cards-3{grid-template-columns:1fr}
+    @media (max-width:700px){
+      .main{padding:14px}
+      .metric-grid{grid-template-columns:1fr}
+      .action-grid{grid-template-columns:1fr}
       .topbar{flex-direction:column;align-items:flex-start}
-      .composer-top{flex-direction:column}
-      .send-btn.primary{width:100%}
     }
   </style>
 </head>
 <body>
+  <div class="test-ribbon">V30 REAL</div>
+
   <div class="app">
-    <aside class="panel sidebar">
-      <div class="brand">
-        <div class="brand-badge">C</div>
-        <div>
-          <h1>CONSIA</h1>
-          <p>AI-OS · owner-first · multi-agent</p>
+    <aside class="sidebar">
+      <div class="section">
+        <div class="brand">
+          <div class="brand-mark">C</div>
+          <div>
+            <div class="brand-title">CONSIA</div>
+            <div class="brand-sub">Ultra Premium Command Suite</div>
+          </div>
         </div>
-      </div>
 
-      <div class="nav">
-        <button class="nav-btn active" data-view="chat">
-          <span>Chat Central</span>
-          <small>brain</small>
+        <div class="nav-title">Control</div>
+        <button class="nav-btn" onclick="focusPanel('chatPanel')">
+          <span class="tag">live</span>
+          <span class="label">Chat Central</span>
+          <span class="desc">brain · voice · orchestration</span>
         </button>
-        <button class="nav-btn" data-view="agents">
-          <span>Agentes</span>
-          <small>swarm</small>
+        <button class="nav-btn" onclick="agentSwarmStatus()">
+          <span class="tag">240</span>
+          <span class="label">Agentes</span>
+          <span class="desc">swarm · roles · network</span>
         </button>
-        <button class="nav-btn" data-view="memory">
-          <span>Memoria</span>
-          <small>vault</small>
+        <button class="nav-btn" onclick="memoryStatus()">
+          <span class="tag">vault</span>
+          <span class="label">Memory Vault</span>
+          <span class="desc">global brain · project context</span>
         </button>
-        <button class="nav-btn" data-view="files">
-          <span>Archivos</span>
-          <small>infinite files</small>
+        <button class="nav-btn" onclick="listFiles()">
+          <span class="tag">files</span>
+          <span class="label">Infinite Files</span>
+          <span class="desc">upload · classify · export</span>
         </button>
-        <button class="nav-btn" data-view="market">
-          <span>Marketplace</span>
-          <small>commerce</small>
+        <button class="nav-btn" onclick="connectorsList()">
+          <span class="tag">commerce</span>
+          <span class="label">Marketplace / Connectors</span>
+          <span class="desc">sales · integrations · run</span>
         </button>
-        <button class="nav-btn" data-view="autopilot">
-          <span>Autopilot</span>
-          <small>execution</small>
+        <button class="nav-btn" onclick="runAutonomous()">
+          <span class="tag">auto</span>
+          <span class="label">Autopilot</span>
+          <span class="desc">execution · roadmaps · actions</span>
         </button>
-      </div>
 
-      <div class="owner-box">
-        <h3>Owner Control</h3>
-        <p>Centro rápido de acciones. Todo en una sola interfaz.</p>
-        <div class="quick-row">
-          <button class="quick-btn primary" id="ownerRefreshBtn">Refrescar</button>
-          <button class="quick-btn" id="voiceToggleBtn">Voz</button>
-          <button class="quick-btn" id="speakToggleBtn">Hablar</button>
+        <div class="nav-title">Owner</div>
+        <div class="panel" style="margin-top:10px">
+          <div class="panel-body">
+            <div style="font-size:22px;font-weight:900;margin-bottom:8px">Owner Center</div>
+            <div class="muted" style="font-size:13px;margin-bottom:14px">
+              Acceso directo a login, refresh, voz, lectura de API y control de sesión.
+            </div>
+            <input class="input" id="ownerPasscode" type="password" placeholder="OWNER_PASSCODE" />
+            <div class="action-grid" style="grid-template-columns:1fr 1fr; margin-top:12px">
+              <button class="primary-btn" onclick="ownerLogin()">Login</button>
+              <button class="danger-btn" onclick="ownerLogout()">Logout</button>
+              <button onclick="health()">Refresh</button>
+              <button onclick="voiceStatus()">Voz</button>
+            </div>
+            <div class="footer-note" id="ownerSessionInfo">Sin sesión owner</div>
+          </div>
         </div>
       </div>
     </aside>
 
-    <main class="panel main">
+    <main class="main">
       <div class="topbar">
-        <div class="title-wrap">
-          <h2>CONSIA Command Center</h2>
-          <p id="subtitle">Chat, agentes, memoria, archivos y marketplace en una sola consola.</p>
+        <div class="top-left">
+          <h1>CONSIA AI-OS Control Plane</h1>
+          <p>Interfaz premium para conversar, orquestar agentes, centralizar archivos, guardar memoria y ejecutar módulos reales de CONSIA API v30.</p>
         </div>
-        <div class="status-row">
-          <div class="chip"><span class="dot" id="apiDot"></span><span id="apiStatus">API checking...</span></div>
-          <div class="chip"><span class="dot" id="memoryDot"></span><span id="memoryStatus">Memory checking...</span></div>
-          <div class="chip"><span class="dot" id="voiceDot"></span><span id="voiceStatus">Voice checking...</span></div>
+        <div class="badge-row">
+          <div class="status-pill"><span class="dot"></span><span id="miniHealth">CONSIA cargando...</span></div>
+          <div class="status-pill"><span id="miniVoice">Voice unknown</span></div>
+          <div class="status-pill"><span id="miniOwner">Owner offline</span></div>
         </div>
       </div>
 
-      <section class="hero">
-        <div class="hero-card">
-          <h3>CONSIA AI-OS</h3>
-          <p>
-            Sistema central para conversar, ejecutar, ordenar memoria, subir archivos, activar agentes y vender módulos desde una sola pantalla.
-          </p>
-          <div class="quick-row">
-            <button class="action-btn primary" id="heroChatBtn">Abrir Chat</button>
-            <button class="action-btn" id="heroAgentsBtn">Ver Agentes</button>
-            <button class="action-btn" id="heroFilesBtn">Subir Archivo</button>
-          </div>
-        </div>
-
-        <div class="hero-card">
-          <div class="metrics">
-            <div class="metric">
-              <div class="label">Estado</div>
-              <div class="value" id="metricHealth">--</div>
-            </div>
-            <div class="metric">
-              <div class="label">Agentes</div>
-              <div class="value" id="metricAgents">--</div>
-            </div>
-            <div class="metric">
-              <div class="label">Productos</div>
-              <div class="value" id="metricProducts">--</div>
+      <div class="grid">
+        <section class="panel span-12">
+          <div class="panel-head">
+            <h2>Estado Ejecutivo</h2>
+            <div class="badge-row">
+              <button class="ghost-btn" onclick="health()">Health</button>
+              <button class="ghost-btn" onclick="ownerConsole()">Owner Console</button>
+              <button class="ghost-btn" onclick="executionGraph()">Execution Graph</button>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section class="workspace">
-        <div class="view active" id="view-chat">
-          <div class="chat-layout">
-            <div class="messages" id="messages"></div>
-            <div class="composer">
-              <div class="composer-top">
-                <textarea id="chatInput" placeholder="Escribí una orden para CONSIA..."></textarea>
+          <div class="panel-body">
+            <div class="metric-grid">
+              <div class="metric">
+                <div class="k">Health</div>
+                <div class="v big" id="metricHealth">-</div>
               </div>
-              <div class="composer-actions">
-                <div class="left-actions">
-                  <label class="upload-btn" for="chatFileInput">Adjuntar</label>
-                  <input id="chatFileInput" type="file" multiple />
-                  <button class="icon-btn" id="micBtn" title="Dictado">🎙️</button>
-                  <button class="icon-btn" id="clearChatBtn" title="Limpiar">🧹</button>
+              <div class="metric">
+                <div class="k">Versión API</div>
+                <div class="v big" id="metricVersion">-</div>
+              </div>
+              <div class="metric">
+                <div class="k">Agentes</div>
+                <div class="v big" id="metricAgents">-</div>
+              </div>
+              <div class="metric">
+                <div class="k">Voice</div>
+                <div class="v big" id="metricVoice">-</div>
+              </div>
+              <div class="metric">
+                <div class="k">Memory</div>
+                <div class="v big" id="metricMemory">-</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel span-8" id="chatPanel">
+          <div class="panel-head">
+            <h2>Executive Command</h2>
+            <div class="badge-row">
+              <button class="ghost-btn" onclick="preset('expandir Real Work en Paraguay')">Real Work PY</button>
+              <button class="ghost-btn" onclick="preset('generar pipeline inversores Manglar')">Manglar Inv.</button>
+              <button class="ghost-btn" onclick="preset('buscar oportunidades de negocio global')">Global Radar</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="cmd-box">
+              <div>
+                <textarea class="textarea" id="commandInput" placeholder="Escribí una orden premium para CONSIA..."></textarea>
+                <div class="action-grid">
+                  <button class="primary-btn" onclick="runIntelligence()">Intelligence</button>
+                  <button class="primary-btn" onclick="runTasks()">Tasks</button>
+                  <button class="primary-btn" onclick="runWorkflow()">Workflow</button>
+                  <button class="primary-btn" onclick="runAutopilot()">Autopilot</button>
+                  <button class="primary-btn" onclick="runAutonomous()">Autonomous</button>
+                  <button class="success-btn" onclick="runChat()">Chat</button>
+                  <button class="ghost-btn" onclick="quickRevenue()">Revenue</button>
+                  <button class="ghost-btn" onclick="quickNextBest()">Next Best</button>
                 </div>
-                <div class="right-actions">
-                  <button class="pill-btn" data-prompt="Analizá este negocio y proponé un plan de ejecución real.">Plan</button>
-                  <button class="pill-btn" data-prompt="Dame un resumen ejecutivo y próximos pasos.">Resumen</button>
-                  <button class="pill-btn" data-prompt="Activa agentes y dividí la tarea por módulos.">Swarm</button>
-                  <button class="send-btn primary" id="sendBtn">Enviar</button>
+              </div>
+              <div class="stack">
+                <select class="select" id="brainMode">
+                  <option>Brain</option>
+                  <option>Strategic</option>
+                  <option>Execution</option>
+                  <option>Research</option>
+                </select>
+                <select class="select" id="premiumMode">
+                  <option>Premium</option>
+                  <option>Ultra Premium</option>
+                  <option>Owner</option>
+                </select>
+                <input class="input" id="workflowIdInput" placeholder="workflow_id" />
+                <div class="action-grid" style="grid-template-columns:1fr 1fr">
+                  <button onclick="workflowStatus()">Ver estado</button>
+                  <button onclick="workflowList()">Listar workflows</button>
+                  <button onclick="quickWorkflowRealWork()">Run RW</button>
+                  <button onclick="quickWorkflowManglar()">Run Manglar</button>
                 </div>
               </div>
             </div>
+            <div class="footer-note">CONSIA WORLD · API v30 REAL · chat · voice · agents · memory · files · marketplace</div>
           </div>
-        </div>
+        </section>
 
-        <div class="view" id="view-agents">
-          <div class="grid cards-2">
-            <div class="card">
-              <h3>Agent Network</h3>
-              <p>Lista dinámica de agentes conectados al backend.</p>
-              <div class="agent-list" id="agentsList"></div>
+        <section class="panel span-4">
+          <div class="panel-head">
+            <h2>Voice + Session</h2>
+            <div class="status-pill"><span class="dot"></span><span id="voiceHead">Voice active</span></div>
+          </div>
+          <div class="panel-body">
+            <div class="voice-box">
+              <button class="primary-btn" onclick="startVoice()">Hablar</button>
+              <button onclick="voiceStatus()">Estado voz</button>
+              <button onclick="viewSession()">Ver sesión</button>
+              <button onclick="ownerConsole()">Owner Console</button>
             </div>
-            <div class="card">
-              <h3>Quick Swarm</h3>
-              <p>Dispará órdenes rápidas con contexto directo.</p>
-              <div class="quick-row" style="margin-top:14px">
-                <button class="action-btn primary swarm-action" data-task="Investigá el proyecto y generá un informe.">Research</button>
-                <button class="action-btn swarm-action" data-task="Analizá la oportunidad y detectá riesgos.">Analysis</button>
-                <button class="action-btn swarm-action" data-task="Convertí esto en pasos concretos para ejecutar.">Execution</button>
-                <button class="action-btn swarm-action" data-task="Ordená todo en memoria con estructura clara.">Memory</button>
-              </div>
-              <div class="footer-note">Las acciones se envían al chat central.</div>
+            <div class="output" style="min-height:190px;margin-top:12px">
+              <pre id="voiceOutput">Micrófono inactivo.</pre>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="view" id="view-memory">
-          <div class="grid cards-2">
-            <div class="card">
-              <h3>Memory Core</h3>
-              <p id="memoryDescription">Estado y resumen del núcleo de memoria.</p>
-              <div class="memory-list" id="memoryList"></div>
-            </div>
-            <div class="card">
-              <h3>Memoria local de sesión</h3>
-              <p>Notas rápidas guardadas solo en el navegador actual.</p>
-              <textarea id="memoryNote" placeholder="Escribí notas de trabajo, decisiones, ideas o recordatorios..."></textarea>
-              <div class="quick-row" style="margin-top:12px">
-                <button class="action-btn primary" id="saveMemoryBtn">Guardar nota</button>
-                <button class="action-btn" id="clearMemoryBtn">Borrar</button>
-              </div>
-            </div>
+        <section class="panel span-6">
+          <div class="panel-head">
+            <h2>Realtime Timeline</h2>
+            <button class="ghost-btn" onclick="clearTimeline()">Limpiar</button>
           </div>
-        </div>
+          <div class="panel-body">
+            <div class="timeline" id="timeline"></div>
+          </div>
+        </section>
 
-        <div class="view" id="view-files">
-          <div class="grid cards-2">
-            <div class="card">
-              <div class="dropzone">
-                <h3>CONSIA Infinite Files</h3>
-                <p>Subí PDFs, imágenes, audios, videos o planillas. Vista rápida local.</p>
-                <label class="upload-btn" for="filesInput">Seleccionar archivos</label>
-                <input id="filesInput" type="file" multiple />
-              </div>
-              <div class="file-list" id="fileList"></div>
-            </div>
-            <div class="card">
-              <h3>Módulo de archivos</h3>
-              <p id="filesStatusText">Verificando estado del storage...</p>
-              <div class="quick-row" style="margin-top:14px">
-                <button class="action-btn primary" id="filesAnalyzeBtn">Analizar selección</button>
-                <button class="action-btn" id="filesExportBtn">Exportar lista</button>
-              </div>
+        <section class="panel span-6">
+          <div class="panel-head">
+            <h2>Output</h2>
+            <div class="badge-row">
+              <button class="ghost-btn" onclick="copyOutput()">Copiar</button>
+              <button class="ghost-btn" onclick="clearOutput()">Limpiar</button>
             </div>
           </div>
-        </div>
+          <div class="panel-body">
+            <div class="output">
+              <pre id="mainOutput">CONSIA v30 REAL listo para operar.</pre>
+            </div>
+          </div>
+        </section>
 
-        <div class="view" id="view-market">
-          <div class="grid cards-2">
-            <div class="card">
-              <h3>Marketplace</h3>
-              <p>Productos conectados al backend.</p>
-              <div class="market-list" id="marketList"></div>
-            </div>
-            <div class="card">
-              <h3>Venta rápida</h3>
-              <p>Vista simple para mostrar módulos, APIs o planes activos.</p>
-              <div class="quick-row" style="margin-top:14px">
-                <button class="action-btn primary" id="reloadMarketBtn">Recargar productos</button>
-                <button class="action-btn" id="sendMarketToChatBtn">Enviar al chat</button>
-              </div>
-            </div>
+        <section class="panel span-6">
+          <div class="panel-head">
+            <h2>Memory Core + Project Brain</h2>
           </div>
-        </div>
+          <div class="panel-body">
+            <input class="input" id="memoryText" placeholder="Texto de memoria" />
+            <div class="action-grid" style="margin-top:12px">
+              <button onclick="saveMemory()">Guardar</button>
+              <button onclick="listMemory()">Listar</button>
+              <button onclick="memoryStatus()">Estado</button>
+              <button onclick="searchMemory()">Buscar</button>
+            </div>
+            <input class="input" id="memoryQuery" placeholder="Buscar memoria" style="margin-top:12px" />
+          </div>
+        </section>
 
-        <div class="view" id="view-autopilot">
-          <div class="grid cards-2">
-            <div class="card">
-              <h3>Autopilot</h3>
-              <p>Plantillas para disparar tareas ejecutivas.</p>
-              <div class="quick-row" style="margin-top:14px">
-                <button class="action-btn primary auto-action" data-task="Creá un plan comercial completo con prioridad y ejecución.">Plan comercial</button>
-                <button class="action-btn auto-action" data-task="Diseñá un flujo automatizado de atención, seguimiento y cierre.">Flujo ventas</button>
-                <button class="action-btn auto-action" data-task="Armá estrategia de marketing con contenido, campañas y calendario.">Marketing</button>
-                <button class="action-btn auto-action" data-task="Convertí este proyecto en roadmap de ejecución con fases y responsables.">Roadmap</button>
-              </div>
-            </div>
-            <div class="card">
-              <h3>Resumen del sistema</h3>
-              <p id="autopilotSummary">Listo para ejecutar órdenes y centralizar operaciones.</p>
+        <section class="panel span-6">
+          <div class="panel-head">
+            <h2>Projects</h2>
+          </div>
+          <div class="panel-body">
+            <input class="input" id="projectName" placeholder="Nombre proyecto" />
+            <input class="input" id="projectCompany" placeholder="Company" value="consia" style="margin-top:12px" />
+            <input class="input" id="projectType" placeholder="Tipo" value="system_validation" style="margin-top:12px" />
+            <div class="action-grid" style="margin-top:12px">
+              <button onclick="createProject()">Crear proyecto</button>
+              <button onclick="listProjects()">Listar proyectos</button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section class="panel span-6">
+          <div class="panel-head">
+            <h2>Connectors</h2>
+          </div>
+          <div class="panel-body">
+            <input class="input" id="connectorName" placeholder="Nombre conector" />
+            <textarea class="textarea" id="connectorPayload" placeholder='{"operation":"ping"}' style="margin-top:12px"></textarea>
+            <div class="action-grid" style="margin-top:12px">
+              <button onclick="connectorsList()">Listar</button>
+              <button onclick="connectorTest()">Test</button>
+              <button onclick="connectorAction()">Ejecutar</button>
+              <button onclick="listFiles()">Files</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel span-6">
+          <div class="panel-head">
+            <h2>Systems</h2>
+          </div>
+          <div class="panel-body">
+            <div class="console-list" id="systemsList">
+              <div class="console-item"><div><div class="name">API</div><div class="sub">Estado general</div></div><span class="muted-tag">loading</span></div>
+              <div class="console-item"><div><div class="name">Memory</div><div class="sub">Project Brain + Vault</div></div><span class="muted-tag">loading</span></div>
+              <div class="console-item"><div><div class="name">Voice</div><div class="sub">Executive mode</div></div><span class="muted-tag">loading</span></div>
+              <div class="console-item"><div><div class="name">Agents</div><div class="sub">Swarm real</div></div><span class="muted-tag">loading</span></div>
+              <div class="console-item"><div><div class="name">Market</div><div class="sub">Scanner + World Model</div></div><span class="muted-tag">loading</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
-    <aside class="panel rightbar">
-      <div class="mini-card">
-        <h4>System Health</h4>
-        <div class="health" id="healthPanel"></div>
+    <aside class="rightbar">
+      <div class="section">
+        <div style="font-size:22px;font-weight:900;margin-bottom:12px">Console</div>
+        <div class="console-list" id="consoleList">
+          <div class="console-item">
+            <div>
+              <div class="name">Inicializando</div>
+              <div class="sub">Esperando health real</div>
+            </div>
+            <span class="muted-tag">wait</span>
+          </div>
+        </div>
       </div>
 
-      <div class="mini-card">
-        <h4>Última respuesta</h4>
-        <p id="lastResponse">Todavía no hay respuesta.</p>
-      </div>
-
-      <div class="mini-card" style="min-height:0; overflow:auto;">
-        <h4>Console</h4>
-        <div class="health" id="consolePanel"></div>
+      <div class="section">
+        <div style="font-size:22px;font-weight:900;margin-bottom:12px">Access</div>
+        <div class="panel" style="background:#0b1422">
+          <div class="panel-body">
+            <div class="muted">API:</div>
+            <div style="font-weight:800;margin-bottom:10px" id="apiBaseView">https://api.consia.world</div>
+            <input class="input" id="apiBase" value="https://api.consia.world" />
+          </div>
+        </div>
       </div>
     </aside>
   </div>
 
   <script>
-    const API = "https://api.consia.world";
+    let OWNER_TOKEN = localStorage.getItem("CONSIA_OWNER_TOKEN") || "";
+    let recognition = null;
+    let listening = false;
 
-    const state = {
-      agents: [],
-      products: [],
-      files: [],
-      health: {},
-      chat: [],
-      voiceEnabled: false,
-      speakEnabled: false,
-      recognition: null,
-      recognitionActive: false
-    };
+    function apiBase(){
+      return document.getElementById("apiBase").value.trim().replace(/\/+$/,'');
+    }
 
-    const els = {
-      navBtns: [...document.querySelectorAll(".nav-btn")],
-      views: {
-        chat: document.getElementById("view-chat"),
-        agents: document.getElementById("view-agents"),
-        memory: document.getElementById("view-memory"),
-        files: document.getElementById("view-files"),
-        market: document.getElementById("view-market"),
-        autopilot: document.getElementById("view-autopilot")
-      },
-      subtitle: document.getElementById("subtitle"),
-      messages: document.getElementById("messages"),
-      chatInput: document.getElementById("chatInput"),
-      sendBtn: document.getElementById("sendBtn"),
-      micBtn: document.getElementById("micBtn"),
-      clearChatBtn: document.getElementById("clearChatBtn"),
-      chatFileInput: document.getElementById("chatFileInput"),
-      healthPanel: document.getElementById("healthPanel"),
-      consolePanel: document.getElementById("consolePanel"),
-      lastResponse: document.getElementById("lastResponse"),
-      apiDot: document.getElementById("apiDot"),
-      apiStatus: document.getElementById("apiStatus"),
-      memoryDot: document.getElementById("memoryDot"),
-      memoryStatus: document.getElementById("memoryStatus"),
-      voiceDot: document.getElementById("voiceDot"),
-      voiceStatus: document.getElementById("voiceStatus"),
-      metricHealth: document.getElementById("metricHealth"),
-      metricAgents: document.getElementById("metricAgents"),
-      metricProducts: document.getElementById("metricProducts"),
-      agentsList: document.getElementById("agentsList"),
-      marketList: document.getElementById("marketList"),
-      memoryList: document.getElementById("memoryList"),
-      memoryDescription: document.getElementById("memoryDescription"),
-      memoryNote: document.getElementById("memoryNote"),
-      saveMemoryBtn: document.getElementById("saveMemoryBtn"),
-      clearMemoryBtn: document.getElementById("clearMemoryBtn"),
-      filesInput: document.getElementById("filesInput"),
-      fileList: document.getElementById("fileList"),
-      filesStatusText: document.getElementById("filesStatusText"),
-      filesAnalyzeBtn: document.getElementById("filesAnalyzeBtn"),
-      filesExportBtn: document.getElementById("filesExportBtn"),
-      reloadMarketBtn: document.getElementById("reloadMarketBtn"),
-      sendMarketToChatBtn: document.getElementById("sendMarketToChatBtn"),
-      ownerRefreshBtn: document.getElementById("ownerRefreshBtn"),
-      voiceToggleBtn: document.getElementById("voiceToggleBtn"),
-      speakToggleBtn: document.getElementById("speakToggleBtn"),
-      heroChatBtn: document.getElementById("heroChatBtn"),
-      heroAgentsBtn: document.getElementById("heroAgentsBtn"),
-      heroFilesBtn: document.getElementById("heroFilesBtn"),
-      autopilotSummary: document.getElementById("autopilotSummary")
-    };
+    function headers(jsonMode = true){
+      const h = {};
+      if(jsonMode) h["Content-Type"] = "application/json";
+      if(OWNER_TOKEN) h["x-owner-session"] = OWNER_TOKEN;
+      return h;
+    }
 
-    function logConsole(title, detail = "", ok = true) {
-      const row = document.createElement("div");
-      row.className = "health-item";
-      row.innerHTML = `
-        <div>
-          <strong style="display:block;font-size:13px;">${escapeHtml(title)}</strong>
-          <small style="color:var(--muted)">${escapeHtml(detail)}</small>
-        </div>
-        <span class="tag">${ok ? "ok" : "warn"}</span>
+    function setOutput(data){
+      document.getElementById("mainOutput").textContent =
+        typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
+
+    function clearOutput(){
+      setOutput("CONSIA output limpiado.");
+    }
+
+    function copyOutput(){
+      navigator.clipboard.writeText(document.getElementById("mainOutput").textContent || "");
+      addEvent("Output copiado", "Contenido copiado al portapapeles");
+    }
+
+    function addEvent(title, detail=""){
+      const el = document.createElement("div");
+      el.className = "event";
+      el.innerHTML = `
+        <div class="time">${new Date().toLocaleString()}</div>
+        <div class="title">${escapeHtml(title)}</div>
+        <div class="text">${escapeHtml(detail)}</div>
       `;
-      els.consolePanel.prepend(row);
-      while (els.consolePanel.children.length > 18) {
-        els.consolePanel.removeChild(els.consolePanel.lastChild);
-      }
+      const box = document.getElementById("timeline");
+      box.prepend(el);
+      addConsole(title, detail, "ok");
     }
 
-    function setStatus(dotEl, textEl, text, ok = false) {
-      textEl.textContent = text;
-      dotEl.classList.toggle("ok", ok);
+    function clearTimeline(){
+      document.getElementById("timeline").innerHTML = "";
+      addEvent("Timeline", "Limpieza completada");
     }
 
-    function updateHealthPanel() {
-      const map = [
-        { label: "API", value: state.health.api || "pending", ok: !!state.health.apiOk },
-        { label: "Memory", value: state.health.memory || "pending", ok: !!state.health.memoryOk },
-        { label: "Voice", value: state.health.voice || "pending", ok: !!state.health.voiceOk },
-        { label: "Files", value: state.health.files || "pending", ok: !!state.health.filesOk },
-        { label: "Agents", value: state.health.agents || "pending", ok: !!state.health.agentsOk },
-        { label: "Market", value: state.health.market || "pending", ok: !!state.health.marketOk }
-      ];
-      els.healthPanel.innerHTML = map.map(item => `
-        <div class="health-item">
-          <span>${escapeHtml(item.label)}</span>
-          <span class="tag">${escapeHtml(item.value)}</span>
+    function addConsole(title, detail="", state="ok"){
+      const box = document.getElementById("consoleList");
+      const el = document.createElement("div");
+      el.className = "console-item";
+      el.innerHTML = `
+        <div>
+          <div class="name">${escapeHtml(title)}</div>
+          <div class="sub">${escapeHtml(detail || "respuesta recibida")}</div>
         </div>
-      `).join("");
-
-      els.metricHealth.textContent = state.health.apiOk ? "ONLINE" : "CHECK";
-      els.metricAgents.textContent = String(state.agents.length || 0);
-      els.metricProducts.textContent = String(state.products.length || 0);
+        <span class="${state === 'ok' ? 'ok-tag':'muted-tag'}">${escapeHtml(state)}</span>
+      `;
+      box.prepend(el);
+      while(box.children.length > 18) box.removeChild(box.lastChild);
     }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
+    function escapeHtml(str){
+      return String(str ?? "")
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
         .replaceAll(">","&gt;")
@@ -951,431 +768,405 @@ Cargando CONSIA...
         .replaceAll("'","&#039;");
     }
 
-    function switchView(name) {
-      Object.entries(els.views).forEach(([key, view]) => {
-        view.classList.toggle("active", key === name);
-      });
-      els.navBtns.forEach(btn => btn.classList.toggle("active", btn.dataset.view === name));
-
-      const labels = {
-        chat: "Conversación central con CONSIA.",
-        agents: "Red de agentes y ejecución distribuida.",
-        memory: "Memoria activa y notas rápidas.",
-        files: "Módulo de archivos y organización.",
-        market: "Productos, APIs y monetización.",
-        autopilot: "Plantillas de ejecución automática."
-      };
-      els.subtitle.textContent = labels[name] || "CONSIA";
-    }
-
-    function addMessage(role, text) {
-      const item = {
-        role,
-        text,
-        time: new Date().toISOString()
-      };
-      state.chat.push(item);
-
-      const row = document.createElement("div");
-      row.className = "msg";
-      row.innerHTML = `
-        <div class="avatar ${role === "user" ? "user" : "bot"}">${role === "user" ? "YOU" : "AI"}</div>
-        <div class="bubble ${role === "user" ? "user" : ""}">${escapeHtml(text)}</div>
-      `;
-      els.messages.appendChild(row);
-      els.messages.scrollTop = els.messages.scrollHeight;
-    }
-
-    function setLastResponse(text) {
-      els.lastResponse.textContent = text;
-      if (state.speakEnabled && "speechSynthesis" in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "es-AR";
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
-    async function safeGet(path) {
-      const res = await fetch(API + path, { headers: { "accept":"application/json" } });
+    async function call(path, method="GET", body=null, customHeaders=null){
+      const opt = { method, headers: customHeaders || headers(body !== null) };
+      if(body !== null) opt.body = JSON.stringify(body);
+      const res = await fetch(apiBase() + path, opt);
       const text = await res.text();
-      try {
-        return JSON.parse(text);
-      } catch {
-        return { raw: text, ok: false };
+      let data = text;
+      try { data = JSON.parse(text); } catch {}
+      setOutput(data);
+      return data;
+    }
+
+    function currentCommand(){
+      return document.getElementById("commandInput").value.trim();
+    }
+
+    function preset(text){
+      document.getElementById("commandInput").value = text;
+    }
+
+    function inferCompany(text=""){
+      const t = String(text).toLowerCase();
+      if(t.includes("real work")) return "real-work";
+      if(t.includes("manglar")) return "manglar";
+      if(t.includes("vip work")) return "vip-work";
+      if(t.includes("bambino")) return "bambino";
+      if(t.includes("consia")) return "consia";
+      return "global";
+    }
+
+    function focusPanel(id){
+      const el = document.getElementById(id);
+      if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    async function ownerLogin(){
+      const passcode = document.getElementById("ownerPasscode").value.trim();
+      const data = await call("/v1/owner/login", "POST", { passcode });
+      if(data && data.ok && data.token){
+        OWNER_TOKEN = data.token;
+        localStorage.setItem("CONSIA_OWNER_TOKEN", OWNER_TOKEN);
+        document.getElementById("ownerSessionInfo").textContent = "Sesión owner activa";
+        document.getElementById("miniOwner").textContent = "Owner online";
+        addEvent("Owner login", "Sesión iniciada");
+        await refreshStatusPanels();
+      } else {
+        addEvent("Owner login", "Falló el login");
       }
     }
 
-    async function checkHealth() {
-      try {
-        const data = await safeGet("/v1/health");
-        const ok = !!data.ok;
-        state.health.apiOk = ok;
-        state.health.api = ok ? "online" : "fallback";
-        setStatus(els.apiDot, els.apiStatus, ok ? "API online" : "API fallback", ok);
-        logConsole("health", ok ? "CONSIA API online" : "Fallback detectado", ok);
-      } catch {
-        state.health.apiOk = false;
-        state.health.api = "offline";
-        setStatus(els.apiDot, els.apiStatus, "API offline", false);
-        logConsole("health", "No se pudo leer /v1/health", false);
+    async function ownerLogout(){
+      if(!OWNER_TOKEN){
+        addEvent("Owner logout", "No había sesión");
+        return;
       }
-      updateHealthPanel();
+      await call("/v1/owner/logout", "POST", {});
+      OWNER_TOKEN = "";
+      localStorage.removeItem("CONSIA_OWNER_TOKEN");
+      document.getElementById("ownerSessionInfo").textContent = "Sin sesión owner";
+      document.getElementById("miniOwner").textContent = "Owner offline";
+      addEvent("Owner logout", "Sesión cerrada");
     }
 
-    async function loadMemory() {
-      try {
-        const data = await safeGet("/v1/memory/status");
-        const ok = !!data.ok;
-        state.health.memoryOk = ok;
-        state.health.memory = ok ? (data.type || "active") : "fallback";
-        setStatus(els.memoryDot, els.memoryStatus, ok ? "Memory active" : "Memory fallback", ok);
-        els.memoryDescription.textContent = ok
-          ? `Memoria ${data.memory || "active"} · ${data.type || "global-brain"}`
-          : "No se pudo leer el endpoint. Se usa estado local.";
-        els.memoryList.innerHTML = `
-          <div class="row-item">
-            <div>
-              <strong>Estado</strong>
-              <span>${escapeHtml(data.memory || "active")}</span>
-            </div>
-            <span class="tag">${escapeHtml(data.type || "local")}</span>
-          </div>
-          <div class="row-item">
-            <div>
-              <strong>Notas de sesión</strong>
-              <span>Guardadas en navegador</span>
-            </div>
-            <span class="tag">local</span>
-          </div>
-        `;
-      } catch {
-        state.health.memoryOk = false;
-        state.health.memory = "offline";
-        setStatus(els.memoryDot, els.memoryStatus, "Memory offline", false);
-        els.memoryDescription.textContent = "No se pudo leer el endpoint de memoria.";
+    async function viewSession(){
+      const data = await call("/v1/owner/session");
+      addEvent("Owner session", data.ok ? "Sesión consultada" : "Sin sesión");
+      return data;
+    }
+
+    async function health(){
+      const data = await call("/v1/health");
+      if(data && data.ok){
+        document.getElementById("miniHealth").textContent = `CONSIA ${data.version} · ${data.status}`;
+        document.getElementById("metricHealth").textContent = data.status || "-";
+        document.getElementById("metricVersion").textContent = data.version || "-";
+        document.getElementById("metricAgents").textContent = String(data.swarm_agents_total || "-");
+        document.getElementById("metricVoice").textContent = data.voice_status || "-";
+        document.getElementById("metricMemory").textContent = data.global_memory_core_real || "-";
+        document.getElementById("apiBaseView").textContent = apiBase();
+        updateSystemRow("API", `v${data.version}`, data.status === "online");
+        updateSystemRow("Voice", data.voice_mode || "executive", data.voice_status === "active");
+        updateSystemRow("Agents", `${data.swarm_agents_total || 0} agentes`, data.swarm === "active");
+        updateSystemRow("Market", "world + scanner", data.world_model === "active");
+        updateSystemRow("Memory", data.project_brain || "active", data.global_memory_core_real === "active");
+        addEvent("Health OK", `${data.version} · ${data.status}`);
       }
-      updateHealthPanel();
+      return data;
     }
 
-    async function loadVoice() {
-      try {
-        const data = await safeGet("/v1/voice/status");
-        const ok = !!data.ok;
-        state.health.voiceOk = ok;
-        state.health.voice = ok ? "active" : "fallback";
-        setStatus(els.voiceDot, els.voiceStatus, ok ? "Voice active" : "Voice fallback", ok);
-      } catch {
-        state.health.voiceOk = false;
-        state.health.voice = "offline";
-        setStatus(els.voiceDot, els.voiceStatus, "Voice offline", false);
-      }
-      updateHealthPanel();
-    }
-
-    async function loadFilesStatus() {
-      try {
-        const data = await safeGet("/v1/files/status");
-        const ok = !!data.ok;
-        state.health.filesOk = ok;
-        state.health.files = ok ? (data.module || "active") : "fallback";
-        els.filesStatusText.textContent = ok
-          ? `Storage activo · ${data.module || "CONSIA Infinite Files"}`
-          : "Storage fallback local.";
-      } catch {
-        state.health.filesOk = false;
-        state.health.files = "offline";
-        els.filesStatusText.textContent = "No se pudo leer el estado de archivos.";
-      }
-      updateHealthPanel();
-    }
-
-    async function loadAgents() {
-      try {
-        const data = await safeGet("/v1/agents");
-        state.agents = Array.isArray(data.agents) ? data.agents : [];
-        state.health.agentsOk = state.agents.length > 0 || !!data.ok;
-        state.health.agents = state.agents.length ? `${state.agents.length} loaded` : "empty";
-      } catch {
-        state.agents = [];
-        state.health.agentsOk = false;
-        state.health.agents = "offline";
-      }
-
-      const fallbackAgents = [
-        { name:"research_agent", role:"research", description:"investiga información" },
-        { name:"analysis_agent", role:"analysis", description:"analiza información" },
-        { name:"execution_agent", role:"execution", description:"ejecuta tareas" },
-        { name:"memory_agent", role:"memory", description:"gestiona memoria" }
-      ];
-
-      const list = state.agents.length ? state.agents : fallbackAgents;
-      els.agentsList.innerHTML = list.map(agent => `
-        <div class="row-item">
-          <div>
-            <strong>${escapeHtml(agent.name || agent)}</strong>
-            <span>${escapeHtml(agent.description || agent.role || "agent")}</span>
-          </div>
-          <span class="tag">${escapeHtml(agent.role || "module")}</span>
-        </div>
-      `).join("");
-
-      updateHealthPanel();
-    }
-
-    async function loadMarket() {
-      try {
-        const data = await safeGet("/v1/marketplace/products");
-        state.products = Array.isArray(data.items) ? data.items : [];
-        state.health.marketOk = state.products.length > 0 || !!data.ok;
-        state.health.market = state.products.length ? `${state.products.length} products` : "empty";
-      } catch {
-        state.products = [];
-        state.health.marketOk = false;
-        state.health.market = "offline";
-      }
-
-      const list = state.products.length ? state.products : [
-        { id:"consia-ai-api", name:"CONSIA AI API", price_usd:10, description:"AI access product" }
-      ];
-
-      els.marketList.innerHTML = list.map(item => `
-        <div class="row-item">
-          <div>
-            <strong>${escapeHtml(item.name || item.id)}</strong>
-            <span>${escapeHtml(item.description || "Producto digital")}</span>
-          </div>
-          <span class="tag">USD ${escapeHtml(item.price_usd ?? "--")}</span>
-        </div>
-      `).join("");
-
-      updateHealthPanel();
-    }
-
-    function saveLocalMemory() {
-      localStorage.setItem("consia_memory_note", els.memoryNote.value || "");
-      logConsole("memory", "Nota local guardada", true);
-    }
-
-    function loadLocalMemory() {
-      els.memoryNote.value = localStorage.getItem("consia_memory_note") || "";
-    }
-
-    function handleFiles(files) {
-      const arr = [...files];
-      state.files = [...state.files, ...arr].slice(0, 50);
-      renderFiles();
-    }
-
-    function renderFiles() {
-      els.fileList.innerHTML = state.files.length
-        ? state.files.map(file => `
-          <div class="row-item">
-            <div>
-              <strong>${escapeHtml(file.name)}</strong>
-              <span>${Math.round((file.size || 0)/1024)} KB · ${escapeHtml(file.type || "unknown")}</span>
-            </div>
-            <span class="tag">local</span>
-          </div>
-        `).join("")
-        : `<div class="row-item"><div><strong>Sin archivos</strong><span>No hay archivos cargados todavía.</span></div><span class="tag">0</span></div>`;
-    }
-
-    async function sendChat() {
-      const message = els.chatInput.value.trim();
-      if (!message) return;
-
-      addMessage("user", message);
-      els.chatInput.value = "";
-      logConsole("chat", "Mensaje enviado", true);
-
-      try {
-        const res = await fetch(API + "/v1/chat", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ message })
-        });
-
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); }
-        catch { data = { answer: text || "CONSIA CORE ACTIVE" }; }
-
-        const answer = data.answer || data.message || "CONSIA CORE ACTIVE";
-        addMessage("bot", answer);
-        setLastResponse(answer);
-      } catch {
-        const fallback = "CONSIA CORE ACTIVE";
-        addMessage("bot", fallback);
-        setLastResponse(fallback);
-        logConsole("chat", "Fallback local activado", false);
+    function updateSystemRow(name, sub, ok=true){
+      const list = document.getElementById("systemsList");
+      const children = Array.from(list.querySelectorAll(".console-item"));
+      const target = children.find(el => el.querySelector(".name")?.textContent === name);
+      if(target){
+        target.querySelector(".sub").textContent = sub;
+        target.querySelector("span").className = ok ? "ok-tag" : "muted-tag";
+        target.querySelector("span").textContent = ok ? "ok" : "check";
       }
     }
 
-    function startVoiceInput() {
-      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!Recognition) {
-        logConsole("voice", "SpeechRecognition no disponible en este navegador", false);
+    async function ownerConsole(){
+      const data = await call("/v1/owner/console");
+      addEvent("Owner Console", data.ok ? "Estado general consultado" : "Error");
+      return data;
+    }
+
+    async function agentSwarmStatus(){
+      const data = await call("/v1/agent-swarm/status");
+      addEvent("Agent Swarm", `${data.agents || 0} agentes`);
+      return data;
+    }
+
+    async function worldModelStatus(){
+      const data = await call("/v1/world-model/status");
+      addEvent("World Model", data.world_model || "status");
+      return data;
+    }
+
+    async function scannerStatus(){
+      const data = await call("/v1/global-business-scanner/status");
+      addEvent("Business Scanner", `${data.opportunities_found || 0} oportunidades`);
+      return data;
+    }
+
+    async function ingestionStatus(){
+      const data = await call("/v1/global-data-ingestion/status");
+      addEvent("Data Ingestion", data.status || "status");
+      return data;
+    }
+
+    async function voiceStatus(){
+      const data = await call("/v1/voice/status");
+      if(data && data.ok){
+        document.getElementById("miniVoice").textContent = `${data.mode || "voice"} · ${data.microphone || ""}`;
+        document.getElementById("voiceHead").textContent = `${data.mode || "voice"} · ${data.microphone || ""}`;
+        document.getElementById("voiceOutput").textContent = JSON.stringify(data, null, 2);
+      }
+      addEvent("Voice Status", `${data.mode || ""} · ${data.microphone || ""}`);
+      return data;
+    }
+
+    async function executionGraph(){
+      const data = await call("/v1/execution/graph");
+      addEvent("Execution Graph", data.status || "graph");
+      return data;
+    }
+
+    async function connectorsList(){
+      const data = await call("/v1/connectors/list");
+      addEvent("Connectors", `${data.count || 0} conectores`);
+      return data;
+    }
+
+    async function connectorTest(){
+      const name = document.getElementById("connectorName").value.trim();
+      const payload = parsePayload();
+      const data = await call("/v1/connectors/test", "POST", { name, payload });
+      addEvent("Connector Test", name);
+      return data;
+    }
+
+    async function connectorAction(){
+      const name = document.getElementById("connectorName").value.trim();
+      const payload = parsePayload();
+      const data = await call("/v1/connectors/action", "POST", { name, action: "run", payload });
+      addEvent("Connector Action", name);
+      return data;
+    }
+
+    function parsePayload(){
+      const raw = document.getElementById("connectorPayload").value.trim();
+      if(!raw) return {};
+      try { return JSON.parse(raw); } catch { return { raw }; }
+    }
+
+    async function runChat(){
+      const message = currentCommand();
+      const data = await call("/v1/chat", "POST", {
+        message,
+        company: inferCompany(message)
+      });
+      addEvent("Chat", message);
+      return data;
+    }
+
+    async function runIntelligence(){
+      const objective = currentCommand();
+      const data = await call("/v1/intelligence/analyze", "POST", {
+        objective,
+        company: inferCompany(objective)
+      });
+      addEvent("Intelligence", objective);
+      return data;
+    }
+
+    async function runTasks(){
+      const goal = currentCommand();
+      const data = await call("/v1/tasks/generate", "POST", {
+        goal,
+        company: inferCompany(goal)
+      });
+      addEvent("Tasks", goal);
+      return data;
+    }
+
+    async function runWorkflow(){
+      const goal = currentCommand();
+      const data = await call("/v1/workflow/run", "POST", {
+        goal,
+        company: inferCompany(goal)
+      });
+      if(data && data.workflow_id){
+        document.getElementById("workflowIdInput").value = data.workflow_id;
+      }
+      addEvent("Workflow", goal);
+      return data;
+    }
+
+    async function workflowStatus(){
+      const workflow_id = document.getElementById("workflowIdInput").value.trim();
+      const data = await call("/v1/workflow/status", "POST", { workflow_id });
+      addEvent("Workflow Status", workflow_id);
+      return data;
+    }
+
+    async function workflowList(){
+      const data = await call("/v1/workflow/list");
+      addEvent("Workflow List", `${(data.workflows || []).length} workflows`);
+      return data;
+    }
+
+    async function runAutopilot(){
+      const input = currentCommand();
+      const data = await call("/v1/company/autopilot", "POST", {
+        input,
+        company: inferCompany(input)
+      });
+      addEvent("Autopilot", input);
+      return data;
+    }
+
+    async function runAutonomous(){
+      const task = currentCommand();
+      const data = await call("/v1/autonomous/execute", "POST", {
+        task,
+        company: inferCompany(task)
+      });
+      addEvent("Autonomous", task);
+      return data;
+    }
+
+    async function quickWorkflowRealWork(){
+      preset("expandir Real Work en Paraguay");
+      await runWorkflow();
+    }
+
+    async function quickWorkflowManglar(){
+      preset("generar pipeline inversores Manglar");
+      await runWorkflow();
+    }
+
+    async function quickRevenue(){
+      const data = await call("/v1/revenue/analyze", "POST", { company:"real-work" });
+      addEvent("Revenue", data.recommended_focus || "");
+      return data;
+    }
+
+    async function quickNextBest(){
+      const data = await call("/v1/next-best-action", "POST", {
+        company: "real-work",
+        objective: "expandir Real Work en Paraguay"
+      });
+      addEvent("Next Best Action", data.next_best_action || "");
+      return data;
+    }
+
+    async function saveMemory(){
+      const text = document.getElementById("memoryText").value.trim();
+      const data = await call("/v1/memory/save", "POST", {
+        text,
+        company: inferCompany(text),
+        kind: "manual"
+      });
+      addEvent("Memory Saved", text);
+      return data;
+    }
+
+    async function listMemory(){
+      const data = await call("/v1/memory/list");
+      addEvent("Memory List", `${data.count || 0} registros`);
+      return data;
+    }
+
+    async function searchMemory(){
+      const query = document.getElementById("memoryQuery").value.trim();
+      const data = await call("/v1/memory/search", "POST", { query });
+      addEvent("Memory Search", query);
+      return data;
+    }
+
+    async function memoryStatus(){
+      const data = await call("/v1/memory/status");
+      addEvent("Memory Status", data.project_brain || "active");
+      return data;
+    }
+
+    async function createProject(){
+      const name = document.getElementById("projectName").value.trim();
+      const company = document.getElementById("projectCompany").value.trim();
+      const type = document.getElementById("projectType").value.trim();
+      const data = await call("/v1/projects/create", "POST", { name, company, type });
+      addEvent("Project Created", name);
+      return data;
+    }
+
+    async function listProjects(){
+      const data = await call("/v1/projects");
+      addEvent("Projects", `${(data.projects || []).length} proyectos`);
+      return data;
+    }
+
+    async function listFiles(){
+      const data = await call("/v1/files/list");
+      addEvent("Files", `${(data.files || []).length} archivos`);
+      return data;
+    }
+
+    function startVoice(){
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SpeechRecognition){
+        document.getElementById("voiceOutput").textContent = "Reconocimiento de voz no disponible en este navegador.";
+        addEvent("Voice", "SpeechRecognition no disponible");
         return;
       }
 
-      if (!state.recognition) {
-        state.recognition = new Recognition();
-        state.recognition.lang = "es-AR";
-        state.recognition.continuous = false;
-        state.recognition.interimResults = false;
-
-        state.recognition.onstart = () => {
-          state.recognitionActive = true;
-          els.micBtn.textContent = "⏹️";
-          logConsole("voice", "Dictado iniciado", true);
-        };
-
-        state.recognition.onend = () => {
-          state.recognitionActive = false;
-          els.micBtn.textContent = "🎙️";
-        };
-
-        state.recognition.onresult = (event) => {
-          const transcript = [...event.results].map(r => r[0].transcript).join(" ");
-          els.chatInput.value = (els.chatInput.value ? els.chatInput.value + " " : "") + transcript;
-        };
-
-        state.recognition.onerror = () => {
-          state.recognitionActive = false;
-          els.micBtn.textContent = "🎙️";
-          logConsole("voice", "Error de dictado", false);
-        };
+      if(recognition && listening){
+        recognition.stop();
+        listening = false;
+        return;
       }
 
-      if (state.recognitionActive) {
-        state.recognition.stop();
-      } else {
-        state.recognition.start();
+      recognition = new SpeechRecognition();
+      recognition.lang = "es-AR";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        listening = true;
+        document.getElementById("voiceOutput").textContent = "Escuchando...";
+        addEvent("Voice", "Micrófono activo");
+      };
+
+      recognition.onresult = async (event) => {
+        const transcript = event.results[0][0].transcript || "";
+        document.getElementById("voiceOutput").textContent = `Comando detectado: ${transcript}`;
+        document.getElementById("commandInput").value = transcript;
+        addEvent("Voice Command", transcript);
+        await runChat();
+      };
+
+      recognition.onerror = (event) => {
+        document.getElementById("voiceOutput").textContent = `Error de voz: ${event.error}`;
+        addEvent("Voice Error", event.error || "unknown");
+      };
+
+      recognition.onend = () => {
+        listening = false;
+      };
+
+      recognition.start();
+    }
+
+    async function refreshStatusPanels(){
+      await health();
+      if(OWNER_TOKEN){
+        await Promise.allSettled([
+          memoryStatus(),
+          voiceStatus(),
+          agentSwarmStatus(),
+          worldModelStatus(),
+          scannerStatus()
+        ]);
       }
     }
 
-    function exportFilesList() {
-      const payload = state.files.map(f => ({
-        name: f.name,
-        size: f.size,
-        type: f.type
-      }));
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "consia-files.json";
-      a.click();
-      URL.revokeObjectURL(url);
-      logConsole("files", "Lista exportada", true);
+    function setOwnerUI(){
+      document.getElementById("ownerSessionInfo").textContent = OWNER_TOKEN ? "Sesión owner detectada" : "Sin sesión owner";
+      document.getElementById("miniOwner").textContent = OWNER_TOKEN ? "Owner online" : "Owner offline";
     }
 
-    function sendProductsToChat() {
-      const summary = (state.products.length ? state.products : [{name:"CONSIA AI API", price_usd:10}])
-        .map(p => `${p.name} - USD ${p.price_usd ?? "--"}`)
-        .join("\n");
-      switchView("chat");
-      els.chatInput.value = `Tomá estos productos y armá una propuesta comercial:\n${summary}`;
+    async function boot(){
+      setOwnerUI();
+      await health();
+      if(OWNER_TOKEN){
+        await ownerConsole();
+      }
+      addEvent("Frontend v30", "Interfaz real cargada");
     }
 
-    function initEvents() {
-      els.navBtns.forEach(btn => {
-        btn.addEventListener("click", () => switchView(btn.dataset.view));
-      });
-
-      els.sendBtn.addEventListener("click", sendChat);
-      els.chatInput.addEventListener("keydown", (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === "Enter") sendChat();
-      });
-
-      els.micBtn.addEventListener("click", startVoiceInput);
-
-      document.querySelectorAll(".pill-btn[data-prompt]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          els.chatInput.value = btn.dataset.prompt || "";
-          els.chatInput.focus();
-        });
-      });
-
-      document.querySelectorAll(".swarm-action").forEach(btn => {
-        btn.addEventListener("click", () => {
-          switchView("chat");
-          els.chatInput.value = btn.dataset.task || "";
-        });
-      });
-
-      document.querySelectorAll(".auto-action").forEach(btn => {
-        btn.addEventListener("click", () => {
-          switchView("chat");
-          els.chatInput.value = btn.dataset.task || "";
-        });
-      });
-
-      els.clearChatBtn.addEventListener("click", () => {
-        state.chat = [];
-        els.messages.innerHTML = "";
-        addMessage("bot", "CONSIA lista para recibir órdenes.");
-      });
-
-      els.chatFileInput.addEventListener("change", (e) => handleFiles(e.target.files || []));
-      els.filesInput.addEventListener("change", (e) => handleFiles(e.target.files || []));
-
-      els.filesAnalyzeBtn.addEventListener("click", () => {
-        switchView("chat");
-        els.chatInput.value = state.files.length
-          ? `Analizá estos archivos cargados y proponé una estructura de trabajo:\n${state.files.map(f => "- " + f.name).join("\n")}`
-          : "No hay archivos cargados todavía.";
-      });
-
-      els.filesExportBtn.addEventListener("click", exportFilesList);
-
-      els.saveMemoryBtn.addEventListener("click", saveLocalMemory);
-      els.clearMemoryBtn.addEventListener("click", () => {
-        els.memoryNote.value = "";
-        localStorage.removeItem("consia_memory_note");
-        logConsole("memory", "Nota local borrada", true);
-      });
-
-      els.reloadMarketBtn.addEventListener("click", loadMarket);
-      els.sendMarketToChatBtn.addEventListener("click", sendProductsToChat);
-
-      els.ownerRefreshBtn.addEventListener("click", bootstrap);
-      els.voiceToggleBtn.addEventListener("click", () => {
-        state.voiceEnabled = !state.voiceEnabled;
-        els.voiceToggleBtn.textContent = state.voiceEnabled ? "Voz ON" : "Voz";
-        logConsole("voice", state.voiceEnabled ? "Entrada por voz habilitada" : "Entrada por voz deshabilitada", true);
-      });
-
-      els.speakToggleBtn.addEventListener("click", () => {
-        state.speakEnabled = !state.speakEnabled;
-        els.speakToggleBtn.textContent = state.speakEnabled ? "Hablar ON" : "Hablar";
-        logConsole("speech", state.speakEnabled ? "Síntesis de voz habilitada" : "Síntesis de voz deshabilitada", true);
-      });
-
-      els.heroChatBtn.addEventListener("click", () => switchView("chat"));
-      els.heroAgentsBtn.addEventListener("click", () => switchView("agents"));
-      els.heroFilesBtn.addEventListener("click", () => switchView("files"));
-    }
-
-    async function bootstrap() {
-      logConsole("system", "Inicializando CONSIA", true);
-      await Promise.all([
-        checkHealth(),
-        loadMemory(),
-        loadVoice(),
-        loadFilesStatus(),
-        loadAgents(),
-        loadMarket()
-      ]);
-      renderFiles();
-      loadLocalMemory();
-      els.autopilotSummary.textContent = "Backend sincronizado. Listo para conversar, ejecutar y ordenar módulos.";
-    }
-
-    addMessage("bot", "CONSIA lista para recibir órdenes.");
-    initEvents();
-    bootstrap();
+    boot();
   </script>
 </body>
 </html>
