@@ -4,7 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
-<title>CONSIA CONTROL CENTER V3</title>
+<title>CONSIA OS</title>
 
 <style>
 
@@ -18,7 +18,7 @@ overflow:hidden;
 
 header{
 background:#050a14;
-padding:16px;
+padding:15px;
 border-bottom:1px solid #00eaff33;
 }
 
@@ -71,17 +71,16 @@ z-index:10;
 #avatar{
 
 position:absolute;
-bottom:30px;
-right:30px;
-width:180px;
-height:180px;
+bottom:25px;
+right:25px;
+width:200px;
+height:200px;
 border-radius:50%;
 border:2px solid #00eaff;
 background:radial-gradient(#00eaff55,#02040a);
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:14px;
 text-align:center;
 
 }
@@ -102,7 +101,7 @@ left:0;
 
 <header>
 
-CONSIA CONTROL CENTER V3
+CONSIA OS INTERFACE
 
 </header>
 
@@ -136,7 +135,7 @@ CONSIA READY
 
 <div id="avatar">
 
-CONSIA<br>Avatar
+CONSIA<br>AI GUIDE
 
 </div>
 
@@ -148,18 +147,18 @@ CONSIA<br>Avatar
 
 const API="https://api.consia.world"
 
-function show(data){
+function show(d){
 
 document.getElementById("panel").innerText=
-
-JSON.stringify(data,null,2)
+JSON.stringify(d,null,2)
 
 }
+
+/* API */
 
 async function health(){
 
 const r=await fetch(API+"/v1/health")
-
 show(await r.json())
 
 }
@@ -167,7 +166,6 @@ show(await r.json())
 async function memory(){
 
 const r=await fetch(API+"/v1/memory/status")
-
 show(await r.json())
 
 }
@@ -175,7 +173,6 @@ show(await r.json())
 async function projects(){
 
 const r=await fetch(API+"/v1/projects/status")
-
 show(await r.json())
 
 }
@@ -183,7 +180,6 @@ show(await r.json())
 async function create(){
 
 const r=await fetch(API+"/v1/project/create")
-
 show(await r.json())
 
 }
@@ -191,7 +187,6 @@ show(await r.json())
 async function autopilot(){
 
 const r=await fetch(API+"/v1/autopilot/start")
-
 show(await r.json())
 
 speak("Autopilot activated")
@@ -201,18 +196,11 @@ speak("Autopilot activated")
 async function autopilotStatus(){
 
 const r=await fetch(API+"/v1/autopilot/status")
-
 show(await r.json())
 
 }
 
-function speak(text){
-
-const s=new SpeechSynthesisUtterance(text)
-
-speechSynthesis.speak(s)
-
-}
+/* VOICE */
 
 function voice(){
 
@@ -232,6 +220,16 @@ rec.start()
 
 }
 
+/* SPEECH */
+
+function speak(text){
+
+const s=new SpeechSynthesisUtterance(text)
+
+speechSynthesis.speak(s)
+
+}
+
 /* THREE JS */
 
 const scene=new THREE.Scene()
@@ -239,11 +237,8 @@ const scene=new THREE.Scene()
 const camera=new THREE.PerspectiveCamera(
 
 75,
-
 window.innerWidth/window.innerHeight,
-
 0.1,
-
 1000
 
 )
@@ -254,28 +249,28 @@ renderer.setSize(window.innerWidth,window.innerHeight)
 
 document.body.appendChild(renderer.domElement)
 
-camera.position.z=18
+camera.position.z=20
 
 /* PLANET */
 
-const geometry=new THREE.SphereGeometry(6,64,64)
+const geo=new THREE.SphereGeometry(7,64,64)
 
-const material=new THREE.MeshBasicMaterial({
+const mat=new THREE.MeshBasicMaterial({
 
 color:0x00eaff,
 wireframe:true
 
 })
 
-const planet=new THREE.Mesh(geometry,material)
+const planet=new THREE.Mesh(geo,mat)
 
 scene.add(planet)
 
-/* AGENT NODES */
+/* AGENTS */
 
 const agents=[]
 
-for(let i=0;i<30;i++){
+for(let i=0;i<60;i++){
 
 const g=new THREE.SphereGeometry(.15,8,8)
 
@@ -283,13 +278,45 @@ const m=new THREE.MeshBasicMaterial({color:0xffffff})
 
 const node=new THREE.Mesh(g,m)
 
-node.position.x=(Math.random()-0.5)*12
-node.position.y=(Math.random()-0.5)*12
-node.position.z=(Math.random()-0.5)*12
+node.position.x=(Math.random()-0.5)*16
+node.position.y=(Math.random()-0.5)*16
+node.position.z=(Math.random()-0.5)*16
 
 scene.add(node)
 
 agents.push(node)
+
+}
+
+/* CONNECTIONS */
+
+const lines=[]
+
+for(let i=0;i<agents.length;i++){
+
+for(let j=i+1;j<agents.length;j++){
+
+if(Math.random()<0.03){
+
+const material=new THREE.LineBasicMaterial({color:0x00eaff})
+
+const points=[]
+
+points.push(agents[i].position)
+
+points.push(agents[j].position)
+
+const geometry=new THREE.BufferGeometry().setFromPoints(points)
+
+const line=new THREE.Line(geometry,material)
+
+scene.add(line)
+
+lines.push(line)
+
+}
+
+}
 
 }
 
@@ -303,7 +330,7 @@ planet.rotation.y+=0.002
 
 agents.forEach(a=>{
 
-a.rotation.y+=0.02
+a.rotation.y+=0.01
 
 })
 
