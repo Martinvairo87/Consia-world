@@ -1,894 +1,176 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONSIA Avatar OS</title>
-  <style>
-    :root{
-      --bg:#061122;
-      --bg2:#07192f;
-      --card:rgba(10,26,48,.55);
-      --card2:rgba(14,37,69,.72);
-      --line:rgba(114,189,255,.22);
-      --text:#eaf7ff;
-      --muted:#90b7d6;
-      --cyan:#4fd4ff;
-      --blue:#3f8cff;
-      --glow:0 0 20px rgba(79,212,255,.35),0 0 60px rgba(63,140,255,.18);
-      --ok:#2de8a2;
-      --warn:#ffd56a;
-      --danger:#ff7a9a;
-    }
 
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at top,#0a2446 0,#05101e 45%,#02070e 100%);color:var(--text);overflow:hidden}
-    button,input,textarea{font:inherit}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-    .bg-grid,.bg-noise,.bg-aurora,.bg-stars{position:fixed;inset:0;pointer-events:none}
-    .bg-grid{
-      background:
-        linear-gradient(rgba(92,161,255,.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(92,161,255,.08) 1px, transparent 1px);
-      background-size: 32px 32px;
-      mask-image: radial-gradient(circle at center, black 35%, transparent 80%);
-      opacity:.35;
-      animation:gridShift 18s linear infinite;
-    }
-    .bg-noise{opacity:.06;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity="1"/></svg>')}
-    .bg-aurora{
-      background:
-      radial-gradient(40vw 40vw at 20% 20%, rgba(47,128,255,.22), transparent 60%),
-      radial-gradient(35vw 35vw at 80% 18%, rgba(79,212,255,.18), transparent 65%),
-      radial-gradient(45vw 45vw at 50% 80%, rgba(33,105,255,.13), transparent 68%);
-      filter: blur(24px);
-      animation: aurora 12s ease-in-out infinite alternate;
-    }
-    .bg-stars::before,.bg-stars::after{
-      content:"";position:absolute;inset:-20%;
-      background:
-      radial-gradient(circle, rgba(255,255,255,.95) 0 1px, transparent 1.4px) 0 0/120px 120px,
-      radial-gradient(circle, rgba(79,212,255,.75) 0 1px, transparent 1.6px) 40px 60px/170px 170px,
-      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, transparent 1.4px) 20px 10px/210px 210px;
-      opacity:.15;
-      animation: drift 40s linear infinite;
-    }
-    .bg-stars::after{animation-duration:60s;opacity:.09;transform:scale(1.15)}
+<title>CONSIA AVATAR OS</title>
 
-    @keyframes gridShift {from{transform:translateY(0)}to{transform:translateY(32px)}}
-    @keyframes aurora {0%{transform:translate3d(-2%,0,0) scale(1)}100%{transform:translate3d(2%,-2%,0) scale(1.08)}}
-    @keyframes drift {from{transform:translate3d(0,0,0)}to{transform:translate3d(-4%,4%,0)}}
-    @keyframes floaty {0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-    @keyframes breathe {0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-    @keyframes blink {0%,45%,100%{transform:scaleY(1)}48%,52%{transform:scaleY(.08)}}
-    @keyframes pulseRing {0%{transform:translate(-50%,-50%) scale(.86);opacity:.85}100%{transform:translate(-50%,-50%) scale(1.18);opacity:0}}
-    @keyframes mouthTalk {0%,100%{height:10px;border-radius:0 0 22px 22px}50%{height:24px;border-radius:0 0 38px 38px}}
-    @keyframes barDance {0%,100%{height:18%}50%{height:95%}}
-    @keyframes sweep {0%{transform:translateX(-140%)}100%{transform:translateX(240%)}}
+<style>
 
-    .app{
-      position:relative;z-index:1;height:100%;display:grid;
-      grid-template-columns: 320px 1fr 360px;
-      grid-template-rows: 84px 1fr 112px;
-      grid-template-areas:
-        "top top top"
-        "left center right"
-        "bottom bottom bottom";
-      gap:18px;padding:18px;
-    }
+body{
+margin:0;
+background:#050f1c;
+font-family:system-ui;
+color:white;
+text-align:center;
+}
 
-    .panel{
-      background:linear-gradient(180deg,rgba(10,24,43,.72),rgba(7,18,34,.62));
-      border:1px solid var(--line);
-      border-radius:24px;
-      box-shadow:0 18px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05), var(--glow);
-      backdrop-filter: blur(18px) saturate(1.25);
-      overflow:hidden;
-      position:relative;
-    }
-    .panel::before{
-      content:"";position:absolute;inset:0;
-      background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.05) 30%,transparent 55%);
-      transform:translateX(-140%);
-      pointer-events:none;
-    }
-    .panel.gloss::before{animation:sweep 8s linear infinite}
+header{
+padding:20px;
+}
 
-    .topbar{grid-area:top;display:grid;grid-template-columns: 1.2fr 1fr auto;align-items:center;padding:18px 22px}
-    .brand{display:flex;align-items:center;gap:14px;min-width:0}
-    .brand-badge{width:42px;height:42px;border-radius:14px;background:radial-gradient(circle at 30% 30%, #74f1ff 0, #3f8cff 46%, #08182c 100%);box-shadow:0 0 20px rgba(79,212,255,.55)}
-    .brand h1{font-size:20px;line-height:1.1;margin:0;letter-spacing:.08em}
-    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+canvas{
+width:100%;
+height:70vh;
+}
 
-    .status-strip{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-    .status-pill{
-      display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#dff5ff;font-size:12px
-    }
-    .dot{width:8px;height:8px;border-radius:999px;background:var(--warn);box-shadow:0 0 10px currentColor}
-    .dot.ok{background:var(--ok)} .dot.err{background:var(--danger)}
+button{
+padding:12px 20px;
+margin:6px;
+border-radius:12px;
+border:none;
+background:#0ea5e9;
+color:white;
+font-weight:600;
+}
 
-    .top-actions{display:flex;gap:10px;align-items:center}
-    .ghost-btn,.solid-btn,.circle-btn,.module-btn{
-      cursor:pointer;border:none;color:var(--text);transition:.24s ease;user-select:none
-    }
-    .ghost-btn,.solid-btn{
-      border-radius:16px;padding:12px 16px;font-weight:700;letter-spacing:.02em
-    }
-    .ghost-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-    .solid-btn{background:linear-gradient(135deg, rgba(79,212,255,.22), rgba(63,140,255,.22));border:1px solid rgba(79,212,255,.35);box-shadow:var(--glow)}
-    .ghost-btn:hover,.solid-btn:hover,.circle-btn:hover,.module-btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.avatar-selector{
+margin-top:10px;
+}
 
-    .left{grid-area:left;padding:18px;display:flex;flex-direction:column;gap:14px}
-    .panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
-    .panel-title h2{margin:0;font-size:15px;letter-spacing:.08em}
-    .panel-title span{font-size:11px;color:var(--muted)}
+</style>
 
-    .module-grid{display:flex;flex-direction:column;gap:12px}
-    .module-btn{
-      width:100%;text-align:left;padding:16px 14px;border-radius:18px;background:rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.06);position:relative;overflow:hidden
-    }
-    .module-btn strong{display:block;font-size:13px;letter-spacing:.04em;margin-bottom:4px}
-    .module-btn small{display:block;color:var(--muted);line-height:1.35}
-    .module-btn.active{border-color:rgba(79,212,255,.55);background:linear-gradient(135deg, rgba(79,212,255,.12), rgba(63,140,255,.08));box-shadow:var(--glow)}
-    .module-btn.active::after{
-      content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(164,229,255,.15);pointer-events:none
-    }
-
-    .mini-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:auto}
-    .stat-card{padding:14px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
-    .stat-card b{display:block;font-size:24px;margin-bottom:6px}
-    .stat-card span{font-size:12px;color:var(--muted)}
-
-    .center{grid-area:center;position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
-    .avatar-stage{position:relative;width:min(100%,920px);height:100%;display:flex;align-items:center;justify-content:center}
-    .stage-floor{
-      position:absolute;bottom:5%;left:50%;transform:translateX(-50%);
-      width:min(88%,760px);height:150px;border-radius:50%;
-      background:radial-gradient(circle, rgba(79,212,255,.22) 0, rgba(63,140,255,.09) 38%, rgba(10,18,34,.02) 72%, transparent 100%);
-      filter:blur(8px)
-    }
-    .avatar-shell{
-      position:relative;width:min(76vw,620px);aspect-ratio: 1 / 1.18;display:flex;align-items:center;justify-content:center;
-      animation:floaty 6.5s ease-in-out infinite
-    }
-    .halo,.halo2,.ring,.ring2,.scan,.scan2,.ringPulse{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none}
-    .halo{width:78%;aspect-ratio:1;background:radial-gradient(circle, rgba(79,212,255,.22), rgba(63,140,255,.08) 45%, transparent 72%);filter:blur(18px)}
-    .halo2{width:58%;aspect-ratio:1;background:radial-gradient(circle, rgba(255,255,255,.12), rgba(79,212,255,.12) 28%, transparent 70%);filter:blur(12px)}
-    .ring{width:62%;aspect-ratio:1;border:1px solid rgba(136,223,255,.42);box-shadow:0 0 22px rgba(79,212,255,.22)}
-    .ring2{width:86%;aspect-ratio:1;border:1px solid rgba(63,140,255,.18)}
-    .scan{width:85%;height:2px;background:linear-gradient(90deg, transparent, rgba(79,212,255,.9), transparent);filter:blur(1px);animation:scanLine 6s linear infinite}
-    .scan2{width:58%;height:2px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);filter:blur(.5px);animation:scanLine 8s linear infinite reverse}
-    .ringPulse{width:50%;aspect-ratio:1;border:1px solid rgba(79,212,255,.55);opacity:0}
-    .ringPulse.on{animation:pulseRing 1.15s ease-out infinite}
-    @keyframes scanLine{0%{transform:translate(-50%,-145px)}50%{transform:translate(-50%,150px)}100%{transform:translate(-50%,-145px)}}
-
-    .avatar-body{position:relative;width:52%;height:78%;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;animation:breathe 4.5s ease-in-out infinite}
-    .torso{
-      position:absolute;bottom:0;width:64%;height:44%;
-      background:linear-gradient(180deg, rgba(93,220,255,.2), rgba(39,95,187,.14) 42%, rgba(9,20,37,.28) 100%);
-      border:1px solid rgba(136,223,255,.16);border-radius:42% 42% 20% 20% / 18% 18% 30% 30%;
-      box-shadow: inset 0 0 28px rgba(79,212,255,.12), 0 0 30px rgba(79,212,255,.09)
-    }
-    .neck{position:absolute;bottom:36%;width:15%;height:9%;border-radius:40px;background:linear-gradient(180deg, rgba(163,233,255,.26), rgba(45,102,200,.18));border:1px solid rgba(170,234,255,.14)}
-    .head{
-      position:absolute;top:7%;width:42%;aspect-ratio: .86 / 1;border-radius:46% 46% 44% 44% / 40% 40% 50% 50%;
-      background:radial-gradient(circle at 50% 25%, rgba(243,252,255,.78), rgba(108,219,255,.42) 22%, rgba(48,108,210,.2) 48%, rgba(5,14,28,.16) 76%);
-      border:1px solid rgba(176,237,255,.22);box-shadow:inset 0 0 45px rgba(202,246,255,.08),0 0 40px rgba(79,212,255,.16);
-      overflow:hidden;transform:translateZ(0)
-    }
-    .head::before{
-      content:"";position:absolute;inset:8% 14% auto 14%;height:45%;border-radius:50%;
-      background:radial-gradient(circle at 50% 25%, rgba(255,255,255,.16), transparent 70%);filter:blur(10px)
-    }
-    .face-grid{position:absolute;inset:0;background:
-      linear-gradient(rgba(79,212,255,.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(79,212,255,.08) 1px, transparent 1px);
-      background-size:12px 12px;opacity:.22;mask-image:radial-gradient(circle at center, black 48%, transparent 86%)}
-    .brow-line{position:absolute;top:35%;left:24%;width:52%;height:1px;background:linear-gradient(90deg, transparent, rgba(190,241,255,.65), transparent)}
-    .eye-zone{position:absolute;top:38%;left:50%;width:58%;height:18%;transform:translateX(-50%);display:flex;justify-content:space-between;align-items:center}
-    .eye{position:relative;width:34%;height:72%;display:flex;align-items:center;justify-content:center;transform-origin:center;animation:blink 7s ease-in-out infinite}
-    .eye::before{content:"";position:absolute;inset:0;border-radius:999px;background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(114,214,255,.15));filter:blur(1.5px);opacity:.85}
-    .iris{position:relative;width:48%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 40%, #d7fbff 0, #79e8ff 22%, #53a7ff 55%, #082749 90%);box-shadow:0 0 14px rgba(79,212,255,.45)}
-    .iris::before{content:"";position:absolute;inset:28%;border-radius:50%;background:#031120;box-shadow:0 0 6px rgba(0,0,0,.6)}
-    .iris::after{content:"";position:absolute;left:24%;top:20%;width:18%;height:18%;border-radius:50%;background:rgba(255,255,255,.9);filter:blur(.4px)}
-    .nose{position:absolute;top:48%;left:50%;width:8%;height:13%;transform:translateX(-50%);border-radius:40px;background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(79,212,255,.08));filter:blur(1.2px);opacity:.8}
-    .mouth{position:absolute;top:65%;left:50%;width:24%;height:10px;transform:translateX(-50%);border:1px solid rgba(195,247,255,.24);border-top:none;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(79,212,255,.18));box-shadow:0 0 15px rgba(79,212,255,.18)}
-    .mouth.speaking{animation:mouthTalk .28s ease-in-out infinite}
-    .cheek-left,.cheek-right{position:absolute;top:54%;width:13%;height:9%;border-radius:50%;background:radial-gradient(circle, rgba(79,212,255,.18), transparent 72%);filter:blur(6px)}
-    .cheek-left{left:16%}.cheek-right{right:16%}
-    .chin-line{position:absolute;bottom:16%;left:50%;transform:translateX(-50%);width:28%;height:1px;background:linear-gradient(90deg, transparent, rgba(171,235,255,.45), transparent)}
-
-    .voice-bars{position:absolute;bottom:15%;left:50%;transform:translateX(-50%);display:flex;gap:8px;height:80px;align-items:flex-end}
-    .voice-bars span{width:6px;border-radius:999px;background:linear-gradient(180deg,#cfffff,#48b7ff);box-shadow:0 0 12px rgba(79,212,255,.45);height:18%}
-    .voice-bars.on span{animation:barDance .6s ease-in-out infinite}
-    .voice-bars.on span:nth-child(2){animation-delay:.08s}
-    .voice-bars.on span:nth-child(3){animation-delay:.14s}
-    .voice-bars.on span:nth-child(4){animation-delay:.22s}
-    .voice-bars.on span:nth-child(5){animation-delay:.31s}
-
-    .tour-indicator{
-      position:absolute;right:10%;top:14%;width:190px;padding:12px 14px;border-radius:18px;background:rgba(6,18,34,.7);
-      border:1px solid rgba(79,212,255,.24);backdrop-filter: blur(10px);box-shadow:var(--glow);opacity:0;transform:translateY(10px);transition:.28s ease
-    }
-    .tour-indicator.show{opacity:1;transform:translateY(0)}
-    .tour-indicator strong{display:block;font-size:12px;letter-spacing:.08em;margin-bottom:6px}
-    .tour-indicator p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
-
-    .center-controls{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-    .circle-btn{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;place-items:center;font-size:20px}
-    .circle-btn.active{background:linear-gradient(135deg, rgba(79,212,255,.2), rgba(63,140,255,.24));border-color:rgba(79,212,255,.4);box-shadow:var(--glow)}
-
-    .right{grid-area:right;padding:18px;display:flex;flex-direction:column;gap:14px;min-height:0}
-    .talk-card{padding:16px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
-    .talk-card strong{display:block;font-size:12px;letter-spacing:.08em;margin-bottom:8px}
-    .talk-card p{margin:0;color:var(--text);line-height:1.55;font-size:14px}
-    .muted{color:var(--muted)!important}
-    .log{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto;padding-right:4px}
-    .log::-webkit-scrollbar{width:8px}.log::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:999px}
-    .msg{padding:14px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025)}
-    .msg.user{border-color:rgba(79,212,255,.2);background:linear-gradient(135deg, rgba(79,212,255,.1), rgba(63,140,255,.07))}
-    .msg .who{font-size:11px;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-    .msg .txt{line-height:1.5;font-size:14px;white-space:pre-wrap}
-
-    .bottom{grid-area:bottom;display:grid;grid-template-columns: 1fr auto;gap:14px;align-items:center;padding:14px 16px}
-    .composer{display:flex;align-items:center;gap:12px;height:100%;padding:10px 12px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
-    .composer textarea{
-      flex:1;height:68px;background:transparent;border:none;outline:none;resize:none;color:var(--text);font-size:15px;line-height:1.45
-    }
-    .composer textarea::placeholder{color:#7aa6ca}
-    .send-wrap{display:flex;gap:10px}
-    .hint{font-size:11px;color:var(--muted);padding-left:10px}
-
-    .badge-line{display:flex;gap:8px;flex-wrap:wrap}
-    .mini-badge{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);font-size:11px;color:var(--muted)}
-
-    .toast{
-      position:fixed;left:50%;top:24px;transform:translate(-50%,-12px);opacity:0;pointer-events:none;z-index:50;
-      padding:12px 16px;border-radius:14px;background:rgba(5,20,34,.84);border:1px solid rgba(79,212,255,.25);box-shadow:var(--glow);transition:.25s ease;color:var(--text);font-size:13px
-    }
-    .toast.show{opacity:1;transform:translate(-50%,0)}
-
-    @media (max-width: 1280px){
-      .app{
-        grid-template-columns: 280px 1fr 320px;
-        gap:14px;padding:14px;
-      }
-    }
-    @media (max-width: 1080px){
-      html,body{overflow:auto}
-      .app{
-        height:auto;min-height:100%;
-        grid-template-columns:1fr;
-        grid-template-rows:auto auto auto auto auto;
-        grid-template-areas:"top" "center" "left" "right" "bottom";
-      }
-      .left,.right,.center,.topbar,.bottom{min-height:unset}
-      .avatar-stage{min-height:640px}
-      .tour-indicator{right:18px;top:18px}
-    }
-  </style>
 </head>
+
 <body>
-  <div class="bg-aurora"></div>
-  <div class="bg-stars"></div>
-  <div class="bg-grid"></div>
-  <div class="bg-noise"></div>
 
-  <div class="toast" id="toast"></div>
+<header>
 
-  <div class="app">
-    <section class="panel gloss topbar">
-      <div class="brand">
-        <div class="brand-badge"></div>
-        <div>
-          <h1>CONSIA AVATAR OS</h1>
-          <p>Avatar interactivo + voz + guía dinámica + acceso al núcleo operativo</p>
-        </div>
-      </div>
-      <div class="status-strip">
-        <div class="status-pill"><span class="dot" id="dotHealth"></span> <span id="healthText">Health: verificando...</span></div>
-        <div class="status-pill"><span class="dot" id="dotChat"></span> <span id="chatText">Chat: verificando...</span></div>
-        <div class="status-pill"><span class="dot" id="dotVoice"></span> <span id="voiceText">Voz: lista local</span></div>
-      </div>
-      <div class="top-actions">
-        <button class="ghost-btn" id="tourBtn">Play demo</button>
-        <button class="solid-btn" id="introBtn">Presentación</button>
-      </div>
-    </section>
+<h2>CONSIA AVATAR OS</h2>
 
-    <aside class="panel gloss left">
-      <div class="panel-title">
-        <h2>MÓDULOS CONSIA</h2>
-        <span>OS activo</span>
-      </div>
+<div class="avatar-selector">
 
-      <div class="module-grid" id="moduleGrid">
-        <button class="module-btn active" data-module="brain">
-          <strong>CONSIA BRAIN</strong>
-          <small>Ordena contexto, prioriza y decide la mejor ruta operativa.</small>
-        </button>
-        <button class="module-btn" data-module="memory">
-          <strong>GLOBAL MEMORY</strong>
-          <small>Conecta continuidad de Real Work, Manglar, VIP Work, Bambino y más.</small>
-        </button>
-        <button class="module-btn" data-module="agents">
-          <strong>AGENT SWARM</strong>
-          <small>Red de agentes para análisis, ejecución, investigación y automatización.</small>
-        </button>
-        <button class="module-btn" data-module="voice">
-          <strong>VOICE CONTROL</strong>
-          <small>Hablar, escuchar, responder y guiar con interacción natural.</small>
-        </button>
-        <button class="module-btn" data-module="realwork">
-          <strong>REAL WORK</strong>
-          <small>Operación multiempresa para inmobiliaria, coworking y desarrollos.</small>
-        </button>
-        <button class="module-btn" data-module="marketplace">
-          <strong>MARKETPLACE</strong>
-          <small>Catálogos, productos, monetización y conectores globales.</small>
-        </button>
-      </div>
+<button onclick="loadAvatar('consia')">CONSIA</button>
 
-      <div class="mini-stats">
-        <div class="stat-card">
-          <b id="msgCount">0</b>
-          <span>Interacciones</span>
-        </div>
-        <div class="stat-card">
-          <b id="tourCount">0</b>
-          <span>Demostraciones</span>
-        </div>
-        <div class="stat-card">
-          <b id="apiMode">LIVE</b>
-          <span>Modo backend</span>
-        </div>
-        <div class="stat-card">
-          <b id="voiceMode">ON</b>
-          <span>Entrada por voz</span>
-        </div>
-      </div>
-    </aside>
+<button onclick="loadAvatar('martin')">MARTIN</button>
 
-    <main class="center">
-      <div class="avatar-stage">
-        <div class="stage-floor"></div>
-        <div class="avatar-shell" id="avatarShell">
-          <div class="halo"></div>
-          <div class="halo2"></div>
-          <div class="ring"></div>
-          <div class="ring2"></div>
-          <div class="scan"></div>
-          <div class="scan2"></div>
-          <div class="ringPulse" id="ringPulse"></div>
+<button onclick="loadAvatar('future')">MARTIN FUTURE</button>
 
-          <div class="avatar-body" id="avatarBody">
-            <div class="torso"></div>
-            <div class="neck"></div>
-            <div class="head" id="head">
-              <div class="face-grid"></div>
-              <div class="brow-line"></div>
-              <div class="eye-zone">
-                <div class="eye"><div class="iris" id="irisLeft"></div></div>
-                <div class="eye"><div class="iris" id="irisRight"></div></div>
-              </div>
-              <div class="nose"></div>
-              <div class="cheek-left"></div>
-              <div class="cheek-right"></div>
-              <div class="mouth" id="mouth"></div>
-              <div class="chin-line"></div>
-            </div>
-          </div>
+</div>
 
-          <div class="voice-bars" id="voiceBars">
-            <span></span><span></span><span></span><span></span><span></span>
-          </div>
-        </div>
+</header>
 
-        <div class="tour-indicator" id="tourIndicator">
-          <strong id="tourTitle">LISTO</strong>
-          <p id="tourText">Activá Play demo o hablale directamente.</p>
-        </div>
+<canvas id="scene"></canvas>
 
-        <div class="center-controls">
-          <button class="circle-btn active" id="voiceBtn" title="Hablar">🎤</button>
-          <button class="circle-btn" id="speakBtn" title="Hablar respuesta">🔊</button>
-          <button class="circle-btn" id="muteBtn" title="Silenciar">🔇</button>
-          <button class="circle-btn" id="scanBtn" title="Escaneo">✦</button>
-        </div>
-      </div>
-    </main>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160/build/three.min.js"></script>
 
-    <aside class="panel gloss right">
-      <div class="panel-title">
-        <h2>CONSIA HUD</h2>
-        <span>tiempo real</span>
-      </div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160/examples/js/loaders/GLTFLoader.js"></script>
 
-      <div class="talk-card">
-        <strong>ESTADO OPERATIVO</strong>
-        <p id="hudState">Avatar listo para guiar, hablar y mostrar módulos de CONSIA.</p>
-      </div>
+<script>
 
-      <div class="talk-card">
-        <strong>SECTOR ACTIVO</strong>
-        <p id="hudModule">CONSIA BRAIN activo. Preparado para operar sobre Real Work, Manglar, VIP Work, Bambino y CONSIA CORE.</p>
-      </div>
+let scene=new THREE.Scene()
 
-      <div class="talk-card">
-        <strong>COMANDOS RÁPIDOS</strong>
-        <div class="badge-line">
-          <span class="mini-badge">Presentame CONSIA</span>
-          <span class="mini-badge">Mostrame Real Work</span>
-          <span class="mini-badge">Abrí Memory</span>
-          <span class="mini-badge">Activá agentes</span>
-          <span class="mini-badge">Explicame Manglar</span>
-        </div>
-      </div>
+let camera=new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000)
 
-      <div class="panel-title" style="margin-top:4px">
-        <h2>CONVERSACIÓN</h2>
-        <span id="conversationMeta">esperando</span>
-      </div>
+let renderer=new THREE.WebGLRenderer({canvas:document.getElementById("scene"),alpha:true})
 
-      <div class="log" id="log"></div>
-    </aside>
+renderer.setSize(window.innerWidth,window.innerHeight)
 
-    <section class="panel gloss bottom">
-      <div>
-        <div class="composer">
-          <button class="circle-btn active" id="composerVoiceBtn" title="Hablar">🎙️</button>
-          <textarea id="promptInput" placeholder="Decime qué querés que haga CONSIA Avatar OS. Ej: “Presentame CONSIA”, “Mostrame Real Work”, “Explicame Manglar”, “Activá agentes”."></textarea>
-        </div>
-        <div class="hint">Enter = enviar · Shift+Enter = salto de línea · Click en Play demo para recorrido guiado</div>
-      </div>
-      <div class="send-wrap">
-        <button class="ghost-btn" id="clearBtn">Limpiar</button>
-        <button class="solid-btn" id="sendBtn">Enviar</button>
-      </div>
-    </section>
-  </div>
+camera.position.z=3
 
-  <script>
-    const API_BASE = 'https://api.consia.world';
-    const CHAT_URL = API_BASE + '/v1/chat';
-    const HEALTH_URL = API_BASE + '/v1/health';
-    const AGENTS_URL = API_BASE + '/v1/agents';
+let light=new THREE.HemisphereLight(0xffffff,0x444444,1)
 
-    const state = {
-      messages: 0,
-      tours: 0,
-      mute: false,
-      currentModule: 'brain',
-      recognition: null,
-      listening: false,
-      speaking: false,
-      backendLive: true,
-      tourTimer: null,
-      demoActive: false,
-      currentUtterance: null,
-      voicesLoaded: false
-    };
+scene.add(light)
 
-    const el = (id) => document.getElementById(id);
-    const log = el('log');
-    const promptInput = el('promptInput');
-    const toast = el('toast');
-    const moduleButtons = [...document.querySelectorAll('.module-btn')];
+let loader=new THREE.GLTFLoader()
 
-    const modules = {
-      brain: {
-        title: 'CONSIA BRAIN',
-        hud: 'CONSIA BRAIN activo. Preparado para ordenar contexto, priorizar acciones y guiar la ejecución.'
-      },
-      memory: {
-        title: 'GLOBAL MEMORY',
-        hud: 'GLOBAL MEMORY activo. Mantiene continuidad operativa sobre proyectos, marcas y decisiones estratégicas.'
-      },
-      agents: {
-        title: 'AGENT SWARM',
-        hud: 'AGENT SWARM activo. Red de agentes para investigación, análisis, ejecución y automatización.'
-      },
-      voice: {
-        title: 'VOICE CONTROL',
-        hud: 'VOICE CONTROL activo. Entrada y salida por voz con interfaz guiada y conversación en tiempo real.'
-      },
-      realwork: {
-        title: 'REAL WORK',
-        hud: 'REAL WORK activo. Operación multiempresa sobre inmobiliaria, coworking, desarrollos y servicios.'
-      },
-      marketplace: {
-        title: 'MARKETPLACE',
-        hud: 'MARKETPLACE activo. Catálogo, monetización, productos y venta integrada dentro de CONSIA.'
-      }
-    };
+let avatar
 
-    const demoSteps = [
-      {
-        module: 'brain',
-        title: 'NÚCLEO CONSIA',
-        text: 'Soy CONSIA. Ordeno contexto, priorizo tareas y convierto ideas en ejecución directa.',
-        speak: 'Soy CONSIA. Ordeno contexto, priorizo tareas y convierto ideas en ejecución directa.'
-      },
-      {
-        module: 'memory',
-        title: 'MEMORIA GLOBAL',
-        text: 'Mantengo continuidad sobre Real Work, Manglar, VIP Work, Bambino y tu visión total de CONSIA.',
-        speak: 'Mantengo continuidad sobre Real Work, Manglar, VIP Work, Bambino y tu visión total de CONSIA.'
-      },
-      {
-        module: 'agents',
-        title: 'RED DE AGENTES',
-        text: 'Puedo coordinar análisis, investigación, ejecución y automatización desde una sola interfaz.',
-        speak: 'Puedo coordinar análisis, investigación, ejecución y automatización desde una sola interfaz.'
-      },
-      {
-        module: 'voice',
-        title: 'CONTROL POR VOZ',
-        text: 'Hablame. Puedo escuchar, responder, presentar módulos y guiarte visualmente en pantalla.',
-        speak: 'Hablame. Puedo escuchar, responder, presentar módulos y guiarte visualmente en pantalla.'
-      },
-      {
-        module: 'realwork',
-        title: 'MULTIEMPRESA',
-        text: 'Puedo trabajar sobre Real Work, Manglar, VIP Work, Bambino y futuras unidades conectadas.',
-        speak: 'Puedo trabajar sobre Real Work, Manglar, VIP Work, Bambino y futuras unidades conectadas.'
-      },
-      {
-        module: 'marketplace',
-        title: 'MONETIZACIÓN',
-        text: 'También puedo activar catálogo, productos, servicios y flujos de monetización dentro del sistema.',
-        speak: 'También puedo activar catálogo, productos, servicios y flujos de monetización dentro del sistema.'
-      }
-    ];
+function loadAvatar(type){
 
-    function showToast(text){
-      toast.textContent = text;
-      toast.classList.add('show');
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=>toast.classList.remove('show'),1800);
-    }
+if(avatar) scene.remove(avatar)
 
-    function setStatus(dotId, textId, ok, text){
-      const dot = el(dotId);
-      const label = el(textId);
-      dot.classList.remove('ok','err');
-      dot.classList.add(ok ? 'ok' : 'err');
-      label.textContent = text;
-    }
+let model
 
-    function addMessage(who, text){
-      state.messages += 1;
-      el('msgCount').textContent = String(state.messages);
-      el('conversationMeta').textContent = new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+if(type==="consia"){
 
-      const div = document.createElement('div');
-      div.className = 'msg ' + (who === 'Usuario' ? 'user' : 'assistant');
-      div.innerHTML = `<div class="who">${who}</div><div class="txt"></div>`;
-      div.querySelector('.txt').textContent = text;
-      log.prepend(div);
-    }
+model="/avatar/consia.glb"
 
-    function activateModule(key){
-      state.currentModule = key;
-      moduleButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.module === key));
-      el('hudModule').textContent = modules[key]?.hud || 'Módulo activo.';
-    }
+}
 
-    moduleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        activateModule(btn.dataset.module);
-        const title = modules[btn.dataset.module]?.title || 'Módulo';
-        el('hudState').textContent = `${title} seleccionado. Listo para mostrar o ejecutar.`;
-      });
-    });
+if(type==="martin"){
 
-    function setSpeaking(on){
-      state.speaking = on;
-      el('mouth').classList.toggle('speaking', on);
-      el('voiceBars').classList.toggle('on', on);
-      el('ringPulse').classList.toggle('on', on);
-      el('speakBtn').classList.toggle('active', on && !state.mute);
-    }
+model="/avatar/martin.glb"
 
-    function speak(text){
-      if (state.mute || !('speechSynthesis' in window) || !text) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      state.currentUtterance = utter;
-      const voices = window.speechSynthesis.getVoices?.() || [];
-      const preferred = voices.find(v => /es-AR|es_AR|es-ES|Spanish/i.test(v.lang + ' ' + v.name)) || voices[0];
-      if (preferred) utter.voice = preferred;
-      utter.lang = preferred?.lang || 'es-AR';
-      utter.rate = 1.02;
-      utter.pitch = 1.0;
-      utter.onstart = ()=> setSpeaking(true);
-      utter.onend = ()=> setSpeaking(false);
-      utter.onerror = ()=> setSpeaking(false);
-      window.speechSynthesis.speak(utter);
-    }
+}
 
-    function stopSpeak(){
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      setSpeaking(false);
-    }
+if(type==="future"){
 
-    function updateVoiceMode(){
-      el('voiceMode').textContent = state.listening ? 'LIVE' : 'ON';
-      setStatus('dotVoice','voiceText',true, state.listening ? 'Voz: escuchando...' : 'Voz: lista local');
-      el('voiceBtn').classList.toggle('active', state.listening);
-      el('composerVoiceBtn').classList.toggle('active', state.listening);
-    }
+model="/avatar/martin-futurista.glb"
 
-    function buildLocalAnswer(input){
-      const t = input.toLowerCase();
-      if (t.includes('presenta') || t.includes('consia')) {
-        activateModule('brain');
-        return 'CONSIA es tu núcleo operativo. Ordena contexto, activa módulos, conecta memoria, agentes, voz y operación multiempresa en una sola interfaz.';
-      }
-      if (t.includes('real work')) {
-        activateModule('realwork');
-        return 'Real Work queda dentro del sistema como operación inmobiliaria, coworking, profesionales, propiedades y seguimiento comercial conectado.';
-      }
-      if (t.includes('manglar')) {
-        activateModule('memory');
-        return 'Manglar queda dentro de la memoria y la operación estratégica para desarrollos, construcción, comercialización y expansión de marca.';
-      }
-      if (t.includes('agente')) {
-        activateModule('agents');
-        return 'La red de agentes permite repartir tareas entre investigación, análisis, ejecución y automatización según el objetivo.';
-      }
-      if (t.includes('market')) {
-        activateModule('marketplace');
-        return 'El Marketplace integra catálogo, productos, servicios, monetización y futuras integraciones comerciales globales.';
-      }
-      if (t.includes('voz') || t.includes('hablar')) {
-        activateModule('voice');
-        return 'El control por voz ya está activo localmente en esta interfaz. Podés hablarme desde el micrófono y te respondo con guía visual.';
-      }
-      return 'Listo. El Avatar OS está activo. Podés pedirme que te presente CONSIA, que te muestre módulos o que te explique una unidad específica.';
-    }
+}
 
-    async function askConsia(input){
-      el('hudState').textContent = 'Procesando consulta...';
-      addMessage('Usuario', input);
+loader.load(model,function(gltf){
 
-      let answer = '';
-      try {
-        const res = await fetch(CHAT_URL, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({
-            message: input,
-            source: 'avatar_os',
-            module: state.currentModule,
-            mode: 'guided_voice_interface'
-          })
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error('chat_http_' + res.status);
-        answer = data.answer || data.message || data.response || buildLocalAnswer(input);
-        state.backendLive = true;
-        el('apiMode').textContent = 'LIVE';
-        setStatus('dotChat','chatText',true,'Chat: conectado');
-      } catch (err) {
-        answer = buildLocalAnswer(input);
-        state.backendLive = false;
-        el('apiMode').textContent = 'LOCAL';
-        setStatus('dotChat','chatText',false,'Chat: fallback local');
-      }
+avatar=gltf.scene
 
-      addMessage('CONSIA', answer);
-      el('hudState').textContent = answer;
-      speak(answer);
-      return answer;
-    }
+scene.add(avatar)
 
-    async function checkApi(){
-      try {
-        const [healthRes, agentsRes] = await Promise.allSettled([
-          fetch(HEALTH_URL),
-          fetch(AGENTS_URL)
-        ]);
+})
 
-        if (healthRes.status === 'fulfilled' && healthRes.value.ok) {
-          const data = await healthRes.value.json().catch(() => ({}));
-          setStatus('dotHealth','healthText',true, `Health: ${data.status || data.message || 'online'}`);
-        } else {
-          setStatus('dotHealth','healthText',false,'Health: sin respuesta');
-        }
+}
 
-        if (agentsRes.status === 'fulfilled' && agentsRes.value.ok) {
-          const data = await agentsRes.value.json().catch(() => ({}));
-          const count = Array.isArray(data.agents) ? data.agents.length : (data.count || 'ok');
-          setStatus('dotChat','chatText',true, `Agentes: ${count}`);
-        } else {
-          setStatus('dotChat','chatText',false,'Agentes: sin respuesta');
-        }
-      } catch (_) {
-        setStatus('dotHealth','healthText',false,'Health: error');
-        setStatus('dotChat','chatText',false,'Chat: error');
-      }
-    }
+function animate(){
 
-    function animateEyes(clientX, clientY){
-      const head = el('head').getBoundingClientRect();
-      const cx = head.left + head.width/2;
-      const cy = head.top + head.height/2;
-      const dx = Math.max(-10, Math.min(10, (clientX - cx) / 26));
-      const dy = Math.max(-8, Math.min(8, (clientY - cy) / 32));
-      el('irisLeft').style.transform = `translate(${dx}px, ${dy}px)`;
-      el('irisRight').style.transform = `translate(${dx}px, ${dy}px)`;
-      el('avatarBody').style.transform = `rotateY(${dx * 0.35}deg) rotateX(${dy * -0.22}deg)`;
-    }
+requestAnimationFrame(animate)
 
-    document.addEventListener('mousemove', e => animateEyes(e.clientX, e.clientY));
-    document.addEventListener('touchmove', e => {
-      const t = e.touches[0];
-      if (t) animateEyes(t.clientX, t.clientY);
-    }, {passive:true});
+renderer.render(scene,camera)
 
-    function showTourCard(title, text, visible=true){
-      el('tourTitle').textContent = title;
-      el('tourText').textContent = text;
-      el('tourIndicator').classList.toggle('show', visible);
-    }
+}
 
-    async function runDemo(){
-      clearTimeout(state.tourTimer);
-      state.demoActive = true;
-      state.tours += 1;
-      el('tourCount').textContent = String(state.tours);
-      showTourCard('DEMO ACTIVA', 'Recorrido guiado de CONSIA Avatar OS.', true);
+animate()
 
-      for (let i = 0; i < demoSteps.length; i++) {
-        const step = demoSteps[i];
-        activateModule(step.module);
-        showTourCard(step.title, step.text, true);
-        el('hudState').textContent = step.text;
-        addMessage('CONSIA', step.text);
-        speak(step.speak);
-        await new Promise(r => setTimeout(r, 4200));
-      }
+</script>
 
-      state.demoActive = false;
-      showTourCard('LISTO', 'Demo finalizada. Ahora podés hablarme o escribir.', true);
-      state.tourTimer = setTimeout(() => showTourCard('LISTO', 'Activá Play demo o hablale directamente.', false), 3500);
-    }
+<script>
 
-    function initSpeechRecognition(){
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SR) {
-        showToast('Este navegador no tiene reconocimiento de voz nativo.');
-        return null;
-      }
-      const recognition = new SR();
-      recognition.lang = 'es-AR';
-      recognition.interimResults = true;
-      recognition.continuous = false;
-      recognition.maxAlternatives = 1;
+async function startCamera(){
 
-      recognition.onstart = () => {
-        state.listening = true;
-        updateVoiceMode();
-        el('hudState').textContent = 'Escuchando...';
-      };
+let stream=await navigator.mediaDevices.getUserMedia({video:true})
 
-      recognition.onresult = (event) => {
-        let finalText = '';
-        let partial = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0]?.transcript || '';
-          if (event.results[i].isFinal) finalText += transcript;
-          else partial += transcript;
-        }
-        promptInput.value = (finalText || partial || '').trim();
-      };
+}
 
-      recognition.onend = async () => {
-        state.listening = false;
-        updateVoiceMode();
-        const value = promptInput.value.trim();
-        if (value) {
-          await askConsia(value);
-          promptInput.value = '';
-        }
-      };
+startCamera()
 
-      recognition.onerror = () => {
-        state.listening = false;
-        updateVoiceMode();
-      };
+</script>
 
-      return recognition;
-    }
+<script>
 
-    function toggleListening(){
-      if (!state.recognition) state.recognition = initSpeechRecognition();
-      if (!state.recognition) return;
-      if (state.listening) {
-        state.recognition.stop();
-        return;
-      }
-      try {
-        state.recognition.start();
-      } catch (_){ }
-    }
+const recognition=new webkitSpeechRecognition()
 
-    async function handleSend(){
-      const value = promptInput.value.trim();
-      if (!value) return;
-      promptInput.value = '';
-      await askConsia(value);
-    }
+recognition.continuous=true
 
-    function preloadWelcome(){
-      addMessage('CONSIA', 'Avatar OS listo. Activá “Presentación” o hablame directamente para recorrer CONSIA.');
-      el('hudState').textContent = 'Avatar OS listo. Activá la presentación o pedime un módulo específico.';
-    }
+recognition.start()
 
-    function setupEvents(){
-      el('sendBtn').addEventListener('click', handleSend);
-      promptInput.addEventListener('keydown', async (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          await handleSend();
-        }
-      });
-      el('clearBtn').addEventListener('click', () => {
-        log.innerHTML = '';
-        showToast('Conversación limpiada');
-      });
-      el('tourBtn').addEventListener('click', runDemo);
-      el('introBtn').addEventListener('click', async () => {
-        const intro = 'Bienvenido a CONSIA Avatar OS. Soy tu interfaz de voz, guía y operación visual para el núcleo inteligente, la memoria, los agentes y la ejecución multiempresa.';
-        addMessage('CONSIA', intro);
-        el('hudState').textContent = intro;
-        speak(intro);
-      });
-      el('voiceBtn').addEventListener('click', toggleListening);
-      el('composerVoiceBtn').addEventListener('click', toggleListening);
-      el('speakBtn').addEventListener('click', () => {
-        const firstConsia = [...document.querySelectorAll('.msg')].find(m => m.querySelector('.who')?.textContent === 'CONSIA');
-        const text = firstConsia?.querySelector('.txt')?.textContent || 'CONSIA Avatar OS listo.';
-        speak(text);
-      });
-      el('muteBtn').addEventListener('click', () => {
-        state.mute = !state.mute;
-        el('muteBtn').classList.toggle('active', state.mute);
-        if (state.mute) stopSpeak();
-        showToast(state.mute ? 'Audio silenciado' : 'Audio activado');
-      });
-      el('scanBtn').addEventListener('click', () => {
-        el('ringPulse').classList.toggle('on');
-        showToast('Escaneo visual ' + (el('ringPulse').classList.contains('on') ? 'activo' : 'inactivo'));
-      });
-      document.querySelectorAll('.mini-badge').forEach(b => {
-        b.addEventListener('click', () => {
-          promptInput.value = b.textContent;
-          handleSend();
-        })
-      });
-    }
+recognition.onresult=(e)=>{
 
-    function bootstrapVoices(){
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => {
-        state.voicesLoaded = true;
-      };
-    }
+let text=e.results[e.results.length-1][0].transcript
 
-    (async function init(){
-      bootstrapVoices();
-      setupEvents();
-      preloadWelcome();
-      checkApi();
-      updateVoiceMode();
-      showTourCard('LISTO', 'Activá Play demo o hablale directamente.', true);
-      setTimeout(() => showTourCard('LISTO', 'Activá Play demo o hablale directamente.', false), 2800);
-    })();
-  </script>
+fetch("https://api.consia.world/v1/chat",{
+
+method:"POST",
+
+headers:{"Content-Type":"application/json"},
+
+body:JSON.stringify({message:text})
+
+})
+
+}
+
+</script>
+
 </body>
 </html>
