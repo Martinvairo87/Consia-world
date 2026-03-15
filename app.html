@@ -1,232 +1,1166 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>CONSIA AI OS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA AI OS</title>
+  <style>
+    :root{
+      --bg:#06101d;
+      --bg2:#0b1730;
+      --panel:#0f1c35;
+      --panel2:#122243;
+      --line:rgba(120,170,255,.14);
+      --soft:rgba(255,255,255,.08);
+      --text:#eef4ff;
+      --muted:#99afd6;
+      --accent:#41d8ff;
+      --accent2:#56efc8;
+      --ok:#34d689;
+      --warn:#ffcb57;
+      --bad:#ff6b7a;
+      --shadow:0 24px 80px rgba(0,0,0,.38);
+      --radius:22px;
+    }
 
-<style>
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(65,216,255,.16), transparent 20%),
+        radial-gradient(circle at top right, rgba(86,239,200,.10), transparent 18%),
+        linear-gradient(180deg,var(--bg),#040b16 100%);
+    }
 
-body{
-margin:0;
-font-family:Arial;
-background:#0b0b0b;
-color:white;
-display:flex;
-height:100vh;
-}
+    body{
+      display:grid;
+      grid-template-columns:280px 1fr 320px;
+      gap:18px;
+      padding:18px;
+    }
 
-.sidebar{
-width:260px;
-background:#111;
-padding:20px;
-}
+    .glass{
+      background:linear-gradient(180deg,rgba(16,28,55,.92),rgba(9,17,34,.96));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(14px);
+      overflow:hidden;
+    }
 
-.sidebar h2{
-margin-top:0;
-}
+    .left,.right{
+      min-height:calc(100vh - 36px);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      padding:16px;
+    }
 
-.sidebar button{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-background:#1e1e1e;
-border:0;
-color:white;
-cursor:pointer;
-}
+    .center{
+      min-height:calc(100vh - 36px);
+      display:grid;
+      grid-template-rows:auto auto 1fr;
+      gap:16px;
+      padding:18px;
+    }
 
-.main{
-flex:1;
-display:flex;
-flex-direction:column;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:6px;
+    }
 
-.topbar{
-background:#111;
-padding:10px;
-}
+    .brand-logo{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      background:linear-gradient(135deg,rgba(65,216,255,.24),rgba(86,239,200,.12));
+      border:1px solid rgba(65,216,255,.3);
+      box-shadow:0 0 34px rgba(65,216,255,.14) inset;
+      color:#dfffff;
+    }
 
-.chat{
-flex:1;
-overflow:auto;
-padding:20px;
-}
+    .brand h1{
+      margin:0;
+      font-size:22px;
+      line-height:1;
+    }
 
-.msg{
-margin-bottom:12px;
-}
+    .sub{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:12px;
+    }
 
-.input{
-display:flex;
-padding:10px;
-background:#111;
-}
+    .nav-card{
+      padding:16px;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(22,39,76,.74),rgba(12,23,44,.84));
+      border:1px solid var(--line);
+    }
 
-.input input{
-flex:1;
-padding:10px;
-background:#1a1a1a;
-border:0;
-color:white;
-}
+    .nav-card h3{
+      margin:0 0 4px 0;
+      font-size:15px;
+    }
 
-.input button{
-padding:10px 16px;
-background:#2b2b2b;
-border:0;
-color:white;
-cursor:pointer;
-}
+    .nav-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
 
-.avatar{
-position:fixed;
-bottom:20px;
-right:20px;
-width:80px;
-height:80px;
-border-radius:50%;
-background:#0ff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
-}
+    .tag{
+      margin-top:10px;
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--soft);
+      color:var(--muted);
+      font-size:12px;
+    }
 
-</style>
+    .owner-box{
+      padding:18px;
+      border-radius:20px;
+      background:linear-gradient(180deg,rgba(20,47,79,.80),rgba(13,27,53,.86));
+      border:1px solid rgba(65,216,255,.2);
+    }
+
+    .owner-box h3{
+      margin:0 0 8px 0;
+      font-size:16px;
+    }
+
+    .owner-box p{
+      margin:0 0 14px 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .btnrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      color:var(--text);
+      background:linear-gradient(180deg,rgba(39,58,98,.95),rgba(23,35,64,.98));
+      border:1px solid rgba(255,255,255,.08);
+      padding:12px 16px;
+      border-radius:14px;
+      font-weight:600;
+      transition:.18s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      border-color:rgba(65,216,255,.34);
+      box-shadow:0 10px 28px rgba(0,0,0,.22);
+    }
+
+    .primary{
+      background:linear-gradient(135deg,rgba(65,216,255,.28),rgba(86,239,200,.20));
+      border:1px solid rgba(65,216,255,.34);
+      color:#f2ffff;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:20px;
+      padding:22px;
+      border-radius:24px;
+      border:1px solid rgba(65,216,255,.16);
+      background:
+        radial-gradient(circle at top right, rgba(65,216,255,.12), transparent 22%),
+        linear-gradient(180deg,rgba(18,33,66,.90),rgba(10,17,33,.96));
+    }
+
+    .hero h2{
+      margin:0 0 8px 0;
+      font-size:24px;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.55;
+      max-width:760px;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .status-pills{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-content:flex-start;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--soft);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:13px;
+      white-space:nowrap;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:var(--warn);
+      box-shadow:0 0 0 4px rgba(255,203,87,.12);
+    }
+
+    .dot.ok{
+      background:var(--ok);
+      box-shadow:0 0 0 4px rgba(52,214,137,.12);
+    }
+
+    .dot.bad{
+      background:var(--bad);
+      box-shadow:0 0 0 4px rgba(255,107,122,.12);
+    }
+
+    .panel-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
+    .mini{
+      min-height:110px;
+      padding:16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(22,36,69,.78),rgba(12,22,41,.88));
+    }
+
+    .mini .label{
+      font-size:11px;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:#88a2cd;
+      margin-bottom:8px;
+    }
+
+    .mini .value{
+      font-size:34px;
+      font-weight:900;
+      line-height:1;
+      margin-bottom:8px;
+    }
+
+    .mini .desc{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .workspace{
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr 360px;
+      gap:16px;
+    }
+
+    .chat-shell{
+      min-height:0;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      border-radius:24px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(17,29,57,.90),rgba(9,17,34,.96));
+      overflow:hidden;
+    }
+
+    .chat-head{
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .chat-head h3{
+      margin:0;
+      font-size:16px;
+    }
+
+    .chat-meta{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
+    }
+
+    .chat-log{
+      min-height:0;
+      overflow:auto;
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .msg{
+      max-width:86%;
+      padding:14px 16px;
+      border-radius:18px;
+      line-height:1.55;
+      white-space:pre-wrap;
+      word-break:break-word;
+      border:1px solid var(--line);
+    }
+
+    .msg.user{
+      align-self:flex-end;
+      background:linear-gradient(180deg,rgba(65,216,255,.18),rgba(65,216,255,.08));
+      border-color:rgba(65,216,255,.22);
+    }
+
+    .msg.ai{
+      align-self:flex-start;
+      background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+    }
+
+    .msg.system{
+      align-self:center;
+      max-width:100%;
+      color:var(--muted);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      padding:10px 12px;
+    }
+
+    .composer{
+      padding:14px;
+      border-top:1px solid var(--line);
+      display:grid;
+      grid-template-columns:1fr auto auto auto auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    .composer textarea{
+      width:100%;
+      min-height:58px;
+      max-height:180px;
+      resize:vertical;
+      border:none;
+      outline:none;
+      border-radius:16px;
+      padding:16px;
+      color:var(--text);
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.06);
+      font:inherit;
+    }
+
+    .side-stack{
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      overflow:auto;
+    }
+
+    .card{
+      padding:16px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(20,34,66,.78),rgba(11,21,41,.90));
+    }
+
+    .card h3{
+      margin:0 0 12px 0;
+      font-size:16px;
+    }
+
+    .status-list,.list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .status-row,.list-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.05);
+    }
+
+    .status-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .status-right{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:lowercase;
+    }
+
+    .lefttxt{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:0;
+    }
+
+    .lefttxt .title{
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .lefttxt .subtxt{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:210px;
+    }
+
+    .badge{
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.07);
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .console{
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:12px;
+      line-height:1.55;
+      color:#bfd2ff;
+      background:#091226;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      min-height:180px;
+      max-height:260px;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+
+    .avatar-orb{
+      width:92px;
+      height:92px;
+      border-radius:50%;
+      margin:0 auto 12px auto;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      color:#dfffff;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.5), transparent 18%),
+        radial-gradient(circle at center, rgba(65,216,255,.48), rgba(65,216,255,.18) 36%, rgba(15,28,56,.9) 72%);
+      border:1px solid rgba(65,216,255,.34);
+      box-shadow:0 0 60px rgba(65,216,255,.28), inset 0 0 40px rgba(255,255,255,.08);
+      animation:pulse 2.8s infinite ease-in-out;
+    }
+
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.04)}
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    @media (max-width:1450px){
+      body{grid-template-columns:250px 1fr 300px}
+      .panel-grid{grid-template-columns:repeat(2,1fr)}
+      .workspace{grid-template-columns:1fr}
+    }
+
+    @media (max-width:1080px){
+      body{
+        grid-template-columns:1fr;
+        height:auto;
+        overflow:auto;
+      }
+      .left,.center,.right{min-height:auto}
+      .panel-grid{grid-template-columns:1fr 1fr}
+    }
+
+    @media (max-width:720px){
+      .panel-grid{grid-template-columns:1fr}
+      .hero{grid-template-columns:1fr}
+      .composer{grid-template-columns:1fr 1fr}
+      .composer textarea{grid-column:1/-1}
+    }
+  </style>
 </head>
-
 <body>
+  <aside class="left glass">
+    <div class="brand">
+      <div class="brand-logo">C</div>
+      <div>
+        <h1>CONSIA</h1>
+        <div class="sub">AI Operating System</div>
+      </div>
+    </div>
 
-<div class="sidebar">
+    <div class="nav-card">
+      <h3>Chat Central</h3>
+      <p>brain · voice · orchestration</p>
+      <div class="tag">live</div>
+    </div>
 
-<h2>CONSIA</h2>
+    <div class="nav-card">
+      <h3>Agentes</h3>
+      <p>swarm · tasks · roles</p>
+      <div class="tag" id="agentsCountTag">0</div>
+    </div>
 
-<button onclick="system()">System</button>
-<button onclick="agents()">Agents</button>
-<button onclick="memory()">Memory</button>
-<button onclick="autopilot()">Autopilot</button>
+    <div class="nav-card">
+      <h3>Memory Vault</h3>
+      <p>global brain · notes · recall</p>
+      <div class="tag" id="memoryCountTag">0</div>
+    </div>
 
-</div>
+    <div class="nav-card">
+      <h3>Infinite Files</h3>
+      <p>upload · classify · export</p>
+      <div class="tag">r2</div>
+    </div>
 
-<div class="main">
+    <div class="nav-card">
+      <h3>Marketplace</h3>
+      <p>plans · products · sales</p>
+      <div class="tag">commerce</div>
+    </div>
 
-<div class="topbar">
-CONSIA AI OS
-</div>
+    <div class="nav-card">
+      <h3>Autopilot</h3>
+      <p>execution · roadmaps · actions</p>
+      <div class="tag">auto</div>
+    </div>
 
-<div class="chat" id="chat"></div>
+    <div class="owner-box">
+      <h3>Owner Center</h3>
+      <p>Acciones rápidas para refrescar módulos, voz, lectura hablada, limpiar chat y disparar tareas.</p>
+      <div class="btnrow">
+        <button class="primary" id="refreshAllBtn">Refresh</button>
+        <button id="voiceBtn">Voz</button>
+        <button id="speakLastBtn">Hablar</button>
+        <button id="clearChatBtn">Chat</button>
+      </div>
+    </div>
 
-<div class="input">
+    <div class="nav-card">
+      <h3>Quick Launch</h3>
+      <p>Plantillas premium para disparar tareas rápido.</p>
+      <div class="btnrow" style="margin-top:12px">
+        <button onclick="prefillPrompt('Diseñá un plan premium para CONSIA')">Plan premium</button>
+        <button onclick="prefillPrompt('Creá una estrategia global para CONSIA')">Global</button>
+        <button onclick="openAutopilotPrompt()">Roadmap</button>
+      </div>
+    </div>
+  </aside>
 
-<input id="msg" placeholder="Habla con CONSIA">
+  <main class="center glass">
+    <section class="hero">
+      <div>
+        <h2>CONSIA Ultra Premium App</h2>
+        <p>Sistema central de conversación, ejecución, memoria, archivos, agentes, autopilot, voz y monetización. Todo conectado a tu backend de CONSIA en una sola cabina operativa.</p>
+        <div class="hero-actions">
+          <button class="primary" onclick="focusComposer()">Abrir chat</button>
+          <button onclick="runSystemStatus()">System</button>
+          <button onclick="loadAgents()">Agents</button>
+          <button onclick="loadMemory()">Memory</button>
+          <button onclick="openAutopilotPrompt()">Autopilot</button>
+        </div>
+      </div>
 
-<button onclick="send()">Send</button>
+      <div class="status-pills">
+        <div class="pill"><span class="dot bad" id="apiDot"></span><span id="apiPillText">API offline</span></div>
+        <div class="pill"><span class="dot bad" id="memoryDot"></span><span id="memoryPillText">Memory offline</span></div>
+        <div class="pill"><span class="dot bad" id="voiceDot"></span><span id="voicePillText">Voice offline</span></div>
+        <div class="pill"><span class="dot bad" id="agentDot"></span><span id="agentPillText">Agents offline</span></div>
+      </div>
+    </section>
 
-<button onclick="voice()">🎤</button>
+    <section class="panel-grid">
+      <div class="mini">
+        <div class="label">health</div>
+        <div class="value" id="healthValue">CHECK</div>
+        <div class="desc">Estado global del sistema</div>
+      </div>
+      <div class="mini">
+        <div class="label">agents</div>
+        <div class="value" id="agentsValue">0</div>
+        <div class="desc">Agentes conectados</div>
+      </div>
+      <div class="mini">
+        <div class="label">memory</div>
+        <div class="value" id="memoryValue">0</div>
+        <div class="desc">Ítems en memoria</div>
+      </div>
+      <div class="mini">
+        <div class="label">files</div>
+        <div class="value" id="filesValue">0</div>
+        <div class="desc">Pruebas de archivos</div>
+      </div>
+    </section>
 
-</div>
+    <section class="workspace">
+      <div class="chat-shell">
+        <div class="chat-head">
+          <div>
+            <h3>CONSIA Chat</h3>
+            <div class="chat-meta">AI router · memory · agents · autopilot · voice</div>
+          </div>
+          <div class="row">
+            <button onclick="runSystemStatus()">System</button>
+            <button onclick="loadAgents()">Agents</button>
+            <button onclick="loadMemory()">Memory</button>
+          </div>
+        </div>
 
-</div>
+        <div class="chat-log" id="chatLog">
+          <div class="msg system">CONSIA lista para recibir órdenes.</div>
+        </div>
 
-<div class="avatar">AI</div>
+        <div class="composer">
+          <textarea id="msgInput" placeholder="Habla con CONSIA..."></textarea>
+          <button class="primary" id="sendBtn">Send</button>
+          <button id="micBtn">🎤 Voz</button>
+          <button id="autopilotBtn">⚡ Auto</button>
+          <button id="saveMemoryBtn">💾 Save</button>
+        </div>
+      </div>
 
-<script>
+      <div class="side-stack">
+        <div class="card">
+          <div class="avatar-orb">AI</div>
+          <h3 style="text-align:center;margin-bottom:6px">CONSIA Avatar</h3>
+          <div class="small" style="text-align:center;margin-bottom:12px" id="avatarState">Voz lista</div>
+          <div class="btnrow" style="justify-content:center">
+            <button class="primary" onclick="startVoice()">Hablar</button>
+            <button onclick="speakLastAnswer()">Leer</button>
+          </div>
+        </div>
 
-const API="https://api.consia.world"
+        <div class="card">
+          <h3>System Health</h3>
+          <div class="status-list">
+            <div class="status-row">
+              <div class="status-left"><span class="dot bad" id="apiStatusDot"></span><span>API</span></div>
+              <div class="status-right" id="apiStatusText">offline</div>
+            </div>
+            <div class="status-row">
+              <div class="status-left"><span class="dot bad" id="memoryStatusDot"></span><span>Memory</span></div>
+              <div class="status-right" id="memoryStatusText">offline</div>
+            </div>
+            <div class="status-row">
+              <div class="status-left"><span class="dot bad" id="voiceStatusDot"></span><span>Voice</span></div>
+              <div class="status-right" id="voiceStatusText">offline</div>
+            </div>
+            <div class="status-row">
+              <div class="status-left"><span class="dot bad" id="filesStatusDot"></span><span>Files</span></div>
+              <div class="status-right" id="filesStatusText">offline</div>
+            </div>
+            <div class="status-row">
+              <div class="status-left"><span class="dot bad" id="agentsStatusDot"></span><span>Agents</span></div>
+              <div class="status-right" id="agentsStatusText">offline</div>
+            </div>
+            <div class="status-row">
+              <div class="status-left"><span class="dot bad" id="marketStatusDot"></span><span>Market</span></div>
+              <div class="status-right" id="marketStatusText">offline</div>
+            </div>
+          </div>
+        </div>
 
-function add(text){
-const div=document.createElement("div")
-div.className="msg"
-div.innerText=text
-document.getElementById("chat").appendChild(div)
-}
+        <div class="card">
+          <h3>Última respuesta</h3>
+          <div class="small" id="lastAnswerText">Todavía no hay respuesta.</div>
+        </div>
 
-async function send(){
+        <div class="card">
+          <h3>Console</h3>
+          <div class="console" id="consoleLog">system
+inicializando CONSIA
+...</div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-const text=document.getElementById("msg").value
+  <aside class="right glass">
+    <div class="card">
+      <h3>Agent Swarm</h3>
+      <div class="list" id="agentsList">
+        <div class="list-item">
+          <div class="lefttxt">
+            <div class="title">Sin cargar</div>
+            <div class="subtxt">Esperando consulta a /v1/agents</div>
+          </div>
+          <div class="badge">0</div>
+        </div>
+      </div>
+    </div>
 
-add("You: "+text)
+    <div class="card">
+      <h3>Memory Vault</h3>
+      <div class="list" id="memoryList">
+        <div class="list-item">
+          <div class="lefttxt">
+            <div class="title">Vacío</div>
+            <div class="subtxt">Esperando consulta a /v1/memory/search</div>
+          </div>
+          <div class="badge">0</div>
+        </div>
+      </div>
+      <div class="btnrow" style="margin-top:12px">
+        <button onclick="saveQuickMemory()">Guardar memoria</button>
+        <button onclick="loadMemory()">Refrescar</button>
+      </div>
+    </div>
 
-const r=await fetch(API+"/v1/chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({message:text})
-})
+    <div class="card">
+      <h3>Autopilot</h3>
+      <div class="small" style="margin-bottom:12px">Disparar una tarea global desde CONSIA.</div>
+      <div class="btnrow">
+        <button class="primary" onclick="openAutopilotPrompt()">Run goal</button>
+        <button onclick="prefillPrompt('Creá un plan de expansión global para CONSIA')">Expansión</button>
+      </div>
+    </div>
 
-const j=await r.json()
+    <div class="card">
+      <h3>Files</h3>
+      <div class="small" style="margin-bottom:12px">Prueba rápida del motor de archivos.</div>
+      <div class="btnrow">
+        <button onclick="testFiles()">Test upload</button>
+      </div>
+    </div>
+  </aside>
 
-add("CONSIA: "+j.answer)
+  <script>
+    const API = "https://api.consia.world";
 
-}
+    const state = {
+      lastAnswer: "",
+      memoryCount: 0,
+      agentCount: 0,
+      filesCount: 0,
+      voiceReady: false
+    };
 
-async function system(){
+    const chatLog = document.getElementById("chatLog");
+    const consoleLog = document.getElementById("consoleLog");
+    const msgInput = document.getElementById("msgInput");
 
-const r=await fetch(API+"/v1/system/status")
-const j=await r.json()
+    function logConsole(text){
+      const stamp = new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      consoleLog.textContent += `\n[${stamp}] ${text}`;
+      consoleLog.scrollTop = consoleLog.scrollHeight;
+    }
 
-add(JSON.stringify(j,null,2))
+    function addMessage(kind, text){
+      const div = document.createElement("div");
+      div.className = `msg ${kind}`;
+      div.textContent = text;
+      chatLog.appendChild(div);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
 
-}
+    function setMetric(id, value){
+      document.getElementById(id).textContent = value;
+    }
 
-async function agents(){
+    function setHealth(label){
+      document.getElementById("healthValue").textContent = label;
+    }
 
-const r=await fetch(API+"/v1/agents")
-const j=await r.json()
+    function setPill(dotId, textId, ok, text){
+      document.getElementById(dotId).className = ok ? "dot ok" : "dot bad";
+      document.getElementById(textId).textContent = text;
+    }
 
-add(JSON.stringify(j,null,2))
+    function setStatus(dotId, textId, ok, text){
+      document.getElementById(dotId).className = ok ? "dot ok" : "dot bad";
+      document.getElementById(textId).textContent = text;
+    }
 
-}
+    function updateAPI(ok){
+      setPill("apiDot","apiPillText",ok, ok ? "API online" : "API offline");
+      setStatus("apiStatusDot","apiStatusText",ok, ok ? "online" : "offline");
+    }
 
-async function memory(){
+    function updateMemory(ok){
+      setPill("memoryDot","memoryPillText",ok, ok ? "Memory online" : "Memory offline");
+      setStatus("memoryStatusDot","memoryStatusText",ok, ok ? "online" : "offline");
+    }
 
-const r=await fetch(API+"/v1/memory/search")
-const j=await r.json()
+    function updateVoice(ok){
+      setPill("voiceDot","voicePillText",ok, ok ? "Voice ready" : "Voice offline");
+      setStatus("voiceStatusDot","voiceStatusText",ok, ok ? "ready" : "offline");
+      document.getElementById("avatarState").textContent = ok ? "Voz lista" : "Voz no disponible";
+    }
 
-add(JSON.stringify(j,null,2))
+    function updateAgents(ok){
+      setPill("agentDot","agentPillText",ok, ok ? "Agents online" : "Agents offline");
+      setStatus("agentsStatusDot","agentsStatusText",ok, ok ? "online" : "offline");
+    }
 
-}
+    function updateFiles(ok){
+      setStatus("filesStatusDot","filesStatusText",ok, ok ? "ready" : "offline");
+    }
 
-async function autopilot(){
+    function updateMarket(ok){
+      setStatus("marketStatusDot","marketStatusText",ok, ok ? "ready" : "offline");
+    }
 
-const goal=prompt("Autopilot goal")
+    async function safeFetch(url, options){
+      const res = await fetch(url, options);
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
 
-const r=await fetch(API+"/v1/autopilot/start",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({goal})
-})
+    async function runSystemStatus(){
+      logConsole("consultando /v1/system/status");
+      try{
+        const j = await safeFetch(API + "/v1/system/status");
+        updateAPI(true);
+        updateMarket(true);
+        setHealth("ONLINE");
+        addMessage("system", JSON.stringify(j, null, 2));
+        logConsole("system/status OK");
+        return j;
+      }catch(e){
+        updateAPI(false);
+        setHealth("ERROR");
+        addMessage("system", "Error de conexión con CONSIA API");
+        logConsole("system/status FAIL");
+        throw e;
+      }
+    }
 
-const j=await r.json()
+    async function sendChat(){
+      const text = msgInput.value.trim();
+      if(!text) return;
 
-add(JSON.stringify(j,null,2))
+      addMessage("user", text);
+      msgInput.value = "";
+      logConsole("enviando mensaje a /v1/chat");
 
-}
+      try{
+        const j = await safeFetch(API + "/v1/chat",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify({ message:text })
+        });
 
-function voice(){
+        const answer = j.answer || "Sin respuesta";
+        state.lastAnswer = answer;
+        document.getElementById("lastAnswerText").textContent = answer;
+        addMessage("ai", answer);
+        logConsole("chat OK");
+      }catch(e){
+        addMessage("system", "Error en /v1/chat");
+        logConsole("chat FAIL");
+      }
+    }
 
-const rec=new webkitSpeechRecognition()
+    async function loadAgents(){
+      logConsole("consultando /v1/agents");
+      try{
+        const j = await safeFetch(API + "/v1/agents");
+        const list = Array.isArray(j.agents) ? j.agents : [];
+        state.agentCount = list.length;
+        setMetric("agentsValue", list.length);
+        document.getElementById("agentsCountTag").textContent = list.length;
+        updateAgents(true);
 
-rec.lang="es"
+        const container = document.getElementById("agentsList");
+        container.innerHTML = "";
 
-rec.start()
+        list.forEach((agent, i)=>{
+          const row = document.createElement("div");
+          row.className = "list-item";
+          row.innerHTML = `
+            <div class="lefttxt">
+              <div class="title">${agent}</div>
+              <div class="subtxt">Agente operativo #${i + 1}</div>
+            </div>
+            <div class="badge">online</div>
+          `;
+          container.appendChild(row);
+        });
 
-rec.onresult=async(e)=>{
+        logConsole("agents OK");
+        return j;
+      }catch(e){
+        updateAgents(false);
+        logConsole("agents FAIL");
+      }
+    }
 
-const text=e.results[0][0].transcript
+    async function loadMemory(){
+      logConsole("consultando /v1/memory/search");
+      try{
+        const j = await safeFetch(API + "/v1/memory/search");
+        const items = Array.isArray(j.items) ? j.items : [];
+        state.memoryCount = items.length;
+        setMetric("memoryValue", items.length);
+        document.getElementById("memoryCountTag").textContent = items.length;
+        updateMemory(true);
 
-document.getElementById("msg").value=text
+        const container = document.getElementById("memoryList");
+        container.innerHTML = "";
 
-send()
+        if(items.length === 0){
+          container.innerHTML = `
+            <div class="list-item">
+              <div class="lefttxt">
+                <div class="title">Vacío</div>
+                <div class="subtxt">No hay memorias todavía</div>
+              </div>
+              <div class="badge">0</div>
+            </div>
+          `;
+        } else {
+          items.slice(0,10).forEach((item, i)=>{
+            const name = item.name || item.key || `memory-${i+1}`;
+            const row = document.createElement("div");
+            row.className = "list-item";
+            row.innerHTML = `
+              <div class="lefttxt">
+                <div class="title">${name}</div>
+                <div class="subtxt">Ítem guardado en CONSIA_MEMORY</div>
+              </div>
+              <div class="badge">saved</div>
+            `;
+            container.appendChild(row);
+          });
+        }
 
-}
+        logConsole("memory OK");
+        return j;
+      }catch(e){
+        updateMemory(false);
+        logConsole("memory FAIL");
+      }
+    }
 
-}
+    async function saveQuickMemory(){
+      const note = prompt("Texto a guardar en memoria");
+      if(!note) return;
 
-</script>
+      logConsole("guardando memoria");
+      try{
+        const j = await safeFetch(API + "/v1/memory/write",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify({
+            note,
+            source:"CONSIA app",
+            time:Date.now()
+          })
+        });
 
+        addMessage("system", `Memoria guardada: ${j.stored || "ok"}`);
+        logConsole("memory/write OK");
+        await loadMemory();
+      }catch(e){
+        addMessage("system", "Error guardando memoria");
+        logConsole("memory/write FAIL");
+      }
+    }
+
+    async function saveCurrentPromptToMemory(){
+      const note = msgInput.value.trim();
+      if(!note) return;
+      try{
+        const j = await safeFetch(API + "/v1/memory/write",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify({
+            note,
+            source:"composer",
+            time:Date.now()
+          })
+        });
+        addMessage("system", `Prompt guardado: ${j.stored || "ok"}`);
+        logConsole("composer memory/write OK");
+        await loadMemory();
+      }catch(e){
+        logConsole("composer memory/write FAIL");
+      }
+    }
+
+    async function openAutopilotPrompt(){
+      const goal = prompt("Objetivo para Autopilot");
+      if(!goal) return;
+
+      logConsole("disparando /v1/autopilot/start");
+      try{
+        await safeFetch(API + "/v1/autopilot/start",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify({ goal })
+        });
+        addMessage("system", `Autopilot activado: ${goal}`);
+        logConsole("autopilot OK");
+      }catch(e){
+        addMessage("system", "Error en autopilot");
+        logConsole("autopilot FAIL");
+      }
+    }
+
+    async function testFiles(){
+      logConsole("probando /v1/files/upload");
+      try{
+        const j = await safeFetch(API + "/v1/files/upload");
+        state.filesCount += 1;
+        setMetric("filesValue", state.filesCount);
+        updateFiles(true);
+        addMessage("system", `File test OK: ${j.file || "generated"}`);
+        logConsole("files/upload OK");
+      }catch(e){
+        updateFiles(false);
+        addMessage("system", "Error en files/upload");
+        logConsole("files/upload FAIL");
+      }
+    }
+
+    function focusComposer(){
+      msgInput.focus();
+    }
+
+    function prefillPrompt(text){
+      msgInput.value = text;
+      msgInput.focus();
+    }
+
+    function clearChat(){
+      chatLog.innerHTML = `<div class="msg system">CONSIA lista para recibir órdenes.</div>`;
+      state.lastAnswer = "";
+      document.getElementById("lastAnswerText").textContent = "Todavía no hay respuesta.";
+      logConsole("chat cleared");
+    }
+
+    function speak(text){
+      if(!("speechSynthesis" in window)) return;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "es-AR";
+      utter.rate = 1;
+      speechSynthesis.speak(utter);
+    }
+
+    function speakLastAnswer(){
+      if(state.lastAnswer) speak(state.lastAnswer);
+    }
+
+    function startVoice(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR){
+        updateVoice(false);
+        addMessage("system", "Voice no soportado en este navegador");
+        logConsole("voice unsupported");
+        return;
+      }
+
+      const rec = new SR();
+      rec.lang = "es-AR";
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+
+      updateVoice(true);
+      logConsole("voice listening");
+      rec.start();
+
+      rec.onresult = (e)=>{
+        const text = e.results[0][0].transcript;
+        msgInput.value = text;
+        sendChat();
+      };
+
+      rec.onerror = ()=>{
+        logConsole("voice error");
+      };
+    }
+
+    async function initConsia(){
+      logConsole("boot CONSIA frontend");
+      updateVoice(!!(window.SpeechRecognition || window.webkitSpeechRecognition || "speechSynthesis" in window));
+
+      try{ await runSystemStatus(); }catch(e){}
+      try{ await loadAgents(); }catch(e){}
+      try{ await loadMemory(); }catch(e){}
+
+      if(state.agentCount > 0){
+        updateFiles(true);
+      }
+
+      setMetric("filesValue", state.filesCount);
+      logConsole("CONSIA READY");
+    }
+
+    document.getElementById("sendBtn").addEventListener("click", sendChat);
+    document.getElementById("micBtn").addEventListener("click", startVoice);
+    document.getElementById("autopilotBtn").addEventListener("click", openAutopilotPrompt);
+    document.getElementById("saveMemoryBtn").addEventListener("click", saveCurrentPromptToMemory);
+    document.getElementById("refreshAllBtn").addEventListener("click", initConsia);
+    document.getElementById("voiceBtn").addEventListener("click", startVoice);
+    document.getElementById("speakLastBtn").addEventListener("click", speakLastAnswer);
+    document.getElementById("clearChatBtn").addEventListener("click", clearChat);
+
+    msgInput.addEventListener("keydown",(e)=>{
+      if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendChat();
+      }
+    });
+
+    initConsia();
+  </script>
 </body>
 </html>
