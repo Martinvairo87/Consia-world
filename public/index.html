@@ -1,55 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>CONSIA AI-OS Control Plane</title>
+<title>CONSIA OS</title>
 
 <style>
 
-/* =========================
-GLOBAL
-========================= */
+/* GLOBAL */
 
 *{
-box-sizing:border-box;
 margin:0;
 padding:0;
+box-sizing:border-box;
 }
 
 body{
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-background:#060b16;
+background:#050a16;
 color:white;
 }
 
-/* =========================
-LAYOUT
-========================= */
+/* LAYOUT */
 
 .app{
 display:grid;
 grid-template-columns:260px 1fr 340px;
-min-height:100vh;
 gap:20px;
 padding:20px;
+min-height:100vh;
 }
 
-/* =========================
-SIDEBAR
-========================= */
+/* SIDEBAR */
 
 .sidebar{
-background:#0c1426;
-border-radius:18px;
+background:#0e1a32;
 padding:20px;
+border-radius:18px;
 }
 
-.sidebar h2{
-margin-bottom:20px;
+.logo{
 font-size:20px;
+font-weight:bold;
+margin-bottom:20px;
 }
 
 .menu{
@@ -59,17 +55,15 @@ gap:10px;
 }
 
 .menu button{
-background:#121b33;
+background:#16264a;
 border:none;
-color:white;
 padding:12px;
 border-radius:10px;
+color:white;
 cursor:pointer;
 }
 
-/* =========================
-MAIN PANEL
-========================= */
+/* MAIN */
 
 .main{
 display:flex;
@@ -77,16 +71,16 @@ flex-direction:column;
 gap:20px;
 }
 
+/* PANELS */
+
 .panel{
-background:linear-gradient(180deg,#0f1a30,#0a1426);
+background:#0b1630;
 border-radius:18px;
-padding:24px;
+padding:20px;
 border:1px solid rgba(255,255,255,0.05);
 }
 
-/* =========================
-STATUS GRID
-========================= */
+/* STATUS */
 
 .status-grid{
 display:grid;
@@ -95,84 +89,71 @@ gap:12px;
 margin-top:10px;
 }
 
-.status-box{
-background:#0b152a;
+.status{
+background:#0a1428;
 padding:16px;
 border-radius:12px;
 }
 
-.status-box span{
-font-size:13px;
-opacity:.6;
-}
+/* COMMAND */
 
-/* =========================
-COMMAND
-========================= */
-
-.command-input{
+.command{
 width:100%;
 padding:16px;
-border-radius:10px;
 border:none;
-background:#081222;
+border-radius:10px;
+background:#061024;
 color:white;
-margin-top:12px;
+margin-top:10px;
 }
 
-/* =========================
-BUTTON GRID
-========================= */
+/* BUTTON GRID */
 
-.button-grid{
+.grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:10px;
-margin-top:14px;
+margin-top:12px;
 }
 
-.button-grid button{
+.grid button{
 padding:14px;
-border-radius:10px;
 border:none;
-background:linear-gradient(135deg,#4c7cff,#6c8cff);
+border-radius:10px;
+background:linear-gradient(135deg,#4c7cff,#7c94ff);
 color:white;
 cursor:pointer;
 }
 
-/* =========================
-TIMELINE
-========================= */
+/* TIMELINE */
 
 .timeline{
-max-height:320px;
+display:flex;
+flex-direction:column;
+gap:10px;
+max-height:300px;
 overflow:auto;
+}
+
+.event{
+background:#081428;
+padding:12px;
+border-radius:10px;
+}
+
+/* CONSOLE */
+
+.console{
+background:#0e1a32;
+border-radius:18px;
+padding:20px;
 display:flex;
 flex-direction:column;
 gap:12px;
 }
 
-.timeline-item{
-background:#0a1426;
-padding:14px;
-border-radius:10px;
-}
-
-/* =========================
-CONSOLE
-========================= */
-
-.console{
-background:#0c1426;
-border-radius:18px;
-padding:20px;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
 .output{
-background:#050a15;
+background:#030712;
 padding:14px;
 border-radius:10px;
 font-family:monospace;
@@ -180,9 +161,19 @@ max-height:400px;
 overflow:auto;
 }
 
-/* =========================
-TABLET
-========================= */
+/* RADAR */
+
+.radar{
+height:200px;
+background:radial-gradient(circle,#1a2c55,#050a16);
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+}
+
+/* RESPONSIVE */
 
 @media(max-width:1100px){
 
@@ -196,10 +187,6 @@ display:none;
 
 }
 
-/* =========================
-MOBILE
-========================= */
-
 @media(max-width:640px){
 
 .app{
@@ -211,7 +198,7 @@ gap:10px;
 grid-template-columns:1fr 1fr;
 }
 
-.button-grid{
+.grid{
 grid-template-columns:1fr 1fr;
 }
 
@@ -233,16 +220,17 @@ max-height:200px;
 
 <div class="sidebar">
 
-<h2>CONSIA</h2>
+<div class="logo">CONSIA OS</div>
 
 <div class="menu">
 
 <button>Chat Central</button>
-<button>Agents</button>
+<button>Agent Swarm</button>
 <button>Memory Vault</button>
-<button>Files</button>
+<button>Infinite Files</button>
 <button>Marketplace</button>
 <button>Autopilot</button>
+<button>Owner Center</button>
 
 </div>
 
@@ -252,46 +240,33 @@ max-height:200px;
 
 <div class="main">
 
+<!-- STATUS -->
+
 <div class="panel">
 
-<h1>CONSIA AI-OS Control Plane</h1>
+<h2>System Status</h2>
 
 <div class="status-grid">
 
-<div class="status-box">
-<span>Health</span>
-<h3>online</h3>
-</div>
-
-<div class="status-box">
-<span>API</span>
-<h3>30.0.0</h3>
-</div>
-
-<div class="status-box">
-<span>Agents</span>
-<h3>240</h3>
-</div>
-
-<div class="status-box">
-<span>Memory</span>
-<h3>active</h3>
-</div>
+<div class="status">API<br><b>30.0.0</b></div>
+<div class="status">Agents<br><b>240</b></div>
+<div class="status">Memory<br><b>active</b></div>
+<div class="status">World Model<br><b>active</b></div>
 
 </div>
 
 </div>
 
-<!-- COMMAND -->
+<!-- JARVIS COMMAND -->
 
 <div class="panel">
 
-<h3>Executive Command</h3>
+<h2>Jarvis Command</h2>
 
-<input class="command-input"
-placeholder="Escribí una orden para CONSIA...">
+<input class="command"
+placeholder="Ej: scan global opportunities">
 
-<div class="button-grid">
+<div class="grid">
 
 <button>Intelligence</button>
 <button>Tasks</button>
@@ -306,29 +281,32 @@ placeholder="Escribí una orden para CONSIA...">
 
 </div>
 
+<!-- RADAR -->
+
+<div class="panel">
+
+<h2>Global Radar</h2>
+
+<div class="radar">
+
+Market Scanner Active
+
+</div>
+
+</div>
+
 <!-- TIMELINE -->
 
 <div class="panel">
 
-<h3>Realtime Timeline</h3>
+<h2>Realtime Timeline</h2>
 
 <div class="timeline">
 
-<div class="timeline-item">
-Autonomous mission ejecutada
-</div>
-
-<div class="timeline-item">
-Agent swarm activo
-</div>
-
-<div class="timeline-item">
-Global scan iniciado
-</div>
-
-<div class="timeline-item">
-Memory guardada
-</div>
+<div class="event">Agent Swarm iniciado</div>
+<div class="event">Autopilot ejecutado</div>
+<div class="event">Global market scan</div>
+<div class="event">Memory actualizada</div>
 
 </div>
 
@@ -340,14 +318,15 @@ Memory guardada
 
 <div class="console">
 
-<h3>Console</h3>
+<h2>Console</h2>
 
 <div class="output">
 
 {
 "ok": true,
-"consia": "active",
+"consia_os": "active",
 "agents": 240,
+"world_model": "active",
 "autopilot": "enabled"
 }
 
@@ -358,4 +337,5 @@ Memory guardada
 </div>
 
 </body>
+
 </html>
