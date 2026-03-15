@@ -1,521 +1,405 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONSIA GLOBAL COMMAND CENTER</title>
-  <style>
-    :root{
-      --bg:#050d1a;
-      --bg2:#07162b;
-      --top:#0b1d3c;
-      --panel:#0d2348;
-      --panel2:#08172f;
-      --card:#0b2145;
-      --line:rgba(255,255,255,.06);
-      --text:#ffffff;
-      --muted:rgba(255,255,255,.72);
-      --ok:#47ffab;
-      --cyan:#2f6bff;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
-    body{overflow:hidden}
-    header{
-      height:72px;display:flex;align-items:center;justify-content:space-between;
-      padding:0 24px;background:var(--top);border-bottom:1px solid var(--line)
-    }
-    .title{font-size:22px;font-weight:700}
-    .status{font-size:14px;font-weight:700;color:var(--ok)}
-    .container{display:flex;height:calc(100vh - 72px)}
-    .sidebar{
-      width:230px;background:var(--bg2);border-right:1px solid var(--line);
-      padding:18px;overflow:auto
-    }
-    .sidebar button{
-      width:100%;margin-bottom:10px;padding:12px;background:var(--card);
-      border:none;color:#fff;border-radius:8px;cursor:pointer;text-align:left;font-size:14px;font-weight:700
-    }
-    .sidebar button:hover{background:#143164}
-    .main{flex:1;padding:22px;overflow:auto}
-    .cards{
-      display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));
-      gap:18px;margin-bottom:20px
-    }
-    .card{
-      background:var(--panel2);border:1px solid var(--line);
-      border-radius:10px;padding:18px;min-height:110px
-    }
-    .card h3{margin:0 0 20px 0;font-size:16px}
-    .big{font-size:18px;font-weight:700}
-    .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
-    .panel{
-      background:var(--panel2);border:1px solid var(--line);
-      border-radius:10px;padding:18px;margin-bottom:20px
-    }
-    .panel h2{margin:0 0 8px 0;font-size:18px}
-    .sub{
-      margin:0 0 14px 0;font-size:12px;color:var(--muted);
-      text-transform:uppercase;letter-spacing:.08em
-    }
-    input,textarea{
-      width:100%;background:#061224;color:#fff;border:1px solid var(--line);
-      border-radius:8px;padding:12px;outline:none;font:inherit
-    }
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .btn{
-      background:var(--cyan);color:#fff;border:none;border-radius:8px;
-      padding:10px 14px;font-weight:700;cursor:pointer
-    }
-    .btn.secondary{background:#143164}
-    .btn.dark{background:#0a1a34}
-    .output{
-      margin-top:12px;background:#040d1c;border:1px solid var(--line);
-      border-radius:8px;padding:12px;min-height:120px;max-height:320px;
-      overflow:auto;white-space:pre-wrap;font-size:13px;color:#dbe8ff
-    }
-    .agent{
-      background:#0b2b5a;border:1px solid rgba(255,255,255,.04);
-      padding:10px 12px;border-radius:8px;margin-bottom:8px;font-size:13px
-    }
-    .mini{
-      display:grid;grid-template-columns:repeat(2,minmax(140px,1fr));
-      gap:10px;margin-bottom:12px
-    }
-    .mini .box{
-      background:#0a1a34;border:1px solid var(--line);border-radius:8px;padding:12px
-    }
-    .mini .label{
-      color:var(--muted);font-size:11px;text-transform:uppercase;
-      letter-spacing:.08em;margin-bottom:6px
-    }
-    .mini .value{font-weight:700;font-size:15px}
-    #map{
-      position:relative;height:320px;background:#040b1e;border:1px solid var(--line);
-      border-radius:8px;overflow:hidden
-    }
-    .node{
-      position:absolute;background:#0f2b66;border:1px solid rgba(255,255,255,.08);
-      padding:6px 12px;border-radius:6px;font-size:12px;color:#fff
-    }
-    @media (max-width:1100px){
-      .cards{grid-template-columns:repeat(2,minmax(180px,1fr))}
-      .layout{grid-template-columns:1fr}
-    }
-    @media (max-width:760px){
-      body{overflow:auto}
-      .container{flex-direction:column;height:auto}
-      .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--line)}
-      .cards{grid-template-columns:1fr}
-      .mini{grid-template-columns:1fr}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA GLOBAL COMMAND CENTER</title>
+
+<style>
+
+body{
+background:#070c18;
+font-family:Arial,Helvetica,sans-serif;
+color:#e6f0ff;
+margin:0;
+}
+
+header{
+background:#0c1a35;
+padding:18px 28px;
+font-size:20px;
+font-weight:700;
+display:flex;
+justify-content:space-between;
+}
+
+.system{
+color:#4cff9a;
+}
+
+.container{
+display:flex;
+}
+
+.sidebar{
+width:230px;
+background:#081327;
+padding:20px;
+}
+
+.sidebar button{
+width:100%;
+background:#0f2347;
+border:none;
+padding:12px;
+margin-bottom:10px;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+.main{
+flex:1;
+padding:25px;
+}
+
+.panel{
+background:#0c1a35;
+border-radius:10px;
+padding:20px;
+margin-bottom:20px;
+}
+
+h2{
+margin-top:0;
+}
+
+.mini{
+display:grid;
+grid-template-columns:repeat(3,minmax(140px,1fr));
+gap:10px;
+margin-bottom:12px;
+}
+
+.box{
+background:#0f2347;
+padding:12px;
+border-radius:8px;
+}
+
+.label{
+font-size:12px;
+opacity:.7;
+}
+
+.value{
+font-size:15px;
+font-weight:600;
+}
+
+input{
+width:100%;
+padding:10px;
+background:#0a1730;
+border:none;
+border-radius:6px;
+color:white;
+margin-bottom:10px;
+}
+
+button{
+padding:10px 16px;
+background:#356dff;
+border:none;
+border-radius:6px;
+color:white;
+cursor:pointer;
+}
+
+.secondary{
+background:#162a55;
+}
+
+.output{
+margin-top:10px;
+background:#050d1d;
+padding:12px;
+border-radius:8px;
+min-height:60px;
+white-space:pre-wrap;
+}
+
+</style>
 </head>
+
 <body>
-  <header>
-    <div class="title">CONSIA GLOBAL COMMAND CENTER</div>
-    <div class="status" id="status">CHECKING...</div>
-  </header>
 
-  <div class="container">
-    <aside class="sidebar">
-      <button onclick="focusSection('brain-panel')">Global Brain</button>
-      <button onclick="focusSection('strategic-panel')">Strategic</button>
-      <button onclick="focusSection('swarm-panel')">Agent Swarm</button>
-      <button onclick="focusSection('autopilot-panel')">Autopilot</button>
-      <button onclick="focusSection('economy-panel')">Agent Economy</button>
-      <button onclick="focusSection('memory-panel')">Global Memory</button>
-      <button onclick="focusSection('map-panel')">System Map</button>
-      <button onclick="focusSection('system-panel')">System</button>
-    </aside>
+<header>
+CONSIA GLOBAL COMMAND CENTER
+<div class="system">SYSTEM ONLINE</div>
+</header>
 
-    <main class="main">
-      <section class="cards">
-        <div class="card">
-          <h3>CORE</h3>
-          <div class="big" id="core">loading...</div>
-        </div>
-        <div class="card">
-          <h3>API</h3>
-          <div class="big" id="api">loading...</div>
-        </div>
-        <div class="card">
-          <h3>AGENTS</h3>
-          <div class="big" id="agents">loading...</div>
-        </div>
-        <div class="card">
-          <h3>ECONOMY</h3>
-          <div class="big" id="economy-head">READY</div>
-        </div>
-      </section>
+<div class="container">
 
-      <section class="layout">
-        <div>
-          <div class="panel" id="brain-panel">
-            <h2>CONSIA GLOBAL BRAIN</h2>
-            <div class="sub">Contexto, continuidad, routing y dispatch</div>
-            <div class="mini">
-              <div class="box"><div class="label">Brain State</div><div class="value" id="brain-state">IDLE</div></div>
-              <div class="box"><div class="label">Objective</div><div class="value" id="brain-objective">-</div></div>
-            </div>
-            <input id="brain-input" placeholder="Ej: crear negocio digital para Real Work" />
-            <div class="row">
-              <button class="btn" onclick="runBrain()">RUN BRAIN</button>
-              <button class="btn secondary" onclick="runBrainDispatch()">RUN + DISPATCH</button>
-            </div>
-            <div class="output" id="brain-output">Waiting command...</div>
-          </div>
+<div class="sidebar">
 
-          <div class="panel" id="strategic-panel">
-            <h2>CONSIA STRATEGIC ENGINE</h2>
-            <div class="sub">Oportunidades, prioridades y roadmap</div>
-            <input id="strategic-input" placeholder="Ej: cómo monetizar CONSIA globalmente" />
-            <div class="row">
-              <button class="btn" onclick="runStrategic()">ANALYZE</button>
-            </div>
-            <div class="output" id="strategic-output">Waiting strategy...</div>
-          </div>
+<button>Global Brain</button>
+<button>Strategic</button>
+<button>Agent Swarm</button>
+<button>Autopilot</button>
+<button>Agent Economy</button>
+<button>Global Memory</button>
+<button>System Map</button>
+<button>System</button>
 
-          <div class="panel" id="swarm-panel">
-            <h2>CONSIA AGENT SWARM</h2>
-            <div class="sub">Ejecución paralela del swarm</div>
-            <div class="mini">
-              <div class="box"><div class="label">Swarm State</div><div class="value" id="swarm-run-state">IDLE</div></div>
-              <div class="box"><div class="label">Agents Running</div><div class="value" id="swarm-running">0</div></div>
-            </div>
-            <input id="swarm-input" placeholder="Ej: nuevo proyecto" />
-            <div class="row">
-              <button class="btn secondary" onclick="runSwarm()">RUN SWARM</button>
-            </div>
-            <div class="output" id="swarm-output">Waiting swarm...</div>
-          </div>
+</div>
 
-          <div class="panel" id="autopilot-panel">
-            <h2>CONSIA AUTOPILOT ENGINE</h2>
-            <div class="sub">Creación automática de proyectos y negocios</div>
-            <div class="row">
-              <button class="btn" onclick="runAutopilot()">START AUTOPILOT</button>
-              <button class="btn dark" onclick="runAutopilotCycle()">RUN ONE CYCLE</button>
-              <button class="btn secondary" onclick="buildBusiness()">BUILD BUSINESS</button>
-            </div>
-            <div class="output" id="autopilot-output">Autopilot idle...</div>
-          </div>
+<div class="main">
 
-          <div class="panel" id="economy-panel">
-            <h2>CONSIA AGENT ECONOMY</h2>
-            <div class="sub">Créditos, gasto, reserva y recompensas</div>
-            <div class="mini">
-              <div class="box"><div class="label">Credits</div><div class="value" id="eco-credits">0</div></div>
-              <div class="box"><div class="label">Reserved</div><div class="value" id="eco-reserved">0</div></div>
-              <div class="box"><div class="label">Spent</div><div class="value" id="eco-spent">0</div></div>
-              <div class="box"><div class="label">Available</div><div class="value" id="eco-available">0</div></div>
-            </div>
-            <div class="row">
-              <button class="btn" onclick="rewardEconomy()">REWARD +500</button>
-              <button class="btn secondary" onclick="refreshEconomy()">REFRESH</button>
-            </div>
-            <div class="output" id="economy-output">Economy ready...</div>
-          </div>
+<!-- GLOBAL BRAIN -->
 
-          <div class="panel" id="memory-panel">
-            <h2>CONSIA GLOBAL MEMORY</h2>
-            <div class="sub">Persistencia local tipo vector simplificada</div>
-            <input id="memory-input" placeholder="Guardar conocimiento..." />
-            <div class="row">
-              <button class="btn" onclick="storeMemory()">STORE MEMORY</button>
-              <button class="btn secondary" onclick="searchMemory()">SEARCH MEMORY</button>
-            </div>
-            <div class="output" id="memory-output">Memory empty</div>
-          </div>
-        </div>
+<div class="panel">
 
-        <div>
-          <div class="panel" id="agents-panel">
-            <h2>ACTIVE AGENTS</h2>
-            <div class="sub">Lista desde API</div>
-            <div id="agents-list">Loading agents...</div>
-          </div>
+<h2>CONSIA GLOBAL BRAIN</h2>
 
-          <div class="panel" id="map-panel">
-            <h2>CONSIA HOLOGRAPHIC SYSTEM MAP</h2>
-            <div class="sub">Mapa visual de módulos</div>
-            <div id="map"></div>
-          </div>
+<div class="mini">
 
-          <div class="panel" id="system-panel">
-            <h2>SYSTEM STATE</h2>
-            <div class="sub">Estado general del sistema</div>
-            <div class="mini">
-              <div class="box"><div class="label">API Health</div><div class="value" id="sys-api-health">checking...</div></div>
-              <div class="box"><div class="label">Swarm</div><div class="value" id="sys-swarm-health">checking...</div></div>
-              <div class="box"><div class="label">Brain</div><div class="value" id="sys-brain-health">checking...</div></div>
-              <div class="box"><div class="label">Memory</div><div class="value" id="sys-memory-health">ready</div></div>
-            </div>
-            <div class="output" id="system-output">System booting...</div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+<div class="box">
+<div class="label">Brain State</div>
+<div class="value" id="brain-state">IDLE</div>
+</div>
 
-  <script src="/autopilot-engine.js"></script>
-  <script src="/global-memory.js"></script>
-  <script src="/holographic-map.js"></script>
-  <script src="/agent-economy.js"></script>
+<div class="box">
+<div class="label">Objective</div>
+<div class="value" id="brain-objective">-</div>
+</div>
 
-  <script>
-    const API = "https://api.consia.world";
-    const economy = typeof CONSIAAgentEconomy !== "undefined" ? new CONSIAAgentEconomy() : null;
-    const autopilot = typeof CONSIAAutopilot !== "undefined" ? new CONSIAAutopilot(API, economy) : null;
-    const memory = typeof CONSIAGlobalMemory !== "undefined" ? new CONSIAGlobalMemory() : null;
+<div class="box">
+<div class="label">Next Action</div>
+<div class="value" id="brain-next">Waiting</div>
+</div>
 
-    function focusSection(id){
-      const el = document.getElementById(id);
-      if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
-    }
+</div>
 
-    async function checkSystem(){
-      try{
-        const r = await fetch(API + "/?t=" + Date.now(), { cache: "no-store" });
-        const data = await r.json();
-        document.getElementById("core").innerText = data.brain === "active" ? "ACTIVE" : "OFFLINE";
-        document.getElementById("api").innerText = data.service ? "ONLINE" : "OFFLINE";
-        document.getElementById("status").innerText = data.ok ? "SYSTEM ONLINE" : "SYSTEM ERROR";
-        document.getElementById("sys-api-health").innerText = data.ok ? "ONLINE" : "OFFLINE";
-        document.getElementById("system-output").innerText = JSON.stringify(data, null, 2);
-      }catch(e){
-        document.getElementById("core").innerText = "OFFLINE";
-        document.getElementById("api").innerText = "OFFLINE";
-        document.getElementById("status").innerText = "SYSTEM ERROR";
-        document.getElementById("sys-api-health").innerText = "OFFLINE";
-        document.getElementById("system-output").innerText = String(e);
-      }
-    }
+<input id="brain-input" placeholder="crear negocio digital para Real Work">
 
-    async function loadAgents(){
-      try{
-        const r = await fetch(API + "/v1/agents?t=" + Date.now(), { cache: "no-store" });
-        const data = await r.json();
-        if(data && data.agents && data.agents.length){
-          document.getElementById("agents").innerText = data.agents.length + " ONLINE";
-          document.getElementById("agents-list").innerHTML =
-            data.agents.map(a => `<div class="agent">🤖 ${a.name}</div>`).join("");
-        }else{
-          throw new Error("no agents");
-        }
-      }catch(e){
-        document.getElementById("agents").innerText = "OFFLINE";
-        document.getElementById("agents-list").innerText = "Agents unavailable";
-      }
-    }
+<button onclick="runBrain()">RUN BRAIN</button>
+<button class="secondary" onclick="runBrainDispatch()">RUN + DISPATCH</button>
 
-    async function runBrain(){
-      const task = document.getElementById("brain-input").value.trim();
-      if(!task) return;
-      document.getElementById("brain-state").innerText = "RUNNING";
-      document.getElementById("brain-objective").innerText = task;
-      document.getElementById("brain-output").innerText = "Running brain...";
-      try{
-        const r = await fetch(API + "/v1/brain/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task })
-        });
-        const data = await r.json();
-        document.getElementById("brain-state").innerText = data.ok ? "COMPLETED" : "ERROR";
-        document.getElementById("brain-next").innerText = data.plan?.steps?.join(" → ") || "No plan";
-        document.getElementById("brain-output").innerText = JSON.stringify(data, null, 2);
-        document.getElementById("sys-brain-health").innerText = data.ok ? "ACTIVE" : "ERROR";
-      }catch(e){
-        document.getElementById("brain-state").innerText = "ERROR";
-        document.getElementById("brain-output").innerText = String(e);
-        document.getElementById("sys-brain-health").innerText = "ERROR";
-      }
-    }
+<div class="output" id="brain-output">Waiting command...</div>
 
-    async function runBrainDispatch(){
-      const task = document.getElementById("brain-input").value.trim();
-      if(!task) return;
-      document.getElementById("brain-output").innerText = "Running brain + swarm...";
-      try{
-        const brainRes = await fetch(API + "/v1/brain/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task })
-        });
-        const brainData = await brainRes.json();
+</div>
 
-        const swarmRes = await fetch(API + "/v1/swarm/dispatch", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task })
-        });
-        const swarmData = await swarmRes.json();
 
-        document.getElementById("brain-state").innerText = "COMPLETED";
-        document.getElementById("brain-next").innerText = brainData.plan?.steps?.join(" → ") || "No plan";
-        document.getElementById("brain-output").innerText = JSON.stringify({ brain: brainData, swarm: swarmData }, null, 2);
-        document.getElementById("sys-brain-health").innerText = "ACTIVE";
-        document.getElementById("sys-swarm-health").innerText = "ACTIVE";
-      }catch(e){
-        document.getElementById("brain-state").innerText = "ERROR";
-        document.getElementById("brain-output").innerText = String(e);
-      }
-    }
+<!-- STRATEGIC ENGINE -->
 
-    async function runStrategic(){
-      const task = document.getElementById("strategic-input").value.trim();
-      if(!task) return;
-      document.getElementById("strategic-output").innerText = "Running strategic analysis...";
-      try{
-        const r = await fetch(API + "/v1/brain/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task })
-        });
-        const data = await r.json();
-        document.getElementById("strategic-output").innerText = JSON.stringify(data, null, 2);
-      }catch(e){
-        document.getElementById("strategic-output").innerText = String(e);
-      }
-    }
+<div class="panel">
 
-    async function runSwarm(){
-      const task = document.getElementById("swarm-input").value.trim();
-      if(!task) return;
-      document.getElementById("swarm-run-state").innerText = "RUNNING";
-      document.getElementById("swarm-running").innerText = "4";
-      document.getElementById("swarm-output").innerText = "Running swarm...";
-      try{
-        const r = await fetch(API + "/v1/swarm/dispatch", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task })
-        });
-        const data = await r.json();
-        document.getElementById("swarm-run-state").innerText = data.ok ? "COMPLETED" : "ERROR";
-        document.getElementById("swarm-state").innerText = data.ok ? "ACTIVE" : "ERROR";
-        document.getElementById("sys-swarm-health").innerText = data.ok ? "ACTIVE" : "ERROR";
-        document.getElementById("swarm-output").innerText = JSON.stringify(data, null, 2);
-      }catch(e){
-        document.getElementById("swarm-run-state").innerText = "ERROR";
-        document.getElementById("swarm-output").innerText = String(e);
-        document.getElementById("sys-swarm-health").innerText = "ERROR";
-      }
-    }
+<h2>CONSIA STRATEGIC ENGINE</h2>
 
-    async function runAutopilot(){
-      if(!autopilot){
-        document.getElementById("autopilot-output").innerText = "Autopilot module not loaded";
-        return;
-      }
-      await autopilot.start();
-      document.getElementById("autopilot-output").innerText = "AUTOPILOT ACTIVE";
-    }
+<input id="strategy-input" placeholder="Ej: cómo monetizar CONSIA globalmente">
 
-    async function runAutopilotCycle(){
-      if(!autopilot){
-        document.getElementById("autopilot-output").innerText = "Autopilot module not loaded";
-        return;
-      }
-      const result = await autopilot.runCycle();
-      document.getElementById("autopilot-output").innerText = JSON.stringify(result, null, 2);
-      refreshEconomy();
-    }
+<button onclick="runStrategy()">ANALYZE</button>
 
-    async function buildBusiness(){
-      if(!autopilot){
-        document.getElementById("autopilot-output").innerText = "Autopilot module not loaded";
-        return;
-      }
-      const goal = document.getElementById("brain-input").value.trim() || "nuevo negocio digital";
-      const result = await autopilot.buildBusiness(goal);
-      document.getElementById("autopilot-output").innerText = JSON.stringify(result, null, 2);
-      refreshEconomy();
-    }
+<div class="output" id="strategy-output">Waiting strategy...</div>
 
-    async function storeMemory(){
-      if(!memory){
-        document.getElementById("memory-output").innerText = "Memory module not loaded";
-        return;
-      }
-      const text = document.getElementById("memory-input").value.trim();
-      if(!text) return;
-      const res = await memory.store(text);
-      document.getElementById("memory-output").innerText = "Memory size: " + res.size;
-      document.getElementById("sys-memory-health").innerText = "ACTIVE";
-    }
+</div>
 
-    async function searchMemory(){
-      if(!memory){
-        document.getElementById("memory-output").innerText = "Memory module not loaded";
-        return;
-      }
-      const text = document.getElementById("memory-input").value.trim();
-      if(!text) return;
-      const res = await memory.search(text);
-      document.getElementById("memory-output").innerText = JSON.stringify(res, null, 2);
-    }
 
-    function refreshEconomy(){
-      if(!economy){
-        document.getElementById("economy-output").innerText = "Economy module not loaded";
-        return;
-      }
-      const b = economy.getBalance();
-      document.getElementById("eco-credits").innerText = b.credits;
-      document.getElementById("eco-reserved").innerText = b.reserved;
-      document.getElementById("eco-spent").innerText = b.spent;
-      document.getElementById("eco-available").innerText = b.available;
-      document.getElementById("economy-output").innerText = JSON.stringify({
-        balance: b,
-        history: economy.getHistory(10)
-      }, null, 2);
-      document.getElementById("economy-head").innerText = "ACTIVE";
-    }
+<!-- AGENT SWARM -->
 
-    function rewardEconomy(){
-      if(!economy) return;
-      economy.reward("manual_reward", 500);
-      refreshEconomy();
-    }
+<div class="panel">
 
-    function initMap(){
-      const map = document.getElementById("map");
-      if(!map) return;
-      const nodes = [
-        ["GLOBAL BRAIN", 24, 26],
-        ["AGENT SWARM", 180, 110],
-        ["GLOBAL MEMORY", 360, 40],
-        ["AUTOPILOT", 120, 220],
-        ["PROJECT ENGINE", 36, 190],
-        ["AGENT ECONOMY", 390, 210]
-      ];
-      nodes.forEach(([name,x,y])=>{
-        const el = document.createElement("div");
-        el.className = "node";
-        el.style.left = x + "px";
-        el.style.top = y + "px";
-        el.innerText = name;
-        map.appendChild(el);
-      });
-      if(typeof CONSIAHolographicMap !== "undefined"){
-        try{
-          const holo = new CONSIAHolographicMap(map);
-          holo.render();
-        }catch(e){}
-      }
-    }
+<h2>CONSIA AGENT SWARM</h2>
 
-    function boot(){
-      checkSystem();
-      loadAgents();
-      initMap();
-      refreshEconomy();
-      document.getElementById("sys-swarm-health").innerText = "READY";
-    }
+<button onclick="runSwarm()">RUN SWARM</button>
 
-    boot();
-  </script>
+<div class="output" id="swarm-output">Waiting swarm...</div>
+
+</div>
+
+
+<!-- AUTOPILOT -->
+
+<div class="panel">
+
+<h2>CONSIA AUTOPILOT ENGINE</h2>
+
+<button onclick="startAutopilot()">START AUTOPILOT</button>
+<button class="secondary" onclick="runCycle()">RUN ONE CYCLE</button>
+
+<div class="output" id="autopilot-output">Autopilot idle</div>
+
+</div>
+
+
+<!-- AGENT ECONOMY -->
+
+<div class="panel">
+
+<h2>CONSIA AGENT ECONOMY</h2>
+
+<div class="mini">
+
+<div class="box">
+<div class="label">Credits</div>
+<div class="value" id="eco-credits">0</div>
+</div>
+
+<div class="box">
+<div class="label">Reserved</div>
+<div class="value" id="eco-reserved">0</div>
+</div>
+
+<div class="box">
+<div class="label">Spent</div>
+<div class="value" id="eco-spent">0</div>
+</div>
+
+</div>
+
+<button onclick="rewardEconomy()">REWARD +500</button>
+<button class="secondary" onclick="refreshEconomy()">REFRESH</button>
+
+<div class="output" id="economy-output">Economy ready</div>
+
+</div>
+
+
+<!-- GLOBAL MEMORY -->
+
+<div class="panel">
+
+<h2>CONSIA GLOBAL MEMORY</h2>
+
+<input id="memory-input" placeholder="Guardar conocimiento...">
+
+<button onclick="storeMemory()">STORE MEMORY</button>
+<button class="secondary" onclick="searchMemory()">SEARCH MEMORY</button>
+
+<div class="output" id="memory-output">Memory empty</div>
+
+</div>
+
+</div>
+</div>
+
+
+<script>
+
+const API="https://api.consia.world"
+
+
+async function runBrain(){
+
+const objective=document.getElementById("brain-input").value
+
+const r=await fetch(API+"/v1/brain/run",{method:"POST",body:JSON.stringify({objective})})
+
+const data=await r.json()
+
+document.getElementById("brain-state").innerText="ACTIVE"
+document.getElementById("brain-objective").innerText=objective
+
+const brainNextEl=document.getElementById("brain-next")
+if(brainNextEl){
+brainNextEl.innerText=data.plan?.steps?.join(" → ")||"No plan"
+}
+
+document.getElementById("brain-output").innerText=JSON.stringify(data,null,2)
+
+}
+
+
+async function runBrainDispatch(){
+
+const objective=document.getElementById("brain-input").value
+
+const r=await fetch(API+"/v1/brain/dispatch",{method:"POST",body:JSON.stringify({objective})})
+
+const data=await r.json()
+
+document.getElementById("brain-output").innerText=JSON.stringify(data,null,2)
+
+}
+
+
+async function runSwarm(){
+
+const r=await fetch(API+"/v1/swarm/run")
+
+const data=await r.json()
+
+document.getElementById("swarm-output").innerText=JSON.stringify(data,null,2)
+
+}
+
+
+async function runStrategy(){
+
+const q=document.getElementById("strategy-input").value
+
+const r=await fetch(API+"/v1/strategy",{method:"POST",body:JSON.stringify({query:q})})
+
+const data=await r.json()
+
+document.getElementById("strategy-output").innerText=JSON.stringify(data,null,2)
+
+}
+
+
+async function startAutopilot(){
+
+const r=await fetch(API+"/v1/autopilot/start")
+
+const data=await r.json()
+
+document.getElementById("autopilot-output").innerText=JSON.stringify(data,null,2)
+
+}
+
+
+async function runCycle(){
+
+const r=await fetch(API+"/v1/autopilot/cycle")
+
+const data=await r.json()
+
+document.getElementById("autopilot-output").innerText=JSON.stringify(data,null,2)
+
+}
+
+
+let economy={credits:0,reserved:0,spent:0}
+
+function rewardEconomy(){
+
+economy.credits+=500
+
+refreshEconomy()
+
+}
+
+function refreshEconomy(){
+
+document.getElementById("eco-credits").innerText=economy.credits
+document.getElementById("eco-reserved").innerText=economy.reserved
+document.getElementById("eco-spent").innerText=economy.spent
+
+document.getElementById("economy-output").innerText=JSON.stringify(economy,null,2)
+
+}
+
+
+let memory=[]
+
+function storeMemory(){
+
+const v=document.getElementById("memory-input").value
+
+memory.push(v)
+
+document.getElementById("memory-output").innerText=JSON.stringify(memory,null,2)
+
+}
+
+function searchMemory(){
+
+document.getElementById("memory-output").innerText=JSON.stringify(memory,null,2)
+
+}
+
+</script>
+
 </body>
 </html>
