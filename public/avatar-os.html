@@ -1,80 +1,1285 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CONSIA Avatar OS</title>
+  <meta name="theme-color" content="#061225" />
+  <style>
+    :root{
+      --bg:#061225;
+      --bg2:#091a33;
+      --panel:rgba(8,18,40,.72);
+      --panel-2:rgba(12,28,58,.62);
+      --line:rgba(91,167,255,.22);
+      --cyan:#27b7ff;
+      --cyan-2:#7ad8ff;
+      --text:#f4f8ff;
+      --muted:#9ab6d8;
+      --ok:#34d399;
+      --warn:#f59e0b;
+      --err:#fb7185;
+      --shadow:0 18px 60px rgba(0,0,0,.36);
+      --radius:22px;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:
+      radial-gradient(circle at 20% 10%, rgba(39,183,255,.12), transparent 26%),
+      radial-gradient(circle at 80% 18%, rgba(68,92,255,.10), transparent 24%),
+      linear-gradient(180deg, #041021 0%, #061225 40%, #041021 100%);
+      color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      min-height:100%;
+      overflow-x:hidden;
+    }
 
-<title>CONSIA Avatar</title>
+    .app{
+      min-height:100vh;
+      padding:18px;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      gap:16px;
+    }
 
-<style>
+    .topbar{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:center;
+      background:linear-gradient(180deg, rgba(10,22,48,.82), rgba(7,16,35,.76));
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:18px 18px 16px 18px;
+      backdrop-filter: blur(16px);
+    }
 
-body{
-margin:0;
-background:#07111f;
-color:white;
-font-family:system-ui;
-text-align:center;
-}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      min-width:0;
+    }
 
-#avatarCanvas{
-width:100%;
-height:70vh;
-}
+    .orb{
+      width:58px;height:58px;border-radius:50%;
+      position:relative;flex:0 0 auto;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.95), rgba(122,216,255,.55) 18%, rgba(39,183,255,.18) 40%, rgba(39,183,255,.04) 62%, transparent 70%),
+        radial-gradient(circle at 50% 50%, rgba(39,183,255,.32), rgba(39,183,255,.06) 60%, transparent 72%);
+      border:1px solid rgba(122,216,255,.35);
+      box-shadow:
+        0 0 50px rgba(39,183,255,.24),
+        inset 0 0 26px rgba(122,216,255,.14);
+      overflow:hidden;
+    }
 
-button{
-padding:12px 20px;
-margin:6px;
-border-radius:10px;
-border:none;
-background:#0ea5e9;
-color:white;
-font-weight:700;
-cursor:pointer;
-}
+    .orb::before{
+      content:"";
+      position:absolute;inset:-25%;
+      background:
+        linear-gradient(90deg, transparent 0 40%, rgba(255,255,255,.16) 50%, transparent 60% 100%);
+      animation:scan 4.2s linear infinite;
+      transform:rotate(22deg);
+    }
 
-</style>
+    @keyframes scan{
+      from{transform:translateX(-120%) rotate(22deg)}
+      to{transform:translateX(120%) rotate(22deg)}
+    }
 
+    .title-wrap{min-width:0}
+    .title{
+      font-size:clamp(28px,4vw,56px);
+      font-weight:800;
+      line-height:1;
+      letter-spacing:-.03em;
+      margin:0 0 6px 0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size:clamp(13px,1.5vw,18px);
+      line-height:1.35;
+    }
+
+    .status-grid{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:10px;
+      align-items:center;
+    }
+
+    .pill{
+      border:1px solid var(--line);
+      background:rgba(8,18,40,.68);
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 14px;
+      display:flex;
+      align-items:center;
+      gap:9px;
+      min-height:42px;
+      box-shadow: inset 0 0 20px rgba(122,216,255,.04);
+      font-size:14px;
+    }
+
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:#6b7280;
+      box-shadow:0 0 14px currentColor;
+      color:#6b7280;
+    }
+    .dot.ok{background:var(--ok);color:var(--ok)}
+    .dot.warn{background:var(--warn);color:var(--warn)}
+    .dot.err{background:var(--err);color:var(--err)}
+
+    .main{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 340px;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    .stage-card,.side-card,.bottom-card{
+      border:1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(9,20,42,.78), rgba(6,16,35,.72));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .stage-card{
+      min-height:64vh;
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+    }
+
+    .stage-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px 18px;
+      border-bottom:1px solid rgba(91,167,255,.12);
+      background:
+        linear-gradient(180deg, rgba(12,28,58,.52), rgba(10,20,40,.18));
+    }
+
+    .stage-title{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+
+    .stage-sub{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .viewer-wrap{
+      position:relative;
+      min-height:420px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(122,216,255,.14), transparent 18%),
+        radial-gradient(circle at 50% 64%, rgba(39,183,255,.09), transparent 24%),
+        linear-gradient(180deg, rgba(5,16,34,.82), rgba(3,12,28,.94));
+    }
+
+    .viewer-wrap::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(rgba(122,216,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(122,216,255,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 50% 50%, black 38%, rgba(0,0,0,.25) 72%, transparent 100%);
+      pointer-events:none;
+    }
+
+    .rings{
+      position:absolute; inset:0; pointer-events:none;
+      display:grid; place-items:center;
+    }
+    .ring{
+      position:absolute;
+      border-radius:50%;
+      border:1px solid rgba(122,216,255,.14);
+      box-shadow:0 0 26px rgba(39,183,255,.06), inset 0 0 26px rgba(122,216,255,.03);
+      animation:float 9s ease-in-out infinite;
+    }
+    .ring.r1{width:65vmin;height:65vmin;max-width:700px;max-height:700px}
+    .ring.r2{width:48vmin;height:48vmin;max-width:520px;max-height:520px;animation-delay:-1.8s}
+    .ring.r3{width:31vmin;height:31vmin;max-width:340px;max-height:340px;animation-delay:-3.2s}
+    @keyframes float{
+      0%,100%{transform:translateY(0) scale(1)}
+      50%{transform:translateY(-8px) scale(1.012)}
+    }
+
+    #avatarCanvas{
+      display:block;
+      width:100%;
+      height:min(72vh,760px);
+      min-height:420px;
+      position:relative;
+      z-index:2;
+      touch-action:none;
+    }
+
+    .speech-bubble{
+      position:absolute;
+      left:18px;
+      top:18px;
+      z-index:3;
+      max-width:min(560px,calc(100% - 36px));
+      background:rgba(5,13,28,.82);
+      border:1px solid rgba(122,216,255,.18);
+      border-radius:18px;
+      padding:14px 16px;
+      box-shadow:0 10px 40px rgba(0,0,0,.28);
+      backdrop-filter: blur(10px);
+      opacity:0;
+      transform:translateY(8px);
+      transition:.25s ease;
+      pointer-events:none;
+    }
+
+    .speech-bubble.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .speech-name{
+      font-size:12px;
+      color:var(--cyan-2);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-bottom:6px;
+      font-weight:700;
+    }
+
+    .speech-text{
+      font-size:15px;
+      line-height:1.45;
+      color:#f1f6ff;
+      white-space:pre-wrap;
+    }
+
+    .viewer-overlay{
+      position:absolute;
+      right:18px;
+      bottom:18px;
+      z-index:3;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      max-width:calc(100% - 36px);
+    }
+
+    .mini{
+      border-radius:999px;
+      background:rgba(6,16,35,.76);
+      border:1px solid rgba(122,216,255,.16);
+      padding:10px 14px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      padding:16px 18px 18px;
+      border-top:1px solid rgba(91,167,255,.12);
+      justify-content:center;
+      background:linear-gradient(180deg, rgba(7,17,36,.16), rgba(9,20,42,.42));
+    }
+
+    button, .ghost-input, select, textarea{
+      font:inherit;
+    }
+
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:14px 18px;
+      min-height:48px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.01em;
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease, background .15s ease;
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+    .btn-primary{
+      color:#04101f;
+      background:linear-gradient(180deg, #57ceff, #1ab6ff);
+      box-shadow:0 12px 26px rgba(39,183,255,.24);
+    }
+    .btn-dark{
+      color:var(--text);
+      background:linear-gradient(180deg, rgba(21,40,78,.95), rgba(11,24,50,.95));
+      border:1px solid rgba(122,216,255,.18);
+      box-shadow:inset 0 0 18px rgba(122,216,255,.04);
+    }
+    .btn-soft{
+      color:var(--text);
+      background:linear-gradient(180deg, rgba(15,29,60,.8), rgba(11,20,42,.8));
+      border:1px solid rgba(122,216,255,.16);
+    }
+    .btn.full{width:100%}
+
+    .side-card{
+      display:grid;
+      grid-template-rows:auto auto auto 1fr;
+      min-height:64vh;
+    }
+
+    .panel-head{
+      padding:18px 18px 14px;
+      border-bottom:1px solid rgba(91,167,255,.12);
+      background:linear-gradient(180deg, rgba(12,28,58,.48), rgba(10,20,40,.12));
+    }
+    .panel-title{font-weight:900;font-size:18px;letter-spacing:-.02em}
+    .panel-sub{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.4}
+
+    .panel-sec{
+      padding:16px 18px;
+      border-bottom:1px solid rgba(91,167,255,.08);
+    }
+
+    .label{
+      display:block;
+      font-size:12px;
+      color:var(--cyan-2);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      margin-bottom:9px;
+      font-weight:800;
+    }
+
+    .avatar-switches{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .ghost-input, .prompt-box, .select{
+      width:100%;
+      background:rgba(5,13,28,.78);
+      color:var(--text);
+      border:1px solid rgba(122,216,255,.16);
+      border-radius:14px;
+      padding:14px 14px;
+      outline:none;
+      box-shadow:inset 0 0 14px rgba(122,216,255,.03);
+    }
+
+    .prompt-box{
+      min-height:110px;
+      resize:vertical;
+      line-height:1.42;
+    }
+
+    .stack{display:grid;gap:10px}
+    .inline{display:flex;gap:10px}
+    .inline > *{flex:1}
+
+    .log{
+      padding:16px 18px 18px;
+      overflow:auto;
+      min-height:180px;
+    }
+
+    .log-card{
+      border:1px solid rgba(122,216,255,.1);
+      background:rgba(5,13,28,.56);
+      border-radius:16px;
+      padding:12px 13px;
+      margin-bottom:10px;
+    }
+
+    .log-role{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--cyan-2);
+      font-weight:900;
+      margin-bottom:6px;
+    }
+    .log-text{
+      font-size:14px;
+      line-height:1.45;
+      color:#eef5ff;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .bottom-card{
+      padding:14px 16px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .footer-left,.footer-right{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .badge{
+      border:1px solid rgba(122,216,255,.14);
+      background:rgba(6,16,35,.6);
+      border-radius:999px;
+      padding:9px 12px;
+      color:#d6e9ff;
+    }
+
+    .hidden{display:none!important}
+
+    @media (max-width: 1100px){
+      .main{grid-template-columns:1fr}
+      .side-card{min-height:auto}
+      .status-grid{justify-content:flex-start}
+      .topbar{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 720px){
+      .app{padding:12px}
+      .topbar{padding:14px}
+      .title{white-space:normal}
+      .avatar-switches{grid-template-columns:1fr}
+      .inline{flex-direction:column}
+      .controls{padding:14px}
+      .viewer-overlay{left:18px; right:18px; justify-content:flex-start}
+      #avatarCanvas{height:54vh; min-height:360px}
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="orb"></div>
+        <div class="title-wrap">
+          <h1 class="title">CONSIA Avatar OS</h1>
+          <p class="subtitle">Avatar vivo + voz + cámara + multiidioma + modo presentador + creación por prompt</p>
+        </div>
+      </div>
 
-<h1>CONSIA Avatar</h1>
+      <div class="status-grid">
+        <div class="pill"><span id="healthDot" class="dot warn"></span><span id="healthText">Health: iniciando</span></div>
+        <div class="pill"><span id="voiceDot" class="dot warn"></span><span id="voiceText">Voz: esperando</span></div>
+        <div class="pill"><span id="camDot" class="dot warn"></span><span id="camText">Cámara: esperando</span></div>
+        <div class="pill"><span id="chatDot" class="dot warn"></span><span id="chatText">Chat: esperando</span></div>
+      </div>
+    </header>
 
-<canvas id="avatarCanvas"></canvas>
+    <main class="main">
+      <section class="stage-card">
+        <div class="stage-head">
+          <div>
+            <div class="stage-title">Neural Avatar Stage</div>
+            <div class="stage-sub">Con fallback holográfico si todavía no subiste los .glb</div>
+          </div>
+          <div class="pill"><span id="activeAvatarDot" class="dot ok"></span><span id="activeAvatarLabel">Avatar activo: CONSIA</span></div>
+        </div>
 
-<div>
+        <div class="viewer-wrap">
+          <div class="rings">
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
+          </div>
 
-<button onclick="loadCONSIA('consia')">CONSIA</button>
+          <canvas id="avatarCanvas"></canvas>
 
-<button onclick="loadCONSIA('martin')">MARTIN</button>
+          <div id="speechBubble" class="speech-bubble">
+            <div class="speech-name" id="speechName">CONSIA</div>
+            <div class="speech-text" id="speechText">Listo.</div>
+          </div>
 
-<button onclick="loadCONSIA('martin-futurista')">MARTIN FUTURE</button>
+          <div class="viewer-overlay">
+            <div class="mini"><span id="renderMode">Modo render: fallback holográfico</span></div>
+            <div class="mini"><span id="langMode">Idioma: auto</span></div>
+            <div class="mini"><span id="micState">Mic: off</span></div>
+          </div>
+        </div>
 
-</div>
+        <div class="controls">
+          <button class="btn btn-primary" id="btnConsia">CONSIA</button>
+          <button class="btn btn-dark" id="btnMartin">MARTIN</button>
+          <button class="btn btn-dark" id="btnFuture">MARTIN FUTURE</button>
+          <button class="btn btn-soft" id="btnMic">Activar voz</button>
+          <button class="btn btn-soft" id="btnCam">Activar cámara</button>
+          <button class="btn btn-soft" id="btnPresent">Presentación</button>
+          <button class="btn btn-soft" id="btnDemo">Play demo</button>
+          <button class="btn btn-soft" id="btnStopSpeech">Silenciar</button>
+        </div>
+      </section>
 
-<script type="module">
+      <aside class="side-card">
+        <div class="panel-head">
+          <div class="panel-title">Avatar Control Center</div>
+          <div class="panel-sub">Definí modo, prompt, idioma y lanzá generación o presentación.</div>
+        </div>
 
-import {
+        <div class="panel-sec">
+          <label class="label">Selector rápido</label>
+          <div class="avatar-switches">
+            <button class="btn btn-dark full" id="btnLoadConsia2">Cargar CONSIA</button>
+            <button class="btn btn-dark full" id="btnLoadMartin2">Cargar MARTIN</button>
+            <button class="btn btn-dark full" id="btnLoadFuture2">Cargar FUTURE</button>
+            <button class="btn btn-dark full" id="btnFallback">Modo holograma</button>
+          </div>
+        </div>
 
-initCONSIAAvatar,
-loadAvatar,
-startListening,
-startCamera
+        <div class="panel-sec stack">
+          <div>
+            <label class="label" for="voiceLanguage">Idioma de respuesta</label>
+            <select id="voiceLanguage" class="select ghost-input">
+              <option value="auto" selected>Auto</option>
+              <option value="es-AR">Español (Argentina)</option>
+              <option value="es-ES">Español</option>
+              <option value="en-US">English (US)</option>
+              <option value="en-GB">English (UK)</option>
+              <option value="pt-BR">Português (Brasil)</option>
+              <option value="fr-FR">Français</option>
+              <option value="de-DE">Deutsch</option>
+              <option value="it-IT">Italiano</option>
+              <option value="ja-JP">日本語</option>
+              <option value="zh-CN">中文</option>
+              <option value="ar-SA">العربية</option>
+            </select>
+          </div>
 
-} from "/avatar/consia-avatar-engine-v5.js";
+          <div>
+            <label class="label" for="promptInput">Crear avatar por imaginación</label>
+            <textarea id="promptInput" class="prompt-box" placeholder="Ejemplo: líder tecnológico hiperrealista, traje negro premium, energía serena, mirada segura, estilo CONSIA top mundial"></textarea>
+          </div>
 
-initCONSIAAvatar("avatarCanvas");
+          <div class="inline">
+            <button class="btn btn-primary" id="btnGenerate">Generar avatar</button>
+            <button class="btn btn-dark" id="btnSpeakPrompt">Decir prompt</button>
+          </div>
 
-loadAvatar("consia");
+          <div>
+            <label class="label" for="messageInput">Mensaje directo al avatar</label>
+            <input id="messageInput" class="ghost-input" placeholder="Ejemplo: presentame CONSIA en 30 segundos" />
+          </div>
 
-startListening();
+          <div class="inline">
+            <button class="btn btn-primary" id="btnSend">Enviar</button>
+            <button class="btn btn-dark" id="btnHello">Saludo</button>
+          </div>
+        </div>
 
-startCamera();
+        <div class="log" id="log"></div>
+      </aside>
+    </main>
 
-window.loadCONSIA = loadAvatar;
+    <footer class="bottom-card">
+      <div class="footer-left">
+        <span class="badge">CONSIA Neural Avatar</span>
+        <span class="badge" id="footerAvatar">Avatar: CONSIA</span>
+        <span class="badge" id="footerRenderer">Renderer: fallback</span>
+      </div>
+      <div class="footer-right">
+        <span class="badge">Ruta GLB: /avatar/*.glb</span>
+        <span class="badge">API: /v1/chat</span>
+      </div>
+    </footer>
+  </div>
 
-</script>
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js";
+    import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/loaders/GLTFLoader.js";
+    import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/controls/OrbitControls.js";
 
+    const els = {
+      healthDot: document.getElementById("healthDot"),
+      healthText: document.getElementById("healthText"),
+      voiceDot: document.getElementById("voiceDot"),
+      voiceText: document.getElementById("voiceText"),
+      camDot: document.getElementById("camDot"),
+      camText: document.getElementById("camText"),
+      chatDot: document.getElementById("chatDot"),
+      chatText: document.getElementById("chatText"),
+      activeAvatarLabel: document.getElementById("activeAvatarLabel"),
+      renderMode: document.getElementById("renderMode"),
+      langMode: document.getElementById("langMode"),
+      micState: document.getElementById("micState"),
+      footerAvatar: document.getElementById("footerAvatar"),
+      footerRenderer: document.getElementById("footerRenderer"),
+      speechBubble: document.getElementById("speechBubble"),
+      speechName: document.getElementById("speechName"),
+      speechText: document.getElementById("speechText"),
+      promptInput: document.getElementById("promptInput"),
+      messageInput: document.getElementById("messageInput"),
+      voiceLanguage: document.getElementById("voiceLanguage"),
+      log: document.getElementById("log"),
+      btnConsia: document.getElementById("btnConsia"),
+      btnMartin: document.getElementById("btnMartin"),
+      btnFuture: document.getElementById("btnFuture"),
+      btnMic: document.getElementById("btnMic"),
+      btnCam: document.getElementById("btnCam"),
+      btnPresent: document.getElementById("btnPresent"),
+      btnDemo: document.getElementById("btnDemo"),
+      btnStopSpeech: document.getElementById("btnStopSpeech"),
+      btnLoadConsia2: document.getElementById("btnLoadConsia2"),
+      btnLoadMartin2: document.getElementById("btnLoadMartin2"),
+      btnLoadFuture2: document.getElementById("btnLoadFuture2"),
+      btnFallback: document.getElementById("btnFallback"),
+      btnGenerate: document.getElementById("btnGenerate"),
+      btnSpeakPrompt: document.getElementById("btnSpeakPrompt"),
+      btnSend: document.getElementById("btnSend"),
+      btnHello: document.getElementById("btnHello")
+    };
+
+    const state = {
+      activeAvatar: "consia",
+      renderMode: "fallback holográfico",
+      micActive: false,
+      camActive: false,
+      currentLang: "auto",
+      avatarLoaded: false,
+      speaking: false,
+      recognition: null,
+      videoStream: null,
+      apiAvailable: false,
+      firstInteraction: false
+    };
+
+    function setDot(el, mode){
+      el.classList.remove("ok","warn","err");
+      el.classList.add(mode);
+    }
+
+    function setStatus(kind, mode, text){
+      const map = {
+        health:[els.healthDot, els.healthText],
+        voice:[els.voiceDot, els.voiceText],
+        cam:[els.camDot, els.camText],
+        chat:[els.chatDot, els.chatText]
+      };
+      const [dot, label] = map[kind];
+      setDot(dot, mode);
+      label.textContent = text;
+    }
+
+    function addLog(role, text){
+      const wrap = document.createElement("div");
+      wrap.className = "log-card";
+      wrap.innerHTML = `<div class="log-role">${role}</div><div class="log-text"></div>`;
+      wrap.querySelector(".log-text").textContent = text;
+      els.log.prepend(wrap);
+    }
+
+    let bubbleTimer;
+    function showBubble(name, text, sticky=false){
+      els.speechName.textContent = name;
+      els.speechText.textContent = text;
+      els.speechBubble.classList.add("show");
+      clearTimeout(bubbleTimer);
+      if(!sticky){
+        bubbleTimer = setTimeout(()=> els.speechBubble.classList.remove("show"), 6500);
+      }
+    }
+
+    function updateUiAvatar(){
+      const label = state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase();
+      els.activeAvatarLabel.textContent = `Avatar activo: ${label}`;
+      els.footerAvatar.textContent = `Avatar: ${label}`;
+      els.renderMode.textContent = `Modo render: ${state.renderMode}`;
+      els.footerRenderer.textContent = `Renderer: ${state.renderMode}`;
+      els.langMode.textContent = `Idioma: ${state.currentLang}`;
+      els.micState.textContent = `Mic: ${state.micActive ? "on" : "off"}`;
+    }
+
+    const canvas = document.getElementById("avatarCanvas");
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x061225);
+
+    const camera = new THREE.PerspectiveCamera(38, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+    camera.position.set(0, 1.34, 3.1);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:"high-performance" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.minDistance = 1.8;
+    controls.maxDistance = 5.5;
+    controls.target.set(0, 1.12, 0);
+
+    const hemi = new THREE.HemisphereLight(0xdff5ff, 0x102040, 1.7);
+    scene.add(hemi);
+
+    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
+    dir.position.set(2.8, 4, 3.4);
+    scene.add(dir);
+
+    const fill = new THREE.DirectionalLight(0x5ccaff, 0.5);
+    fill.position.set(-3, 2, 2);
+    scene.add(fill);
+
+    const floor = new THREE.Mesh(
+      new THREE.CircleGeometry(1.15, 64),
+      new THREE.MeshBasicMaterial({ color:0x1f6fff, transparent:true, opacity:.08 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.02;
+    scene.add(floor);
+
+    const hologramGroup = new THREE.Group();
+    scene.add(hologramGroup);
+
+    const loader = new GLTFLoader();
+    let currentAvatar = null;
+    let mixer = null;
+    const clock = new THREE.Clock();
+
+    function clearAvatar(){
+      if(currentAvatar){
+        scene.remove(currentAvatar);
+        currentAvatar.traverse(obj=>{
+          if(obj.geometry) obj.geometry.dispose?.();
+          if(obj.material){
+            if(Array.isArray(obj.material)) obj.material.forEach(m=>m.dispose?.());
+            else obj.material.dispose?.();
+          }
+        });
+        currentAvatar = null;
+      }
+      mixer = null;
+    }
+
+    function createFallbackAvatar(){
+      hologramGroup.clear();
+
+      const root = new THREE.Group();
+
+      const bodyMat = new THREE.MeshPhongMaterial({
+        color:0x72d8ff,
+        transparent:true,
+        opacity:.17,
+        emissive:0x1ab6ff,
+        emissiveIntensity:.22,
+        shininess:90
+      });
+
+      const lineMat = new THREE.MeshBasicMaterial({
+        color:0x99e7ff,
+        transparent:true,
+        opacity:.75
+      });
+
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 32, 32), bodyMat.clone());
+      head.position.set(0, 1.52, 0);
+      root.add(head);
+
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.14, 16), bodyMat.clone());
+      neck.position.set(0, 1.28, 0);
+      root.add(neck);
+
+      const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.8, 8, 18), bodyMat.clone());
+      torso.position.set(0, 0.65, 0);
+      root.add(torso);
+
+      const eyeGeo = new THREE.SphereGeometry(0.026, 16, 16);
+      const eyeMat = new THREE.MeshBasicMaterial({ color:0xc7f3ff, transparent:true, opacity:.95 });
+      const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+      const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+      eyeL.position.set(-0.09, 1.56, 0.24);
+      eyeR.position.set(0.09, 1.56, 0.24);
+      root.add(eyeL, eyeR);
+
+      const mouth = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.015, 0.01),
+        new THREE.MeshBasicMaterial({ color:0x9be9ff, transparent:true, opacity:.9 })
+      );
+      mouth.name = "fallbackMouth";
+      mouth.position.set(0, 1.43, 0.24);
+      root.add(mouth);
+
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(0.09, 24, 24),
+        new THREE.MeshBasicMaterial({ color:0xdfffff, transparent:true, opacity:.9 })
+      );
+      core.position.set(0, 0.84, 0.28);
+      root.add(core);
+
+      const ring1 = new THREE.Mesh(
+        new THREE.TorusGeometry(0.58, 0.004, 12, 100),
+        new THREE.MeshBasicMaterial({ color:0x59cfff, transparent:true, opacity:.35 })
+      );
+      ring1.rotation.x = Math.PI / 2;
+      ring1.position.set(0, 0.78, 0);
+      root.add(ring1);
+
+      const ring2 = new THREE.Mesh(
+        new THREE.TorusGeometry(0.96, 0.004, 12, 120),
+        new THREE.MeshBasicMaterial({ color:0x59cfff, transparent:true, opacity:.18 })
+      );
+      ring2.rotation.x = Math.PI / 2;
+      ring2.position.set(0, 1.02, 0);
+      root.add(ring2);
+
+      root.userData = { eyeL, eyeR, mouth, core, ring1, ring2 };
+      hologramGroup.add(root);
+      currentAvatar = root;
+      state.renderMode = "fallback holográfico";
+      state.avatarLoaded = false;
+      updateUiAvatar();
+    }
+
+    createFallbackAvatar();
+
+    function setActiveButton(name){
+      const buttons = [
+        [els.btnConsia,"consia"], [els.btnMartin,"martin"], [els.btnFuture,"martin-futurista"]
+      ];
+      buttons.forEach(([btn, key])=>{
+        btn.className = "btn " + (name===key ? "btn-primary" : "btn-dark");
+      });
+    }
+
+    async function loadAvatar(name){
+      state.activeAvatar = name;
+      setActiveButton(name);
+      updateUiAvatar();
+
+      const path = `/avatar/${name}.glb`;
+      clearAvatar();
+      createFallbackAvatar();
+      showBubble("CONSIA", `Cargando ${name.toUpperCase()}...`, true);
+
+      try{
+        const gltf = await loader.loadAsync(path);
+        hologramGroup.clear();
+        currentAvatar = gltf.scene;
+        currentAvatar.position.set(0, 0, 0);
+        currentAvatar.scale.setScalar(1.32);
+
+        currentAvatar.traverse(obj=>{
+          if(obj.isMesh){
+            obj.castShadow = false;
+            obj.receiveShadow = false;
+          }
+        });
+
+        scene.add(currentAvatar);
+
+        if(gltf.animations && gltf.animations.length){
+          mixer = new THREE.AnimationMixer(currentAvatar);
+          const clip = gltf.animations[0];
+          const action = mixer.clipAction(clip);
+          action.play();
+        } else {
+          mixer = null;
+        }
+
+        state.renderMode = "GLB real";
+        state.avatarLoaded = true;
+        updateUiAvatar();
+        showBubble(name.toUpperCase(), `${name.toUpperCase()} cargado correctamente.`);
+        addLog("system", `${path} cargado.`);
+      } catch(err){
+        state.renderMode = "fallback holográfico";
+        state.avatarLoaded = false;
+        updateUiAvatar();
+        showBubble("CONSIA", `No encontré ${path}. Uso modo holograma hasta que subas el archivo .glb.`);
+        addLog("warning", `No se pudo cargar ${path}. Fallback activado.`);
+      }
+    }
+
+    function animateFallback(delta){
+      if(!currentAvatar || state.avatarLoaded) return;
+      const t = performance.now() * 0.001;
+      currentAvatar.rotation.y = Math.sin(t * 0.55) * 0.18;
+
+      const d = currentAvatar.userData || {};
+      if(d.core){
+        d.core.scale.setScalar(1 + Math.sin(t * 2.2) * 0.08);
+      }
+      if(d.ring1){
+        d.ring1.rotation.z += delta * 0.5;
+      }
+      if(d.ring2){
+        d.ring2.rotation.z -= delta * 0.3;
+      }
+      if(d.mouth && state.speaking){
+        d.mouth.scale.y = 1 + Math.abs(Math.sin(t * 18)) * 3.4;
+      } else if(d.mouth){
+        d.mouth.scale.y = 1;
+      }
+    }
+
+    function animate(){
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+
+      if(mixer) mixer.update(delta);
+      if(currentAvatar && state.avatarLoaded){
+        currentAvatar.rotation.y += delta * 0.12;
+      }
+      animateFallback(delta);
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    function resize(){
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function getPreferredLang(){
+      const v = els.voiceLanguage.value;
+      if(v !== "auto") return v;
+      return navigator.language || "es-AR";
+    }
+
+    function speak(text, who="CONSIA"){
+      if(!("speechSynthesis" in window)){
+        addLog("error", "SpeechSynthesis no disponible en este navegador.");
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      const lang = getPreferredLang();
+      utter.lang = lang;
+      utter.rate = 1;
+      utter.pitch = 1;
+
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang.toLowerCase().startsWith(lang.toLowerCase().slice(0,2)));
+      if(preferred) utter.voice = preferred;
+
+      utter.onstart = () => {
+        state.speaking = true;
+        setStatus("voice","ok","Voz: hablando");
+        showBubble(who, text, true);
+      };
+      utter.onend = () => {
+        state.speaking = false;
+        setStatus("voice", state.micActive ? "ok" : "warn", state.micActive ? "Voz: lista" : "Voz: disponible");
+        els.speechBubble.classList.remove("show");
+      };
+      utter.onerror = () => {
+        state.speaking = false;
+        setStatus("voice","err","Voz: error");
+      };
+
+      speechSynthesis.speak(utter);
+    }
+
+    async function checkApiHealth(){
+      try{
+        const res = await fetch("https://api.consia.world/v1/chat", {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ message:"ping" })
+        });
+        if(!res.ok) throw new Error("bad_status");
+        state.apiAvailable = true;
+        setStatus("chat","ok","Chat: conectado");
+        setStatus("health","ok","Health: online");
+      } catch {
+        state.apiAvailable = false;
+        setStatus("chat","warn","Chat: fallback local");
+        setStatus("health","ok","Health: online");
+      }
+    }
+
+    async function sendToConsia(text){
+      addLog("user", text);
+      showBubble("TÚ", text);
+
+      try{
+        const res = await fetch("https://api.consia.world/v1/chat",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ message:text })
+        });
+
+        if(!res.ok) throw new Error("bad_status");
+        const data = await res.json();
+        const answer = data.answer || data.message || "Listo.";
+        addLog("consia", answer);
+        speak(answer, state.activeAvatar === "martin-futurista" ? "MARTIN FUTURE" : state.activeAvatar.toUpperCase());
+        setStatus("chat","ok","Chat: conectado");
+      } catch {
+        const fallback = buildLocalFallback(text);
+        addLog("consia", fallback);
+        speak(fallback, "CONSIA");
+        setStatus("chat","warn","Chat: fallback local");
+      }
+    }
+
+    function buildLocalFallback(text){
+      const t = text.toLowerCase();
+
+      if(t.includes("present") || t.includes("consia")){
+        return "Hola. Soy CONSIA Avatar OS. Estoy activo con voz, cámara, selector de avatar, modo holograma, prompt de creación y conexión preparada al backend.";
+      }
+      if(t.includes("manglar")){
+        return "Manglar queda listo para integrarse como modo presentador con métricas, proyectos y ventas dentro de CONSIA.";
+      }
+      if(t.includes("real work")){
+        return "Real Work puede entrar como presentador comercial con propiedades, leads y automatización de atención.";
+      }
+      if(t.includes("hola")){
+        return "Hola Martín. Ya estoy activo. Podemos seguir escalando el sistema de avatar de CONSIA.";
+      }
+      return "Recibido. El backend no respondió en este momento, así que te respondo en modo local. La interfaz quedó lista para seguir potenciando CONSIA.";
+    }
+
+    function setupSpeechRecognition(){
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SpeechRecognition){
+        setStatus("voice","warn","Voz: navegador sin reconocimiento");
+        els.btnMic.disabled = true;
+        return;
+      }
+
+      const rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = false;
+      rec.lang = getPreferredLang();
+
+      rec.onstart = () => {
+        state.micActive = true;
+        els.btnMic.textContent = "Detener voz";
+        setStatus("voice","ok","Voz: escuchando");
+        updateUiAvatar();
+      };
+
+      rec.onend = () => {
+        state.micActive = false;
+        els.btnMic.textContent = "Activar voz";
+        setStatus("voice","warn","Voz: detenida");
+        updateUiAvatar();
+      };
+
+      rec.onerror = () => {
+        state.micActive = false;
+        els.btnMic.textContent = "Activar voz";
+        setStatus("voice","err","Voz: error");
+        updateUiAvatar();
+      };
+
+      rec.onresult = (e) => {
+        const text = e.results[e.results.length - 1][0].transcript;
+        sendToConsia(text);
+      };
+
+      state.recognition = rec;
+      setStatus("voice","ok","Voz: lista");
+    }
+
+    function toggleMic(){
+      if(!state.recognition){
+        setupSpeechRecognition();
+        if(!state.recognition) return;
+      }
+      state.recognition.lang = getPreferredLang();
+
+      if(state.micActive) state.recognition.stop();
+      else {
+        try { state.recognition.start(); }
+        catch {}
+      }
+    }
+
+    async function toggleCamera(){
+      if(state.camActive && state.videoStream){
+        state.videoStream.getTracks().forEach(t => t.stop());
+        state.videoStream = null;
+        state.camActive = false;
+        els.btnCam.textContent = "Activar cámara";
+        setStatus("cam","warn","Cámara: detenida");
+        return;
+      }
+
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
+        state.videoStream = stream;
+        state.camActive = true;
+        els.btnCam.textContent = "Detener cámara";
+        setStatus("cam","ok","Cámara: activa");
+      } catch {
+        state.camActive = false;
+        setStatus("cam","err","Cámara: permiso denegado");
+      }
+    }
+
+    async function generateAvatar(){
+      const prompt = els.promptInput.value.trim();
+      if(!prompt){
+        speak("Escribí primero cómo querés el avatar.", "CONSIA");
+        return;
+      }
+
+      addLog("prompt", prompt);
+      showBubble("CONSIA", "Procesando prompt de avatar...", true);
+
+      try{
+        const res = await fetch("https://api.consia.world/v1/avatar/generate",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ prompt })
+        });
+        if(!res.ok) throw new Error("bad_status");
+        const data = await res.json();
+
+        if(data.avatar){
+          await loadAvatar(String(data.avatar).replace(".glb",""));
+          speak("Avatar generado y cargado.", "CONSIA");
+          addLog("system", `Avatar generado: ${data.avatar}`);
+        } else {
+          throw new Error("no_avatar");
+        }
+      } catch {
+        const fallbackName = prompt.toLowerCase().includes("martin") ? "martin" :
+                             prompt.toLowerCase().includes("future") || prompt.toLowerCase().includes("futur") ? "martin-futurista" :
+                             "consia";
+        await loadAvatar(fallbackName);
+        speak("No llegó un modelo nuevo desde el backend. Activé la mejor coincidencia local.", "CONSIA");
+      }
+    }
+
+    function runPresentation(){
+      const name = state.activeAvatar === "martin-futurista" ? "Martín Future" : state.activeAvatar === "martin" ? "Martín" : "CONSIA";
+      const text = `${name} activo. Bienvenido a CONSIA Avatar OS. Este sistema ya integra escenario visual, voz, cámara, selector de identidades, prompt de creación y conexión preparada para backend, ventas, demos y automatizaciones multiempresa.`;
+      addLog("presentation", text);
+      speak(text, name.toUpperCase());
+    }
+
+    function runDemo(){
+      const seq = [
+        () => loadAvatar("consia"),
+        () => speak("Hola Martín. Soy CONSIA. Estoy listo para operar como avatar vivo dentro de tu sistema.", "CONSIA"),
+        () => loadAvatar("martin"),
+        () => speak("Modo gemelo digital activado.", "MARTIN"),
+        () => loadAvatar("martin-futurista"),
+        () => speak("Modo futurista activado. Preparado para presentaciones top nivel.", "MARTIN FUTURE")
+      ];
+
+      let i = 0;
+      const next = () => {
+        if(i >= seq.length) return;
+        seq[i++]();
+        setTimeout(next, i % 2 === 0 ? 2200 : 900);
+      };
+      next();
+    }
+
+    function sayHello(){
+      const hello = "Hola Martín. CONSIA Avatar OS está activo y listo para seguir escalando.";
+      addLog("consia", hello);
+      speak(hello, "CONSIA");
+    }
+
+    function primeSpeech(){
+      if(state.firstInteraction) return;
+      state.firstInteraction = true;
+      speechSynthesis.getVoices();
+    }
+
+    els.btnConsia.onclick = async () => { primeSpeech(); await loadAvatar("consia"); };
+    els.btnMartin.onclick = async () => { primeSpeech(); await loadAvatar("martin"); };
+    els.btnFuture.onclick = async () => { primeSpeech(); await loadAvatar("martin-futurista"); };
+
+    els.btnLoadConsia2.onclick = async () => { primeSpeech(); await loadAvatar("consia"); };
+    els.btnLoadMartin2.onclick = async () => { primeSpeech(); await loadAvatar("martin"); };
+    els.btnLoadFuture2.onclick = async () => { primeSpeech(); await loadAvatar("martin-futurista"); };
+    els.btnFallback.onclick = () => {
+      clearAvatar();
+      createFallbackAvatar();
+      state.renderMode = "fallback holográfico";
+      updateUiAvatar();
+      showBubble("CONSIA", "Modo holograma activado.");
+    };
+
+    els.btnMic.onclick = () => { primeSpeech(); toggleMic(); };
+    els.btnCam.onclick = () => toggleCamera();
+    els.btnPresent.onclick = () => { primeSpeech(); runPresentation(); };
+    els.btnDemo.onclick = () => { primeSpeech(); runDemo(); };
+    els.btnStopSpeech.onclick = () => {
+      speechSynthesis.cancel();
+      state.speaking = false;
+      setStatus("voice", state.micActive ? "ok" : "warn", state.micActive ? "Voz: escuchando" : "Voz: lista");
+      els.speechBubble.classList.remove("show");
+    };
+
+    els.btnGenerate.onclick = () => { primeSpeech(); generateAvatar(); };
+    els.btnSpeakPrompt.onclick = () => {
+      primeSpeech();
+      const prompt = els.promptInput.value.trim() || "Todavía no hay prompt cargado.";
+      speak(prompt, "CONSIA");
+    };
+    els.btnSend.onclick = () => {
+      primeSpeech();
+      const msg = els.messageInput.value.trim();
+      if(msg) sendToConsia(msg);
+    };
+    els.btnHello.onclick = () => { primeSpeech(); sayHello(); };
+
+    els.voiceLanguage.onchange = () => {
+      state.currentLang = els.voiceLanguage.value;
+      updateUiAvatar();
+      if(state.recognition && state.micActive){
+        try{ state.recognition.stop(); } catch {}
+      }
+    };
+
+    document.addEventListener("click", primeSpeech, { once:true });
+
+    speechSynthesis.onvoiceschanged = () => {};
+
+    setStatus("health","warn","Health: iniciando");
+    setStatus("voice","warn","Voz: iniciando");
+    setStatus("cam","warn","Cámara: esperando");
+    setStatus("chat","warn","Chat: verificando");
+    state.currentLang = els.voiceLanguage.value;
+    updateUiAvatar();
+
+    await checkApiHealth();
+    setupSpeechRecognition();
+    await loadAvatar("consia");
+    showBubble("CONSIA", "Avatar OS activo. Si todavía no ves modelo 3D, subí /avatar/consia.glb, /avatar/martin.glb y /avatar/martin-futurista.glb.");
+    addLog("system", "CONSIA Avatar OS iniciado.");
+    addLog("system", "Listo para voz, cámara, prompt y presentación.");
+  </script>
 </body>
 </html>
