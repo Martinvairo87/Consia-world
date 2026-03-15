@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CONSIA HOLOGRAPHIC BRAIN</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+
+body{
+margin:0;
+background:#000;
+color:#00f7ff;
+font-family:Arial;
+overflow:hidden;
+}
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+}
+
+#panel{
+position:absolute;
+top:20px;
+left:20px;
+background:rgba(0,0,0,0.6);
+padding:15px;
+border:1px solid #00f7ff55;
+width:300px;
+}
+
+#status{
+font-size:12px;
+white-space:pre;
+}
+
+button{
+margin-top:10px;
+padding:10px;
+width:100%;
+background:#021c22;
+color:#00f7ff;
+border:1px solid #00f7ff44;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="brain"></canvas>
+
+<div id="panel">
+
+<h3>CONSIA GLOBAL BRAIN</h3>
+
+<button onclick="system()">System</button>
+<button onclick="agents()">Agents</button>
+<button onclick="projects()">Projects</button>
+
+<div id="status"></div>
+
+</div>
+
+<script>
+
+const API="https://api.consia.world"
+
+const canvas=document.getElementById("brain")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let nodes=[]
+let links=[]
+
+for(let i=0;i<120;i++){
+
+nodes.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5),
+vy:(Math.random()-0.5)
+})
+
+}
+
+function draw(){
+
+ctx.fillStyle="black"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+ctx.strokeStyle="#00f7ff22"
+
+for(let i=0;i<nodes.length;i++){
+
+for(let j=i+1;j<nodes.length;j++){
+
+const dx=nodes[i].x-nodes[j].x
+const dy=nodes[i].y-nodes[j].y
+const dist=Math.sqrt(dx*dx+dy*dy)
+
+if(dist<120){
+
+ctx.beginPath()
+ctx.moveTo(nodes[i].x,nodes[i].y)
+ctx.lineTo(nodes[j].x,nodes[j].y)
+ctx.stroke()
+
+}
+
+}
+
+}
+
+ctx.fillStyle="#00f7ff"
+
+nodes.forEach(n=>{
+
+n.x+=n.vx
+n.y+=n.vy
+
+if(n.x<0||n.x>canvas.width) n.vx*=-1
+if(n.y<0||n.y>canvas.height) n.vy*=-1
+
+ctx.beginPath()
+ctx.arc(n.x,n.y,2,0,Math.PI*2)
+ctx.fill()
+
+})
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+async function system(){
+
+const r=await fetch(API)
+const j=await r.json()
+
+document.getElementById("status").innerText=
+JSON.stringify(j,null,2)
+
+}
+
+async function agents(){
+
+const r=await fetch(API+"/v1/agents")
+const j=await r.json()
+
+document.getElementById("status").innerText=
+"Agents: "+j.agents.length
+
+}
+
+async function projects(){
+
+const r=await fetch(API+"/v1/projects")
+const j=await r.json()
+
+document.getElementById("status").innerText=
+"Projects: "+j.projects.length
+
+}
+
+</script>
+
+</body>
+</html>
