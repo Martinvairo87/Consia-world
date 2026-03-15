@@ -15,217 +15,81 @@
       --text:#ffffff;
       --muted:rgba(255,255,255,.72);
       --ok:#47ffab;
-      --warn:#ffd166;
-      --err:#ff6b6b;
-      --cyan:#1f66ff;
+      --cyan:#2f6bff;
     }
-
     *{box-sizing:border-box}
     html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
     body{overflow:hidden}
-
     header{
-      height:72px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 24px;
-      background:var(--top);
-      border-bottom:1px solid var(--line);
+      height:72px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 24px; background:var(--top); border-bottom:1px solid var(--line);
     }
-
-    .title{
-      font-size:22px;
-      font-weight:700;
-      letter-spacing:.02em;
-    }
-
-    .status{
-      font-size:14px;
-      font-weight:700;
-      color:var(--ok);
-    }
-
-    .container{
-      display:flex;
-      height:calc(100vh - 72px);
-    }
-
+    .title{font-size:22px;font-weight:700}
+    .status{font-size:14px;font-weight:700;color:var(--ok)}
+    .container{display:flex;height:calc(100vh - 72px)}
     .sidebar{
-      width:220px;
-      background:var(--bg2);
-      border-right:1px solid var(--line);
-      padding:18px;
-      overflow:auto;
+      width:220px; background:var(--bg2); border-right:1px solid var(--line);
+      padding:18px; overflow:auto;
     }
-
     .sidebar button{
-      width:100%;
-      margin-bottom:10px;
-      padding:12px;
-      background:var(--panel);
-      border:none;
-      color:#fff;
-      border-radius:8px;
-      cursor:pointer;
-      text-align:left;
-      font-size:14px;
+      width:100%; margin-bottom:10px; padding:12px; background:var(--panel);
+      border:none; color:#fff; border-radius:8px; cursor:pointer; text-align:left; font-size:14px;
     }
-
-    .sidebar button:hover{
-      background:#143164;
-    }
-
-    .main{
-      flex:1;
-      padding:22px;
-      overflow:auto;
-    }
-
+    .sidebar button:hover{background:#143164}
+    .main{flex:1;padding:22px;overflow:auto}
     .cards{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(180px,1fr));
-      gap:18px;
-      margin-bottom:20px;
+      display:grid; grid-template-columns:repeat(4,minmax(180px,1fr));
+      gap:18px; margin-bottom:20px;
     }
-
     .card{
-      background:var(--panel2);
-      border:1px solid var(--line);
-      border-radius:10px;
-      padding:18px;
-      min-height:110px;
+      background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+      padding:18px; min-height:110px;
     }
-
-    .card h3{
-      margin:0 0 20px 0;
-      font-size:16px;
-      letter-spacing:.02em;
-    }
-
-    .big{
-      font-size:18px;
-      font-weight:700;
-    }
-
-    .layout{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:20px;
-    }
-
+    .card h3{margin:0 0 20px 0;font-size:16px}
+    .big{font-size:18px;font-weight:700}
+    .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
     .panel{
-      background:var(--panel2);
-      border:1px solid var(--line);
-      border-radius:10px;
-      padding:18px;
-      margin-bottom:20px;
+      background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+      padding:18px; margin-bottom:20px;
     }
-
-    .panel h2{
-      margin:0 0 8px 0;
-      font-size:18px;
-    }
-
+    .panel h2{margin:0 0 8px 0;font-size:18px}
     .sub{
-      margin:0 0 14px 0;
-      font-size:12px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:.08em;
+      margin:0 0 14px 0; font-size:12px; color:var(--muted);
+      text-transform:uppercase; letter-spacing:.08em;
     }
-
-    input, textarea{
-      width:100%;
-      background:#061224;
-      color:#fff;
-      border:1px solid var(--line);
-      border-radius:8px;
-      padding:12px;
-      outline:none;
-      font:inherit;
+    input{
+      width:100%; background:#061224; color:#fff; border:1px solid var(--line);
+      border-radius:8px; padding:12px; outline:none; font:inherit;
     }
-
-    textarea{
-      min-height:120px;
-      resize:vertical;
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
     .btn{
-      background:var(--cyan);
-      color:#fff;
-      border:none;
-      border-radius:8px;
-      padding:10px 14px;
-      font-weight:700;
-      cursor:pointer;
+      background:var(--cyan); color:#fff; border:none; border-radius:8px;
+      padding:10px 14px; font-weight:700; cursor:pointer;
     }
-
     .btn.secondary{background:#143164}
-    .btn.dark{background:#0a1a34}
-
     .output{
-      margin-top:12px;
-      background:#040d1c;
-      border:1px solid var(--line);
-      border-radius:8px;
-      padding:12px;
-      min-height:120px;
-      max-height:320px;
-      overflow:auto;
-      white-space:pre-wrap;
-      font-size:13px;
-      color:#dbe8ff;
+      margin-top:12px; background:#040d1c; border:1px solid var(--line); border-radius:8px;
+      padding:12px; min-height:120px; max-height:320px; overflow:auto; white-space:pre-wrap; font-size:13px;
     }
-
     .agent{
-      background:#0b2b5a;
-      border:1px solid rgba(255,255,255,.04);
-      padding:10px 12px;
-      border-radius:8px;
-      margin-bottom:8px;
-      font-size:13px;
+      background:#0b2b5a; border:1px solid rgba(255,255,255,.04);
+      padding:10px 12px; border-radius:8px; margin-bottom:8px; font-size:13px;
     }
-
     .mini{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(140px,1fr));
-      gap:10px;
-      margin-bottom:12px;
+      display:grid; grid-template-columns:repeat(2,minmax(140px,1fr));
+      gap:10px; margin-bottom:12px;
     }
-
     .mini .box{
-      background:#0a1a34;
-      border:1px solid var(--line);
-      border-radius:8px;
-      padding:12px;
+      background:#0a1a34; border:1px solid var(--line); border-radius:8px; padding:12px;
     }
-
     .mini .label{
-      color:var(--muted);
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      margin-bottom:6px;
+      color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;
     }
-
-    .mini .value{
-      font-weight:700;
-      font-size:15px;
-    }
-
+    .mini .value{font-weight:700;font-size:15px}
     @media (max-width: 1100px){
       .cards{grid-template-columns:repeat(2,minmax(180px,1fr))}
       .layout{grid-template-columns:1fr}
     }
-
     @media (max-width: 760px){
       body{overflow:auto}
       .container{flex-direction:column;height:auto}
@@ -244,7 +108,7 @@
   <div class="container">
     <aside class="sidebar">
       <button onclick="focusSection('brain-panel')">Global Brain</button>
-      <button onclick="focusSection('strategic-panel')">Strategic</button>
+      <button onclick="focusSection('swarm-panel')">Agent Swarm</button>
       <button onclick="focusSection('agents-panel')">Agents</button>
       <button onclick="focusSection('system-panel')">System</button>
     </aside>
@@ -264,8 +128,8 @@
           <div class="big" id="agents">loading...</div>
         </div>
         <div class="card">
-          <h3>LEARNING</h3>
-          <div class="big" id="learning">ACTIVE</div>
+          <h3>SWARM</h3>
+          <div class="big" id="swarm-state">READY</div>
         </div>
       </section>
 
@@ -273,7 +137,7 @@
         <div>
           <div class="panel" id="brain-panel">
             <h2>CONSIA GLOBAL BRAIN</h2>
-            <div class="sub">Contexto, continuidad, routing y dispatch</div>
+            <div class="sub">Planificación y routing</div>
 
             <div class="mini">
               <div class="box">
@@ -281,70 +145,51 @@
                 <div class="value" id="brain-state">IDLE</div>
               </div>
               <div class="box">
-                <div class="label">Company</div>
-                <div class="value" id="brain-company">CONSIA</div>
-              </div>
-              <div class="box">
-                <div class="label">Project</div>
-                <div class="value" id="brain-project">-</div>
-              </div>
-              <div class="box">
-                <div class="label">Next Action</div>
-                <div class="value" id="brain-next">Waiting</div>
+                <div class="label">Objective</div>
+                <div class="value" id="brain-objective">-</div>
               </div>
             </div>
 
             <input id="brain-input" placeholder="Ej: crear negocio digital para Real Work" />
             <div class="row">
               <button class="btn" onclick="runBrain()">RUN BRAIN</button>
-              <button class="btn secondary" onclick="runBrainDispatch()">RUN + DISPATCH</button>
             </div>
             <div class="output" id="brain-output">Waiting command...</div>
           </div>
 
-          <div class="panel" id="strategic-panel">
-            <h2>CONSIA STRATEGIC ENGINE</h2>
-            <div class="sub">Oportunidades, prioridades y roadmap</div>
+          <div class="panel" id="swarm-panel">
+            <h2>CONSIA AGENT SWARM</h2>
+            <div class="sub">Ejecución paralela</div>
 
             <div class="mini">
               <div class="box">
-                <div class="label">Strategic State</div>
-                <div class="value" id="strategic-state">IDLE</div>
+                <div class="label">Swarm State</div>
+                <div class="value" id="swarm-run-state">IDLE</div>
               </div>
               <div class="box">
-                <div class="label">Company</div>
-                <div class="value" id="strategic-company">CONSIA</div>
-              </div>
-              <div class="box">
-                <div class="label">Objective</div>
-                <div class="value" id="strategic-objective">strategy</div>
-              </div>
-              <div class="box">
-                <div class="label">Last Result</div>
-                <div class="value" id="strategic-last">Waiting</div>
+                <div class="label">Agents Running</div>
+                <div class="value" id="swarm-running">0</div>
               </div>
             </div>
 
-            <input id="strategic-input" placeholder="Ej: cómo monetizar CONSIA globalmente" />
+            <input id="swarm-input" placeholder="Ej: nuevo proyecto" />
             <div class="row">
-              <button class="btn" id="strategic-run">ANALYZE</button>
-              <button class="btn secondary" id="strategic-dispatch">DISPATCH</button>
+              <button class="btn secondary" onclick="runSwarm()">RUN SWARM</button>
             </div>
-            <div class="output" id="strategic-output">Waiting strategy...</div>
+            <div class="output" id="swarm-output">Waiting swarm...</div>
           </div>
         </div>
 
         <div>
           <div class="panel" id="agents-panel">
             <h2>ACTIVE AGENTS</h2>
-            <div class="sub">Swarm vivo + fallback</div>
+            <div class="sub">Lista desde API</div>
             <div id="agents-list">Loading agents...</div>
-            <div class="output" id="agents-log">Waiting agents sync...</div>
           </div>
 
           <div class="panel" id="system-panel">
             <h2>SYSTEM STATE</h2>
-            <div class="sub">Estado general del sistema</div>
+            <div class="sub">Estado general</div>
 
             <div class="mini">
               <div class="box">
@@ -354,14 +199,6 @@
               <div class="box">
                 <div class="label">Swarm</div>
                 <div class="value" id="sys-swarm-health">checking...</div>
-              </div>
-              <div class="box">
-                <div class="label">Brain</div>
-                <div class="value" id="sys-brain-health">checking...</div>
-              </div>
-              <div class="box">
-                <div class="label">Learning</div>
-                <div class="value" id="sys-learning-health">ACTIVE</div>
               </div>
             </div>
 
@@ -382,11 +219,11 @@
 
     async function checkSystem(){
       try{
-        const r = await fetch(API + "/health?t=" + Date.now(), { cache: "no-store" });
+        const r = await fetch(API + "/?t=" + Date.now(), { cache: "no-store" });
         const data = await r.json();
 
-        document.getElementById("core").innerText = data.ok ? "ACTIVE" : "OFFLINE";
-        document.getElementById("api").innerText = data.status ? data.status.toUpperCase() : "ONLINE";
+        document.getElementById("core").innerText = data.brain === "active" ? "ACTIVE" : "OFFLINE";
+        document.getElementById("api").innerText = data.service ? "ONLINE" : "OFFLINE";
         document.getElementById("status").innerText = data.ok ? "SYSTEM ONLINE" : "SYSTEM ERROR";
         document.getElementById("sys-api-health").innerText = data.ok ? "ONLINE" : "OFFLINE";
         document.getElementById("system-output").innerText = JSON.stringify(data, null, 2);
@@ -400,140 +237,78 @@
     }
 
     async function loadAgents(){
-      const list = document.getElementById("agents-list");
-      const log = document.getElementById("agents-log");
-
       try{
         const r = await fetch(API + "/v1/agents?t=" + Date.now(), { cache: "no-store" });
         const data = await r.json();
 
         if(data && data.agents && data.agents.length){
           document.getElementById("agents").innerText = data.agents.length + " ONLINE";
-          document.getElementById("sys-swarm-health").innerText = "ACTIVE";
-          list.innerHTML = data.agents.map(a => `<div class="agent">🤖 ${a.name}</div>`).join("");
-          log.innerText = JSON.stringify(data, null, 2);
+          document.getElementById("agents-list").innerHTML =
+            data.agents.map(a => `<div class="agent">🤖 ${a.name}</div>`).join("");
         }else{
           throw new Error("no agents");
         }
       }catch(e){
-        const fallback = [
-          "research_agent",
-          "analysis_agent",
-          "execution_agent",
-          "memory_agent",
-          "strategy_agent",
-          "automation_agent"
-        ];
-
-        document.getElementById("agents").innerText = fallback.length + " ONLINE";
-        document.getElementById("sys-swarm-health").innerText = "FALLBACK";
-        list.innerHTML = fallback.map(a => `<div class="agent">🤖 ${a}</div>`).join("");
-        log.innerText = "Fallback local activo";
+        document.getElementById("agents").innerText = "OFFLINE";
+        document.getElementById("agents-list").innerText = "Agents unavailable";
       }
     }
 
     async function runBrain(){
-      const input = document.getElementById("brain-input").value.trim();
-      if(!input) return;
+      const task = document.getElementById("brain-input").value.trim();
+      if(!task) return;
 
-      document.getElementById("brain-output").innerText = "CONSIA thinking...";
-      document.getElementById("sys-brain-health").innerText = "RUNNING";
+      document.getElementById("brain-state").innerText = "RUNNING";
+      document.getElementById("brain-objective").innerText = task;
+      document.getElementById("brain-output").innerText = "Running brain...";
 
       try{
-        if(window.runGlobalBrain){
-          const result = await window.runGlobalBrain(input);
-          document.getElementById("brain-output").innerText = JSON.stringify(result, null, 2);
-          document.getElementById("sys-brain-health").innerText = "ACTIVE";
-          if(result.context){
-            document.getElementById("brain-state").innerText = (result.state || "completed").toUpperCase();
-            document.getElementById("brain-company").innerText = result.context.company || "CONSIA";
-            document.getElementById("brain-project").innerText = result.context.project || "-";
-            document.getElementById("brain-next").innerText = result.next_action || "Waiting";
-          }
-        }else{
-          document.getElementById("brain-output").innerText = "Global Brain not loaded";
-          document.getElementById("sys-brain-health").innerText = "NOT LOADED";
-        }
+        const r = await fetch(API + "/v1/brain/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task })
+        });
+        const data = await r.json();
+        document.getElementById("brain-state").innerText = data.ok ? "COMPLETED" : "ERROR";
+        document.getElementById("brain-output").innerText = JSON.stringify(data, null, 2);
       }catch(e){
+        document.getElementById("brain-state").innerText = "ERROR";
         document.getElementById("brain-output").innerText = String(e);
-        document.getElementById("sys-brain-health").innerText = "ERROR";
       }
     }
 
-    async function runBrainDispatch(){
-      const input = document.getElementById("brain-input").value.trim();
-      if(!input) return;
+    async function runSwarm(){
+      const task = document.getElementById("swarm-input").value.trim();
+      if(!task) return;
 
-      document.getElementById("brain-output").innerText = "CONSIA brain + dispatch...";
-      document.getElementById("sys-brain-health").innerText = "DISPATCHING";
+      document.getElementById("swarm-run-state").innerText = "RUNNING";
+      document.getElementById("swarm-running").innerText = "4";
+      document.getElementById("swarm-output").innerText = "Running swarm...";
 
       try{
-        if(window.runBrainAndDispatch){
-          const result = await window.runBrainAndDispatch(input, "build");
-          document.getElementById("brain-output").innerText = JSON.stringify(result, null, 2);
-          document.getElementById("sys-brain-health").innerText = "ACTIVE";
-        }else{
-          document.getElementById("brain-output").innerText = "runBrainAndDispatch not loaded";
-          document.getElementById("sys-brain-health").innerText = "NOT LOADED";
-        }
+        const r = await fetch(API + "/v1/swarm/dispatch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task })
+        });
+        const data = await r.json();
+        document.getElementById("swarm-run-state").innerText = data.ok ? "COMPLETED" : "ERROR";
+        document.getElementById("sys-swarm-health").innerText = data.ok ? "ACTIVE" : "ERROR";
+        document.getElementById("swarm-output").innerText = JSON.stringify(data, null, 2);
       }catch(e){
-        document.getElementById("brain-output").innerText = String(e);
-        document.getElementById("sys-brain-health").innerText = "ERROR";
-      }
-    }
-
-    function wireStrategicButtons(){
-      const runBtn = document.getElementById("strategic-run");
-      const dispatchBtn = document.getElementById("strategic-dispatch");
-      const input = document.getElementById("strategic-input");
-      const output = document.getElementById("strategic-output");
-
-      if(runBtn){
-        runBtn.onclick = function(){
-          const value = input.value.trim();
-          if(!value) return;
-          if(window.strategicAnalyze){
-            const result = window.strategicAnalyze(value);
-            output.innerText = JSON.stringify(result, null, 2);
-            document.getElementById("strategic-state").innerText = (result.state || "completed").toUpperCase();
-            document.getElementById("strategic-company").innerText = result.company || "CONSIA";
-            document.getElementById("strategic-objective").innerText = result.objective || "strategy";
-            document.getElementById("strategic-last").innerText = result.opportunity_main || "OK";
-          }else{
-            output.innerText = "Strategic Engine not loaded";
-          }
-        };
-      }
-
-      if(dispatchBtn){
-        dispatchBtn.onclick = async function(){
-          const value = input.value.trim();
-          if(!value) return;
-          output.innerText = "Dispatching strategic plan...";
-          if(window.dispatchStrategicPlan){
-            const result = await window.dispatchStrategicPlan(value, "build");
-            output.innerText = JSON.stringify(result, null, 2);
-          }else{
-            output.innerText = "dispatchStrategicPlan not loaded";
-          }
-        };
+        document.getElementById("swarm-run-state").innerText = "ERROR";
+        document.getElementById("sys-swarm-health").innerText = "ERROR";
+        document.getElementById("swarm-output").innerText = String(e);
       }
     }
 
     function boot(){
-      document.getElementById("learning").innerText = "ACTIVE";
-      document.getElementById("sys-learning-health").innerText = "ACTIVE";
       checkSystem();
       loadAgents();
-      wireStrategicButtons();
+      document.getElementById("sys-swarm-health").innerText = "READY";
     }
 
     boot();
   </script>
-
-  <script src="/agents-autopilot-final.js"></script>
-  <script src="/global-brain.js"></script>
-  <script src="/strategic-engine.js"></script>
-  <script src="/self-learning-engine.js"></script>
 </body>
 </html>
