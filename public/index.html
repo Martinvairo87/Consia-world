@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <meta charset="UTF-8">
-<title>CONSIA CONTROL CENTER V2</title>
+<title>CONSIA CONTROL CENTER V3</title>
 
 <style>
 
 body{
 margin:0;
-background:#02040a;
+background:#01030a;
 color:#00eaff;
 font-family:Arial;
 overflow:hidden;
@@ -18,7 +20,6 @@ header{
 background:#050a14;
 padding:16px;
 border-bottom:1px solid #00eaff33;
-font-size:18px;
 }
 
 .container{
@@ -42,12 +43,11 @@ background:#0c1424;
 border:1px solid #00eaff33;
 color:#00eaff;
 cursor:pointer;
-font-size:14px;
 
 }
 
 .sidebar button:hover{
-background:#102040;
+background:#132040;
 }
 
 .main{
@@ -57,33 +57,31 @@ position:relative;
 #panel{
 
 position:absolute;
-top:10px;
-left:10px;
+top:15px;
+left:15px;
 background:#060a14;
 border:1px solid #00eaff33;
 padding:15px;
 width:320px;
 font-size:12px;
-z-index:20;
+z-index:10;
 
 }
 
 #avatar{
 
 position:absolute;
-bottom:20px;
-right:20px;
-width:140px;
-height:140px;
+bottom:30px;
+right:30px;
+width:180px;
+height:180px;
 border-radius:50%;
 border:2px solid #00eaff;
-background:radial-gradient(#00eaff33,#02040a);
-
+background:radial-gradient(#00eaff55,#02040a);
 display:flex;
 align-items:center;
 justify-content:center;
-
-font-size:12px;
+font-size:14px;
 text-align:center;
 
 }
@@ -104,7 +102,7 @@ left:0;
 
 <header>
 
-CONSIA CONTROL CENTER V2
+CONSIA CONTROL CENTER V3
 
 </header>
 
@@ -138,7 +136,7 @@ CONSIA READY
 
 <div id="avatar">
 
-CONSIA<br>Guide
+CONSIA<br>Avatar
 
 </div>
 
@@ -157,8 +155,6 @@ document.getElementById("panel").innerText=
 JSON.stringify(data,null,2)
 
 }
-
-/* API */
 
 async function health(){
 
@@ -210,7 +206,13 @@ show(await r.json())
 
 }
 
-/* VOICE */
+function speak(text){
+
+const s=new SpeechSynthesisUtterance(text)
+
+speechSynthesis.speak(s)
+
+}
 
 function voice(){
 
@@ -230,17 +232,7 @@ rec.start()
 
 }
 
-/* SPEECH */
-
-function speak(text){
-
-const s=new SpeechSynthesisUtterance(text)
-
-speechSynthesis.speak(s)
-
-}
-
-/* 3D MAP */
+/* THREE JS */
 
 const scene=new THREE.Scene()
 
@@ -262,27 +254,58 @@ renderer.setSize(window.innerWidth,window.innerHeight)
 
 document.body.appendChild(renderer.domElement)
 
-const geometry=new THREE.SphereGeometry(5,64,64)
+camera.position.z=18
+
+/* PLANET */
+
+const geometry=new THREE.SphereGeometry(6,64,64)
 
 const material=new THREE.MeshBasicMaterial({
 
 color:0x00eaff,
-
 wireframe:true
 
 })
 
-const globe=new THREE.Mesh(geometry,material)
+const planet=new THREE.Mesh(geometry,material)
 
-scene.add(globe)
+scene.add(planet)
 
-camera.position.z=12
+/* AGENT NODES */
+
+const agents=[]
+
+for(let i=0;i<30;i++){
+
+const g=new THREE.SphereGeometry(.15,8,8)
+
+const m=new THREE.MeshBasicMaterial({color:0xffffff})
+
+const node=new THREE.Mesh(g,m)
+
+node.position.x=(Math.random()-0.5)*12
+node.position.y=(Math.random()-0.5)*12
+node.position.z=(Math.random()-0.5)*12
+
+scene.add(node)
+
+agents.push(node)
+
+}
+
+/* ANIMATION */
 
 function animate(){
 
 requestAnimationFrame(animate)
 
-globe.rotation.y+=0.002
+planet.rotation.y+=0.002
+
+agents.forEach(a=>{
+
+a.rotation.y+=0.02
+
+})
 
 renderer.render(scene,camera)
 
