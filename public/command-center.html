@@ -1,35 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>CONSIA GLOBAL COMMAND CENTER</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 
 body{
 margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:#0a0f18;
+background:#030712;
+font-family:Arial;
 color:white;
 }
 
 header{
-background:#0f1a2e;
-padding:15px;
 display:flex;
 justify-content:space-between;
-align-items:center;
-border-bottom:1px solid #1f2a44;
-}
-
-.logo{
-font-weight:bold;
-font-size:18px;
-}
-
-.status{
-color:#3cff9a;
+padding:20px;
+background:#0a1b3d;
 }
 
 .container{
@@ -39,16 +30,15 @@ height:calc(100vh - 60px);
 
 .sidebar{
 width:220px;
-background:#0d1424;
-border-right:1px solid #1f2a44;
-padding:10px;
+background:#07142b;
+padding:20px;
 }
 
 .sidebar button{
 width:100%;
 margin-bottom:10px;
 padding:10px;
-background:#18233d;
+background:#0f2a5a;
 border:none;
 color:white;
 cursor:pointer;
@@ -56,71 +46,39 @@ cursor:pointer;
 
 .main{
 flex:1;
+padding:30px;
+}
+
+.cards{
 display:flex;
-flex-direction:column;
+gap:20px;
 }
 
-.widgets{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px;
-padding:10px;
+.card{
+background:#081c3c;
+padding:20px;
+border-radius:8px;
+width:200px;
 }
 
-.widget{
-background:#111b33;
-padding:15px;
-border:1px solid #1f2a44;
-}
-
-.chat{
-flex:1;
-display:flex;
-flex-direction:column;
-border-top:1px solid #1f2a44;
-}
-
-.chat-log{
-flex:1;
-overflow:auto;
-padding:10px;
-}
-
-.chat-input{
-display:flex;
-border-top:1px solid #1f2a44;
-}
-
-.chat-input input{
-flex:1;
-padding:12px;
-background:#0f1729;
-border:none;
-color:white;
-}
-
-.chat-input button{
-padding:12px;
-background:#2b4bff;
-border:none;
-color:white;
-cursor:pointer;
-}
-
-.agent{
-background:#18233d;
-padding:8px;
-margin-top:5px;
+.status{
+color:#00ff9d;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <header>
-<div class="logo">CONSIA GLOBAL COMMAND CENTER</div>
-<div class="status" id="systemStatus">Checking system...</div>
+
+<h2>CONSIA GLOBAL COMMAND CENTER</h2>
+
+<div id="status" class="status">
+checking...
+</div>
+
 </header>
 
 <div class="container">
@@ -130,38 +88,27 @@ margin-top:5px;
 <button onclick="loadAgents()">Agents</button>
 <button onclick="loadProjects()">Projects</button>
 <button onclick="loadMemory()">Memory</button>
-<button onclick="systemStatus()">System</button>
+<button onclick="loadSystem()">System</button>
 
 </div>
 
 <div class="main">
 
-<div class="widgets">
+<div class="cards">
 
-<div class="widget">
+<div class="card">
 <h3>CORE</h3>
-<div id="coreStatus">loading...</div>
+<div id="core">loading...</div>
 </div>
 
-<div class="widget">
+<div class="card">
 <h3>API</h3>
-<div id="apiStatus">loading...</div>
+<div id="api">loading...</div>
 </div>
 
-<div class="widget">
+<div class="card">
 <h3>AGENTS</h3>
-<div id="agentStatus">loading...</div>
-</div>
-
-</div>
-
-<div class="chat">
-
-<div class="chat-log" id="chatLog"></div>
-
-<div class="chat-input">
-<input id="chatInput" placeholder="Send command to CONSIA">
-<button onclick="sendCommand()">Send</button>
+<div id="agents">loading...</div>
 </div>
 
 </div>
@@ -172,105 +119,64 @@ margin-top:5px;
 
 <script>
 
-const API="https://api.consia.world";
+const API="https://api.consia.world"
 
-async function systemStatus(){
+async function checkSystem(){
 
 try{
 
-let r=await fetch(API+"/v1/chat");
-let d=await r.json();
-
-document.getElementById("systemStatus").innerText="SYSTEM ONLINE";
-document.getElementById("coreStatus").innerText="ACTIVE";
-document.getElementById("apiStatus").innerText="CONNECTED";
-
-}catch(e){
-
-document.getElementById("systemStatus").innerText="SYSTEM ERROR";
-
-}
-
-}
-
-async function sendCommand(){
-
-let input=document.getElementById("chatInput");
-let log=document.getElementById("chatLog");
-
-let text=input.value;
-
-if(!text)return;
-
-log.innerHTML+="<div>> "+text+"</div>";
-
-input.value="";
-
-let res=await fetch(API+"/v1/chat",{
+const r=await fetch(API+"/v1/chat",{
 method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({message:text})
-});
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({message:"status"})
+})
 
-let data=await res.json();
+const data=await r.json()
 
-log.innerHTML+="<div style='color:#3cff9a'>CONSIA: "+(data.reply||JSON.stringify(data))+"</div>";
-
-log.scrollTop=log.scrollHeight;
-
-}
-
-async function loadAgents(){
-
-let log=document.getElementById("chatLog");
-log.innerHTML="Loading agents...";
-
-try{
-
-let r=await fetch(API+"/v1/agents");
-let d=await r.json();
-
-log.innerHTML="<h3>Agent Swarm</h3>";
-
-d.agents.forEach(a=>{
-log.innerHTML+="<div class='agent'>"+a.name+" - "+a.role+"</div>";
-});
+document.getElementById("core").innerText="ACTIVE"
+document.getElementById("api").innerText="ONLINE"
+document.getElementById("agents").innerText="READY"
+document.getElementById("status").innerText="SYSTEM ONLINE"
 
 }catch(e){
 
-log.innerHTML="Agent system not available";
+document.getElementById("status").innerText="SYSTEM ERROR"
 
 }
+
+}
+
+checkSystem()
+
+function loadAgents(){
+
+document.getElementById("agents").innerText="AGENT SWARM READY"
 
 }
 
 function loadProjects(){
 
-let log=document.getElementById("chatLog");
-
-log.innerHTML=`
-
-<h3>Projects</h3>
-
-<div class="agent">Real Work</div>
-<div class="agent">Manglar Construcciones</div>
-<div class="agent">VIP Work</div>
-<div class="agent">Bambino</div>
-<div class="agent">CONSIA</div>
-
-`;
+alert("Projects module coming")
 
 }
 
 function loadMemory(){
 
-let log=document.getElementById("chatLog");
+fetch(API+"/v1/memory/status")
+.then(r=>r.json())
+.then(d=>{
 
-log.innerHTML="<h3>Memory Hub</h3>Memory system active";
+alert(JSON.stringify(d,null,2))
+
+})
 
 }
 
-systemStatus();
+function loadSystem(){
+
+alert("CONSIA CORE ACTIVE")
+
+}
 
 </script>
 
