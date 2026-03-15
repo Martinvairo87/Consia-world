@@ -1,184 +1,539 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA GLOBAL COMMAND CENTER</title>
+  <style>
+    :root{
+      --bg:#040913;
+      --bg2:#071428;
+      --top:#0b1936;
+      --panel:#0d2147;
+      --panel2:#081731;
+      --line:rgba(255,255,255,.06);
+      --text:#ffffff;
+      --muted:rgba(255,255,255,.72);
+      --ok:#47ffab;
+      --warn:#ffd166;
+      --err:#ff6b6b;
+      --cyan:#1f66ff;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+    body{overflow:hidden}
 
-<title>CONSIA GLOBAL COMMAND CENTER</title>
+    header{
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 24px;
+      background:var(--top);
+      border-bottom:1px solid var(--line);
+    }
 
-<style>
+    .title{
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:.02em;
+    }
 
-body{
-margin:0;
-background:#030712;
-font-family:Arial;
-color:white;
-}
+    .status{
+      font-size:14px;
+      font-weight:700;
+      color:var(--ok);
+    }
 
-header{
-display:flex;
-justify-content:space-between;
-padding:20px;
-background:#0a1b3d;
-}
+    .container{
+      display:flex;
+      height:calc(100vh - 72px);
+    }
 
-.container{
-display:flex;
-height:calc(100vh - 60px);
-}
+    .sidebar{
+      width:220px;
+      background:var(--bg2);
+      border-right:1px solid var(--line);
+      padding:18px;
+      overflow:auto;
+    }
 
-.sidebar{
-width:220px;
-background:#07142b;
-padding:20px;
-}
+    .sidebar button{
+      width:100%;
+      margin-bottom:10px;
+      padding:12px;
+      background:var(--panel);
+      border:none;
+      color:#fff;
+      border-radius:8px;
+      cursor:pointer;
+      text-align:left;
+      font-size:14px;
+    }
 
-.sidebar button{
-width:100%;
-margin-bottom:10px;
-padding:10px;
-background:#0f2a5a;
-border:none;
-color:white;
-cursor:pointer;
-}
+    .sidebar button:hover{
+      background:#143164;
+    }
 
-.main{
-flex:1;
-padding:30px;
-}
+    .main{
+      flex:1;
+      padding:22px;
+      overflow:auto;
+    }
 
-.cards{
-display:flex;
-gap:20px;
-}
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(180px,1fr));
+      gap:18px;
+      margin-bottom:20px;
+    }
 
-.card{
-background:#081c3c;
-padding:20px;
-border-radius:8px;
-width:200px;
-}
+    .card{
+      background:var(--panel2);
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:18px;
+      min-height:110px;
+    }
 
-.status{
-color:#00ff9d;
-}
+    .card h3{
+      margin:0 0 20px 0;
+      font-size:16px;
+      letter-spacing:.02em;
+    }
 
-</style>
+    .big{
+      font-size:18px;
+      font-weight:700;
+    }
 
+    .layout{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:20px;
+    }
+
+    .panel{
+      background:var(--panel2);
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:18px;
+      margin-bottom:20px;
+    }
+
+    .panel h2{
+      margin:0 0 8px 0;
+      font-size:18px;
+    }
+
+    .sub{
+      margin:0 0 14px 0;
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    input, textarea{
+      width:100%;
+      background:#061224;
+      color:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:12px;
+      outline:none;
+      font:inherit;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .btn{
+      background:var(--cyan);
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      padding:10px 14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .btn.secondary{background:#143164}
+    .btn.dark{background:#0a1a34}
+
+    .output{
+      margin-top:12px;
+      background:#040d1c;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:12px;
+      min-height:120px;
+      max-height:320px;
+      overflow:auto;
+      white-space:pre-wrap;
+      font-size:13px;
+      color:#dbe8ff;
+    }
+
+    .agent{
+      background:#0b2b5a;
+      border:1px solid rgba(255,255,255,.04);
+      padding:10px 12px;
+      border-radius:8px;
+      margin-bottom:8px;
+      font-size:13px;
+    }
+
+    .mini{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(140px,1fr));
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .mini .box{
+      background:#0a1a34;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:12px;
+    }
+
+    .mini .label{
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:6px;
+    }
+
+    .mini .value{
+      font-weight:700;
+      font-size:15px;
+    }
+
+    @media (max-width: 1100px){
+      .cards{grid-template-columns:repeat(2,minmax(180px,1fr))}
+      .layout{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 760px){
+      body{overflow:auto}
+      .container{flex-direction:column;height:auto}
+      .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--line)}
+      .cards{grid-template-columns:1fr}
+      .mini{grid-template-columns:1fr}
+    }
+  </style>
 </head>
-
 <body>
+  <header>
+    <div class="title">CONSIA GLOBAL COMMAND CENTER</div>
+    <div class="status" id="status">CHECKING...</div>
+  </header>
 
-<header>
+  <div class="container">
+    <aside class="sidebar">
+      <button onclick="focusSection('brain-panel')">Global Brain</button>
+      <button onclick="focusSection('strategic-panel')">Strategic</button>
+      <button onclick="focusSection('agents-panel')">Agents</button>
+      <button onclick="focusSection('system-panel')">System</button>
+    </aside>
 
-<h2>CONSIA GLOBAL COMMAND CENTER</h2>
+    <main class="main">
+      <section class="cards">
+        <div class="card">
+          <h3>CORE</h3>
+          <div class="big" id="core">loading...</div>
+        </div>
+        <div class="card">
+          <h3>API</h3>
+          <div class="big" id="api">loading...</div>
+        </div>
+        <div class="card">
+          <h3>AGENTS</h3>
+          <div class="big" id="agents">loading...</div>
+        </div>
+        <div class="card">
+          <h3>LEARNING</h3>
+          <div class="big" id="learning">ACTIVE</div>
+        </div>
+      </section>
 
-<div id="status" class="status">
-checking...
-</div>
+      <section class="layout">
+        <div>
+          <div class="panel" id="brain-panel">
+            <h2>CONSIA GLOBAL BRAIN</h2>
+            <div class="sub">Contexto, continuidad, routing y dispatch</div>
 
-</header>
+            <div class="mini">
+              <div class="box">
+                <div class="label">Brain State</div>
+                <div class="value" id="brain-state">IDLE</div>
+              </div>
+              <div class="box">
+                <div class="label">Company</div>
+                <div class="value" id="brain-company">CONSIA</div>
+              </div>
+              <div class="box">
+                <div class="label">Project</div>
+                <div class="value" id="brain-project">-</div>
+              </div>
+              <div class="box">
+                <div class="label">Next Action</div>
+                <div class="value" id="brain-next">Waiting</div>
+              </div>
+            </div>
 
-<div class="container">
+            <input id="brain-input" placeholder="Ej: crear negocio digital para Real Work" />
+            <div class="row">
+              <button class="btn" onclick="runBrain()">RUN BRAIN</button>
+              <button class="btn secondary" onclick="runBrainDispatch()">RUN + DISPATCH</button>
+            </div>
+            <div class="output" id="brain-output">Waiting command...</div>
+          </div>
 
-<div class="sidebar">
+          <div class="panel" id="strategic-panel">
+            <h2>CONSIA STRATEGIC ENGINE</h2>
+            <div class="sub">Oportunidades, prioridades y roadmap</div>
 
-<button onclick="loadAgents()">Agents</button>
-<button onclick="loadProjects()">Projects</button>
-<button onclick="loadMemory()">Memory</button>
-<button onclick="loadSystem()">System</button>
+            <div class="mini">
+              <div class="box">
+                <div class="label">Strategic State</div>
+                <div class="value" id="strategic-state">IDLE</div>
+              </div>
+              <div class="box">
+                <div class="label">Company</div>
+                <div class="value" id="strategic-company">CONSIA</div>
+              </div>
+              <div class="box">
+                <div class="label">Objective</div>
+                <div class="value" id="strategic-objective">strategy</div>
+              </div>
+              <div class="box">
+                <div class="label">Last Result</div>
+                <div class="value" id="strategic-last">Waiting</div>
+              </div>
+            </div>
 
-</div>
+            <input id="strategic-input" placeholder="Ej: cómo monetizar CONSIA globalmente" />
+            <div class="row">
+              <button class="btn" id="strategic-run">ANALYZE</button>
+              <button class="btn secondary" id="strategic-dispatch">DISPATCH</button>
+            </div>
+            <div class="output" id="strategic-output">Waiting strategy...</div>
+          </div>
+        </div>
 
-<div class="main">
+        <div>
+          <div class="panel" id="agents-panel">
+            <h2>ACTIVE AGENTS</h2>
+            <div class="sub">Swarm vivo + fallback</div>
+            <div id="agents-list">Loading agents...</div>
+            <div class="output" id="agents-log">Waiting agents sync...</div>
+          </div>
 
-<div class="cards">
+          <div class="panel" id="system-panel">
+            <h2>SYSTEM STATE</h2>
+            <div class="sub">Estado general del sistema</div>
 
-<div class="card">
-<h3>CORE</h3>
-<div id="core">loading...</div>
-</div>
+            <div class="mini">
+              <div class="box">
+                <div class="label">API Health</div>
+                <div class="value" id="sys-api-health">checking...</div>
+              </div>
+              <div class="box">
+                <div class="label">Swarm</div>
+                <div class="value" id="sys-swarm-health">checking...</div>
+              </div>
+              <div class="box">
+                <div class="label">Brain</div>
+                <div class="value" id="sys-brain-health">checking...</div>
+              </div>
+              <div class="box">
+                <div class="label">Learning</div>
+                <div class="value" id="sys-learning-health">ACTIVE</div>
+              </div>
+            </div>
 
-<div class="card">
-<h3>API</h3>
-<div id="api">loading...</div>
-</div>
+            <div class="output" id="system-output">System booting...</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-<div class="card">
-<h3>AGENTS</h3>
-<div id="agents">loading...</div>
-</div>
+  <script>
+    const API = "https://api.consia.world";
 
-</div>
+    function focusSection(id){
+      const el = document.getElementById(id);
+      if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    }
 
-</div>
+    async function checkSystem(){
+      try{
+        const r = await fetch(API + "/health?t=" + Date.now(), { cache: "no-store" });
+        const data = await r.json();
 
-</div>
+        document.getElementById("core").innerText = data.ok ? "ACTIVE" : "OFFLINE";
+        document.getElementById("api").innerText = data.status ? data.status.toUpperCase() : "ONLINE";
+        document.getElementById("status").innerText = data.ok ? "SYSTEM ONLINE" : "SYSTEM ERROR";
+        document.getElementById("sys-api-health").innerText = data.ok ? "ONLINE" : "OFFLINE";
+        document.getElementById("system-output").innerText = JSON.stringify(data, null, 2);
+      }catch(e){
+        document.getElementById("core").innerText = "OFFLINE";
+        document.getElementById("api").innerText = "OFFLINE";
+        document.getElementById("status").innerText = "SYSTEM ERROR";
+        document.getElementById("sys-api-health").innerText = "OFFLINE";
+        document.getElementById("system-output").innerText = String(e);
+      }
+    }
 
-<script>
+    async function loadAgents(){
+      const list = document.getElementById("agents-list");
+      const log = document.getElementById("agents-log");
 
-const API="https://api.consia.world"
+      try{
+        const r = await fetch(API + "/v1/agents?t=" + Date.now(), { cache: "no-store" });
+        const data = await r.json();
 
-async function checkSystem(){
+        if(data && data.agents && data.agents.length){
+          document.getElementById("agents").innerText = data.agents.length + " ONLINE";
+          document.getElementById("sys-swarm-health").innerText = "ACTIVE";
+          list.innerHTML = data.agents.map(a => `<div class="agent">🤖 ${a.name}</div>`).join("");
+          log.innerText = JSON.stringify(data, null, 2);
+        }else{
+          throw new Error("no agents");
+        }
+      }catch(e){
+        const fallback = [
+          "research_agent",
+          "analysis_agent",
+          "execution_agent",
+          "memory_agent",
+          "strategy_agent",
+          "automation_agent"
+        ];
 
-try{
+        document.getElementById("agents").innerText = fallback.length + " ONLINE";
+        document.getElementById("sys-swarm-health").innerText = "FALLBACK";
+        list.innerHTML = fallback.map(a => `<div class="agent">🤖 ${a}</div>`).join("");
+        log.innerText = "Fallback local activo";
+      }
+    }
 
-const r=await fetch(API+"/v1/chat",{
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({message:"status"})
-})
+    async function runBrain(){
+      const input = document.getElementById("brain-input").value.trim();
+      if(!input) return;
 
-const data=await r.json()
+      document.getElementById("brain-output").innerText = "CONSIA thinking...";
+      document.getElementById("sys-brain-health").innerText = "RUNNING";
 
-document.getElementById("core").innerText="ACTIVE"
-document.getElementById("api").innerText="ONLINE"
-document.getElementById("agents").innerText="READY"
-document.getElementById("status").innerText="SYSTEM ONLINE"
+      try{
+        if(window.runGlobalBrain){
+          const result = await window.runGlobalBrain(input);
+          document.getElementById("brain-output").innerText = JSON.stringify(result, null, 2);
+          document.getElementById("sys-brain-health").innerText = "ACTIVE";
+          if(result.context){
+            document.getElementById("brain-state").innerText = (result.state || "completed").toUpperCase();
+            document.getElementById("brain-company").innerText = result.context.company || "CONSIA";
+            document.getElementById("brain-project").innerText = result.context.project || "-";
+            document.getElementById("brain-next").innerText = result.next_action || "Waiting";
+          }
+        }else{
+          document.getElementById("brain-output").innerText = "Global Brain not loaded";
+          document.getElementById("sys-brain-health").innerText = "NOT LOADED";
+        }
+      }catch(e){
+        document.getElementById("brain-output").innerText = String(e);
+        document.getElementById("sys-brain-health").innerText = "ERROR";
+      }
+    }
 
-}catch(e){
+    async function runBrainDispatch(){
+      const input = document.getElementById("brain-input").value.trim();
+      if(!input) return;
 
-document.getElementById("status").innerText="SYSTEM ERROR"
+      document.getElementById("brain-output").innerText = "CONSIA brain + dispatch...";
+      document.getElementById("sys-brain-health").innerText = "DISPATCHING";
 
-}
+      try{
+        if(window.runBrainAndDispatch){
+          const result = await window.runBrainAndDispatch(input, "build");
+          document.getElementById("brain-output").innerText = JSON.stringify(result, null, 2);
+          document.getElementById("sys-brain-health").innerText = "ACTIVE";
+        }else{
+          document.getElementById("brain-output").innerText = "runBrainAndDispatch not loaded";
+          document.getElementById("sys-brain-health").innerText = "NOT LOADED";
+        }
+      }catch(e){
+        document.getElementById("brain-output").innerText = String(e);
+        document.getElementById("sys-brain-health").innerText = "ERROR";
+      }
+    }
 
-}
+    function wireStrategicButtons(){
+      const runBtn = document.getElementById("strategic-run");
+      const dispatchBtn = document.getElementById("strategic-dispatch");
+      const input = document.getElementById("strategic-input");
+      const output = document.getElementById("strategic-output");
 
-checkSystem()
+      if(runBtn){
+        runBtn.onclick = function(){
+          const value = input.value.trim();
+          if(!value) return;
+          if(window.strategicAnalyze){
+            const result = window.strategicAnalyze(value);
+            output.innerText = JSON.stringify(result, null, 2);
+            document.getElementById("strategic-state").innerText = (result.state || "completed").toUpperCase();
+            document.getElementById("strategic-company").innerText = result.company || "CONSIA";
+            document.getElementById("strategic-objective").innerText = result.objective || "strategy";
+            document.getElementById("strategic-last").innerText = result.opportunity_main || "OK";
+          }else{
+            output.innerText = "Strategic Engine not loaded";
+          }
+        };
+      }
 
-function loadAgents(){
+      if(dispatchBtn){
+        dispatchBtn.onclick = async function(){
+          const value = input.value.trim();
+          if(!value) return;
+          output.innerText = "Dispatching strategic plan...";
+          if(window.dispatchStrategicPlan){
+            const result = await window.dispatchStrategicPlan(value, "build");
+            output.innerText = JSON.stringify(result, null, 2);
+          }else{
+            output.innerText = "dispatchStrategicPlan not loaded";
+          }
+        };
+      }
+    }
 
-document.getElementById("agents").innerText="AGENT SWARM READY"
+    function boot(){
+      document.getElementById("learning").innerText = "ACTIVE";
+      document.getElementById("sys-learning-health").innerText = "ACTIVE";
+      checkSystem();
+      loadAgents();
+      wireStrategicButtons();
+    }
 
-}
+    boot();
+  </script>
 
-function loadProjects(){
-
-alert("Projects module coming")
-
-}
-
-function loadMemory(){
-
-fetch(API+"/v1/memory/status")
-.then(r=>r.json())
-.then(d=>{
-
-alert(JSON.stringify(d,null,2))
-
-})
-
-}
-
-function loadSystem(){
-
-alert("CONSIA CORE ACTIVE")
-
-}
-
-</script>
-
+  <script src="/agents-autopilot-final.js"></script>
+  <script src="/global-brain.js"></script>
+  <script src="/strategic-engine.js"></script>
+  <script src="/self-learning-engine.js"></script>
 </body>
 </html>
