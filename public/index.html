@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 
 <meta charset="UTF-8">
-<title>CONSIA OS</title>
+<title>CONSIA GLOBAL INTELLIGENCE MAP</title>
 
 <style>
 
@@ -62,7 +61,7 @@ left:15px;
 background:#060a14;
 border:1px solid #00eaff33;
 padding:15px;
-width:320px;
+width:340px;
 font-size:12px;
 z-index:10;
 
@@ -101,7 +100,7 @@ left:0;
 
 <header>
 
-CONSIA OS INTERFACE
+CONSIA GLOBAL INTELLIGENCE MAP
 
 </header>
 
@@ -110,17 +109,10 @@ CONSIA OS INTERFACE
 <div class="sidebar">
 
 <button onclick="health()">System Status</button>
-
 <button onclick="memory()">Memory</button>
-
 <button onclick="projects()">Projects</button>
-
-<button onclick="create()">Create Project</button>
-
 <button onclick="autopilot()">Start Autopilot</button>
-
 <button onclick="autopilotStatus()">Autopilot Status</button>
-
 <button onclick="voice()">Voice Command</button>
 
 </div>
@@ -129,7 +121,7 @@ CONSIA OS INTERFACE
 
 <div id="panel">
 
-CONSIA READY
+CONSIA GLOBAL NETWORK READY
 
 </div>
 
@@ -177,13 +169,6 @@ show(await r.json())
 
 }
 
-async function create(){
-
-const r=await fetch(API+"/v1/project/create")
-show(await r.json())
-
-}
-
 async function autopilot(){
 
 const r=await fetch(API+"/v1/autopilot/start")
@@ -220,99 +205,86 @@ rec.start()
 
 }
 
-/* SPEECH */
-
 function speak(text){
 
 const s=new SpeechSynthesisUtterance(text)
-
 speechSynthesis.speak(s)
 
 }
 
-/* THREE JS */
+/* THREE.JS */
 
 const scene=new THREE.Scene()
 
 const camera=new THREE.PerspectiveCamera(
-
 75,
 window.innerWidth/window.innerHeight,
 0.1,
 1000
-
 )
 
 const renderer=new THREE.WebGLRenderer({antialias:true})
-
 renderer.setSize(window.innerWidth,window.innerHeight)
-
 document.body.appendChild(renderer.domElement)
 
-camera.position.z=20
+camera.position.z=18
 
-/* PLANET */
+/* EARTH */
 
-const geo=new THREE.SphereGeometry(7,64,64)
+const geometry=new THREE.SphereGeometry(7,64,64)
 
-const mat=new THREE.MeshBasicMaterial({
+const material=new THREE.MeshBasicMaterial({
 
 color:0x00eaff,
 wireframe:true
 
 })
 
-const planet=new THREE.Mesh(geo,mat)
+const earth=new THREE.Mesh(geometry,material)
 
-scene.add(planet)
+scene.add(earth)
 
-/* AGENTS */
+/* INTELLIGENCE NODES */
 
-const agents=[]
+const nodes=[]
 
-for(let i=0;i<60;i++){
+for(let i=0;i<80;i++){
 
-const g=new THREE.SphereGeometry(.15,8,8)
-
+const g=new THREE.SphereGeometry(.12,8,8)
 const m=new THREE.MeshBasicMaterial({color:0xffffff})
 
 const node=new THREE.Mesh(g,m)
 
-node.position.x=(Math.random()-0.5)*16
-node.position.y=(Math.random()-0.5)*16
-node.position.z=(Math.random()-0.5)*16
+node.position.x=(Math.random()-0.5)*18
+node.position.y=(Math.random()-0.5)*18
+node.position.z=(Math.random()-0.5)*18
 
 scene.add(node)
 
-agents.push(node)
+nodes.push(node)
 
 }
 
-/* CONNECTIONS */
+/* CONNECTION NETWORK */
 
-const lines=[]
+for(let i=0;i<nodes.length;i++){
 
-for(let i=0;i<agents.length;i++){
+for(let j=i+1;j<nodes.length;j++){
 
-for(let j=i+1;j<agents.length;j++){
-
-if(Math.random()<0.03){
+if(Math.random()<0.02){
 
 const material=new THREE.LineBasicMaterial({color:0x00eaff})
 
 const points=[]
 
-points.push(agents[i].position)
-
-points.push(agents[j].position)
+points.push(nodes[i].position)
+points.push(nodes[j].position)
 
 const geometry=new THREE.BufferGeometry().setFromPoints(points)
 
 const line=new THREE.Line(geometry,material)
 
 scene.add(line)
-
-lines.push(line)
 
 }
 
@@ -326,11 +298,11 @@ function animate(){
 
 requestAnimationFrame(animate)
 
-planet.rotation.y+=0.002
+earth.rotation.y+=0.002
 
-agents.forEach(a=>{
+nodes.forEach(n=>{
 
-a.rotation.y+=0.01
+n.rotation.y+=0.01
 
 })
 
@@ -343,5 +315,4 @@ animate()
 </script>
 
 </body>
-
 </html>
