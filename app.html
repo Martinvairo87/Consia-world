@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CONSIA AI OS</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b0b0b;
+color:white;
+display:flex;
+height:100vh;
+}
+
+.sidebar{
+width:260px;
+background:#111;
+padding:20px;
+}
+
+.sidebar h2{
+margin-top:0;
+}
+
+.sidebar button{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+background:#1e1e1e;
+border:0;
+color:white;
+cursor:pointer;
+}
+
+.main{
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+.topbar{
+background:#111;
+padding:10px;
+}
+
+.chat{
+flex:1;
+overflow:auto;
+padding:20px;
+}
+
+.msg{
+margin-bottom:12px;
+}
+
+.input{
+display:flex;
+padding:10px;
+background:#111;
+}
+
+.input input{
+flex:1;
+padding:10px;
+background:#1a1a1a;
+border:0;
+color:white;
+}
+
+.input button{
+padding:10px 16px;
+background:#2b2b2b;
+border:0;
+color:white;
+cursor:pointer;
+}
+
+.avatar{
+position:fixed;
+bottom:20px;
+right:20px;
+width:80px;
+height:80px;
+border-radius:50%;
+background:#0ff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>CONSIA</h2>
+
+<button onclick="system()">System</button>
+<button onclick="agents()">Agents</button>
+<button onclick="memory()">Memory</button>
+<button onclick="autopilot()">Autopilot</button>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+CONSIA AI OS
+</div>
+
+<div class="chat" id="chat"></div>
+
+<div class="input">
+
+<input id="msg" placeholder="Habla con CONSIA">
+
+<button onclick="send()">Send</button>
+
+<button onclick="voice()">🎤</button>
+
+</div>
+
+</div>
+
+<div class="avatar">AI</div>
+
+<script>
+
+const API="https://api.consia.world"
+
+function add(text){
+const div=document.createElement("div")
+div.className="msg"
+div.innerText=text
+document.getElementById("chat").appendChild(div)
+}
+
+async function send(){
+
+const text=document.getElementById("msg").value
+
+add("You: "+text)
+
+const r=await fetch(API+"/v1/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({message:text})
+})
+
+const j=await r.json()
+
+add("CONSIA: "+j.answer)
+
+}
+
+async function system(){
+
+const r=await fetch(API+"/v1/system/status")
+const j=await r.json()
+
+add(JSON.stringify(j,null,2))
+
+}
+
+async function agents(){
+
+const r=await fetch(API+"/v1/agents")
+const j=await r.json()
+
+add(JSON.stringify(j,null,2))
+
+}
+
+async function memory(){
+
+const r=await fetch(API+"/v1/memory/search")
+const j=await r.json()
+
+add(JSON.stringify(j,null,2))
+
+}
+
+async function autopilot(){
+
+const goal=prompt("Autopilot goal")
+
+const r=await fetch(API+"/v1/autopilot/start",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({goal})
+})
+
+const j=await r.json()
+
+add(JSON.stringify(j,null,2))
+
+}
+
+function voice(){
+
+const rec=new webkitSpeechRecognition()
+
+rec.lang="es"
+
+rec.start()
+
+rec.onresult=async(e)=>{
+
+const text=e.results[0][0].transcript
+
+document.getElementById("msg").value=text
+
+send()
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
