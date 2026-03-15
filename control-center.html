@@ -3,339 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <title>CONSIA CONTROL CENTER</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <style>
-
 body{
-background:#020612;
-color:#00f2ff;
-font-family:Arial,Helvetica,sans-serif;
 margin:0;
+background:#000;
+color:#00f7ff;
+font-family:Arial;
 overflow:hidden;
 }
 
-#topbar{
-height:60px;
-background:#061326;
-display:flex;
-align-items:center;
-padding-left:20px;
-font-weight:bold;
-letter-spacing:2px;
+canvas{
+position:absolute;
+top:0;
+left:0;
 }
 
-#container{
-display:flex;
-height:calc(100vh - 60px);
-}
-
-#left{
-width:320px;
-background:#061326;
-padding:15px;
-overflow:auto;
-}
-
-#center{
-flex:1;
-position:relative;
-}
-
-#right{
-width:320px;
-background:#061326;
-padding:15px;
-overflow:auto;
-}
-
-.panel{
-border:1px solid #00f2ff44;
-padding:12px;
-margin-bottom:12px;
-border-radius:8px;
+#panel{
+position:absolute;
+top:40px;
+left:40px;
+background:rgba(0,0,0,0.7);
+padding:20px;
+border:1px solid #00f7ff55;
 }
 
 button{
-background:#00f2ff22;
-color:#00f2ff;
-border:1px solid #00f2ff66;
-padding:8px 10px;
-border-radius:6px;
+background:#021c22;
+border:1px solid #00f7ff55;
+color:#00f7ff;
+padding:10px;
+margin-top:10px;
+width:100%;
 cursor:pointer;
 }
 
-button:hover{
-background:#00f2ff44;
+#status{
+margin-top:20px;
+font-size:12px;
 }
-
-#chat{
-height:220px;
-overflow:auto;
-font-size:14px;
-}
-
-#chatInput{
-width:100%;
-margin-top:8px;
-background:#020612;
-color:#00f2ff;
-border:1px solid #00f2ff66;
-padding:8px;
-}
-
-canvas{
-width:100%;
-height:100%;
-}
-
-.agent{
-font-size:13px;
-margin-bottom:4px;
-}
-
 </style>
 </head>
 
-
 <body>
 
-<div id="topbar">
-CONSIA CONTROL CENTER
-</div>
+<canvas id="bg"></canvas>
 
-<div id="container">
+<div id="panel">
 
-<div id="left">
+<h2>CONSIA CONTROL</h2>
 
-<div class="panel">
-<b>SYSTEM</b><br>
-<div id="systemStatus">loading...</div>
-</div>
+<button onclick="system()">System Status</button>
+<button onclick="agents()">Agents</button>
+<button onclick="projects()">Projects</button>
 
-<div class="panel">
-<b>AGENTS</b>
-<div id="agents"></div>
-</div>
-
-<div class="panel">
-<b>AUTOPILOT</b><br>
-<button onclick="runAutopilot()">RUN</button>
-</div>
-
-<div class="panel">
-<b>MEMORY</b><br>
-<button onclick="loadMemory()">LIST</button>
-<div id="memory"></div>
-</div>
+<div id="status"></div>
 
 </div>
-
-
-<div id="center">
-
-<canvas id="map"></canvas>
-
-</div>
-
-
-<div id="right">
-
-<div class="panel">
-<b>CONSIA CHAT</b>
-<div id="chat"></div>
-<input id="chatInput" placeholder="mensaje...">
-</div>
-
-<div class="panel">
-<b>VOICE</b><br>
-<button onclick="startVoice()">🎤 hablar</button>
-</div>
-
-</div>
-
-</div>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
 
 const API="https://api.consia.world"
 
+const canvas=document.getElementById("bg")
+const ctx=canvas.getContext("2d")
 
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
 
+let nodes=[]
 
-async function loadSystem(){
+for(let i=0;i<120;i++){
+
+nodes.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5),
+vy:(Math.random()-0.5)
+})
+
+}
+
+function draw(){
+
+ctx.fillStyle="black"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+ctx.fillStyle="#00f7ff"
+
+nodes.forEach(n=>{
+
+n.x+=n.vx
+n.y+=n.vy
+
+ctx.beginPath()
+ctx.arc(n.x,n.y,2,0,Math.PI*2)
+ctx.fill()
+
+})
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+async function system(){
 
 const r=await fetch(API)
 const j=await r.json()
 
-document.getElementById("systemStatus").innerHTML=
-"CORE: "+j.core+"<br>"+
-"CHAT: "+j.chat+"<br>"+
-"AGENTS: "+j.agents+"<br>"+
-"MEMORY: "+j.memory+"<br>"+
-"AUTOPILOT: "+j.autopilot
+document.getElementById("status").innerText=JSON.stringify(j,null,2)
 
 }
 
-
-
-async function loadAgents(){
+async function agents(){
 
 const r=await fetch(API+"/v1/agents")
 const j=await r.json()
 
-const box=document.getElementById("agents")
-box.innerHTML=""
-
-j.agents.forEach(a=>{
-const div=document.createElement("div")
-div.className="agent"
-div.innerText=a
-box.appendChild(div)
-})
+document.getElementById("status").innerText="Agents: "+j.agents.length
 
 }
 
+async function projects(){
 
-
-async function runAutopilot(){
-
-const r=await fetch(API+"/v1/autopilot/run")
+const r=await fetch(API+"/v1/projects")
 const j=await r.json()
 
-alert("jobs:"+j.jobs)
+document.getElementById("status").innerText="Projects: "+j.projects.length
 
 }
-
-
-
-async function loadMemory(){
-
-const r=await fetch(API+"/v1/memory/get?key=martin")
-const j=await r.json()
-
-document.getElementById("memory").innerText=j.value
-
-}
-
-
-
-document.getElementById("chatInput").addEventListener("keypress",async e=>{
-
-if(e.key==="Enter"){
-
-const msg=e.target.value
-e.target.value=""
-
-addChat("YOU",msg)
-
-const r=await fetch(API+"/v1/chat",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({message:msg})
-})
-
-const j=await r.json()
-
-addChat("CONSIA",j.answer)
-
-}
-
-})
-
-
-
-function addChat(u,m){
-
-const c=document.getElementById("chat")
-
-const div=document.createElement("div")
-div.innerHTML="<b>"+u+":</b> "+m
-
-c.appendChild(div)
-c.scrollTop=c.scrollHeight
-
-}
-
-
-
-
-function startVoice(){
-
-const r=new webkitSpeechRecognition()
-
-r.onresult=async e=>{
-
-const text=e.results[0][0].transcript
-
-document.getElementById("chatInput").value=text
-
-const event=new KeyboardEvent("keypress",{key:"Enter"})
-document.getElementById("chatInput").dispatchEvent(event)
-
-}
-
-r.start()
-
-}
-
-
-
-const scene=new THREE.Scene()
-
-const camera=new THREE.PerspectiveCamera(
-60,
-window.innerWidth/window.innerHeight,
-0.1,
-1000
-)
-
-const renderer=new THREE.WebGLRenderer({
-canvas:document.getElementById("map"),
-alpha:true
-})
-
-renderer.setSize(
-document.getElementById("center").clientWidth,
-document.getElementById("center").clientHeight
-)
-
-camera.position.z=5
-
-
-const geometry=new THREE.IcosahedronGeometry(2,1)
-
-const material=new THREE.MeshBasicMaterial({
-wireframe:true,
-color:0x00ffff
-})
-
-const sphere=new THREE.Mesh(geometry,material)
-
-scene.add(sphere)
-
-
-
-function animate(){
-
-requestAnimationFrame(animate)
-
-sphere.rotation.x+=0.002
-sphere.rotation.y+=0.003
-
-renderer.render(scene,camera)
-
-}
-
-animate()
-
-
-
-loadSystem()
-loadAgents()
 
 </script>
 
