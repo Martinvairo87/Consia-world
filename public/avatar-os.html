@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
-<title>CONSIA Avatar OS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CONSIA Avatar</title>
 
 <style>
+
 body{
 margin:0;
 background:#07111f;
 color:white;
-font-family:sans-serif;
+font-family:system-ui;
 text-align:center;
 }
 
@@ -19,27 +23,32 @@ height:70vh;
 }
 
 button{
-padding:12px 18px;
+padding:12px 20px;
 margin:6px;
-border-radius:12px;
+border-radius:10px;
 border:none;
 background:#0ea5e9;
 color:white;
 font-weight:700;
+cursor:pointer;
 }
+
 </style>
+
 </head>
 
 <body>
 
-<h1>CONSIA AVATAR</h1>
+<h1>CONSIA Avatar</h1>
 
 <canvas id="avatarCanvas"></canvas>
 
 <div>
 
 <button onclick="loadCONSIA('consia')">CONSIA</button>
+
 <button onclick="loadCONSIA('martin')">MARTIN</button>
+
 <button onclick="loadCONSIA('martin-futurista')">MARTIN FUTURE</button>
 
 </div>
@@ -47,17 +56,20 @@ font-weight:700;
 <script type="module">
 
 import {
-initAvatar,
+
+initCONSIAAvatar,
 loadAvatar,
 startListening,
 startCamera
-} from "/avatar/consia-avatar-engine-v3.js";
 
-initAvatar("avatarCanvas");
+} from "/avatar/consia-avatar-engine-v5.js";
+
+initCONSIAAvatar("avatarCanvas");
 
 loadAvatar("consia");
 
 startListening();
+
 startCamera();
 
 window.loadCONSIA = loadAvatar;
