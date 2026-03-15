@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<title>CONSIA OPERATING SYSTEM</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+
+body{
+margin:0;
+background:#020912;
+color:#00f7ff;
+font-family:Arial;
+}
+
+#topbar{
+height:60px;
+background:#031a22;
+display:flex;
+align-items:center;
+padding-left:20px;
+font-size:20px;
+letter-spacing:2px;
+}
+
+#layout{
+display:flex;
+height:calc(100vh - 60px);
+}
+
+#sidebar{
+width:260px;
+background:#041c26;
+padding:20px;
+}
+
+#content{
+flex:1;
+padding:20px;
+overflow:auto;
+}
+
+button{
+background:#052a33;
+border:1px solid #00f7ff44;
+color:#00f7ff;
+padding:10px;
+width:100%;
+margin-top:10px;
+cursor:pointer;
+}
+
+input{
+width:100%;
+padding:10px;
+background:#000;
+border:1px solid #00f7ff33;
+color:#00f7ff;
+margin-top:10px;
+}
+
+.panel{
+border:1px solid #00f7ff33;
+padding:15px;
+margin-bottom:20px;
+}
+
+#chat{
+height:320px;
+overflow:auto;
+border:1px solid #00f7ff33;
+padding:10px;
+margin-bottom:10px;
+}
+
+.agent{
+font-size:13px;
+margin-bottom:4px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="topbar">
+CONSIA OPERATING SYSTEM
+</div>
+
+<div id="layout">
+
+<div id="sidebar">
+
+<h3>CONSIA</h3>
+
+<button onclick="openPanel('chat')">Chat</button>
+<button onclick="openPanel('projects')">Projects</button>
+<button onclick="openPanel('agents')">Agents</button>
+<button onclick="openPanel('market')">Marketplace</button>
+<button onclick="openPanel('network')">Network</button>
+
+</div>
+
+
+<div id="content">
+
+<div id="chatPanel" class="panel">
+
+<h2>Chat CONSIA</h2>
+
+<div id="chat"></div>
+
+<input id="msg" placeholder="mensaje">
+
+<button onclick="send()">Enviar</button>
+
+</div>
+
+
+
+<div id="projectsPanel" class="panel" style="display:none">
+
+<h2>Crear Proyecto</h2>
+
+<input id="idea" placeholder="idea del proyecto">
+
+<button onclick="createProject()">Crear</button>
+
+</div>
+
+
+
+<div id="agentsPanel" class="panel" style="display:none">
+
+<h2>Agentes</h2>
+
+<div id="agents"></div>
+
+</div>
+
+
+
+<div id="marketPanel" class="panel" style="display:none">
+
+<h2>Marketplace</h2>
+
+<input id="agentName" placeholder="nombre agente">
+<input id="agentDesc" placeholder="descripcion">
+
+<button onclick="publishAgent()">Publicar agente</button>
+
+</div>
+
+
+
+<div id="networkPanel" class="panel" style="display:none">
+
+<h2>Crear cuenta</h2>
+
+<input id="email" placeholder="email">
+
+<button onclick="createUser()">Crear usuario</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API="https://api.consia.world"
+
+function openPanel(name){
+
+document.querySelectorAll(".panel").forEach(p=>p.style.display="none")
+
+document.getElementById(name+"Panel").style.display="block"
+
+}
+
+
+
+function log(text){
+
+const chat=document.getElementById("chat")
+
+chat.innerHTML+=text+"<br>"
+chat.scrollTop=chat.scrollHeight
+
+}
+
+
+
+async function send(){
+
+const msg=document.getElementById("msg").value
+
+document.getElementById("msg").value=""
+
+log("<b>YOU:</b> "+msg)
+
+const r=await fetch(API+"/v1/chat",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:msg})
+
+})
+
+const j=await r.json()
+
+log("<b>CONSIA:</b> "+j.answer)
+
+}
+
+
+
+async function createProject(){
+
+const idea=document.getElementById("idea").value
+
+const r=await fetch(API+"/v1/project/create",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({idea})
+
+})
+
+const j=await r.json()
+
+alert("Proyecto creado: "+j.project.id)
+
+}
+
+
+
+async function publishAgent(){
+
+const name=document.getElementById("agentName").value
+const description=document.getElementById("agentDesc").value
+
+await fetch(API+"/v1/network/agent/publish",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+
+name,
+description,
+price:10,
+creator:"user"
+
+})
+
+})
+
+alert("Agente publicado")
+
+}
+
+
+
+async function createUser(){
+
+const email=document.getElementById("email").value
+
+const r=await fetch(API+"/v1/network/user/create",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email})
+
+})
+
+const j=await r.json()
+
+alert("Usuario creado: "+j.user.id)
+
+}
+
+
+
+async function loadAgents(){
+
+const r=await fetch(API+"/v1/agents")
+
+const j=await r.json()
+
+const box=document.getElementById("agents")
+
+j.agents.forEach(a=>{
+
+const div=document.createElement("div")
+div.className="agent"
+div.innerText=a
+
+box.appendChild(div)
+
+})
+
+}
+
+loadAgents()
+
+</script>
+
+</body>
+</html>
