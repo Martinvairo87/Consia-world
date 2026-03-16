@@ -1,129 +1,125 @@
-<!doctype html>
-<html lang="es">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CONSIA • Dashboard</title>
+
+<title>CONSIA Dashboard</title>
+
 <style>
-body{margin:0;background:#020617;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto}
-.wrap{max-width:1200px;margin:auto;padding:30px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px}
-h1{margin:0;font-size:38px}
-.sub{opacity:.7;margin-top:8px}
-a{color:#fff;text-decoration:none}
-.btn{padding:12px 16px;border-radius:14px;background:#111a33;border:1px solid #1f2b4d}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:24px}
-.card{background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:22px}
-.label{opacity:.7;margin-bottom:10px}
-.value{font-size:34px;font-weight:700}
-.log{margin-top:24px;background:#0b1225;border:1px solid #1f2b4d;border-radius:20px;padding:22px}
+
+body{
+font-family:Arial;
+background:#0b0f1a;
+color:white;
+margin:0;
+}
+
+header{
+padding:20px;
+background:#111a2e;
+}
+
+.container{
+padding:40px;
+}
+
+.card{
+background:#141f35;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:6px;
+background:#4c8bf5;
+color:white;
+cursor:pointer;
+}
+
 </style>
+
 </head>
+
 <body>
-<div class="wrap">
 
-<div class="top">
-  <div>
-    <h1>CONSIA Dashboard</h1>
-    <div class="sub">Estado general del núcleo operativo</div>
-  </div>
-  <a class="btn" href="/">← Home</a>
+<header>
+<h1>CONSIA GLOBAL DASHBOARD</h1>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Analytics</h2>
+<button onclick="loadAnalytics()">Load</button>
+<pre id="analytics"></pre>
 </div>
 
-<div class="grid">
-  <div class="card">
-    <div class="label">API</div>
-    <div class="value" id="apiStatus">...</div>
-  </div>
-
-  <div class="card">
-    <div class="label">Router</div>
-    <div class="value" id="routerStatus">...</div>
-  </div>
-
-  <div class="card">
-    <div class="label">Agents</div>
-    <div class="value" id="agentsCount">...</div>
-  </div>
-
-  <div class="card">
-    <div class="label">Marketplace</div>
-    <div class="value" id="marketCount">...</div>
-  </div>
-
-  <div class="card">
-    <div class="label">Automation</div>
-    <div class="value" id="automationCount">...</div>
-  </div>
-
-  <div class="card">
-    <div class="label">Wallet</div>
-    <div class="value" id="walletValue">...</div>
-  </div>
+<div class="card">
+<h2>Create Agent</h2>
+<button onclick="createAgent()">Create</button>
 </div>
 
-<div class="log">
-  <strong>CONSIA CORE LOG</strong>
-  <div id="logBox" style="margin-top:12px;opacity:.82">Cargando estado del sistema...</div>
+<div class="card">
+<h2>Startup Generator</h2>
+<button onclick="startup()">Generate</button>
+<pre id="startup"></pre>
 </div>
 
 </div>
 
 <script>
-const API = "https://api.consia.world";
 
-async function loadDashboard(){
-  try{
-    const health = await fetch(API + "/v1/health").then(r=>r.json());
-    document.getElementById("apiStatus").textContent = health.status || "ONLINE";
-  }catch(e){
-    document.getElementById("apiStatus").textContent = "OFF";
-  }
+const API="https://api.consia.world"
 
-  try{
-    const router = await fetch(API + "/v1/router", {
-      method:"POST",
-      headers:{"content-type":"application/json"},
-      body:JSON.stringify({input:"ping",provider:"openai"})
-    }).then(r=>r.json());
-    document.getElementById("routerStatus").textContent = router.status || "READY";
-  }catch(e){
-    document.getElementById("routerStatus").textContent = "OFF";
-  }
+async function loadAnalytics(){
 
-  try{
-    const agents = await fetch(API + "/v1/agents").then(r=>r.json());
-    document.getElementById("agentsCount").textContent = (agents.agents || []).length;
-  }catch(e){
-    document.getElementById("agentsCount").textContent = "0";
-  }
+const r = await fetch(API+"/v1/analytics")
 
-  try{
-    const market = await fetch(API + "/v1/marketplace").then(r=>r.json());
-    document.getElementById("marketCount").textContent = (market.items || []).length;
-  }catch(e){
-    document.getElementById("marketCount").textContent = "0";
-  }
+const d = await r.json()
 
-  try{
-    const automation = await fetch(API + "/v1/automation").then(r=>r.json());
-    document.getElementById("automationCount").textContent = (automation.workflows || []).length;
-  }catch(e){
-    document.getElementById("automationCount").textContent = "0";
-  }
+document.getElementById("analytics").textContent =
+JSON.stringify(d,null,2)
 
-  try{
-    const wallet = await fetch(API + "/v1/wallet").then(r=>r.json());
-    document.getElementById("walletValue").textContent = `${wallet.balance} ${wallet.currency}`;
-  }catch(e){
-    document.getElementById("walletValue").textContent = "0 USD";
-  }
-
-  document.getElementById("logBox").textContent =
-    "CONSIA Dashboard ONLINE · API conectada · Router activo · módulos enlazados";
 }
 
-loadDashboard();
+async function createAgent(){
+
+await fetch(API+"/v1/agents/create",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+name:"Demo Agent",
+type:"automation",
+price:10,
+owner_email:"demo@consia.ai",
+data:{}
+})
+})
+
+alert("Agent created")
+
+}
+
+async function startup(){
+
+const r = await fetch(API+"/v1/startup/generate",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+idea:"AI Real Estate Platform"
+})
+})
+
+const d = await r.json()
+
+document.getElementById("startup").textContent =
+JSON.stringify(d,null,2)
+
+}
+
 </script>
+
 </body>
 </html>
