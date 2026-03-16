@@ -1,30 +1,149 @@
-<button onclick="start()">Hablar con CONSIA</button>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA REALTIME VOICE ENGINE</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+text-align:center;
+}
+
+button{
+margin-top:20px;
+padding:15px 30px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.result{
+margin-top:30px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+font-size:14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA REALTIME VOICE ENGINE
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<button onclick="startVoice()">
+Hablar con CONSIA
+</button>
+
+<div class="result" id="voiceText">
+Esperando voz...
+</div>
+
+</div>
+
+</div>
 
 <script>
 
-function start(){
+let recognition
 
-const rec=new webkitSpeechRecognition()
+function startVoice(){
 
-rec.lang="es-ES"
+if(!('webkitSpeechRecognition' in window)){
+alert("El navegador no soporta voz")
+return
+}
 
-rec.onresult=async e=>{
+recognition=new webkitSpeechRecognition()
 
-const text=e.results[0][0].transcript
+recognition.lang="es-ES"
+recognition.continuous=false
+recognition.interimResults=false
 
-const r=await fetch("https://api.consia.world/chat",{
-method:"POST",
-body:JSON.stringify({message:text})
-})
+recognition.onresult=function(event){
 
-const j=await r.json()
+const text=event.results[0][0].transcript
 
-alert(j.answer)
+document.getElementById("voiceText").innerText=text
+
+sendToConsia(text)
 
 }
 
-rec.start()
+recognition.start()
+
+}
+
+async function sendToConsia(message){
+
+try{
+
+const r=await fetch(
+"https://api.consia.world/v1/chat",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+message:message
+})
+}
+)
+
+const data=await r.json()
+
+document.getElementById("voiceText").innerText=
+JSON.stringify(data,null,2)
+
+}catch(e){
+
+document.getElementById("voiceText").innerText="Error conexión CONSIA"
+
+}
 
 }
 
 </script>
+
+</body>
+</html>
