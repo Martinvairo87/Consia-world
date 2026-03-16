@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA PROJECT ENGINE</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial, Helvetica, sans-serif;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+margin-bottom:30px;
+}
+
+input{
+width:100%;
+padding:16px;
+border-radius:25px;
+border:none;
+background:#0f223c;
+color:white;
+}
+
+button{
+margin-top:15px;
+padding:14px 28px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.agents{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:15px;
+margin-top:25px;
+}
+
+.agent{
+background:#081424;
+padding:15px;
+border-radius:8px;
+text-align:center;
+font-size:13px;
+}
+
+.result{
+margin-top:25px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL PROJECT ENGINE
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<input
+id="objective"
+placeholder="Ej: crear negocio digital para Real Work"
+/>
+
+<button onclick="runProject()">
+Ejecutar proyecto
+</button>
+
+<div class="agents">
+
+<div class="agent">Research Agent</div>
+<div class="agent">Analysis Agent</div>
+<div class="agent">Strategy Agent</div>
+<div class="agent">Execution Agent</div>
+
+</div>
+
+<div class="result" id="result">
+Esperando proyecto...
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function runProject(){
+
+const objective=document.getElementById("objective").value
+
+if(!objective) return
+
+const resultBox=document.getElementById("result")
+
+resultBox.innerText="CONSIA ejecutando agentes..."
+
+try{
+
+const r=await fetch(
+"https://api.consia.world/v1/brain/run",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+objective:objective
+})
+}
+)
+
+const data=await r.json()
+
+resultBox.innerText=JSON.stringify(data,null,2)
+
+}catch(e){
+
+resultBox.innerText="Error ejecutando proyecto"
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
