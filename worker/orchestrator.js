@@ -1,9 +1,3 @@
-/*
-CONSIA AI ORCHESTRATOR
-Cerebro central del sistema
-coordina agentes + RAG + proyectos + marketplace + IA
-*/
-
 export class ConsiaOrchestrator {
 
 constructor(env){
@@ -12,19 +6,19 @@ this.env = env
 
 }
 
-/* ============================
-MAIN ENTRY
-============================ */
+/* ===============================
+MAIN EXECUTION
+================================ */
 
-async executeTask(input){
+async executeTask(objective){
 
-const plan = await this.createPlan(input)
+const plan = await this.createPlan(objective)
 
 const results = []
 
 for(const step of plan.steps){
 
-const result = await this.executeStep(step,input)
+const result = await this.executeStep(step,objective)
 
 results.push(result)
 
@@ -32,16 +26,16 @@ results.push(result)
 
 return {
 ok:true,
-objective:input,
+brain:"completed",
 plan,
 results
 }
 
 }
 
-/* ============================
+/* ===============================
 PLAN GENERATOR
-============================ */
+================================ */
 
 async createPlan(objective){
 
@@ -50,21 +44,19 @@ return {
 objective,
 
 steps:[
-
 {agent:"research_agent"},
 {agent:"analysis_agent"},
 {agent:"strategy_agent"},
 {agent:"execution_agent"}
-
 ]
 
 }
 
 }
 
-/* ============================
+/* ===============================
 STEP EXECUTION
-============================ */
+================================ */
 
 async executeStep(step,input){
 
@@ -83,69 +75,73 @@ case "execution_agent":
 return await this.execution(input)
 
 default:
-return {agent:step.agent,status:"unknown"}
-
+return {
+agent:step.agent,
+status:"not_found"
 }
 
 }
 
-/* ============================
-AGENTS
-============================ */
+}
+
+/* ===============================
+RESEARCH AGENT
+================================ */
 
 async research(query){
 
 const rag = await this.searchMemory(query)
 
 return {
-
 agent:"research_agent",
-status:"done",
-memory_results:rag
-
+result:"research completed",
+memory:rag
 }
 
 }
+
+/* ===============================
+ANALYSIS AGENT
+================================ */
 
 async analysis(query){
 
 return {
-
 agent:"analysis_agent",
-status:"done",
-analysis:`analysis completed for ${query}`
-
+result:`analysis completed for ${query}`
 }
 
 }
+
+/* ===============================
+STRATEGY AGENT
+================================ */
 
 async strategy(query){
 
 return {
-
 agent:"strategy_agent",
-status:"done",
-strategy:`strategy created for ${query}`
-
+result:`strategy created for ${query}`
 }
 
 }
+
+/* ===============================
+EXECUTION AGENT
+================================ */
 
 async execution(query){
 
 return {
-
 agent:"execution_agent",
-status:"done",
-execution:`execution plan generated for ${query}`
-
+result:`execution plan created for ${query}`
 }
 
 }
 
-/* ============================
-RAG SEARCH
-============================ */
+/* ===============================
+VECTOR MEMORY SEARCH
+================================ */
 
 async searchMemory(query){
 
@@ -157,9 +153,9 @@ return rows.results || []
 
 }
 
-/* ============================
+/* ===============================
 PROJECT CREATOR
-============================ */
+================================ */
 
 async createProject(name,type,data){
 
@@ -175,17 +171,15 @@ Date.now()
 ).run()
 
 return {
-
 ok:true,
 project:name
-
 }
 
 }
 
-/* ============================
+/* ===============================
 AGENT EXECUTOR
-============================ */
+================================ */
 
 async runAgent(agent,input){
 
@@ -201,32 +195,35 @@ case "code_agent":
 return await this.generateCode(input)
 
 default:
-return {agent,status:"not_found"}
-
+return {
+agent,
+status:"unknown_agent"
 }
 
 }
 
-/* ============================
+}
+
+/* ===============================
 STARTUP GENERATOR
-============================ */
+================================ */
 
 async generateStartup(idea){
 
 return {
 
 agent:"startup_agent",
+
 startup:{
-
 idea,
-
 market:"global",
 model:"AI SaaS",
+
 steps:[
 "market research",
-"MVP creation",
+"MVP development",
 "user acquisition",
-"scaling"
+"scale globally"
 ]
 
 }
@@ -235,17 +232,17 @@ steps:[
 
 }
 
-/* ============================
+/* ===============================
 MARKETING GENERATOR
-============================ */
+================================ */
 
 async generateMarketing(product){
 
 return {
 
 agent:"marketing_agent",
-campaign:{
 
+campaign:{
 product,
 channels:[
 "social",
@@ -260,9 +257,9 @@ channels:[
 
 }
 
-/* ============================
+/* ===============================
 CODE GENERATOR
-============================ */
+================================ */
 
 async generateCode(spec){
 
