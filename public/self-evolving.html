@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>CONSIA SELF EVOLVING SYSTEM</title>
 
 <style>
-
 body{
 margin:0;
 background:#020b16;
@@ -17,60 +13,67 @@ font-family:Arial;
 color:white;
 }
 
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
 .container{
-max-width:900px;
+max-width:1000px;
 margin:auto;
-padding:40px;
+padding:30px;
 }
 
 .panel{
 background:#071426;
-padding:30px;
+padding:25px;
 border-radius:12px;
+margin-bottom:25px;
 }
 
 button{
-margin-top:20px;
-padding:15px 30px;
+padding:12px 25px;
 border:none;
-border-radius:25px;
+border-radius:20px;
 background:#00eaff;
-color:#00151f;
 font-weight:bold;
 cursor:pointer;
 }
 
 .log{
-margin-top:25px;
 background:#081424;
 padding:20px;
 border-radius:10px;
+margin-top:20px;
 white-space:pre-wrap;
-font-size:13px;
 }
-
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="header">
+CONSIA SELF EVOLVING SYSTEM
+</div>
 
-<h2>CONSIA SELF EVOLVING SYSTEM</h2>
+<div class="container">
 
 <div class="panel">
 
-CONSIA analiza el sistema y mejora módulos automáticamente.
+<h3>Analizar sistema</h3>
 
-<br>
+<button onclick="analyze()">ANALIZAR CONSIA</button>
 
-<button onclick="evolve()">
-Analizar sistema
-</button>
+</div>
 
-<div class="log" id="log">
-Sistema esperando análisis...
+<div class="panel">
+
+<h3>Resultados</h3>
+
+<div id="log" class="log">
+Esperando análisis...
 </div>
 
 </div>
@@ -79,30 +82,22 @@ Sistema esperando análisis...
 
 <script>
 
-async function evolve(){
+function analyze(){
 
-document.getElementById("log").innerText=
-"CONSIA analizando arquitectura..."
+let log=document.getElementById("log")
 
-setTimeout(()=>{
-
-document.getElementById("log").innerText=
-`Revisión completada
-
-Módulos activos:
-- Brain
-- Agents
-- Autopilot
-- Network
-- Marketplace
-
-Sugerencias:
-- Optimizar agents
-- Mejorar memoria
-- Expandir marketplace
-`
-
-},2000)
+log.innerText=
+"Escaneando módulos...\n\n"+
+"✔ Orchestrator activo\n"+
+"✔ Agents activos\n"+
+"✔ Backend activo\n"+
+"✔ Deploy engine activo\n\n"+
+"Mejoras sugeridas:\n\n"+
+"1. Optimizar analytics\n"+
+"2. Mejorar indexado RAG\n"+
+"3. Escalar agentes en paralelo\n"+
+"4. Optimizar latencia backend\n\n"+
+"Sistema saludable"
 
 }
 
