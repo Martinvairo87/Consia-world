@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL AUTH SYSTEM</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial,Helvetica,sans-serif;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:500px;
+margin:auto;
+padding:40px;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+margin-top:10px;
+}
+
+button{
+margin-top:15px;
+padding:12px 24px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+}
+
+.user{
+margin-top:20px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+font-size:13px;
+white-space:pre-wrap;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL AUTH SYSTEM
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Crear cuenta</h3>
+
+<input id="name" placeholder="Nombre">
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="register()">
+Crear cuenta
+</button>
+
+<hr style="margin:25px 0;border-color:#0f223c">
+
+<h3>Login</h3>
+
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="login()">
+Entrar
+</button>
+
+<div class="user" id="session"></div>
+
+<button onclick="logout()" style="margin-top:10px;background:#ff4b5c;color:white">
+Cerrar sesión
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+function register(){
+
+const name=document.getElementById("name").value
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+if(!name||!email||!password) return
+
+let users=JSON.parse(localStorage.getItem("consia_users"))||[]
+
+users.push({
+name,
+email,
+password
+})
+
+localStorage.setItem("consia_users",JSON.stringify(users))
+
+alert("Cuenta creada")
+
+}
+
+function login(){
+
+const email=document.getElementById("loginEmail").value
+const password=document.getElementById("loginPassword").value
+
+const users=JSON.parse(localStorage.getItem("consia_users"))||[]
+
+const user=users.find(u=>u.email===email && u.password===password)
+
+if(!user){
+alert("Login incorrecto")
+return
+}
+
+localStorage.setItem("consia_session",JSON.stringify(user))
+
+showSession()
+
+}
+
+function showSession(){
+
+const session=JSON.parse(localStorage.getItem("consia_session"))
+
+if(!session){
+document.getElementById("session").innerText="No hay sesión activa"
+return
+}
+
+document.getElementById("session").innerText=
+`Sesión activa
+
+Usuario: ${session.name}
+Email: ${session.email}
+`
+
+}
+
+function logout(){
+
+localStorage.removeItem("consia_session")
+
+showSession()
+
+}
+
+showSession()
+
+</script>
+
+</body>
+</html>
