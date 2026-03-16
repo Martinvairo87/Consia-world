@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>CONSIA DEPLOY ENGINE</title>
+
+<style>
+
+body{
+background:#020b16;
+font-family:Arial;
+color:white;
+margin:0;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+}
+
+input,select,textarea{
+
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+margin-top:10px;
+background:#0f223c;
+color:white;
+
+}
+
+button{
+
+margin-top:15px;
+padding:12px 25px;
+border:none;
+border-radius:20px;
+background:#00eaff;
+font-weight:bold;
+cursor:pointer;
+
+}
+
+.log{
+
+background:#081424;
+padding:20px;
+border-radius:10px;
+margin-top:20px;
+white-space:pre-wrap;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL DEPLOY ENGINE
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Crear aplicación automática</h3>
+
+<select id="type">
+<option>SaaS</option>
+<option>Marketplace</option>
+<option>AI Tool</option>
+<option>Landing</option>
+<option>API</option>
+</select>
+
+<input id="name" placeholder="Nombre del proyecto">
+
+<textarea id="description" placeholder="Descripción del proyecto"></textarea>
+
+<button onclick="deploy()">DEPLOY</button>
+
+</div>
+
+<div class="panel">
+
+<h3>Log de despliegue</h3>
+
+<div id="log" class="log">
+Deploy engine listo
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function deploy(){
+
+const name=document.getElementById("name").value
+const type=document.getElementById("type").value
+const desc=document.getElementById("description").value
+
+let log=document.getElementById("log")
+
+log.innerText=
+"Proyecto creado\n\n"+
+"name: "+name+"\n"+
+"type: "+type+"\n"+
+"description: "+desc+"\n\n"+
+"generando frontend...\n"+
+"generando backend...\n"+
+"generando agentes...\n"+
+"generando estrategia...\n\n"+
+"DEPLOY COMPLETADO"
+
+}
+
+</script>
+
+</body>
+</html>
