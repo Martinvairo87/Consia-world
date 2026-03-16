@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CONSIA FILE SYSTEM</title>
+<title>CONSIA GLOBAL FILE SYSTEM</title>
 
 <style>
 
@@ -17,15 +17,17 @@ font-family:Arial;
 color:white;
 }
 
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
 .container{
 max-width:1000px;
 margin:auto;
-padding:40px;
-}
-
-h1{
-text-align:center;
-color:#00eaff;
+padding:30px;
 }
 
 .panel{
@@ -35,10 +37,20 @@ border-radius:12px;
 }
 
 input{
-margin-top:20px;
+margin-top:15px;
 }
 
-.file-list{
+button{
+margin-top:15px;
+padding:12px 25px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+cursor:pointer;
+}
+
+.files{
 margin-top:30px;
 background:#081424;
 padding:20px;
@@ -46,8 +58,9 @@ border-radius:10px;
 }
 
 .file{
-padding:10px;
+padding:8px;
 border-bottom:1px solid #0f223c;
+font-size:13px;
 }
 
 </style>
@@ -56,19 +69,27 @@ border-bottom:1px solid #0f223c;
 
 <body>
 
-<div class="container">
+<div class="header">
+CONSIA GLOBAL FILE SYSTEM
+</div>
 
-<h1>CONSIA GLOBAL FILE SYSTEM</h1>
+<div class="container">
 
 <div class="panel">
 
-<input type="file" id="fileInput"/>
+<h3>Subir archivo</h3>
 
-<button onclick="uploadFile()">
-Subir archivo
-</button>
+<input type="file" id="fileInput">
 
-<div class="file-list" id="files"></div>
+<br>
+
+<button onclick="uploadFile()">Subir</button>
+
+</div>
+
+<div class="files" id="fileList">
+
+Archivos aparecerán aquí
 
 </div>
 
@@ -76,59 +97,41 @@ Subir archivo
 
 <script>
 
-let files=[]
-
 function uploadFile(){
 
-const file=document.getElementById("fileInput").files[0]
+const fileInput=document.getElementById("fileInput")
 
-if(!file)return
+const file=fileInput.files[0]
 
-const reader=new FileReader()
+if(!file) return
 
-reader.onload=function(e){
+let files=JSON.parse(localStorage.getItem("consia_files")) || []
 
-const data={
+files.push({
 name:file.name,
-content:e.target.result,
+size:file.size,
 date:new Date().toISOString()
-}
+})
 
-files.push(data)
-
-localStorage.setItem(
-"consia_files",
-JSON.stringify(files)
-)
+localStorage.setItem("consia_files",JSON.stringify(files))
 
 loadFiles()
 
 }
 
-reader.readAsDataURL(file)
-
-}
-
 function loadFiles(){
 
-const data=localStorage.getItem("consia_files")
-
-if(!data)return
-
-files=JSON.parse(data)
+const data=JSON.parse(localStorage.getItem("consia_files")) || []
 
 let html=""
 
-files.forEach(f=>{
+data.forEach(f=>{
 
-html+=
-"<div class='file'>"+
-f.name+
-"</div>"
+html+=`<div class="file">${f.name} (${Math.round(f.size/1024)} KB)</div>`
 
 })
 
-document.getElementById("files").innerHTML=html
+document.getElementById("fileList").innerHTML=html
 
 }
 
