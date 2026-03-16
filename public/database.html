@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA GLOBAL DATABASE</title>
+
+<style>
+body{
+  margin:0;
+  background:#020b16;
+  font-family:Arial,Helvetica,sans-serif;
+  color:white;
+}
+.header{
+  text-align:center;
+  padding:30px;
+  font-size:30px;
+  color:#00eaff;
+  letter-spacing:2px;
+}
+.container{
+  max-width:1400px;
+  margin:auto;
+  padding:30px;
+}
+.panel{
+  background:#071426;
+  padding:25px;
+  border-radius:14px;
+  margin-bottom:25px;
+  box-shadow:0 0 20px rgba(0,234,255,0.08);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+.box{
+  background:#081424;
+  padding:18px;
+  border-radius:12px;
+  text-align:center;
+}
+.box h3{
+  margin:0 0 10px 0;
+  font-size:14px;
+  color:#00eaff;
+  letter-spacing:1px;
+}
+.value{
+  font-size:24px;
+  font-weight:bold;
+}
+input,select,textarea{
+  width:100%;
+  padding:14px;
+  border-radius:20px;
+  border:none;
+  background:#0f223c;
+  color:white;
+  margin-top:10px;
+  box-sizing:border-box;
+}
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+button{
+  margin-top:15px;
+  padding:12px 24px;
+  border:none;
+  border-radius:25px;
+  background:#00eaff;
+  color:#00151f;
+  font-weight:bold;
+  cursor:pointer;
+  margin-right:10px;
+}
+button:hover{
+  transform:scale(1.04);
+}
+.log{
+  margin-top:20px;
+  background:#081424;
+  padding:20px;
+  border-radius:12px;
+  font-size:13px;
+  white-space:pre-wrap;
+  max-height:360px;
+  overflow:auto;
+}
+.table-block{
+  margin-top:20px;
+  background:#081424;
+  padding:20px;
+  border-radius:12px;
+  font-size:13px;
+  overflow:auto;
+}
+.footer{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
+  color:#3aaec9;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL DATABASE
+</div>
+
+<div class="container">
+
+  <div class="panel">
+    <h2>Base de datos maestra</h2>
+
+    <div class="grid">
+      <div class="box">
+        <h3>TABLAS</h3>
+        <div class="value" id="tablesCount">8</div>
+      </div>
+      <div class="box">
+        <h3>USUARIOS</h3>
+        <div class="value" id="usersCount">0</div>
+      </div>
+      <div class="box">
+        <h3>PROYECTOS</h3>
+        <div class="value" id="projectsCount">0</div>
+      </div>
+      <div class="box">
+        <h3>AGENTES</h3>
+        <div class="value" id="agentsCount">0</div>
+      </div>
+      <div class="box">
+        <h3>VECTORES</h3>
+        <div class="value" id="vectorsCount">0</div>
+      </div>
+      <div class="box">
+        <h3>TX</h3>
+        <div class="value" id="txCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Generar SQL base</h2>
+    <button onclick="generateSQL()">GENERAR SQL</button>
+    <button onclick="copySQL()">COPIAR SQL</button>
+    <div class="log" id="sqlBox">Esperando generación SQL...</div>
+  </div>
+
+  <div class="panel">
+    <h2>Insert demo data</h2>
+
+    <select id="demoType">
+      <option value="user">user</option>
+      <option value="project">project</option>
+      <option value="agent">agent</option>
+      <option value="vector">vector</option>
+      <option value="transaction">transaction</option>
+    </select>
+
+    <input id="demoName" placeholder="Nombre / título">
+    <textarea id="demoData" placeholder="JSON o texto"></textarea>
+
+    <button onclick="insertDemo()">INSERT DEMO</button>
+    <button onclick="clearDatabase()">LIMPIAR DB LOCAL</button>
+
+    <div class="log" id="dbLog">Database runtime listo.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Vista local de tablas</h2>
+
+    <div class="table-block" id="dbPreview">
+      Sin registros todavía.
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+CONSIA AI OPERATING SYSTEM — GLOBAL DATABASE LAYER
+</div>
+
+<script>
+const DB_KEY = "consia_global_database";
+
+let db = {
+  users: [],
+  projects: [],
+  agents: [],
+  vectors: [],
+  transactions: [],
+  files: [],
+  analytics: [],
+  sessions: []
+};
+
+function saveDB(){
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+}
+
+function loadDB(){
+  const data = JSON.parse(localStorage.getItem(DB_KEY) || "null");
+  if(data) db = data;
+}
+
+function updateStats(){
+  document.getElementById("usersCount").innerText = db.users.length;
+  document.getElementById("projectsCount").innerText = db.projects.length;
+  document.getElementById("agentsCount").innerText = db.agents.length;
+  document.getElementById("vectorsCount").innerText = db.vectors.length;
+  document.getElementById("txCount").innerText = db.transactions.length;
+}
+
+function renderPreview(){
+  const preview = {
+    users: db.users.slice(0,5),
+    projects: db.projects.slice(0,5),
+    agents: db.agents.slice(0,5),
+    vectors: db.vectors.slice(0,5),
+    transactions: db.transactions.slice(0,5),
+    files: db.files.slice(0,5),
+    analytics: db.analytics.slice(0,5),
+    sessions: db.sessions.slice(0,5)
+  };
+
+  document.getElementById("dbPreview").innerText =
+    JSON.stringify(preview, null, 2) || "Sin registros.";
+}
+
+function appendLog(text){
+  const box = document.getElementById("dbLog");
+  box.innerText = text + "\n\n" + box.innerText;
+}
+
+function generateSQL(){
+  const sql = `
+CREATE TABLE users(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT,
+  name TEXT,
+  role TEXT,
+  created INTEGER
+);
+
+CREATE TABLE projects(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  type TEXT,
+  data TEXT,
+  created INTEGER
+);
+
+CREATE TABLE agents(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  type TEXT,
+  data TEXT,
+  created INTEGER
+);
+
+CREATE TABLE vectors(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  text TEXT,
+  embedding TEXT,
+  created INTEGER
+);
+
+CREATE TABLE transactions(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT,
+  type TEXT,
+  amount REAL,
+  currency TEXT,
+  created INTEGER
+);
+
+CREATE TABLE files(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT,
+  path TEXT,
+  meta TEXT,
+  created INTEGER
+);
+
+CREATE TABLE analytics(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  metric TEXT,
+  value TEXT,
+  created INTEGER
+);
+
+CREATE TABLE sessions(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT,
+  token TEXT,
+  created INTEGER
+);
+`.trim();
+
+  document.getElementById("sqlBox").innerText = sql;
+}
+
+function copySQL(){
+  const text = document.getElementById("sqlBox").innerText;
+  navigator.clipboard.writeText(text);
+  appendLog("SQL copiado");
+}
+
+function safeParse(value){
+  try{
+    return JSON.parse(value);
+  }catch{
+    return value;
+  }
+}
+
+function insertDemo(){
+  const type = document.getElementById("demoType").value;
+  const name = document.getElementById("demoName").value.trim();
+  const data = document.getElementById("demoData").value.trim();
+
+  if(!name) return;
+
+  const now = Date.now();
+
+  if(type === "user"){
+    db.users.unshift({
+      id: now,
+      email: name.toLowerCase().replace(/\s+/g,".") + "@consia.world",
+      name,
+      role: "user",
+      created: now
+    });
+  }
+
+  if(type === "project"){
+    db.projects.unshift({
+      id: now,
+      name,
+      type: "generated-project",
+      data: safeParse(data || "{}"),
+      created: now
+    });
+  }
+
+  if(type === "agent"){
+    db.agents.unshift({
+      id: now,
+      name,
+      type: "custom-agent",
+      data: safeParse(data || "{}"),
+      created: now
+    });
+  }
+
+  if(type === "vector"){
+    db.vectors.unshift({
+      id: now,
+      text: name,
+      embedding: data || "[0.1,0.2,0.3]",
+      created: now
+    });
+  }
+
+  if(type === "transaction"){
+    db.transactions.unshift({
+      id: now,
+      user_id: "demo-user",
+      type: name,
+      amount: Number(data || 100),
+      currency: "USD",
+      created: now
+    });
+  }
+
+  saveDB();
+  updateStats();
+  renderPreview();
+  appendLog("Insert demo en " + type + ": " + name);
+
+  document.getElementById("demoName").value = "";
+  document.getElementById("demoData").value = "";
+}
+
+function clearDatabase(){
+  db = {
+    users: [],
+    projects: [],
+    agents: [],
+    vectors: [],
+    transactions: [],
+    files: [],
+    analytics: [],
+    sessions: []
+  };
+  saveDB();
+  updateStats();
+  renderPreview();
+  appendLog("DB local reiniciada");
+}
+
+loadDB();
+generateSQL();
+updateStats();
+renderPreview();
+</script>
+
+</body>
+</html>
