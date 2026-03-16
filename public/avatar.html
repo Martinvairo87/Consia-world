@@ -1,195 +1,795 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA AI AVATAR REAL</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root{
+      --bg:#020b16;
+      --panel:#08192f;
+      --panel2:#0d294a;
+      --line:rgba(0,234,255,.18);
+      --cyan:#00eaff;
+      --green:#4df5a6;
+      --red:#ff6565;
+      --text:#eef9ff;
+      --muted:#8fb2c7;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:22px;
+    }
 
-<title>CONSIA AI AVATAR</title>
+    *{box-sizing:border-box}
+    html,body{height:100%}
 
-<style>
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(0,234,255,.08), transparent 28%),
+        linear-gradient(180deg, #03101d 0%, #020b16 100%);
+      overflow:hidden;
+    }
 
-body{
-margin:0;
-font-family:Arial;
-background:#020b16;
-color:white;
-display:flex;
-align-items:center;
-justify-content:center;
-height:100vh;
-overflow:hidden;
-}
+    canvas{
+      position:fixed;
+      inset:0;
+      z-index:0;
+    }
 
-.container{
-text-align:center;
-}
+    .app{
+      position:relative;
+      z-index:2;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      padding:24px;
+    }
 
-.avatar{
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:20px;
+    }
 
-width:220px;
-height:220px;
+    .title{
+      font-size:clamp(30px,5vw,60px);
+      font-weight:700;
+      color:var(--cyan);
+      letter-spacing:.3px;
+    }
 
-border-radius:50%;
+    .badge{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(0,234,255,.06);
+      color:#baf9ff;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      white-space:nowrap;
+    }
 
-border:3px solid #00eaff;
+    .center{
+      flex:1;
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:24px;
+      min-height:0;
+    }
 
-display:flex;
-align-items:center;
-justify-content:center;
+    .left,
+    .right{
+      min-height:0;
+    }
 
-font-size:28px;
+    .panel{
+      height:100%;
+      background:linear-gradient(180deg, rgba(8,25,47,.88) 0%, rgba(6,18,34,.94) 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:24px;
+      backdrop-filter:blur(8px);
+    }
 
-color:#00eaff;
+    .avatar-wrap{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:22px;
+    }
 
-box-shadow:
+    .avatar-shell{
+      position:relative;
+      width:min(56vw, 430px);
+      height:min(56vw, 430px);
+      max-width:430px;
+      max-height:430px;
+      min-width:220px;
+      min-height:220px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:2px solid rgba(0,234,255,.35);
+      box-shadow:
+        0 0 32px rgba(0,234,255,.25),
+        inset 0 0 32px rgba(0,234,255,.18);
+      overflow:hidden;
+      background:radial-gradient(circle at 50% 45%, rgba(0,234,255,.06), rgba(0,0,0,.06));
+    }
 
-0 0 40px #00eaff,
-inset 0 0 40px #00eaff;
+    .ring, .ring2, .ring3{
+      position:absolute;
+      border-radius:50%;
+      border:1px solid rgba(0,234,255,.30);
+      animation:spin 18s linear infinite;
+    }
 
-margin:auto;
+    .ring{
+      width:86%;
+      height:86%;
+      border-style:solid;
+    }
 
-animation:pulse 3s infinite;
+    .ring2{
+      width:64%;
+      height:64%;
+      border-style:dashed;
+      animation-direction:reverse;
+      animation-duration:12s;
+    }
 
-}
+    .ring3{
+      width:42%;
+      height:42%;
+      border-style:dotted;
+      animation-duration:8s;
+    }
 
-@keyframes pulse{
+    .core{
+      width:30%;
+      height:30%;
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, #8fffff 0%, #21f0ff 45%, #02a9c7 100%);
+      box-shadow:
+        0 0 28px rgba(0,234,255,.55),
+        0 0 70px rgba(0,234,255,.20);
+      animation:pulse 2.4s ease-in-out infinite;
+    }
 
-0%{box-shadow:0 0 20px #00eaff}
-50%{box-shadow:0 0 60px #00eaff}
-100%{box-shadow:0 0 20px #00eaff}
+    .avatar-label{
+      font-size:clamp(28px,4vw,54px);
+      font-weight:700;
+      color:#f6feff;
+      text-align:center;
+    }
 
-}
+    .subtitle{
+      color:var(--muted);
+      font-size:14px;
+      letter-spacing:1.1px;
+      text-transform:uppercase;
+      text-align:center;
+    }
 
-button{
+    .status-strip{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:12px;
+      width:100%;
+      max-width:760px;
+    }
 
-margin-top:30px;
+    .mini{
+      padding:14px;
+      border-radius:16px;
+      background:rgba(10,33,61,.92);
+      border:1px solid rgba(0,234,255,.12);
+      text-align:center;
+    }
 
-padding:14px 26px;
+    .mini .k{
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-bottom:8px;
+    }
 
-font-size:16px;
+    .mini .v{
+      font-weight:700;
+      font-size:16px;
+    }
 
-border:none;
+    .ok{color:var(--green)}
+    .bad{color:var(--red)}
+    .cyan{color:var(--cyan)}
 
-border-radius:30px;
+    .right .panel{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
 
-background:#00eaff;
+    .section-title{
+      font-size:28px;
+      font-weight:700;
+      margin:0;
+      color:#f4fcff;
+    }
 
-color:black;
+    .section-sub{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+    }
 
-cursor:pointer;
+    .input{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:16px;
+      padding:18px 18px;
+      font-size:18px;
+      color:var(--text);
+      background:#071426;
+      border:1px solid rgba(0,234,255,.10);
+    }
 
-}
+    .input:focus{
+      border-color:rgba(0,234,255,.28);
+      box-shadow:0 0 0 3px rgba(0,234,255,.08);
+    }
 
-#text{
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
 
-margin-top:30px;
+    button{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      padding:16px 20px;
+      font-size:16px;
+      font-weight:700;
+      transition:transform .15s ease, opacity .15s ease;
+    }
 
-font-size:18px;
+    button:hover{transform:translateY(-1px)}
+    button:disabled{opacity:.55; cursor:not-allowed; transform:none}
 
-max-width:600px;
+    .btn-primary{
+      background:linear-gradient(180deg, #56f6a8, #43df93);
+      color:#042217;
+    }
 
-margin-left:auto;
-margin-right:auto;
+    .btn-secondary{
+      background:linear-gradient(180deg, #3d87ff, #2f6fe0);
+      color:white;
+    }
 
-}
+    .btn-dark{
+      background:#0b2340;
+      color:#dff7ff;
+      border:1px solid rgba(0,234,255,.14);
+    }
 
-</style>
+    .live{
+      padding:16px;
+      border-radius:16px;
+      background:#061220;
+      border:1px solid rgba(0,234,255,.10);
+      min-height:74px;
+      font-size:16px;
+      line-height:1.5;
+      color:#dff9ff;
+    }
 
+    .console{
+      flex:1;
+      min-height:200px;
+      border-radius:16px;
+      background:#030d18;
+      border:1px solid rgba(0,234,255,.10);
+      padding:16px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-family:ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size:13px;
+      line-height:1.55;
+      color:#d8f8ff;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    @keyframes pulse{
+      0%{transform:scale(1); opacity:.92}
+      50%{transform:scale(1.08); opacity:1}
+      100%{transform:scale(1); opacity:.92}
+    }
+
+    @keyframes spin{
+      from{transform:rotate(0deg)}
+      to{transform:rotate(360deg)}
+    }
+
+    @media (max-width: 980px){
+      .center{
+        grid-template-columns:1fr;
+      }
+      .app{
+        overflow:auto;
+      }
+      body{
+        overflow:auto;
+      }
+      .status-strip{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 560px){
+      .status-strip{
+        grid-template-columns:1fr;
+      }
+      .actions{
+        flex-direction:column;
+      }
+      button{
+        width:100%;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <canvas id="bg"></canvas>
 
-<div class="container">
+  <div class="app">
+    <div class="header">
+      <div class="title">CONSIA Avatar</div>
+      <div class="badge" id="topBadge">inicializando</div>
+    </div>
 
-<div class="avatar">
-CONSIA
-</div>
+    <div class="center">
+      <div class="left">
+        <div class="panel">
+          <div class="avatar-wrap">
+            <div class="avatar-label">CONSIA</div>
+            <div class="subtitle">avatar · voz · brain · realtime ui</div>
 
-<button onclick="listen()">
-🎤 Hablar con CONSIA
-</button>
+            <div class="avatar-shell" id="avatarShell">
+              <div class="ring"></div>
+              <div class="ring2"></div>
+              <div class="ring3"></div>
+              <div class="core" id="coreOrb"></div>
+            </div>
 
-<div id="text">
-Esperando comando...
-</div>
+            <div class="status-strip">
+              <div class="mini">
+                <div class="k">Core</div>
+                <div class="v bad" id="coreStatus">offline</div>
+              </div>
+              <div class="mini">
+                <div class="k">Mic</div>
+                <div class="v bad" id="micStatus">bloqueado</div>
+              </div>
+              <div class="mini">
+                <div class="k">Speech</div>
+                <div class="v bad" id="speechStatus">no listo</div>
+              </div>
+              <div class="mini">
+                <div class="k">Voice</div>
+                <div class="v bad" id="voiceStatus">silencio</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-</div>
+      <div class="right">
+        <div class="panel">
+          <h2 class="section-title">CONSIA AI AVATAR REAL</h2>
+          <p class="section-sub">Comando por texto o voz conectado al brain</p>
 
+          <input
+            id="promptInput"
+            class="input"
+            type="text"
+            placeholder="decile algo a CONSIA"
+            value="crear plataforma inmobiliaria automática"
+          />
 
-<script>
+          <div class="actions">
+            <button class="btn-primary" id="runBtn">Hablar</button>
+            <button class="btn-secondary" id="micBtn">🎤 voz</button>
+            <button class="btn-dark" id="unlockBtn">Activar audio</button>
+          </div>
 
-const API="https://api.consia.world"
+          <div class="live" id="liveBox">Esperando comando...</div>
 
-function speak(text){
+          <div class="console" id="consoleBox">Sin resultados todavía.</div>
 
-const speech=new SpeechSynthesisUtterance(text)
+          <div class="hint" id="hintBox">
+            En iPad/Safari, el reconocimiento de voz puede no responder si el navegador no expone SpeechRecognition o si el micrófono fue rechazado. La Web Speech API tiene disponibilidad limitada y Safari/iOS puede devolver errores como not-allowed o service-not-allowed.  [oai_citation:2‡MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition?utm_source=chatgpt.com)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-speech.lang="es-ES"
+  <script>
+    const API = "https://api.consia.world";
 
-speech.rate=1
+    const els = {
+      topBadge: document.getElementById("topBadge"),
+      coreStatus: document.getElementById("coreStatus"),
+      micStatus: document.getElementById("micStatus"),
+      speechStatus: document.getElementById("speechStatus"),
+      voiceStatus: document.getElementById("voiceStatus"),
+      promptInput: document.getElementById("promptInput"),
+      runBtn: document.getElementById("runBtn"),
+      micBtn: document.getElementById("micBtn"),
+      unlockBtn: document.getElementById("unlockBtn"),
+      liveBox: document.getElementById("liveBox"),
+      consoleBox: document.getElementById("consoleBox"),
+      coreOrb: document.getElementById("coreOrb"),
+      avatarShell: document.getElementById("avatarShell")
+    };
 
-speech.pitch=1
+    let recognition = null;
+    let isListening = false;
+    let audioUnlocked = false;
+    let voicesReady = false;
 
-speechSynthesis.speak(speech)
+    function setText(idEl, text, cls){
+      idEl.textContent = text;
+      idEl.className = "v " + cls;
+    }
 
-}
+    function setLive(text){
+      els.liveBox.textContent = text;
+    }
 
-function listen(){
+    function setConsole(value){
+      els.consoleBox.textContent = typeof value === "string" ? value : JSON.stringify(value, null, 2);
+    }
 
-const recognition=
+    function pulseAvatar(active){
+      els.coreOrb.style.animationDuration = active ? "1s" : "2.4s";
+      els.avatarShell.style.boxShadow = active
+        ? "0 0 42px rgba(0,234,255,.35), inset 0 0 42px rgba(0,234,255,.24)"
+        : "0 0 32px rgba(0,234,255,.25), inset 0 0 32px rgba(0,234,255,.18)";
+    }
 
-new(window.SpeechRecognition||
-window.webkitSpeechRecognition)()
+    async function checkCore(){
+      try{
+        const r = await fetch(API + "/health", { cache: "no-store" });
+        const j = await r.json();
+        if(j.ok){
+          setText(els.coreStatus, "active", "ok");
+          els.topBadge.textContent = "core online";
+        }else{
+          setText(els.coreStatus, "error", "bad");
+          els.topBadge.textContent = "core error";
+        }
+      }catch(e){
+        setText(els.coreStatus, "offline", "bad");
+        els.topBadge.textContent = "sin conexión";
+      }
+    }
 
-recognition.lang="es-ES"
+    function getRecognitionCtor(){
+      return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+    }
 
-recognition.onresult=async function(event){
+    function setupRecognition(){
+      const Ctor = getRecognitionCtor();
+      if(!Ctor){
+        setText(els.speechStatus, "sin soporte", "bad");
+        return null;
+      }
 
-const text=event.results[0][0].transcript
+      const rec = new Ctor();
+      rec.lang = "es-ES";
+      rec.interimResults = false;
+      rec.continuous = false;
+      rec.maxAlternatives = 1;
 
-document.getElementById("text").innerText="Comando: "+text
+      rec.onstart = () => {
+        isListening = true;
+        pulseAvatar(true);
+        setText(els.speechStatus, "escuchando", "ok");
+        setLive("Escuchando...");
+      };
 
-runBrain(text)
+      rec.onend = () => {
+        isListening = false;
+        pulseAvatar(false);
+        if (els.speechStatus.textContent === "escuchando") {
+          setText(els.speechStatus, "listo", "ok");
+        }
+      };
 
-}
+      rec.onerror = (event) => {
+        isListening = false;
+        pulseAvatar(false);
+        const err = event?.error || "desconocido";
+        setText(els.speechStatus, err, "bad");
+        setLive("Error de voz: " + err);
+      };
 
-recognition.start()
+      rec.onresult = async (event) => {
+        const text = event.results?.[0]?.[0]?.transcript?.trim() || "";
+        if(!text){
+          setLive("No se detectó voz.");
+          return;
+        }
+        els.promptInput.value = text;
+        setLive("Comando detectado: " + text);
+        await runBrain(text);
+      };
 
-}
+      setText(els.speechStatus, "listo", "ok");
+      return rec;
+    }
 
-async function runBrain(objective){
+    async function requestMic(){
+      if(!navigator.mediaDevices?.getUserMedia){
+        setText(els.micStatus, "sin soporte", "bad");
+        return false;
+      }
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(t => t.stop());
+        setText(els.micStatus, "permitido", "ok");
+        return true;
+      }catch(e){
+        setText(els.micStatus, "denegado", "bad");
+        setLive("Micrófono bloqueado o no disponible.");
+        return false;
+      }
+    }
 
-const r=await fetch(API+"/v1/brain/run",{
+    function loadVoices(){
+      const list = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+      voicesReady = Array.isArray(list) && list.length > 0;
+      setText(els.voiceStatus, voicesReady ? "lista" : "sin voces", voicesReady ? "ok" : "bad");
+      return list;
+    }
 
-method:"POST",
+    function chooseVoice(){
+      const voices = loadVoices();
+      if(!voices.length) return null;
 
-headers:{
-"Content-Type":"application/json"
-},
+      return (
+        voices.find(v => /es[-_](AR|ES|MX|US)/i.test(v.lang)) ||
+        voices.find(v => /^es/i.test(v.lang)) ||
+        voices[0]
+      );
+    }
 
-body:JSON.stringify({
-objective
-})
+    function unlockAudio(){
+      try{
+        if(!window.speechSynthesis){
+          setText(els.voiceStatus, "sin soporte", "bad");
+          return false;
+        }
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(" ");
+        u.volume = 0;
+        window.speechSynthesis.speak(u);
+        audioUnlocked = true;
+        loadVoices();
+        if(voicesReady){
+          setText(els.voiceStatus, "lista", "ok");
+        }
+        setLive("Audio activado.");
+        return true;
+      }catch(e){
+        setText(els.voiceStatus, "falló", "bad");
+        return false;
+      }
+    }
 
-})
+    function speak(text){
+      if(!window.speechSynthesis){
+        setText(els.voiceStatus, "sin soporte", "bad");
+        return;
+      }
+      if(!audioUnlocked){
+        unlockAudio();
+      }
 
-const j=await r.json()
+      try{
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "es-ES";
+        utter.rate = 1;
+        utter.pitch = 1;
+        const v = chooseVoice();
+        if(v) utter.voice = v;
 
-const answer="Brain ejecutado. Plan generado."
+        utter.onstart = () => {
+          setText(els.voiceStatus, "hablando", "ok");
+          pulseAvatar(true);
+        };
+        utter.onend = () => {
+          setText(els.voiceStatus, "lista", "ok");
+          pulseAvatar(false);
+        };
+        utter.onerror = () => {
+          setText(els.voiceStatus, "error", "bad");
+          pulseAvatar(false);
+        };
 
-document.getElementById("text").innerText=
+        window.speechSynthesis.speak(utter);
+      }catch(e){
+        setText(els.voiceStatus, "error", "bad");
+      }
+    }
 
-JSON.stringify(j,null,2)
+    async function runBrain(forcedText){
+      const objective = (forcedText || els.promptInput.value || "").trim();
+      if(!objective){
+        setLive("Escribí o dictá un comando.");
+        return;
+      }
 
-speak(answer)
+      els.runBtn.disabled = true;
+      pulseAvatar(true);
+      setLive("Ejecutando brain...");
+      setConsole("Procesando...");
 
-}
+      try{
+        const r = await fetch(API + "/v1/brain/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ objective })
+        });
 
-speak("CONSIA lista")
+        const j = await r.json();
+        setConsole(j);
 
-</script>
+        if(j?.ok){
+          const steps = Array.isArray(j?.plan?.steps) ? j.plan.steps.join(", ") : "sin pasos";
+          const msg = `Brain ejecutado. Objetivo recibido. Pasos: ${steps}.`;
+          setLive(msg);
+          speak(msg);
+        }else{
+          setLive("La API respondió con error.");
+        }
+      }catch(e){
+        setConsole("Error: " + (e?.message || e));
+        setLive("Falló la ejecución del brain.");
+      }finally{
+        els.runBtn.disabled = false;
+        pulseAvatar(false);
+      }
+    }
 
+    async function startListening(){
+      if(!recognition){
+        recognition = setupRecognition();
+        if(!recognition){
+          setLive("Este navegador no expone reconocimiento de voz.");
+          return;
+        }
+      }
+
+      const micOk = await requestMic();
+      if(!micOk) return;
+
+      try{
+        if(isListening){
+          recognition.stop();
+          return;
+        }
+        recognition.start();
+      }catch(e){
+        setLive("No se pudo iniciar el micrófono de voz.");
+      }
+    }
+
+    els.runBtn.addEventListener("click", async () => {
+      unlockAudio();
+      await runBrain();
+    });
+
+    els.micBtn.addEventListener("click", async () => {
+      unlockAudio();
+      await startListening();
+    });
+
+    els.unlockBtn.addEventListener("click", async () => {
+      unlockAudio();
+      await requestMic();
+    });
+
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        loadVoices();
+      };
+    }
+
+    (async function init(){
+      await checkCore();
+      recognition = setupRecognition();
+      loadVoices();
+      setLive("Listo. Tocá “Activar audio” y después “🎤 voz”.");
+    })();
+
+    const canvas = document.getElementById("bg");
+    const ctx = canvas.getContext("2d");
+    let dots = [];
+
+    function resize(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      dots = Array.from({ length: Math.min(140, Math.floor((canvas.width * canvas.height) / 18000)) }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - .5) * .45,
+        vy: (Math.random() - .5) * .45,
+        r: Math.random() * 1.8 + .6
+      }));
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      for(let i=0;i<dots.length;i++){
+        const p = dots[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,234,255,.85)";
+        ctx.fill();
+
+        for(let j=i+1;j<dots.length;j++){
+          const q = dots[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if(d < 110){
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = "rgba(0,234,255," + (0.12 - d/1200) + ")";
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    draw();
+    window.addEventListener("resize", resize);
+  </script>
 </body>
 </html>
