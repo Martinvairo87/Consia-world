@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA AI APP BUILDER</title>
+
+<style>
+body{
+margin:0;
+background:#020b16;
+font-family:Arial,Helvetica,sans-serif;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+}
+
+input,textarea,select{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+background:#0f223c;
+color:white;
+margin-top:10px;
+}
+
+button{
+margin-top:15px;
+padding:12px 25px;
+border:none;
+border-radius:20px;
+background:#00eaff;
+font-weight:bold;
+cursor:pointer;
+}
+
+.log{
+background:#081424;
+padding:20px;
+border-radius:10px;
+margin-top:20px;
+white-space:pre-wrap;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+CONSIA AI APP BUILDER
+</div>
+
+<div class="container">
+
+<div class="panel">
+<h3>Crear aplicación</h3>
+
+<input id="name" placeholder="Nombre de la app">
+
+<select id="type">
+<option>SaaS</option>
+<option>Marketplace</option>
+<option>AI Tool</option>
+<option>Internal Tool</option>
+</select>
+
+<textarea id="description" placeholder="Describe la aplicación"></textarea>
+
+<button onclick="generate()">GENERAR APP</button>
+
+</div>
+
+<div class="panel">
+<h3>Resultado</h3>
+<div id="log" class="log">
+Esperando generación...
+</div>
+</div>
+
+</div>
+
+<script>
+
+function generate(){
+
+let name=document.getElementById("name").value
+let type=document.getElementById("type").value
+let desc=document.getElementById("description").value
+
+let log=document.getElementById("log")
+
+log.innerText=
+"Analizando requerimientos...\n\n"+
+"Tipo: "+type+"\n"+
+"App: "+name+"\n\n"+
+"Generando arquitectura...\n"+
+"- frontend\n"+
+"- backend API\n"+
+"- base de datos\n"+
+"- agentes\n\n"+
+"Estructura sugerida:\n\n"+
+"name: "+name+"\n"+
+"type: "+type+"\n"+
+"description: "+desc+"\n\n"+
+"Archivos base:\n"+
+"- index.html\n"+
+"- worker.js\n"+
+"- agents\n"+
+"- analytics\n\n"+
+"APP BASE GENERADA"
+
+}
+
+</script>
+
+</body>
+</html>
