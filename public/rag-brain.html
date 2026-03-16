@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL RAG BRAIN</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+}
+
+textarea{
+width:100%;
+height:120px;
+padding:15px;
+border-radius:10px;
+border:none;
+background:#0f223c;
+color:white;
+}
+
+button{
+margin-top:15px;
+padding:12px 25px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.result{
+margin-top:25px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+font-size:13px;
+}
+
+.memory{
+margin-top:25px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+}
+
+.item{
+border-bottom:1px solid #0f223c;
+padding:10px;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL RAG BRAIN
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Agregar conocimiento</h3>
+
+<textarea id="knowledge" placeholder="Agregar información para la memoria de CONSIA"></textarea>
+
+<button onclick="saveKnowledge()">
+Guardar en memoria
+</button>
+
+</div>
+
+<div class="panel">
+
+<h3>Consultar memoria</h3>
+
+<textarea id="query" placeholder="Preguntar algo a la memoria"></textarea>
+
+<button onclick="searchMemory()">
+Buscar
+</button>
+
+<div class="result" id="result">
+Esperando consulta...
+</div>
+
+</div>
+
+<div class="memory" id="memoryList">
+
+Memoria almacenada aparecerá aquí
+
+</div>
+
+</div>
+
+<script>
+
+function saveKnowledge(){
+
+const text=document.getElementById("knowledge").value
+
+if(!text) return
+
+let memory=JSON.parse(localStorage.getItem("consia_memory"))||[]
+
+memory.push({
+text:text,
+date:new Date().toISOString()
+})
+
+localStorage.setItem("consia_memory",JSON.stringify(memory))
+
+document.getElementById("knowledge").value=""
+
+loadMemory()
+
+}
+
+function searchMemory(){
+
+const query=document.getElementById("query").value.toLowerCase()
+
+const memory=JSON.parse(localStorage.getItem("consia_memory"))||[]
+
+let results=memory.filter(m=>m.text.toLowerCase().includes(query))
+
+let output=""
+
+results.forEach(r=>{
+output+=r.text+"\n\n"
+})
+
+if(!output){
+output="No se encontraron resultados"
+}
+
+document.getElementById("result").innerText=output
+
+}
+
+function loadMemory(){
+
+const memory=JSON.parse(localStorage.getItem("consia_memory"))||[]
+
+let html=""
+
+memory.forEach(m=>{
+
+html+=`<div class="item">${m.text}</div>`
+
+})
+
+document.getElementById("memoryList").innerHTML=html
+
+}
+
+loadMemory()
+
+</script>
+
+</body>
+</html>
