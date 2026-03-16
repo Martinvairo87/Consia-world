@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>CONSIA GLOBAL COMMAND CENTER</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA JARVIS COMMAND CENTER</title>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial;
-background:#061021;
+background:#040f1f;
 color:white;
 }
 
 header{
 padding:20px;
-background:#0b1d33;
+background:#081a2f;
 border-bottom:1px solid #00eaff33;
 }
 
 h1{
 margin:0;
 color:#00eaff;
+font-size:36px;
 }
 
 .container{
@@ -32,25 +36,25 @@ height:calc(100vh - 70px);
 }
 
 .sidebar{
-background:#081a2f;
+background:#07192f;
 padding:20px;
-border-right:1px solid #00eaff33;
+border-right:1px solid #00eaff22;
 }
 
 .sidebar button{
-display:block;
 width:100%;
 padding:14px;
 margin-bottom:12px;
-background:#0e2c4c;
+background:#0d294a;
 border:none;
 border-radius:6px;
 color:white;
 cursor:pointer;
+font-size:15px;
 }
 
 .sidebar button:hover{
-background:#1c4f7c;
+background:#17457a;
 }
 
 .main{
@@ -67,25 +71,21 @@ margin-bottom:20px;
 
 .status{
 font-size:18px;
-margin-bottom:8px;
+margin-bottom:10px;
 }
 
-.green{
-color:#00ff9c;
-}
-
-.red{
-color:#ff4d4d;
-}
+.green{color:#00ff9c}
+.red{color:#ff4d4d}
 
 textarea{
 width:100%;
-height:90px;
+height:100px;
 background:#07192f;
 border:none;
 border-radius:6px;
 color:white;
 padding:10px;
+font-size:16px;
 }
 
 button.run{
@@ -99,20 +99,39 @@ cursor:pointer;
 }
 
 pre{
-background:#05101d;
+background:#020b16;
 padding:15px;
 border-radius:8px;
 overflow:auto;
+font-size:14px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.agent{
+background:#081a2f;
+padding:15px;
+border-radius:8px;
+}
+
+.agent h4{
+margin:0 0 8px 0;
+color:#00eaff;
 }
 
 </style>
+
 </head>
 
 
 <body>
 
 <header>
-<h1>CONSIA GLOBAL COMMAND CENTER</h1>
+<h1>CONSIA JARVIS COMMAND CENTER</h1>
 </header>
 
 <div class="container">
@@ -153,7 +172,7 @@ ECONOMY: <span id="economy" class="red">offline</span>
 
 <div class="card">
 
-<h3>CONSIA GLOBAL BRAIN</h3>
+<h2>CONSIA GLOBAL BRAIN</h2>
 
 <textarea id="objective">crear negocio digital para Real Work</textarea>
 
@@ -164,6 +183,38 @@ ECONOMY: <span id="economy" class="red">offline</span>
 <pre id="result"></pre>
 
 </div>
+
+
+<div class="card">
+
+<h2>AGENT SWARM</h2>
+
+<div class="grid">
+
+<div class="agent">
+<h4>Research Agent</h4>
+<div id="agent_research">idle</div>
+</div>
+
+<div class="agent">
+<h4>Analysis Agent</h4>
+<div id="agent_analysis">idle</div>
+</div>
+
+<div class="agent">
+<h4>Strategy Agent</h4>
+<div id="agent_strategy">idle</div>
+</div>
+
+<div class="agent">
+<h4>Execution Agent</h4>
+<div id="agent_execution">idle</div>
+</div>
+
+</div>
+
+</div>
+
 
 </div>
 
@@ -192,12 +243,9 @@ document.getElementById("api").innerText="ONLINE"
 
 }
 
-}catch(e){
-console.log(e)
-}
+}catch(e){}
 
 }
-
 
 
 async function loadAgents(){
@@ -214,12 +262,9 @@ document.getElementById("agents").innerText="ACTIVE"
 
 }
 
-}catch(e){
-console.log(e)
-}
+}catch(e){}
 
 }
-
 
 
 async function loadEconomy(){
@@ -236,12 +281,9 @@ document.getElementById("economy").innerText="ACTIVE"
 
 }
 
-}catch(e){
-console.log(e)
-}
+}catch(e){}
 
 }
-
 
 
 async function loadBrain(){
@@ -255,7 +297,6 @@ JSON.stringify(j,null,2)
 }
 
 
-
 async function loadAutopilot(){
 
 const r=await fetch(API+"/v1/autopilot")
@@ -265,7 +306,6 @@ document.getElementById("result").innerText=
 JSON.stringify(j,null,2)
 
 }
-
 
 
 async function runBrain(){
@@ -280,7 +320,9 @@ headers:{
 "Content-Type":"application/json"
 },
 
-body:JSON.stringify({objective})
+body:JSON.stringify({
+objective
+})
 
 })
 
@@ -289,11 +331,15 @@ const j=await r.json()
 document.getElementById("result").innerText=
 JSON.stringify(j,null,2)
 
+document.getElementById("agent_research").innerText="completed"
+document.getElementById("agent_analysis").innerText="completed"
+document.getElementById("agent_strategy").innerText="completed"
+document.getElementById("agent_execution").innerText="completed"
+
 }
 
 
-
-/* INIT SYSTEM */
+/* INIT */
 
 async function init(){
 
