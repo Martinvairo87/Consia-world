@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CONSIA GLOBAL AUTH SYSTEM</title>
+<title>CONSIA AUTH</title>
 
 <style>
 
@@ -15,56 +14,54 @@ margin:0;
 background:#020b16;
 font-family:Arial,Helvetica,sans-serif;
 color:white;
-}
-
-.header{
-text-align:center;
-padding:30px;
-font-size:28px;
-color:#00eaff;
-}
-
-.container{
-max-width:500px;
-margin:auto;
-padding:40px;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
 }
 
 .panel{
 background:#071426;
-padding:30px;
-border-radius:12px;
+padding:40px;
+border-radius:14px;
+width:360px;
+box-shadow:0 0 25px rgba(0,234,255,0.1);
+}
+
+.title{
+text-align:center;
+font-size:22px;
+color:#00eaff;
+margin-bottom:20px;
 }
 
 input{
 width:100%;
-padding:14px;
+padding:12px;
+margin-bottom:12px;
 border-radius:20px;
 border:none;
 background:#0f223c;
 color:white;
-margin-top:10px;
 }
 
 button{
-margin-top:15px;
-padding:12px 24px;
+width:100%;
+padding:12px;
 border:none;
-border-radius:25px;
+border-radius:20px;
 background:#00eaff;
 color:#00151f;
 font-weight:bold;
 cursor:pointer;
-width:100%;
 }
 
-.user{
-margin-top:20px;
-background:#081424;
-padding:20px;
-border-radius:10px;
-font-size:13px;
-white-space:pre-wrap;
+.switch{
+text-align:center;
+margin-top:15px;
+font-size:12px;
+color:#9feaff;
+cursor:pointer;
 }
 
 </style>
@@ -73,40 +70,37 @@ white-space:pre-wrap;
 
 <body>
 
-<div class="header">
-CONSIA GLOBAL AUTH SYSTEM
-</div>
-
-<div class="container">
-
 <div class="panel">
 
-<h3>Crear cuenta</h3>
+<div class="title">CONSIA</div>
 
-<input id="name" placeholder="Nombre">
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-
-<button onclick="register()">
-Crear cuenta
-</button>
-
-<hr style="margin:25px 0;border-color:#0f223c">
-
-<h3>Login</h3>
+<div id="login">
 
 <input id="loginEmail" placeholder="Email">
-<input id="loginPassword" type="password" placeholder="Password">
 
-<button onclick="login()">
-Entrar
-</button>
+<input id="loginPass" type="password" placeholder="Password">
 
-<div class="user" id="session"></div>
+<button onclick="login()">LOGIN</button>
 
-<button onclick="logout()" style="margin-top:10px;background:#ff4b5c;color:white">
-Cerrar sesión
-</button>
+<div class="switch" onclick="showSignup()">
+Crear cuenta
+</div>
+
+</div>
+
+<div id="signup" style="display:none">
+
+<input id="signupEmail" placeholder="Email">
+
+<input id="signupName" placeholder="Nombre">
+
+<input id="signupPass" type="password" placeholder="Password">
+
+<button onclick="signup()">SIGNUP</button>
+
+<div class="switch" onclick="showLogin()">
+Ya tengo cuenta
+</div>
 
 </div>
 
@@ -114,75 +108,81 @@ Cerrar sesión
 
 <script>
 
-function register(){
+const API="https://api.consia.world"
 
-const name=document.getElementById("name").value
-const email=document.getElementById("email").value
-const password=document.getElementById("password").value
+function showSignup(){
 
-if(!name||!email||!password) return
+document.getElementById("login").style.display="none"
+document.getElementById("signup").style.display="block"
 
-let users=JSON.parse(localStorage.getItem("consia_users"))||[]
+}
 
-users.push({
-name,
+function showLogin(){
+
+document.getElementById("signup").style.display="none"
+document.getElementById("login").style.display="block"
+
+}
+
+async function signup(){
+
+let email=document.getElementById("signupEmail").value
+let name=document.getElementById("signupName").value
+let password=document.getElementById("signupPass").value
+
+const r=await fetch(API+"/v1/auth/signup",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+
 email,
+name,
 password
+
 })
 
-localStorage.setItem("consia_users",JSON.stringify(users))
+})
 
-alert("Cuenta creada")
+const data=await r.json()
 
-}
+if(data.ok){
 
-function login(){
-
-const email=document.getElementById("loginEmail").value
-const password=document.getElementById("loginPassword").value
-
-const users=JSON.parse(localStorage.getItem("consia_users"))||[]
-
-const user=users.find(u=>u.email===email && u.password===password)
-
-if(!user){
-alert("Login incorrecto")
-return
-}
-
-localStorage.setItem("consia_session",JSON.stringify(user))
-
-showSession()
+localStorage.setItem("consia_token",data.token)
+window.location="user-dashboard.html"
 
 }
 
-function showSession(){
-
-const session=JSON.parse(localStorage.getItem("consia_session"))
-
-if(!session){
-document.getElementById("session").innerText="No hay sesión activa"
-return
 }
 
-document.getElementById("session").innerText=
-`Sesión activa
+async function login(){
 
-Usuario: ${session.name}
-Email: ${session.email}
-`
+let email=document.getElementById("loginEmail").value
+let password=document.getElementById("loginPass").value
+
+const r=await fetch(API+"/v1/auth/login",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+
+email,
+password
+
+})
+
+})
+
+const data=await r.json()
+
+if(data.ok){
+
+localStorage.setItem("consia_token",data.token)
+window.location="user-dashboard.html"
 
 }
 
-function logout(){
-
-localStorage.removeItem("consia_session")
-
-showSession()
-
 }
-
-showSession()
 
 </script>
 
