@@ -1,105 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>CONSIA AUTOPILOT</title>
 
 <style>
 
 body{
-background:#020617;
+margin:0;
+background:#020b16;
+font-family:Arial;
 color:white;
-font-family:-apple-system,system-ui;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
 padding:40px;
 }
 
-.box{
-max-width:900px;
-margin:auto;
+h1{
+text-align:center;
+color:#00eaff;
+}
+
+.panel{
+
+background:#071426;
+
+border-radius:12px;
+
+padding:30px;
+
+margin-top:30px;
+
 }
 
 input{
+
 width:100%;
+
 padding:16px;
-border-radius:14px;
+
+border-radius:20px;
+
 border:none;
-background:#0b1220;
+
+background:#0f223c;
+
 color:white;
-margin-bottom:10px;
+
+font-size:16px;
+
 }
 
 button{
-padding:14px 20px;
+
+margin-top:20px;
+
+padding:14px 26px;
+
 border:none;
-border-radius:12px;
-background:#4f6cff;
-color:white;
+
+border-radius:30px;
+
+background:#00eaff;
+
+color:black;
+
+font-weight:bold;
+
 cursor:pointer;
+
 }
 
-.console{
-margin-top:20px;
-background:#0b1220;
+.status{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:20px;
+
+margin-top:30px;
+
+}
+
+.card{
+
+background:#0d1f35;
+
 padding:20px;
-border-radius:16px;
-border:1px solid #182238;
+
+border-radius:10px;
+
+text-align:center;
+
+}
+
+.result{
+
+margin-top:30px;
+
+background:#081424;
+
+padding:20px;
+
+border-radius:10px;
+
 white-space:pre-wrap;
+
 }
 
 </style>
 
 </head>
 
+
 <body>
 
-<div class="box">
+<div class="container">
 
-<h2>CONSIA AUTOPILOT AGENTS</h2>
+<h1>CONSIA AUTOPILOT ENGINE</h1>
 
-<input id="goal" placeholder="Objetivo para CONSIA">
+<div class="panel">
 
-<button onclick="run()">Ejecutar Autopilot</button>
+<input
+id="objective"
+placeholder="Decile a CONSIA qué proyecto querés crear"
+/>
 
-<div id="console" class="console">
-Autopilot listo.
+<button onclick="runAutopilot()">
+Activar Autopilot
+</button>
+
+<div class="status">
+
+<div class="card">
+Research<br>
+<span id="research">idle</span>
+</div>
+
+<div class="card">
+Analysis<br>
+<span id="analysis">idle</span>
+</div>
+
+<div class="card">
+Strategy<br>
+<span id="strategy">idle</span>
+</div>
+
+<div class="card">
+Execution<br>
+<span id="execution">idle</span>
 </div>
 
 </div>
 
-<script src="agents-core.js"></script>
-<script src="autopilot-core.js"></script>
+<div class="result" id="result"></div>
+
+</div>
+
+</div>
+
 
 <script>
 
-function log(text){
-const box=document.getElementById("console");
-box.textContent += "\n" + text;
+const API="https://api.consia.world"
+
+async function runAutopilot(){
+
+const objective=document.getElementById("objective").value
+
+if(!objective)return
+
+setStatus("research","running")
+
+const r=await fetch(API+"/v1/brain/run",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+objective
+})
+
+})
+
+const j=await r.json()
+
+setStatus("research","done")
+setStatus("analysis","done")
+setStatus("strategy","done")
+setStatus("execution","done")
+
+document.getElementById("result").innerText=
+JSON.stringify(j,null,2)
+
 }
 
-async function run(){
+function setStatus(agent,status){
 
-const goal=document.getElementById("goal").value;
-
-log("Goal: "+goal);
-
-const result = await CONSIA_AUTOPILOT.run(goal);
-
-log("Plan generado:");
-
-result.plan.forEach(step=>{
-log("→ "+step.task+" | "+step.input);
-});
-
-log("Resultados:");
-
-result.results.forEach(r=>{
-log(r.step+" → "+r.result);
-});
+document.getElementById(agent).innerText=status
 
 }
 
 </script>
 
+
 </body>
+
 </html>
