@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL PAYMENT SYSTEM</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial, Helvetica, sans-serif;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+margin-bottom:30px;
+}
+
+.plan{
+background:#081424;
+padding:20px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+button{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+border-radius:20px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.transactions{
+background:#081424;
+padding:20px;
+border-radius:12px;
+}
+
+.tx{
+border-bottom:1px solid #0f223c;
+padding:8px;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL PAYMENT SYSTEM
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Planes</h3>
+
+<div class="plan">
+CONSIA PRO — $29 / mes
+<br>
+<button onclick="subscribe('PRO')">Suscribirse</button>
+</div>
+
+<div class="plan">
+CONSIA BUSINESS — $99 / mes
+<br>
+<button onclick="subscribe('BUSINESS')">Suscribirse</button>
+</div>
+
+<div class="plan">
+CONSIA ENTERPRISE — $299 / mes
+<br>
+<button onclick="subscribe('ENTERPRISE')">Suscribirse</button>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h3>Marketplace compra de agentes</h3>
+
+<div class="plan">
+Marketing Agent — $19
+<br>
+<button onclick="buy('Marketing Agent',19)">Comprar</button>
+</div>
+
+<div class="plan">
+Finance Agent — $29
+<br>
+<button onclick="buy('Finance Agent',29)">Comprar</button>
+</div>
+
+<div class="plan">
+Startup Agent — $39
+<br>
+<button onclick="buy('Startup Agent',39)">Comprar</button>
+</div>
+
+</div>
+
+<div class="transactions" id="transactions">
+
+Transacciones aparecerán aquí
+
+</div>
+
+</div>
+
+<script>
+
+let tx=[]
+
+function subscribe(plan){
+
+const t={
+type:"subscription",
+plan:plan,
+date:new Date().toISOString()
+}
+
+tx.push(t)
+
+localStorage.setItem("consia_tx",JSON.stringify(tx))
+
+loadTx()
+
+}
+
+function buy(name,price){
+
+const t={
+type:"purchase",
+agent:name,
+price:price,
+date:new Date().toISOString()
+}
+
+tx.push(t)
+
+localStorage.setItem("consia_tx",JSON.stringify(tx))
+
+loadTx()
+
+}
+
+function loadTx(){
+
+const data=JSON.parse(localStorage.getItem("consia_tx"))||[]
+
+let html=""
+
+data.forEach(t=>{
+
+html+=`<div class="tx">${JSON.stringify(t)}</div>`
+
+})
+
+document.getElementById("transactions").innerHTML=html
+
+}
+
+loadTx()
+
+</script>
+
+</body>
+</html>
