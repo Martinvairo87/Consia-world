@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA AGENT STORE</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+.agent{
+background:#071426;
+padding:25px;
+border-radius:12px;
+}
+
+button{
+margin-top:15px;
+padding:10px 20px;
+border:none;
+border-radius:20px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL AGENT STORE
+</div>
+
+<div class="grid" id="agents"></div>
+
+<script>
+
+const agents=[
+{name:"Research Agent",price:19},
+{name:"Marketing Agent",price:29},
+{name:"Business Agent",price:39},
+{name:"Automation Agent",price:25}
+]
+
+function loadAgents(){
+
+let html=""
+
+agents.forEach(a=>{
+
+html+=`
+<div class="agent">
+<h3>${a.name}</h3>
+<p>$${a.price}</p>
+<button onclick="installAgent('${a.name}')">Instalar</button>
+</div>
+`
+
+})
+
+document.getElementById("agents").innerHTML=html
+
+}
+
+function installAgent(name){
+
+alert(name+" instalado en CONSIA")
+
+}
+
+loadAgents()
+
+</script>
+
+</body>
+</html>
