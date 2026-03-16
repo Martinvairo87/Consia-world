@@ -13,7 +13,7 @@
 body{
 margin:0;
 background:#020b16;
-font-family:Arial,Helvetica,sans-serif;
+font-family:Arial, Helvetica, sans-serif;
 color:white;
 }
 
@@ -45,6 +45,7 @@ box-shadow:0 0 20px rgba(0,234,255,0.08);
 .card h3{
 font-size:15px;
 margin-bottom:15px;
+letter-spacing:1px;
 }
 
 button{
@@ -147,6 +148,11 @@ CONSIA GLOBAL COMMAND CENTER
 <button onclick="openPage('multi-ai.html')">Abrir</button>
 </div>
 
+<div class="card">
+<h3>GLOBAL BRAIN MAP</h3>
+<button onclick="openPage('global-brain-map.html')">Abrir</button>
+</div>
+
 </div>
 
 <div class="status" id="status">
@@ -181,6 +187,7 @@ document.getElementById("status").innerText=
 `{
 "ok": true,
 "service": "CONSIA API",
+"version": "consia-global-brain",
 "core": "active"
 }`
 
