@@ -1,0 +1,76 @@
+name = "consia-api-live"
+main = "worker.js"
+compatibility_date = "2026-03-16"
+workers_dev = true
+
+routes = [
+  { pattern = "api.consia.world/*", zone_name = "consia.world" }
+]
+
+[vars]
+CONSIA_ENV = "production"
+CONSIA_SYSTEM = "CONSIA GLOBAL COMMAND CENTER"
+
+# VECTOR BRAIN
+VECTOR_INDEX = "consia-brain"
+
+# FILE STORAGE
+FILES_BUCKET = "consia-files"
+
+# AI ENGINE
+AI_MODEL = "@cf/meta/llama-3-8b-instruct"
+
+########################################
+# VECTORIZE (MEMORY BRAIN)
+########################################
+
+[[vectorize]]
+binding = "VECTOR_DB"
+index_name = "consia-brain"
+
+########################################
+# R2 FILE STORAGE
+########################################
+
+[[r2_buckets]]
+binding = "CONSIA_FILES"
+bucket_name = "consia-files"
+
+########################################
+# KV STORAGE
+########################################
+
+[[kv_namespaces]]
+binding = "CONSIA_MEMORY"
+id = "CONSIA_MEMORY"
+
+[[kv_namespaces]]
+binding = "CONSIA_STATE"
+id = "CONSIA_STATE"
+
+[[kv_namespaces]]
+binding = "CONSIA_GLOBAL"
+id = "CONSIA_GLOBAL_STATE"
+
+########################################
+# D1 DATABASE
+########################################
+
+[[d1_databases]]
+binding = "CONSIA_DB"
+database_name = "consia_d1"
+database_id = "consia_d1"
+
+########################################
+# WORKERS AI
+########################################
+
+[ai]
+binding = "CONSIA_AI"
+
+########################################
+# OBSERVABILITY
+########################################
+
+[observability]
+enabled = true
