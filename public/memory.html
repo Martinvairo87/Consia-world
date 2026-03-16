@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL MEMORY</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+text-align:center;
+color:#00eaff;
+}
+
+.panel{
+background:#071426;
+border-radius:12px;
+padding:30px;
+margin-top:30px;
+}
+
+input{
+width:100%;
+padding:16px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+font-size:16px;
+}
+
+textarea{
+width:100%;
+height:120px;
+padding:16px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+margin-top:10px;
+}
+
+button{
+margin-top:20px;
+padding:14px 26px;
+border:none;
+border-radius:30px;
+background:#00eaff;
+color:black;
+font-weight:bold;
+cursor:pointer;
+margin-right:10px;
+}
+
+.memory-list{
+margin-top:30px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+}
+
+.status{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+margin-top:20px;
+}
+
+.card{
+background:#0d1f35;
+padding:20px;
+border-radius:10px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA GLOBAL MEMORY ENGINE</h1>
+
+<div class="panel">
+
+<input
+id="memoryTitle"
+placeholder="Título de memoria"
+/>
+
+<textarea
+id="memoryContent"
+placeholder="Contenido o conocimiento a guardar..."
+></textarea>
+
+<button onclick="saveMemory()">
+Guardar memoria
+</button>
+
+<button onclick="loadMemory()">
+Cargar memoria
+</button>
+
+<div class="status">
+
+<div class="card">
+Memory Engine<br>
+<span id="memoryStatus">activo</span>
+</div>
+
+<div class="card">
+Storage<br>
+<span id="storageStatus">local</span>
+</div>
+
+<div class="card">
+Sync<br>
+<span id="syncStatus">listo</span>
+</div>
+
+</div>
+
+<div class="memory-list" id="memoryList">
+Memorias cargadas aparecerán aquí...
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let memories=[]
+
+function saveMemory(){
+
+const title=document.getElementById("memoryTitle").value
+const content=document.getElementById("memoryContent").value
+
+if(!title || !content) return
+
+const memory={
+title:title,
+content:content,
+date:new Date().toISOString()
+}
+
+memories.push(memory)
+
+localStorage.setItem("consia_memory",JSON.stringify(memories))
+
+document.getElementById("memoryStatus").innerText="guardado"
+
+loadMemory()
+
+}
+
+function loadMemory(){
+
+const data=localStorage.getItem("consia_memory")
+
+if(data){
+
+memories=JSON.parse(data)
+
+let output=""
+
+memories.forEach(m=>{
+
+output+=
+"🧠 "+m.title+"\n"+
+m.content+"\n"+
+m.date+"\n\n"
+
+})
+
+document.getElementById("memoryList").innerText=output
+
+}
+
+}
+
+loadMemory()
+
+</script>
+
+</body>
+</html>
