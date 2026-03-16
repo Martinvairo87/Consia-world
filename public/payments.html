@@ -6,14 +6,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CONSIA GLOBAL PAYMENT SYSTEM</title>
+<title>CONSIA GLOBAL WALLET</title>
 
 <style>
 
 body{
 margin:0;
 background:#020b16;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial,Helvetica,sans-serif;
 color:white;
 }
 
@@ -27,28 +27,37 @@ color:#00eaff;
 .container{
 max-width:900px;
 margin:auto;
-padding:30px;
+padding:40px;
 }
 
 .panel{
 background:#071426;
-padding:30px;
+padding:25px;
 border-radius:12px;
-margin-bottom:30px;
+margin-bottom:25px;
 }
 
-.plan{
-background:#081424;
-padding:20px;
-border-radius:10px;
-margin-bottom:15px;
+.wallet{
+font-size:28px;
+color:#00eaff;
+margin-top:10px;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+margin-top:10px;
 }
 
 button{
-margin-top:10px;
-padding:10px 20px;
+margin-top:15px;
+padding:12px 24px;
 border:none;
-border-radius:20px;
+border-radius:25px;
 background:#00eaff;
 color:#00151f;
 font-weight:bold;
@@ -56,15 +65,16 @@ cursor:pointer;
 }
 
 .transactions{
+margin-top:20px;
 background:#081424;
 padding:20px;
-border-radius:12px;
+border-radius:10px;
+font-size:13px;
 }
 
 .tx{
 border-bottom:1px solid #0f223c;
-padding:8px;
-font-size:13px;
+padding:8px 0;
 }
 
 </style>
@@ -74,62 +84,40 @@ font-size:13px;
 <body>
 
 <div class="header">
-CONSIA GLOBAL PAYMENT SYSTEM
+CONSIA GLOBAL WALLET
 </div>
 
 <div class="container">
 
 <div class="panel">
 
-<h3>Planes</h3>
+<h3>Balance</h3>
 
-<div class="plan">
-CONSIA PRO — $29 / mes
-<br>
-<button onclick="subscribe('PRO')">Suscribirse</button>
-</div>
+<div class="wallet" id="balance">$0</div>
 
-<div class="plan">
-CONSIA BUSINESS — $99 / mes
-<br>
-<button onclick="subscribe('BUSINESS')">Suscribirse</button>
-</div>
-
-<div class="plan">
-CONSIA ENTERPRISE — $299 / mes
-<br>
-<button onclick="subscribe('ENTERPRISE')">Suscribirse</button>
-</div>
+<button onclick="addFunds()">
+Agregar fondos
+</button>
 
 </div>
 
 <div class="panel">
 
-<h3>Marketplace compra de agentes</h3>
+<h3>Transferir</h3>
 
-<div class="plan">
-Marketing Agent — $19
-<br>
-<button onclick="buy('Marketing Agent',19)">Comprar</button>
-</div>
+<input id="amount" placeholder="Monto">
 
-<div class="plan">
-Finance Agent — $29
-<br>
-<button onclick="buy('Finance Agent',29)">Comprar</button>
-</div>
-
-<div class="plan">
-Startup Agent — $39
-<br>
-<button onclick="buy('Startup Agent',39)">Comprar</button>
-</div>
+<button onclick="sendPayment()">
+Enviar pago
+</button>
 
 </div>
 
-<div class="transactions" id="transactions">
+<div class="panel">
 
-Transacciones aparecerán aquí
+<h3>Transacciones</h3>
+
+<div class="transactions" id="txs"></div>
 
 </div>
 
@@ -137,58 +125,69 @@ Transacciones aparecerán aquí
 
 <script>
 
-let tx=[]
+function loadWallet(){
 
-function subscribe(plan){
-
-const t={
-type:"subscription",
-plan:plan,
-date:new Date().toISOString()
+let wallet=JSON.parse(localStorage.getItem("consia_wallet"))||{
+balance:0,
+tx:[]
 }
 
-tx.push(t)
-
-localStorage.setItem("consia_tx",JSON.stringify(tx))
-
-loadTx()
-
-}
-
-function buy(name,price){
-
-const t={
-type:"purchase",
-agent:name,
-price:price,
-date:new Date().toISOString()
-}
-
-tx.push(t)
-
-localStorage.setItem("consia_tx",JSON.stringify(tx))
-
-loadTx()
-
-}
-
-function loadTx(){
-
-const data=JSON.parse(localStorage.getItem("consia_tx"))||[]
+document.getElementById("balance").innerText="$"+wallet.balance
 
 let html=""
 
-data.forEach(t=>{
-
-html+=`<div class="tx">${JSON.stringify(t)}</div>`
-
+wallet.tx.forEach(t=>{
+html+=`<div class="tx">${t}</div>`
 })
 
-document.getElementById("transactions").innerHTML=html
+document.getElementById("txs").innerHTML=html
 
 }
 
-loadTx()
+function addFunds(){
+
+let wallet=JSON.parse(localStorage.getItem("consia_wallet"))||{
+balance:0,
+tx:[]
+}
+
+wallet.balance+=100
+
+wallet.tx.push("Depósito +100")
+
+localStorage.setItem("consia_wallet",JSON.stringify(wallet))
+
+loadWallet()
+
+}
+
+function sendPayment(){
+
+let wallet=JSON.parse(localStorage.getItem("consia_wallet"))||{
+balance:0,
+tx:[]
+}
+
+const amount=parseInt(document.getElementById("amount").value)
+
+if(wallet.balance<amount){
+
+alert("Fondos insuficientes")
+return
+
+}
+
+wallet.balance-=amount
+
+wallet.tx.push("Pago enviado -"+amount)
+
+localStorage.setItem("consia_wallet",JSON.stringify(wallet))
+
+loadWallet()
+
+}
+
+loadWallet()
 
 </script>
 
