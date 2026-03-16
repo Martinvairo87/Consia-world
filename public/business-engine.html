@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA BUSINESS ENGINE</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
+}
+
+input{
+width:100%;
+padding:15px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+}
+
+button{
+margin-top:20px;
+padding:15px 30px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.result{
+margin-top:30px;
+background:#081424;
+padding:25px;
+border-radius:12px;
+white-space:pre-wrap;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>CONSIA AUTONOMOUS BUSINESS ENGINE</h2>
+
+<input id="idea" placeholder="Ej: crear SaaS inmobiliario para Real Work">
+
+<button onclick="createBusiness()">
+Crear negocio
+</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script>
+
+async function createBusiness(){
+
+const idea=document.getElementById("idea").value
+
+document.getElementById("result").innerText="CONSIA creando negocio..."
+
+const r=await fetch("https://api.consia.world/v1/brain/run",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({objective:idea})
+})
+
+const data=await r.json()
+
+document.getElementById("result").innerText=
+JSON.stringify(data,null,2)
+
+}
+
+</script>
+
+</body>
+</html>
