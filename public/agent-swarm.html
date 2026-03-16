@@ -13,60 +13,50 @@
 body{
 margin:0;
 background:#020b16;
-font-family:Arial;
+font-family:Arial, Helvetica, sans-serif;
 color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
 }
 
 .container{
 max-width:1200px;
 margin:auto;
-padding:40px;
-}
-
-h1{
-text-align:center;
-color:#00eaff;
-}
-
-.panel{
-background:#071426;
 padding:30px;
-border-radius:12px;
-margin-top:30px;
-}
-
-input{
-width:100%;
-padding:16px;
-border-radius:25px;
-border:none;
-background:#0f223c;
-color:white;
-}
-
-button{
-margin-top:20px;
-padding:14px 25px;
-border:none;
-border-radius:30px;
-background:#00eaff;
-cursor:pointer;
-font-weight:bold;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:15px;
-margin-top:30px;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
 }
 
 .agent{
-background:#0d1f35;
-padding:15px;
+background:#071426;
+padding:20px;
 border-radius:10px;
 text-align:center;
-font-size:13px;
+}
+
+.agent h3{
+margin-bottom:10px;
+color:#00eaff;
+font-size:15px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
 }
 
 .result{
@@ -75,6 +65,7 @@ background:#081424;
 padding:20px;
 border-radius:10px;
 white-space:pre-wrap;
+font-size:13px;
 }
 
 </style>
@@ -83,105 +74,71 @@ white-space:pre-wrap;
 
 <body>
 
+<div class="header">
+CONSIA GLOBAL AGENT SWARM
+</div>
+
 <div class="container">
 
-<h1>CONSIA GLOBAL AGENT SWARM</h1>
+<div class="grid">
 
-<div class="panel">
+<div class="agent">
+<h3>Research Agent</h3>
+<button onclick="runAgent('research')">Ejecutar</button>
+</div>
 
-<input
-id="goal"
-placeholder="Objetivo para los agentes"
-/>
+<div class="agent">
+<h3>Analysis Agent</h3>
+<button onclick="runAgent('analysis')">Ejecutar</button>
+</div>
 
-<button onclick="runSwarm()">
-Ejecutar Agent Swarm
-</button>
+<div class="agent">
+<h3>Strategy Agent</h3>
+<button onclick="runAgent('strategy')">Ejecutar</button>
+</div>
 
-<div class="grid" id="agents">
+<div class="agent">
+<h3>Execution Agent</h3>
+<button onclick="runAgent('execution')">Ejecutar</button>
+</div>
+
+<div class="agent">
+<h3>Marketing Agent</h3>
+<button onclick="runAgent('marketing')">Ejecutar</button>
+</div>
+
+<div class="agent">
+<h3>Finance Agent</h3>
+<button onclick="runAgent('finance')">Ejecutar</button>
+</div>
+
+<div class="agent">
+<h3>Startup Agent</h3>
+<button onclick="runAgent('startup')">Ejecutar</button>
+</div>
+
+<div class="agent">
+<h3>Growth Agent</h3>
+<button onclick="runAgent('growth')">Ejecutar</button>
+</div>
 
 </div>
 
 <div class="result" id="result">
-Esperando ejecución...
-</div>
-
+Esperando ejecución de agentes...
 </div>
 
 </div>
 
 <script>
 
-const agents=[
+async function runAgent(agent){
 
-"research_agent",
-"analysis_agent",
-"strategy_agent",
-"execution_agent",
-"marketing_agent",
-"seo_agent",
-"social_media_agent",
-"growth_agent",
-"ads_agent",
-"content_agent",
+const resultBox=document.getElementById("result")
 
-"design_agent",
-"ui_agent",
-"ux_agent",
-"branding_agent",
+resultBox.innerText="CONSIA ejecutando agente..."
 
-"finance_agent",
-"accounting_agent",
-"tax_agent",
-
-"legal_agent",
-"contract_agent",
-
-"product_agent",
-"startup_agent",
-"automation_agent",
-
-"data_agent",
-"analytics_agent",
-
-"sales_agent",
-"crm_agent",
-
-"ai_training_agent",
-"prompt_engineer_agent",
-
-"market_research_agent",
-"competitor_agent",
-
-"innovation_agent",
-"idea_agent",
-
-"workflow_agent",
-"integration_agent",
-
-"api_agent",
-"cloud_agent",
-
-"security_agent",
-"compliance_agent"
-
-]
-
-const container=document.getElementById("agents")
-
-agents.forEach(a=>{
-
-const div=document.createElement("div")
-div.className="agent"
-div.innerText=a
-
-container.appendChild(div)
-
-})
-
-async function runSwarm(){
-
-const goal=document.getElementById("goal").value
+try{
 
 const r=await fetch(
 "https://api.consia.world/v1/brain/run",
@@ -191,15 +148,20 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-objective:goal
+objective:"run "+agent+" agent"
 })
 }
 )
 
 const data=await r.json()
 
-document.getElementById("result").innerText=
-JSON.stringify(data,null,2)
+resultBox.innerText=JSON.stringify(data,null,2)
+
+}catch(e){
+
+resultBox.innerText="Error ejecutando agente"
+
+}
 
 }
 
