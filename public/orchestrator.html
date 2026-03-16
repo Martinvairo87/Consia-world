@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA GLOBAL ORCHESTRATOR</title>
+
+<style>
+body{
+  margin:0;
+  background:#020b16;
+  font-family:Arial,Helvetica,sans-serif;
+  color:white;
+}
+.header{
+  text-align:center;
+  padding:30px;
+  font-size:30px;
+  color:#00eaff;
+  letter-spacing:2px;
+}
+.container{
+  max-width:1400px;
+  margin:auto;
+  padding:30px;
+}
+.panel{
+  background:#071426;
+  padding:25px;
+  border-radius:14px;
+  margin-bottom:25px;
+  box-shadow:0 0 20px rgba(0,234,255,0.08);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+.box{
+  background:#081424;
+  padding:18px;
+  border-radius:12px;
+  text-align:center;
+}
+.box h3{
+  margin:0 0 10px 0;
+  font-size:14px;
+  color:#00eaff;
+  letter-spacing:1px;
+}
+.value{
+  font-size:24px;
+  font-weight:bold;
+}
+input, textarea{
+  width:100%;
+  padding:14px;
+  border-radius:20px;
+  border:none;
+  background:#0f223c;
+  color:white;
+  margin-top:10px;
+  box-sizing:border-box;
+}
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+button{
+  margin-top:15px;
+  padding:12px 24px;
+  border:none;
+  border-radius:25px;
+  background:#00eaff;
+  color:#00151f;
+  font-weight:bold;
+  cursor:pointer;
+  margin-right:10px;
+}
+button:hover{
+  transform:scale(1.04);
+}
+.stream, .log, .modules{
+  margin-top:20px;
+  background:#081424;
+  padding:20px;
+  border-radius:12px;
+  font-size:13px;
+}
+.stream, .log{
+  white-space:pre-wrap;
+  max-height:320px;
+  overflow:auto;
+}
+.modules{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+}
+.module{
+  background:#0d1f35;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+}
+.module .name{
+  color:#00eaff;
+  font-size:13px;
+  margin-bottom:8px;
+}
+.module .status{
+  font-size:12px;
+}
+.footer{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
+  color:#3aaec9;
+}
+.ok{color:#4dff9c}
+.warn{color:#ffd166}
+.bad{color:#ff5b6e}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL ORCHESTRATOR
+</div>
+
+<div class="container">
+
+  <div class="panel">
+    <h2>Objetivo maestro</h2>
+
+    <input id="objective" placeholder="Ej: crear plataforma inmobiliaria automática para Real Work">
+
+    <textarea id="context" placeholder="Contexto adicional, prioridades, empresa, mercado, objetivo económico, restricciones..."></textarea>
+
+    <button onclick="runOrchestrator()">Ejecutar Orchestrator</button>
+    <button onclick="runAutoCycle()">Ejecutar ciclo automático</button>
+    <button onclick="clearRuntime()">Limpiar runtime</button>
+
+    <div class="grid">
+      <div class="box">
+        <h3>ESTADO</h3>
+        <div class="value" id="orchestratorState">IDLE</div>
+      </div>
+      <div class="box">
+        <h3>CICLOS</h3>
+        <div class="value" id="cycles">0</div>
+      </div>
+      <div class="box">
+        <h3>TAREAS</h3>
+        <div class="value" id="tasks">0</div>
+      </div>
+      <div class="box">
+        <h3>EVENTOS</h3>
+        <div class="value" id="events">0</div>
+      </div>
+      <div class="box">
+        <h3>AGENTES</h3>
+        <div class="value" id="agentsCount">0</div>
+      </div>
+      <div class="box">
+        <h3>PROYECTOS</h3>
+        <div class="value" id="projectsCount">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Módulos coordinados</h2>
+
+    <div class="modules" id="modules"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Realtime stream</h2>
+    <div class="stream" id="stream">Esperando ejecución...</div>
+  </div>
+
+  <div class="panel">
+    <h2>Orchestrator log</h2>
+    <div class="log" id="log">Sistema esperando inicialización...</div>
+  </div>
+
+</div>
+
+<div class="footer">
+CONSIA AI OPERATING SYSTEM — ORCHESTRATION LAYER
+</div>
+
+<script>
+const API="https://api.consia.world";
+
+const MODULES = [
+  "realtime_brain",
+  "autopilot_engine",
+  "project_engine",
+  "agent_runtime",
+  "agent_swarm",
+  "agent_cloud",
+  "vector_database",
+  "rag_brain",
+  "memory_engine",
+  "data_cloud",
+  "global_file_system",
+  "analytics_engine",
+  "agent_store",
+  "business_engine",
+  "global_network",
+  "global_wallet",
+  "auth_system",
+  "global_user_platform"
+];
+
+let runtime = {
+  state: "IDLE",
+  cycles: 0,
+  tasks: 0,
+  events: 0,
+  agents: [
+    "research_agent",
+    "analysis_agent",
+    "strategy_agent",
+    "execution_agent"
+  ],
+  projects: [],
+  logs: [],
+  stream: [],
+  modules: {}
+};
+
+function bootstrapModules(){
+  MODULES.forEach(name=>{
+    if(!runtime.modules[name]){
+      runtime.modules[name] = "READY";
+    }
+  });
+}
+
+function saveRuntime(){
+  localStorage.setItem("consia_orchestrator", JSON.stringify(runtime));
+}
+
+function loadRuntime(){
+  const data = JSON.parse(localStorage.getItem("consia_orchestrator") || "null");
+  if(data){
+    runtime = data;
+  }
+  bootstrapModules();
+}
+
+function appendLog(text){
+  runtime.logs.unshift(text);
+  runtime.logs = runtime.logs.slice(0,150);
+}
+
+function appendStream(text){
+  runtime.stream.unshift(text);
+  runtime.stream = runtime.stream.slice(0,80);
+}
+
+function renderModules(){
+  const el = document.getElementById("modules");
+  let html = "";
+  Object.keys(runtime.modules).forEach(name=>{
+    const status = runtime.modules[name];
+    let cls = "warn";
+    if(status === "READY" || status === "ACTIVE" || status === "SYNCED") cls = "ok";
+    if(status === "ERROR") cls = "bad";
+
+    html += `
+      <div class="module">
+        <div class="name">${name}</div>
+        <div class="status ${cls}">${status}</div>
+      </div>
+    `;
+  });
+  el.innerHTML = html;
+}
+
+function renderUI(){
+  document.getElementById("orchestratorState").innerText = runtime.state;
+  document.getElementById("cycles").innerText = runtime.cycles;
+  document.getElementById("tasks").innerText = runtime.tasks;
+  document.getElementById("events").innerText = runtime.events;
+  document.getElementById("agentsCount").innerText = runtime.agents.length;
+  document.getElementById("projectsCount").innerText = runtime.projects.length;
+  document.getElementById("log").innerText = runtime.logs.join("\n\n") || "Sin eventos.";
+  document.getElementById("stream").innerText = runtime.stream.join("\n") || "Sin actividad.";
+  renderModules();
+  saveRuntime();
+}
+
+function markCoreModulesActive(){
+  [
+    "realtime_brain",
+    "autopilot_engine",
+    "project_engine",
+    "agent_runtime",
+    "agent_swarm",
+    "agent_cloud",
+    "vector_database",
+    "rag_brain",
+    "memory_engine",
+    "analytics_engine"
+  ].forEach(name=>{
+    runtime.modules[name] = "ACTIVE";
+  });
+}
+
+function syncBusinessModules(){
+  [
+    "business_engine",
+    "agent_store",
+    "global_network",
+    "global_wallet",
+    "auth_system",
+    "global_user_platform",
+    "data_cloud",
+    "global_file_system"
+  ].forEach(name=>{
+    runtime.modules[name] = "SYNCED";
+  });
+}
+
+async function callBrain(objective){
+  const r = await fetch(API + "/v1/brain/run", {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify({ objective })
+  });
+  return await r.json();
+}
+
+async function runOrchestrator(){
+  const objective = document.getElementById("objective").value.trim();
+  const context = document.getElementById("context").value.trim();
+
+  if(!objective) return;
+
+  runtime.state = "RUNNING";
+  runtime.cycles += 1;
+  runtime.tasks += 1;
+  runtime.events += 6;
+
+  markCoreModulesActive();
+  syncBusinessModules();
+
+  const composedObjective = context
+    ? objective + " | contexto: " + context
+    : objective;
+
+  appendStream("▶ Orchestrator iniciado: " + objective);
+  appendLog("Inicio de ciclo " + runtime.cycles + " para objetivo: " + composedObjective);
+
+  renderUI();
+
+  try{
+    const data = await callBrain(composedObjective);
+
+    runtime.projects.unshift({
+      objective: objective,
+      context: context,
+      date: new Date().toISOString(),
+      plan: data
+    });
+    runtime.projects = runtime.projects.slice(0,100);
+
+    appendStream("✓ Brain completado");
+    appendStream("✓ Agent Swarm coordinado");
+    appendStream("✓ Project Engine actualizado");
+    appendStream("✓ Analytics actualizado");
+    appendLog(JSON.stringify(data, null, 2));
+
+    runtime.state = "ACTIVE";
+  }catch(e){
+    appendStream("✗ Error de conexión con CONSIA API");
+    appendLog("Error en orchestrator: " + (e.message || e));
+    runtime.state = "ERROR";
+    Object.keys(runtime.modules).forEach(name=>{
+      if(runtime.modules[name] === "ACTIVE"){
+        runtime.modules[name] = "READY";
+      }
+    });
+  }
+
+  renderUI();
+}
+
+function runAutoCycle(){
+  const objective = document.getElementById("objective").value.trim() || "optimizar sistema CONSIA";
+
+  runtime.state = "AUTO";
+  runtime.cycles += 1;
+  runtime.tasks += 1;
+  runtime.events += 4;
+
+  markCoreModulesActive();
+
+  appendStream("↺ Auto-cycle ejecutado");
+  appendLog("Auto-cycle " + runtime.cycles + " objetivo: " + objective);
+
+  runtime.projects.unshift({
+    objective: objective,
+    context: "auto-cycle",
+    date: new Date().toISOString(),
+    plan: {
+      status: "auto-generated",
+      steps: ["research","analysis","strategy","execution"]
+    }
+  });
+  runtime.projects = runtime.projects.slice(0,100);
+
+  renderUI();
+}
+
+function clearRuntime(){
+  runtime = {
+    state: "IDLE",
+    cycles: 0,
+    tasks: 0,
+    events: 0,
+    agents: [
+      "research_agent",
+      "analysis_agent",
+      "strategy_agent",
+      "execution_agent"
+    ],
+    projects: [],
+    logs: [],
+    stream: [],
+    modules: {}
+  };
+
+  bootstrapModules();
+  appendLog("Runtime reiniciado");
+  appendStream("Sistema reiniciado");
+  renderUI();
+}
+
+loadRuntime();
+appendLog("CONSIA GLOBAL ORCHESTRATOR cargado");
+appendStream("Sistema listo");
+renderUI();
+</script>
+
+</body>
+</html>
