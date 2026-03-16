@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
@@ -13,7 +12,7 @@
 body{
 margin:0;
 background:#020b16;
-font-family:Arial,Helvetica,sans-serif;
+font-family:Arial;
 color:white;
 }
 
@@ -25,67 +24,48 @@ color:#00eaff;
 }
 
 .container{
-max-width:1200px;
+max-width:1400px;
 margin:auto;
 padding:30px;
 }
 
-.market-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:25px;
-}
-
-.agent{
+.panel{
 background:#071426;
 padding:25px;
 border-radius:12px;
-box-shadow:0 0 15px rgba(0,234,255,0.08);
+margin-bottom:25px;
 }
 
-.agent h3{
-margin-bottom:10px;
-color:#00eaff;
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
 }
 
-.agent p{
-font-size:13px;
-opacity:0.9;
+.agent{
+background:#081424;
+padding:20px;
+border-radius:12px;
 }
 
 button{
-margin-top:15px;
 padding:10px 20px;
 border:none;
 border-radius:20px;
 background:#00eaff;
-color:#00151f;
 font-weight:bold;
 cursor:pointer;
-}
-
-.creator{
-margin-top:40px;
-background:#081424;
-padding:25px;
-border-radius:12px;
-}
-
-input{
-width:100%;
-padding:14px;
 margin-top:10px;
-border-radius:20px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+border-radius:10px;
 border:none;
 background:#0f223c;
 color:white;
-}
-
-.footer{
-text-align:center;
-padding:20px;
-font-size:12px;
-color:#3aaec9;
+margin-top:10px;
 }
 
 </style>
@@ -95,89 +75,100 @@ color:#3aaec9;
 <body>
 
 <div class="header">
-CONSIA GLOBAL AGENT MARKETPLACE
+CONSIA AGENT MARKETPLACE
 </div>
 
 <div class="container">
 
-<div class="market-grid" id="market">
+<div class="panel">
 
-<div class="agent">
-<h3>Marketing Agent</h3>
-<p>Automatiza campañas y crecimiento.</p>
-<button onclick="install('marketing_agent')">Instalar</button>
-</div>
+<h3>Publicar agente</h3>
 
-<div class="agent">
-<h3>SEO Agent</h3>
-<p>Optimiza contenido para buscadores.</p>
-<button onclick="install('seo_agent')">Instalar</button>
-</div>
+<input id="name" placeholder="Nombre del agente">
 
-<div class="agent">
-<h3>Finance Agent</h3>
-<p>Analiza finanzas y negocios.</p>
-<button onclick="install('finance_agent')">Instalar</button>
-</div>
+<textarea id="description" placeholder="Descripción"></textarea>
 
-<div class="agent">
-<h3>Startup Agent</h3>
-<p>Crea estrategias de startups.</p>
-<button onclick="install('startup_agent')">Instalar</button>
-</div>
+<input id="price" placeholder="Precio">
+
+<button onclick="publish()">PUBLICAR</button>
 
 </div>
 
-<div class="creator">
+<div class="panel">
 
-<h3>Crear nuevo agente</h3>
+<h3>Marketplace</h3>
 
-<input id="agentName" placeholder="Nombre del agente">
-
-<input id="agentDesc" placeholder="Descripción">
-
-<button onclick="createAgent()">Publicar agente</button>
+<div id="agents" class="grid"></div>
 
 </div>
 
-</div>
-
-<div class="footer">
-CONSIA AI PLATFORM
 </div>
 
 <script>
 
-function install(agent){
+const API="https://api.consia.world"
 
-alert("Agente instalado: "+agent)
+async function load(){
 
-}
+let r=await fetch(API+"/v1/agents")
+let data=await r.json()
 
-function createAgent(){
+let html=""
 
-const name=document.getElementById("agentName").value
-const desc=document.getElementById("agentDesc").value
+data.agents.forEach(a=>{
 
-if(!name || !desc) return
-
-const market=document.getElementById("market")
-
-const div=document.createElement("div")
-div.className="agent"
-
-div.innerHTML=`
-<h3>${name}</h3>
-<p>${desc}</p>
-<button onclick="install('${name}')">Instalar</button>
+html+=`
+<div class="agent">
+<h4>${a.name}</h4>
+<p>${a.type}</p>
+<button onclick="run('${a.name}')">USAR</button>
+</div>
 `
 
-market.appendChild(div)
+})
 
-document.getElementById("agentName").value=""
-document.getElementById("agentDesc").value=""
+document.getElementById("agents").innerHTML=html
 
 }
+
+async function publish(){
+
+const name=document.getElementById("name").value
+const desc=document.getElementById("description").value
+const price=document.getElementById("price").value
+
+await fetch(API+"/v1/agents/create",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+name:name,
+type:"marketplace-agent",
+data:{
+description:desc,
+price:price
+}
+
+})
+
+})
+
+load()
+
+}
+
+function run(name){
+
+alert("Ejecutando agente: "+name)
+
+}
+
+load()
 
 </script>
 
