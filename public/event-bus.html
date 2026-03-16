@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA GLOBAL EVENT BUS</title>
+<style>
+body{
+  margin:0;
+  background:#020b16;
+  font-family:Arial,Helvetica,sans-serif;
+  color:white;
+}
+.header{
+  text-align:center;
+  padding:30px;
+  font-size:30px;
+  color:#00eaff;
+  letter-spacing:2px;
+}
+.container{
+  max-width:1400px;
+  margin:auto;
+  padding:30px;
+}
+.panel{
+  background:#071426;
+  padding:25px;
+  border-radius:14px;
+  margin-bottom:25px;
+  box-shadow:0 0 20px rgba(0,234,255,0.08);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+.box{
+  background:#081424;
+  padding:18px;
+  border-radius:12px;
+  text-align:center;
+}
+.box h3{
+  margin:0 0 10px 0;
+  font-size:14px;
+  color:#00eaff;
+  letter-spacing:1px;
+}
+.value{
+  font-size:24px;
+  font-weight:bold;
+}
+input, textarea, select{
+  width:100%;
+  padding:14px;
+  border-radius:20px;
+  border:none;
+  background:#0f223c;
+  color:white;
+  margin-top:10px;
+  box-sizing:border-box;
+}
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+button{
+  margin-top:15px;
+  padding:12px 24px;
+  border:none;
+  border-radius:25px;
+  background:#00eaff;
+  color:#00151f;
+  font-weight:bold;
+  cursor:pointer;
+  margin-right:10px;
+}
+button:hover{
+  transform:scale(1.04);
+}
+.log{
+  margin-top:20px;
+  background:#081424;
+  padding:20px;
+  border-radius:12px;
+  font-size:13px;
+  white-space:pre-wrap;
+  max-height:360px;
+  overflow:auto;
+}
+.event{
+  border-bottom:1px solid #0f223c;
+  padding:10px 0;
+  font-size:13px;
+}
+.footer{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
+  color:#3aaec9;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+CONSIA GLOBAL EVENT BUS
+</div>
+
+<div class="container">
+
+  <div class="panel">
+    <h2>Emitir evento</h2>
+
+    <select id="module">
+      <option value="global_orchestrator">global_orchestrator</option>
+      <option value="realtime_brain">realtime_brain</option>
+      <option value="agent_runtime">agent_runtime</option>
+      <option value="agent_swarm">agent_swarm</option>
+      <option value="agent_cloud">agent_cloud</option>
+      <option value="analytics_engine">analytics_engine</option>
+      <option value="global_network">global_network</option>
+      <option value="global_wallet">global_wallet</option>
+      <option value="global_user_platform">global_user_platform</option>
+      <option value="business_engine">business_engine</option>
+      <option value="autopilot_engine">autopilot_engine</option>
+    </select>
+
+    <input id="eventName" placeholder="Ej: project.created">
+    <textarea id="payload" placeholder='Payload JSON o texto libre'></textarea>
+
+    <button onclick="emitEvent()">Emitir evento</button>
+    <button onclick="runDemoFlow()">Demo flow</button>
+    <button onclick="clearBus()">Limpiar bus</button>
+
+    <div class="grid">
+      <div class="box">
+        <h3>EVENTOS</h3>
+        <div class="value" id="totalEvents">0</div>
+      </div>
+      <div class="box">
+        <h3>MÓDULOS</h3>
+        <div class="value" id="totalModules">0</div>
+      </div>
+      <div class="box">
+        <h3>FLOWS</h3>
+        <div class="value" id="totalFlows">0</div>
+      </div>
+      <div class="box">
+        <h3>ESTADO</h3>
+        <div class="value" id="busState">READY</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Stream de eventos</h2>
+    <div class="log" id="stream">Esperando eventos...</div>
+  </div>
+
+  <div class="panel">
+    <h2>Log del bus</h2>
+    <div class="log" id="busLog">Sistema listo.</div>
+  </div>
+
+</div>
+
+<div class="footer">
+CONSIA AI OPERATING SYSTEM — EVENT BUS LAYER
+</div>
+
+<script>
+let bus = {
+  events: [],
+  flows: 0,
+  state: "READY",
+  modules: [
+    "global_orchestrator",
+    "realtime_brain",
+    "agent_runtime",
+    "agent_swarm",
+    "agent_cloud",
+    "analytics_engine",
+    "global_network",
+    "global_wallet",
+    "global_user_platform",
+    "business_engine",
+    "autopilot_engine"
+  ],
+  log: []
+};
+
+function saveBus(){
+  localStorage.setItem("consia_event_bus", JSON.stringify(bus));
+}
+
+function loadBus(){
+  const data = JSON.parse(localStorage.getItem("consia_event_bus") || "null");
+  if(data) bus = data;
+}
+
+function appendLog(text){
+  bus.log.unshift(text);
+  bus.log = bus.log.slice(0,120);
+}
+
+function render(){
+  document.getElementById("totalEvents").innerText = bus.events.length;
+  document.getElementById("totalModules").innerText = bus.modules.length;
+  document.getElementById("totalFlows").innerText = bus.flows;
+  document.getElementById("busState").innerText = bus.state;
+
+  const stream = document.getElementById("stream");
+  if(!bus.events.length){
+    stream.innerText = "Esperando eventos...";
+  }else{
+    stream.innerHTML = bus.events.map(e => `
+      <div class="event">
+        [${e.date}] ${e.module} → ${e.name}
+        ${e.payload ? "\n" + e.payload : ""}
+      </div>
+    `).join("");
+  }
+
+  document.getElementById("busLog").innerText = bus.log.join("\n\n") || "Sistema listo.";
+  saveBus();
+}
+
+function emitEvent(){
+  const module = document.getElementById("module").value;
+  const name = document.getElementById("eventName").value.trim() || "generic.event";
+  const payload = document.getElementById("payload").value.trim();
+
+  bus.state = "ACTIVE";
+
+  bus.events.unshift({
+    module,
+    name,
+    payload,
+    date: new Date().toISOString()
+  });
+
+  bus.events = bus.events.slice(0,200);
+
+  appendLog("Evento emitido: " + module + " → " + name);
+  render();
+}
+
+function runDemoFlow(){
+  bus.state = "FLOW";
+  bus.flows += 1;
+
+  const flowEvents = [
+    { module:"global_orchestrator", name:"goal.received", payload:"crear negocio digital inmobiliario" },
+    { module:"realtime_brain", name:"cycle.started", payload:"coordinación inicial" },
+    { module:"agent_runtime", name:"agents.spawned", payload:"research, analysis, strategy, execution" },
+    { module:"agent_swarm", name:"task.dispatched", payload:"research market" },
+    { module:"analytics_engine", name:"metrics.updated", payload:"1 proyecto, 4 agentes, 1 flujo" },
+    { module:"business_engine", name:"business.generated", payload:"modelo SaaS + pricing + go-to-market" },
+    { module:"global_network", name:"team.sync", payload:"team broadcast" }
+  ];
+
+  flowEvents.forEach(ev=>{
+    bus.events.unshift({
+      module:ev.module,
+      name:ev.name,
+      payload:ev.payload,
+      date:new Date().toISOString()
+    });
+  });
+
+  bus.events = bus.events.slice(0,200);
+
+  appendLog("Demo flow ejecutado correctamente");
+  render();
+}
+
+function clearBus(){
+  bus = {
+    events: [],
+    flows: 0,
+    state: "READY",
+    modules: [
+      "global_orchestrator",
+      "realtime_brain",
+      "agent_runtime",
+      "agent_swarm",
+      "agent_cloud",
+      "analytics_engine",
+      "global_network",
+      "global_wallet",
+      "global_user_platform",
+      "business_engine",
+      "autopilot_engine"
+    ],
+    log: ["Bus reiniciado"]
+  };
+  render();
+}
+
+loadBus();
+appendLog("CONSIA GLOBAL EVENT BUS cargado");
+render();
+</script>
+
+</body>
+</html>
