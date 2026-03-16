@@ -1,435 +1,287 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html>
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CONSIA HOLOGRAPHIC COMMAND CENTER</title>
+<title>CONSIA COMMAND CENTER</title>
 
 <style>
 
 body{
-margin:0;
-font-family:Arial;
-background:#020b16;
+background:#0b0f19;
 color:white;
-overflow:hidden;
+font-family:Arial;
+margin:0;
 }
-
-/* HOLOGRAPHIC BACKGROUND */
-
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:0;
-}
-
-/* HEADER */
 
 header{
-position:absolute;
-top:0;
-left:0;
-width:100%;
+background:#05070f;
 padding:20px;
-background:rgba(5,20,40,0.8);
-border-bottom:1px solid #00eaff33;
-z-index:5;
+font-size:22px;
+font-weight:bold;
+border-bottom:1px solid #222;
 }
-
-h1{
-margin:0;
-color:#00eaff;
-font-size:34px;
-}
-
-/* LAYOUT */
 
 .container{
-position:absolute;
-top:80px;
-bottom:0;
-left:0;
-right:0;
-display:grid;
-grid-template-columns:260px 1fr;
-z-index:5;
+display:flex;
+height:100vh;
 }
 
-/* SIDEBAR */
-
 .sidebar{
-background:rgba(5,20,40,0.9);
+width:260px;
+background:#070a12;
 padding:20px;
-border-right:1px solid #00eaff33;
+border-right:1px solid #222;
 }
 
 .sidebar button{
 width:100%;
-padding:14px;
-margin-bottom:12px;
-background:#0b2b4d;
+margin-bottom:10px;
+padding:12px;
+background:#11172a;
 border:none;
-border-radius:6px;
 color:white;
 cursor:pointer;
+border-radius:6px;
 }
 
 .sidebar button:hover{
-background:#1a4d82;
+background:#1c2542;
 }
 
-/* MAIN */
-
 .main{
-padding:30px;
+flex:1;
+padding:20px;
 overflow:auto;
 }
 
-/* CARD */
-
 .card{
-background:rgba(10,35,60,0.9);
+background:#11172a;
 padding:20px;
-border-radius:10px;
+border-radius:8px;
 margin-bottom:20px;
 }
 
-/* STATUS */
-
-.status{
-font-size:18px;
-margin-bottom:10px;
-}
-
-.green{color:#00ff9c}
-.red{color:#ff4d4d}
-
-/* TEXTAREA */
-
-textarea{
+input,textarea{
 width:100%;
-height:100px;
-background:#020b16;
-border:none;
-border-radius:6px;
-color:white;
 padding:10px;
+margin-top:10px;
+background:#05070f;
+border:1px solid #333;
+color:white;
 }
 
-/* BUTTON */
-
-button.run{
+button.action{
 margin-top:10px;
-padding:12px 20px;
-background:#2f7cff;
+padding:10px 16px;
+background:#2b4eff;
 border:none;
 border-radius:6px;
 color:white;
 cursor:pointer;
 }
-
-/* RESULT */
 
 pre{
-background:#01060c;
+background:#05070f;
 padding:15px;
-border-radius:8px;
-}
-
-/* AVATAR */
-
-.avatar{
-position:absolute;
-right:30px;
-bottom:30px;
-width:160px;
-height:160px;
-border-radius:50%;
-border:2px solid #00eaff;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:20px;
-color:#00eaff;
-box-shadow:0 0 30px #00eaff;
-z-index:5;
-}
-
-/* VOICE BUTTON */
-
-.voice{
-position:absolute;
-left:50%;
-transform:translateX(-50%);
-bottom:30px;
-padding:16px 24px;
-background:#00eaff;
-color:black;
-border:none;
-border-radius:30px;
-cursor:pointer;
-font-size:16px;
-z-index:5;
+overflow:auto;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<canvas id="bg"></canvas>
-
 <header>
-<h1>CONSIA HOLOGRAPHIC COMMAND CENTER</h1>
+CONSIA COMMAND CENTER
 </header>
 
 <div class="container">
 
 <div class="sidebar">
 
-<button onclick="loadSystem()">System</button>
-<button onclick="loadBrain()">Global Brain</button>
-<button onclick="loadAgents()">Agent Swarm</button>
-<button onclick="loadAutopilot()">Autopilot</button>
-<button onclick="loadEconomy()">Economy</button>
+<button onclick="status()">System Status</button>
+<button onclick="chat()">AI Chat</button>
+<button onclick="addMemory()">Add Memory</button>
+<button onclick="searchMemory()">Search Memory</button>
+<button onclick="uploadFile()">Upload File</button>
 
 </div>
 
-<div class="main">
+<div class="main" id="main">
 
 <div class="card">
+<h3>CONSIA SYSTEM</h3>
 
-<div class="status">
-CORE: <span id="core" class="red">offline</span>
-</div>
-
-<div class="status">
-API: <span id="api" class="red">offline</span>
-</div>
-
-<div class="status">
-AGENTS: <span id="agents" class="red">offline</span>
-</div>
-
-<div class="status">
-ECONOMY: <span id="economy" class="red">offline</span>
-</div>
-
-</div>
-
-<div class="card">
-
-<h2>CONSIA GLOBAL BRAIN</h2>
-
-<textarea id="objective">
-crear negocio digital para Real Work
-</textarea>
-
-<br>
-
-<button class="run" onclick="runBrain()">RUN BRAIN</button>
-
-<pre id="result"></pre>
+<pre id="output">Loading...</pre>
 
 </div>
 
 </div>
 
 </div>
-
-<div class="avatar">
-CONSIA
-</div>
-
-<button class="voice" onclick="startVoice()">
-🎤 Voice Command
-</button>
 
 <script>
 
 const API="https://api.consia.world"
 
-/* SYSTEM */
+async function status(){
 
-async function loadSystem(){
+let res=await fetch(API)
+let data=await res.json()
 
-try{
-
-const r=await fetch(API+"/health")
-const j=await r.json()
-
-if(j.ok){
-
-document.getElementById("core").className="green"
-document.getElementById("core").innerText="ACTIVE"
-
-document.getElementById("api").className="green"
-document.getElementById("api").innerText="ONLINE"
+document.getElementById("output").innerText=
+JSON.stringify(data,null,2)
 
 }
 
-}catch(e){}
+async function chat(){
+
+document.getElementById("main").innerHTML=`
+
+<div class="card">
+
+<h3>CONSIA CHAT</h3>
+
+<textarea id="msg" placeholder="message"></textarea>
+
+<button class="action" onclick="sendChat()">Send</button>
+
+<pre id="chatRes"></pre>
+
+</div>
+`
 
 }
 
-/* AGENTS */
+async function sendChat(){
 
-async function loadAgents(){
+let message=document.getElementById("msg").value
 
-try{
-
-const r=await fetch(API+"/v1/agents")
-const j=await r.json()
-
-if(j.ok){
-
-document.getElementById("agents").className="green"
-document.getElementById("agents").innerText="ACTIVE"
-
-}
-
-}catch(e){}
-
-}
-
-/* ECONOMY */
-
-async function loadEconomy(){
-
-try{
-
-const r=await fetch(API+"/v1/economy")
-const j=await r.json()
-
-if(j.ok){
-
-document.getElementById("economy").className="green"
-document.getElementById("economy").innerText="ACTIVE"
-
-}
-
-}catch(e){}
-
-}
-
-/* BRAIN */
-
-async function loadBrain(){
-
-const r=await fetch(API+"/v1/brain")
-const j=await r.json()
-
-document.getElementById("result").innerText=
-JSON.stringify(j,null,2)
-
-}
-
-/* RUN BRAIN */
-
-async function runBrain(){
-
-const objective=document.getElementById("objective").value
-
-const r=await fetch(API+"/v1/brain/run",{
-
+let res=await fetch(API+"/v1/chat",{
 method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-objective
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({message})
 })
 
+let data=await res.json()
+
+document.getElementById("chatRes").innerText=
+JSON.stringify(data,null,2)
+
+}
+
+async function addMemory(){
+
+document.getElementById("main").innerHTML=`
+
+<div class="card">
+
+<h3>Add Memory</h3>
+
+<textarea id="memory"></textarea>
+
+<button class="action" onclick="sendMemory()">Save</button>
+
+<pre id="memRes"></pre>
+
+</div>
+`
+
+}
+
+async function sendMemory(){
+
+let text=document.getElementById("memory").value
+
+let res=await fetch(API+"/v1/memory/add",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({text})
 })
 
-const j=await r.json()
+let data=await res.json()
 
-document.getElementById("result").innerText=
-JSON.stringify(j,null,2)
-
-}
-
-/* VOICE CONTROL */
-
-function startVoice(){
-
-const recognition =
-new(window.SpeechRecognition ||
-window.webkitSpeechRecognition)()
-
-recognition.lang="es-ES"
-
-recognition.onresult=function(event){
-
-const text=event.results[0][0].transcript
-
-document.getElementById("objective").value=text
+document.getElementById("memRes").innerText=
+JSON.stringify(data,null,2)
 
 }
 
-recognition.start()
+async function searchMemory(){
+
+document.getElementById("main").innerHTML=`
+
+<div class="card">
+
+<h3>Search Memory</h3>
+
+<input id="query">
+
+<button class="action" onclick="sendSearch()">Search</button>
+
+<pre id="searchRes"></pre>
+
+</div>
+`
 
 }
 
-/* INIT */
+async function sendSearch(){
 
-async function init(){
+let query=document.getElementById("query").value
 
-await loadSystem()
-await loadAgents()
-await loadEconomy()
-
-}
-
-init()
-
-/* HOLOGRAPHIC BACKGROUND */
-
-const canvas=document.getElementById("bg")
-const ctx=canvas.getContext("2d")
-
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
-
-const particles=[]
-
-for(let i=0;i<120;i++){
-particles.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-vx:(Math.random()-0.5)*0.5,
-vy:(Math.random()-0.5)*0.5
-})
-}
-
-function draw(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-particles.forEach(p=>{
-
-p.x+=p.vx
-p.y+=p.vy
-
-ctx.beginPath()
-ctx.arc(p.x,p.y,2,0,Math.PI*2)
-ctx.fillStyle="#00eaff"
-ctx.fill()
-
+let res=await fetch(API+"/v1/memory/search",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({query})
 })
 
-requestAnimationFrame(draw)
+let data=await res.json()
+
+document.getElementById("searchRes").innerText=
+JSON.stringify(data,null,2)
 
 }
 
-draw()
+async function uploadFile(){
+
+document.getElementById("main").innerHTML=`
+
+<div class="card">
+
+<h3>Upload File</h3>
+
+<input type="file" id="file">
+
+<button class="action" onclick="sendFile()">Upload</button>
+
+<pre id="fileRes"></pre>
+
+</div>
+`
+
+}
+
+async function sendFile(){
+
+let file=document.getElementById("file").files[0]
+
+let fd=new FormData()
+
+fd.append("file",file)
+
+let res=await fetch(API+"/v1/files/upload",{
+method:"POST",
+body:fd
+})
+
+let data=await res.json()
+
+document.getElementById("fileRes").innerText=
+JSON.stringify(data,null,2)
+
+}
+
+status()
 
 </script>
 
