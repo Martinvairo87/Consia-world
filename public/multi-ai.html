@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA MULTI AI ENGINE</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+text-align:center;
+color:#00eaff;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+margin-top:30px;
+}
+
+input{
+width:100%;
+padding:16px;
+border-radius:25px;
+border:none;
+background:#0f223c;
+color:white;
+}
+
+button{
+margin-top:20px;
+padding:14px 25px;
+border:none;
+border-radius:30px;
+background:#00eaff;
+cursor:pointer;
+}
+
+.grid{
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-top:30px;
+
+}
+
+.engine{
+
+background:#0d1f35;
+padding:20px;
+border-radius:10px;
+text-align:center;
+
+}
+
+.result{
+
+margin-top:30px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA MULTI-AI ENGINE</h1>
+
+<div class="panel">
+
+<input
+id="prompt"
+placeholder="Pregunta o tarea"
+/>
+
+<button onclick="runAI()">
+Ejecutar Multi-AI
+</button>
+
+<div class="grid">
+
+<div class="engine">
+GPT ENGINE
+</div>
+
+<div class="engine">
+CLAUDE ENGINE
+</div>
+
+<div class="engine">
+GEMINI ENGINE
+</div>
+
+<div class="engine">
+CONSIA BRAIN
+</div>
+
+</div>
+
+<div class="result" id="result">
+Esperando consulta...
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function runAI(){
+
+const prompt=document.getElementById("prompt").value
+
+const r=await fetch(
+"https://api.consia.world/v1/chat",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+message:prompt
+})
+}
+)
+
+const data=await r.json()
+
+document.getElementById("result").innerText=
+JSON.stringify(data,null,2)
+
+}
+
+</script>
+
+</body>
+
+</html>
