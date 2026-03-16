@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA FILE SYSTEM</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+text-align:center;
+color:#00eaff;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+}
+
+input{
+margin-top:20px;
+}
+
+.file-list{
+margin-top:30px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+}
+
+.file{
+padding:10px;
+border-bottom:1px solid #0f223c;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA GLOBAL FILE SYSTEM</h1>
+
+<div class="panel">
+
+<input type="file" id="fileInput"/>
+
+<button onclick="uploadFile()">
+Subir archivo
+</button>
+
+<div class="file-list" id="files"></div>
+
+</div>
+
+</div>
+
+<script>
+
+let files=[]
+
+function uploadFile(){
+
+const file=document.getElementById("fileInput").files[0]
+
+if(!file)return
+
+const reader=new FileReader()
+
+reader.onload=function(e){
+
+const data={
+name:file.name,
+content:e.target.result,
+date:new Date().toISOString()
+}
+
+files.push(data)
+
+localStorage.setItem(
+"consia_files",
+JSON.stringify(files)
+)
+
+loadFiles()
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+function loadFiles(){
+
+const data=localStorage.getItem("consia_files")
+
+if(!data)return
+
+files=JSON.parse(data)
+
+let html=""
+
+files.forEach(f=>{
+
+html+=
+"<div class='file'>"+
+f.name+
+"</div>"
+
+})
+
+document.getElementById("files").innerHTML=html
+
+}
+
+loadFiles()
+
+</script>
+
+</body>
+</html>
