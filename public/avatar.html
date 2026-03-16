@@ -1,48 +1,98 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CONSIA AVATAR</title>
+<title>CONSIA AI AVATAR</title>
 
 <style>
 
 body{
 margin:0;
-background:#050b18;
+font-family:Arial;
+background:#020b16;
 color:white;
-font-family:system-ui;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+overflow:hidden;
+}
+
+.container{
 text-align:center;
 }
 
-#avatarContainer{
-width:100%;
-height:70vh;
+.avatar{
+
+width:220px;
+height:220px;
+
+border-radius:50%;
+
+border:3px solid #00eaff;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:28px;
+
+color:#00eaff;
+
+box-shadow:
+
+0 0 40px #00eaff,
+inset 0 0 40px #00eaff;
+
+margin:auto;
+
+animation:pulse 3s infinite;
+
 }
 
-#controls{
-padding:30px;
+@keyframes pulse{
+
+0%{box-shadow:0 0 20px #00eaff}
+50%{box-shadow:0 0 60px #00eaff}
+100%{box-shadow:0 0 20px #00eaff}
+
 }
 
 button{
-padding:14px 22px;
+
+margin-top:30px;
+
+padding:14px 26px;
+
+font-size:16px;
+
 border:none;
-border-radius:10px;
-background:#3ddc84;
-font-weight:bold;
+
+border-radius:30px;
+
+background:#00eaff;
+
+color:black;
+
 cursor:pointer;
-margin:6px;
+
 }
 
-input{
-width:60%;
-padding:14px;
-border-radius:10px;
-border:none;
-background:#0f1b34;
-color:white;
+#text{
+
+margin-top:30px;
+
+font-size:18px;
+
+max-width:600px;
+
+margin-left:auto;
+margin-right:auto;
+
 }
 
 </style>
@@ -51,66 +101,67 @@ color:white;
 
 <body>
 
-<h1>CONSIA Avatar</h1>
+<div class="container">
 
-<div id="avatarContainer"></div>
+<div class="avatar">
+CONSIA
+</div>
 
-<div id="controls">
+<button onclick="listen()">
+🎤 Hablar con CONSIA
+</button>
 
-<input id="command" placeholder="decile algo a CONSIA">
-
-<button onclick="talk()">Hablar</button>
-
-<button onclick="startVoice()">🎤 voz</button>
+<div id="text">
+Esperando comando...
+</div>
 
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-
 <script>
 
-let scene=new THREE.Scene()
+const API="https://api.consia.world"
 
-let camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000)
+function speak(text){
 
-let renderer=new THREE.WebGLRenderer({alpha:true})
+const speech=new SpeechSynthesisUtterance(text)
 
-renderer.setSize(window.innerWidth,window.innerHeight*0.7)
+speech.lang="es-ES"
 
-document.getElementById("avatarContainer").appendChild(renderer.domElement)
+speech.rate=1
 
-camera.position.z=3
+speech.pitch=1
 
-let geometry=new THREE.SphereGeometry(1,64,64)
-
-let material=new THREE.MeshBasicMaterial({
-color:0x3ddc84,
-wireframe:true
-})
-
-let avatar=new THREE.Mesh(geometry,material)
-
-scene.add(avatar)
-
-function animate(){
-
-requestAnimationFrame(animate)
-
-avatar.rotation.y+=0.01
-
-renderer.render(scene,camera)
+speechSynthesis.speak(speech)
 
 }
 
-animate()
+function listen(){
 
+const recognition=
 
-async function talk(){
+new(window.SpeechRecognition||
+window.webkitSpeechRecognition)()
 
-const text=document.getElementById("command").value
+recognition.lang="es-ES"
 
-const r=await fetch("/v1/autopilot/run",{
+recognition.onresult=async function(event){
+
+const text=event.results[0][0].transcript
+
+document.getElementById("text").innerText="Comando: "+text
+
+runBrain(text)
+
+}
+
+recognition.start()
+
+}
+
+async function runBrain(objective){
+
+const r=await fetch(API+"/v1/brain/run",{
 
 method:"POST",
 
@@ -119,54 +170,24 @@ headers:{
 },
 
 body:JSON.stringify({
-
-company:"CONSIA",
-
-action:"execute",
-
-input:text
-
+objective
 })
 
 })
 
 const j=await r.json()
 
-speak(j.narration)
+const answer="Brain ejecutado. Plan generado."
+
+document.getElementById("text").innerText=
+
+JSON.stringify(j,null,2)
+
+speak(answer)
 
 }
 
-
-function speak(text){
-
-const msg=new SpeechSynthesisUtterance(text)
-
-msg.lang="es"
-
-speechSynthesis.speak(msg)
-
-}
-
-
-function startVoice(){
-
-const rec=new webkitSpeechRecognition()
-
-rec.lang="es"
-
-rec.onresult=(e)=>{
-
-const text=e.results[0][0].transcript
-
-document.getElementById("command").value=text
-
-talk()
-
-}
-
-rec.start()
-
-}
+speak("CONSIA lista")
 
 </script>
 
