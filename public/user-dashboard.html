@@ -1,340 +1,653 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>CONSIA USER DASHBOARD</title>
 
 <style>
+:root{
+  --bg:#020b16;
+  --panel:#071426;
+  --panel2:#081424;
+  --input:#0f223c;
+  --cyan:#00eaff;
+  --text:#ffffff;
+  --muted:#9feaff;
+  --ok:#4dff9c;
+  --err:#ff647c;
+}
+
+*{box-sizing:border-box}
 
 body{
-margin:0;
-background:#020b16;
-font-family:Arial,Helvetica,sans-serif;
-color:white;
+  margin:0;
+  background:var(--bg);
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
 }
 
 .header{
-padding:25px;
-background:#071426;
-display:flex;
-justify-content:space-between;
-align-items:center;
+  padding:22px 28px;
+  background:var(--panel);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
 .logo{
-font-size:20px;
-color:#00eaff;
-letter-spacing:2px;
+  font-size:22px;
+  color:var(--cyan);
+  letter-spacing:2px;
+  font-weight:700;
 }
 
-.user{
-font-size:14px;
-color:#9feaff;
+.userbox{
+  text-align:right;
+  font-size:13px;
+  color:var(--muted);
 }
 
 .container{
-max-width:1600px;
-margin:auto;
-padding:30px;
+  max-width:1600px;
+  margin:auto;
+  padding:28px;
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:20px;
-margin-bottom:30px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+  margin-bottom:26px;
 }
 
 .card{
-background:#071426;
-padding:22px;
-border-radius:14px;
-box-shadow:0 0 20px rgba(0,234,255,0.08);
+  background:var(--panel);
+  padding:22px;
+  border-radius:14px;
+  box-shadow:0 0 20px rgba(0,234,255,0.08);
 }
 
 .card h3{
-font-size:13px;
-letter-spacing:1px;
-margin-bottom:12px;
+  font-size:13px;
+  letter-spacing:1px;
+  margin:0 0 10px 0;
+  color:var(--muted);
 }
 
 .value{
-font-size:28px;
-color:#00eaff;
+  font-size:30px;
+  color:var(--cyan);
+  font-weight:700;
 }
 
 .section{
-background:#071426;
-padding:25px;
-border-radius:14px;
-margin-bottom:25px;
+  background:var(--panel);
+  padding:24px;
+  border-radius:14px;
+  margin-bottom:22px;
+  box-shadow:0 0 20px rgba(0,234,255,0.08);
 }
 
 .section h2{
-font-size:16px;
-margin-bottom:15px;
+  font-size:16px;
+  margin:0 0 14px 0;
+  letter-spacing:1px;
 }
 
-input{
-width:100%;
-padding:12px;
-border-radius:20px;
-border:none;
-background:#0f223c;
-color:white;
-margin-bottom:12px;
+.columns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+input, textarea{
+  width:100%;
+  padding:12px 14px;
+  border:none;
+  border-radius:14px;
+  background:var(--input);
+  color:var(--text);
+  margin-bottom:12px;
 }
 
 textarea{
-width:100%;
-padding:12px;
-border-radius:12px;
-border:none;
-background:#0f223c;
-color:white;
-min-height:100px;
-margin-bottom:12px;
+  min-height:110px;
+  resize:vertical;
 }
 
 button{
-padding:10px 20px;
-border:none;
-border-radius:20px;
-background:#00eaff;
-color:#00151f;
-font-weight:bold;
-cursor:pointer;
+  padding:11px 18px;
+  border:none;
+  border-radius:20px;
+  background:var(--cyan);
+  color:#00151f;
+  font-weight:700;
+  cursor:pointer;
+  margin-right:10px;
+  margin-top:6px;
+}
+
+button.secondary{
+  background:#163450;
+  color:#dffbff;
+}
+
+button.danger{
+  background:#8a2335;
+  color:#fff;
 }
 
 .list{
-margin-top:15px;
+  margin-top:14px;
+  background:var(--panel2);
+  padding:14px;
+  border-radius:12px;
+  min-height:70px;
 }
 
 .item{
-padding:12px;
-border-bottom:1px solid #0f223c;
+  padding:12px 0;
+  border-bottom:1px solid #10304a;
+  font-size:13px;
+}
+
+.item:last-child{
+  border-bottom:none;
 }
 
 .price{
-color:#00eaff;
+  color:var(--cyan);
+  font-weight:700;
 }
+
+.log{
+  background:var(--panel2);
+  padding:16px;
+  border-radius:12px;
+  white-space:pre-wrap;
+  font-size:13px;
+  min-height:80px;
+}
+
+.badge-ok{color:var(--ok)}
+.badge-err{color:var(--err)}
 
 .footer{
-text-align:center;
-padding:20px;
-font-size:12px;
-color:#3aaec9;
+  text-align:center;
+  padding:20px;
+  color:#3aaec9;
+  font-size:12px;
 }
 
+@media (max-width: 980px){
+  .columns{
+    grid-template-columns:1fr;
+  }
+  .header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .userbox{
+    text-align:left;
+  }
+}
 </style>
-
 </head>
-
 <body>
 
 <div class="header">
-<div class="logo">CONSIA</div>
-<div class="user" id="userEmail">user</div>
+  <div class="logo">CONSIA</div>
+  <div class="userbox">
+    <div id="sessionStatus">Sesión: cargando...</div>
+    <div id="sessionUser">Usuario: -</div>
+    <button class="secondary" onclick="goAuth()">AUTH</button>
+    <button class="danger" onclick="logout()">LOGOUT</button>
+  </div>
 </div>
 
 <div class="container">
 
-<div class="grid">
+  <div class="grid">
+    <div class="card">
+      <h3>PROYECTOS</h3>
+      <div class="value" id="projectsCount">0</div>
+    </div>
+    <div class="card">
+      <h3>AGENTES</h3>
+      <div class="value" id="agentsCount">0</div>
+    </div>
+    <div class="card">
+      <h3>USUARIOS</h3>
+      <div class="value" id="usersCount">0</div>
+    </div>
+    <div class="card">
+      <h3>VECTORES</h3>
+      <div class="value" id="vectorsCount">0</div>
+    </div>
+    <div class="card">
+      <h3>COMPRAS</h3>
+      <div class="value" id="purchasesCount">0</div>
+    </div>
+    <div class="card">
+      <h3>BALANCE</h3>
+      <div class="value" id="walletBalance">$0</div>
+    </div>
+  </div>
 
-<div class="card">
-<h3>PROYECTOS</h3>
-<div class="value" id="projectsCount">0</div>
-</div>
+  <div class="columns">
 
-<div class="card">
-<h3>AGENTES</h3>
-<div class="value" id="agentsCount">0</div>
-</div>
+    <div>
 
-<div class="card">
-<h3>DOCUMENTOS RAG</h3>
-<div class="value" id="ragDocs">0</div>
-</div>
+      <div class="section">
+        <h2>Crear proyecto real</h2>
+        <input id="projectName" placeholder="Nombre del proyecto">
+        <input id="projectType" placeholder="Tipo: SaaS, Marketplace, AI Tool...">
+        <textarea id="projectData" placeholder="Descripción / datos del proyecto"></textarea>
+        <button onclick="createProject()">CREAR PROYECTO</button>
+        <div class="list" id="projectsList">Sin proyectos todavía.</div>
+      </div>
 
-<div class="card">
-<h3>BALANCE</h3>
-<div class="value" id="walletBalance">$0</div>
-</div>
+      <div class="section">
+        <h2>RAG real</h2>
+        <input id="ragFileName" placeholder="Nombre lógico del documento">
+        <textarea id="ragText" placeholder="Pegá el contenido para ingestarlo en RAG"></textarea>
+        <button onclick="ingestRag()">INGESTAR</button>
+        <input id="ragQuery" placeholder="Buscar en memoria semántica">
+        <button class="secondary" onclick="searchRag()">BUSCAR</button>
+        <div class="list" id="ragResults">Sin resultados todavía.</div>
+      </div>
 
-</div>
+      <div class="section">
+        <h2>Wallet real</h2>
+        <input id="depositAmount" placeholder="Monto depósito USD">
+        <button onclick="deposit()">DEPOSITAR</button>
+        <div class="list" id="walletInfo">Sin movimientos.</div>
+      </div>
 
-<div class="section">
+    </div>
 
-<h2>Crear proyecto</h2>
+    <div>
 
-<input id="projectName" placeholder="Nombre del proyecto">
+      <div class="section">
+        <h2>Publicar agente</h2>
+        <input id="agentName" placeholder="Nombre del agente">
+        <input id="agentPrice" placeholder="Precio USD">
+        <textarea id="agentData" placeholder="Descripción del agente"></textarea>
+        <button onclick="publishAgent()">PUBLICAR AGENTE</button>
+        <div class="list" id="myAgentsList">Sin agentes todavía.</div>
+      </div>
 
-<input id="projectType" placeholder="Tipo (ej: SaaS, marketplace)">
+      <div class="section">
+        <h2>Marketplace real</h2>
+        <button class="secondary" onclick="loadMarketplace()">REFRESH MARKETPLACE</button>
+        <div class="list" id="marketplaceList">Cargando marketplace...</div>
+      </div>
 
-<textarea id="projectData" placeholder="Descripción"></textarea>
+      <div class="section">
+        <h2>System log</h2>
+        <div class="log" id="systemLog">Dashboard listo.</div>
+      </div>
 
-<button onclick="createProject()">Crear</button>
+    </div>
 
-</div>
-
-<div class="section">
-
-<h2>Subir conocimiento (RAG)</h2>
-
-<textarea id="ragText" placeholder="Pegá conocimiento..."></textarea>
-
-<button onclick="uploadRag()">Ingestar</button>
-
-</div>
-
-<div class="section">
-
-<h2>Marketplace de agentes</h2>
-
-<input id="agentName" placeholder="Nombre agente">
-
-<input id="agentPrice" placeholder="Precio USD">
-
-<textarea id="agentData" placeholder="Descripción agente"></textarea>
-
-<button onclick="publishAgent()">Publicar agente</button>
-
-<div class="list" id="agentList"></div>
-
-</div>
+  </div>
 
 </div>
 
 <div class="footer">
-CONSIA AI PLATFORM
+CONSIA AI PLATFORM — USER DASHBOARD REAL
 </div>
 
 <script>
+const API = "https://api.consia.world";
 
-const API="https://api.consia.world"
+let token = localStorage.getItem("consia_token") || "";
+let currentUser = null;
 
-let user="demo@consia.ai"
+function log(text){
+  const box = document.getElementById("systemLog");
+  box.innerText = text + "\n\n" + box.innerText;
+}
 
-document.getElementById("userEmail").innerText=user
+function goAuth(){
+  window.location = "auth.html";
+}
 
-async function loadDashboard(){
+async function api(path, options = {}){
+  const headers = options.headers || {};
+  headers["Content-Type"] = headers["Content-Type"] || "application/json";
+  if(token){
+    headers["Authorization"] = "Bearer " + token;
+  }
 
-try{
+  const res = await fetch(API + path, {
+    ...options,
+    headers
+  });
 
-const analytics=await fetch(API+"/v1/analytics")
-const data=await analytics.json()
+  return await res.json();
+}
 
-document.getElementById("projectsCount").innerText=data.analytics.projects
-document.getElementById("agentsCount").innerText=data.analytics.agents
+async function loadSession(){
+  if(!token){
+    document.getElementById("sessionStatus").innerHTML = 'Sesión: <span class="badge-err">sin token</span>';
+    document.getElementById("sessionUser").innerText = "Usuario: demo";
+    currentUser = { email: "demo@consia.ai", name: "Demo User" };
+    return;
+  }
 
-}catch(e){}
+  try{
+    const data = await fetch(API + "/v1/auth/session?token=" + encodeURIComponent(token), {
+      headers: { "Authorization": "Bearer " + token }
+    }).then(r=>r.json());
 
-loadAgents()
+    if(data.ok){
+      currentUser = data.user;
+      document.getElementById("sessionStatus").innerHTML = 'Sesión: <span class="badge-ok">activa</span>';
+      document.getElementById("sessionUser").innerText = "Usuario: " + currentUser.email;
+    }else{
+      currentUser = { email: "demo@consia.ai", name: "Demo User" };
+      document.getElementById("sessionStatus").innerHTML = 'Sesión: <span class="badge-err">inválida</span>';
+      document.getElementById("sessionUser").innerText = "Usuario: demo";
+    }
+  }catch{
+    currentUser = { email: "demo@consia.ai", name: "Demo User" };
+    document.getElementById("sessionStatus").innerHTML = 'Sesión: <span class="badge-err">error</span>';
+    document.getElementById("sessionUser").innerText = "Usuario: demo";
+  }
+}
 
+async function loadAnalytics(){
+  try{
+    const data = await api("/v1/analytics", { method:"GET" });
+    if(data.ok){
+      document.getElementById("usersCount").innerText = data.analytics.users || 0;
+      document.getElementById("projectsCount").innerText = data.analytics.projects || 0;
+      document.getElementById("agentsCount").innerText = data.analytics.agents || 0;
+      document.getElementById("vectorsCount").innerText = data.analytics.vectors || 0;
+      document.getElementById("purchasesCount").innerText = data.analytics.purchases || 0;
+    }
+  }catch{
+    log("Error cargando analytics");
+  }
+}
+
+async function loadProjects(){
+  try{
+    const data = await api("/v1/projects", { method:"GET" });
+    const list = document.getElementById("projectsList");
+    if(!data.ok || !data.projects?.length){
+      list.innerText = "Sin proyectos todavía.";
+      return;
+    }
+
+    list.innerHTML = data.projects.map(p => `
+      <div class="item">
+        <b>${escapeHtml(p.name || "")}</b><br>
+        tipo: ${escapeHtml(p.type || "")}
+      </div>
+    `).join("");
+  }catch{
+    log("Error cargando proyectos");
+  }
 }
 
 async function createProject(){
+  const name = document.getElementById("projectName").value.trim();
+  const type = document.getElementById("projectType").value.trim();
+  const data = document.getElementById("projectData").value.trim();
 
-let name=document.getElementById("projectName").value
-let type=document.getElementById("projectType").value
-let data=document.getElementById("projectData").value
+  if(!name) return;
 
-await fetch(API+"/v1/projects/create",{
+  const res = await api("/v1/projects/create", {
+    method:"POST",
+    body: JSON.stringify({
+      name,
+      type,
+      data: {
+        description: data,
+        owner_email: currentUser?.email || "demo@consia.ai",
+        created: Date.now()
+      }
+    })
+  });
 
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-
-name,
-type,
-data
-
-})
-
-})
-
-loadDashboard()
-
-}
-
-async function uploadRag(){
-
-let text=document.getElementById("ragText").value
-
-await fetch(API+"/v1/rag/ingest",{
-
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-
-file_name:"user-doc",
-text
-
-})
-
-})
-
-document.getElementById("ragDocs").innerText="OK"
-
+  if(res.ok){
+    log("Proyecto creado: " + name);
+    document.getElementById("projectName").value = "";
+    document.getElementById("projectType").value = "";
+    document.getElementById("projectData").value = "";
+    await loadProjects();
+    await loadAnalytics();
+  }else{
+    log("Error creando proyecto");
+  }
 }
 
 async function publishAgent(){
+  const name = document.getElementById("agentName").value.trim();
+  const price = document.getElementById("agentPrice").value.trim();
+  const data = document.getElementById("agentData").value.trim();
 
-let name=document.getElementById("agentName").value
-let price=document.getElementById("agentPrice").value
-let data=document.getElementById("agentData").value
+  if(!name) return;
 
-await fetch(API+"/v1/agents/create",{
+  const res = await api("/v1/agents/create", {
+    method:"POST",
+    body: JSON.stringify({
+      name,
+      type:"marketplace-agent",
+      price:Number(price || 0),
+      owner_email: currentUser?.email || "demo@consia.ai",
+      data:{
+        description:data
+      }
+    })
+  });
 
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-
-name,
-price,
-data,
-owner_email:user
-
-})
-
-})
-
-loadAgents()
-
+  if(res.ok){
+    log("Agente publicado: " + name);
+    document.getElementById("agentName").value = "";
+    document.getElementById("agentPrice").value = "";
+    document.getElementById("agentData").value = "";
+    await loadMyAgents();
+    await loadMarketplace();
+    await loadAnalytics();
+  }else{
+    log("Error publicando agente");
+  }
 }
 
-async function loadAgents(){
+async function loadMyAgents(){
+  try{
+    const data = await api("/v1/agents", { method:"GET" });
+    const list = document.getElementById("myAgentsList");
+    const mine = (data.agents || []).filter(a => (a.owner_email || "") === (currentUser?.email || "demo@consia.ai"));
 
-const r=await fetch(API+"/v1/marketplace/agents")
-const data=await r.json()
+    if(!mine.length){
+      list.innerText = "Sin agentes todavía.";
+      return;
+    }
 
-const list=document.getElementById("agentList")
-
-list.innerHTML=""
-
-data.items.forEach(a=>{
-
-let div=document.createElement("div")
-
-div.className="item"
-
-div.innerHTML=
-
-`<b>${a.name}</b>
-<br>
-<span class="price">$${a.price}</span>`
-
-list.appendChild(div)
-
-})
-
+    list.innerHTML = mine.map(a => `
+      <div class="item">
+        <b>${escapeHtml(a.name || "")}</b><br>
+        <span class="price">$${Number(a.price || 0)}</span>
+      </div>
+    `).join("");
+  }catch{
+    log("Error cargando agentes propios");
+  }
 }
 
-loadDashboard()
+async function loadMarketplace(){
+  try{
+    const data = await api("/v1/marketplace/agents", { method:"GET" });
+    const list = document.getElementById("marketplaceList");
 
+    if(!data.ok || !data.items?.length){
+      list.innerText = "Sin agentes publicados todavía.";
+      return;
+    }
+
+    list.innerHTML = data.items.map(a => `
+      <div class="item">
+        <b>${escapeHtml(a.name || "")}</b><br>
+        dueño: ${escapeHtml(a.owner_email || "n/a")}<br>
+        <span class="price">$${Number(a.price || 0)}</span><br>
+        <button onclick="buyAgent(${Number(a.id)})">COMPRAR</button>
+      </div>
+    `).join("");
+  }catch{
+    log("Error cargando marketplace");
+  }
+}
+
+async function buyAgent(agentId){
+  const res = await api("/v1/marketplace/purchase", {
+    method:"POST",
+    body: JSON.stringify({
+      user_email: currentUser?.email || "demo@consia.ai",
+      agent_id: agentId
+    })
+  });
+
+  if(res.ok){
+    log("Compra realizada. Agent ID: " + agentId + " / USD " + res.price);
+    await loadWallet();
+    await loadAnalytics();
+  }else{
+    log("Error al comprar agente: " + (res.error || "unknown"));
+  }
+}
+
+async function ingestRag(){
+  const file_name = document.getElementById("ragFileName").value.trim() || "user-doc.txt";
+  const text = document.getElementById("ragText").value.trim();
+
+  if(!text) return;
+
+  const res = await api("/v1/rag/ingest", {
+    method:"POST",
+    body: JSON.stringify({ file_name, text })
+  });
+
+  if(res.ok){
+    log("RAG ingestado: " + file_name + " / chunks: " + res.chunks);
+    document.getElementById("ragText").value = "";
+    await loadAnalytics();
+  }else{
+    log("Error ingestando RAG");
+  }
+}
+
+async function searchRag(){
+  const query = document.getElementById("ragQuery").value.trim();
+  const box = document.getElementById("ragResults");
+  if(!query) return;
+
+  box.innerText = "Buscando...";
+
+  const res = await api("/v1/rag/search", {
+    method:"POST",
+    body: JSON.stringify({
+      query,
+      limit:5
+    })
+  });
+
+  if(!res.ok || !res.results?.length){
+    box.innerText = "Sin resultados.";
+    return;
+  }
+
+  box.innerHTML = res.results.map(r => {
+    let meta = {};
+    try{ meta = JSON.parse(r.meta || "{}"); }catch{}
+    return `
+      <div class="item">
+        <b>${escapeHtml(meta.file_name || "documento")}</b><br>
+        score: ${Number(r.score || 0).toFixed(4)}<br>
+        ${escapeHtml((r.text || "").slice(0,300))}
+      </div>
+    `;
+  }).join("");
+}
+
+async function deposit(){
+  const amount = Number(document.getElementById("depositAmount").value || 0);
+  if(!amount) return;
+
+  const res = await api("/v1/wallet/deposit", {
+    method:"POST",
+    body: JSON.stringify({
+      user_email: currentUser?.email || "demo@consia.ai",
+      amount,
+      meta:{ source:"dashboard" }
+    })
+  });
+
+  if(res.ok){
+    log("Depósito realizado: USD " + amount);
+    document.getElementById("depositAmount").value = "";
+    await loadWallet();
+  }else{
+    log("Error en depósito");
+  }
+}
+
+async function loadWallet(){
+  const user_email = currentUser?.email || "demo@consia.ai";
+  try{
+    const res = await fetch(API + "/v1/wallet/balance?user_email=" + encodeURIComponent(user_email));
+    const data = await res.json();
+
+    document.getElementById("walletBalance").innerText = "$" + Number(data.balance || 0);
+    document.getElementById("walletInfo").innerText =
+      "email: " + user_email + "\n" +
+      "balance: $" + Number(data.balance || 0) + "\n" +
+      "currency: " + (data.currency || "USD");
+  }catch{
+    log("Error cargando wallet");
+  }
+}
+
+async function logout(){
+  if(token){
+    try{
+      await api("/v1/auth/logout", {
+        method:"POST",
+        body: JSON.stringify({ token })
+      });
+    }catch{}
+  }
+
+  localStorage.removeItem("consia_token");
+  window.location = "auth.html";
+}
+
+function escapeHtml(text){
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+async function init(){
+  await loadSession();
+  await loadAnalytics();
+  await loadProjects();
+  await loadMyAgents();
+  await loadMarketplace();
+  await loadWallet();
+  log("Dashboard conectado 100% al backend");
+}
+
+init();
 </script>
 
 </body>
