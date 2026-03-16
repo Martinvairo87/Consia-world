@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL DATA CLOUD</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial,Helvetica,sans-serif;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px;
+}
+
+.panel{
+background:#071426;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+margin-top:10px;
+}
+
+button{
+margin-top:15px;
+padding:12px 24px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.files{
+margin-top:20px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+font-size:13px;
+}
+
+.file{
+border-bottom:1px solid #0f223c;
+padding:10px 0;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:20px;
+margin-top:20px;
+}
+
+.box{
+background:#081424;
+padding:15px;
+border-radius:10px;
+text-align:center;
+font-size:14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL DATA CLOUD
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Subir archivo</h3>
+
+<input id="fileName" placeholder="Nombre del archivo">
+
+<button onclick="uploadFile()">
+Subir archivo
+</button>
+
+</div>
+
+<div class="panel">
+
+<h3>Archivos en la nube</h3>
+
+<div class="files" id="files"></div>
+
+</div>
+
+<div class="panel">
+
+<h3>Estadísticas</h3>
+
+<div class="stats">
+
+<div class="box">
+<div id="totalFiles">0</div>
+Archivos
+</div>
+
+<div class="box">
+<div id="totalData">0 MB</div>
+Datos
+</div>
+
+<div class="box">
+<div id="datasets">0</div>
+Datasets
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function uploadFile(){
+
+const name=document.getElementById("fileName").value
+
+if(!name) return
+
+let files=JSON.parse(localStorage.getItem("consia_files"))||[]
+
+files.push({
+name:name,
+date:new Date().toISOString()
+})
+
+localStorage.setItem("consia_files",JSON.stringify(files))
+
+document.getElementById("fileName").value=""
+
+loadFiles()
+
+}
+
+function loadFiles(){
+
+const files=JSON.parse(localStorage.getItem("consia_files"))||[]
+
+let html=""
+
+files.forEach(f=>{
+html+=`<div class="file">${f.name}</div>`
+})
+
+document.getElementById("files").innerHTML=html
+
+document.getElementById("totalFiles").innerText=files.length
+document.getElementById("totalData").innerText=files.length*5+" MB"
+document.getElementById("datasets").innerText=Math.floor(files.length/2)
+
+}
+
+loadFiles()
+
+</script>
+
+</body>
+</html>
