@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL BRAIN MAP</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+overflow:hidden;
+}
+
+.title{
+position:absolute;
+top:30px;
+width:100%;
+text-align:center;
+color:#00eaff;
+font-size:28px;
+z-index:10;
+}
+
+canvas{
+display:block;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="title">
+CONSIA GLOBAL BRAIN MAP
+</div>
+
+<canvas id="map"></canvas>
+
+<script>
+
+const canvas=document.getElementById("map")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+const nodes=[
+
+{label:"CORE",x:500,y:300},
+
+{label:"GLOBAL BRAIN",x:700,y:200},
+{label:"AUTOPILOT",x:900,y:300},
+{label:"AGENT SWARM",x:700,y:400},
+
+{label:"PROJECT BRAIN",x:300,y:200},
+{label:"VECTOR BRAIN",x:300,y:400},
+
+{label:"MEMORY",x:500,y:100},
+
+{label:"ECONOMY",x:900,y:500},
+{label:"FILE SYSTEM",x:700,y:550},
+{label:"VOICE",x:500,y:550},
+
+{label:"HUMAN AVATAR",x:300,y:550},
+{label:"MULTI AI",x:100,y:300}
+
+]
+
+const connections=[
+
+[0,1],
+[0,2],
+[0,3],
+[0,4],
+[0,5],
+[0,6],
+[0,7],
+[0,8],
+[0,9],
+[0,10],
+[0,11]
+
+]
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+ctx.strokeStyle="#00eaff"
+ctx.lineWidth=1
+
+connections.forEach(c=>{
+
+const a=nodes[c[0]]
+const b=nodes[c[1]]
+
+ctx.beginPath()
+ctx.moveTo(a.x,a.y)
+ctx.lineTo(b.x,b.y)
+ctx.stroke()
+
+})
+
+nodes.forEach(n=>{
+
+ctx.beginPath()
+ctx.arc(n.x,n.y,25,0,Math.PI*2)
+
+ctx.fillStyle="#071426"
+ctx.fill()
+
+ctx.strokeStyle="#00eaff"
+ctx.stroke()
+
+ctx.fillStyle="#00eaff"
+ctx.font="12px Arial"
+ctx.textAlign="center"
+ctx.fillText(n.label,n.x,n.y+40)
+
+})
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+</script>
+
+</body>
+
+</html>
