@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA STARTUP GENERATOR</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:25px;
+border-radius:12px;
+margin-bottom:25px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+background:#0f223c;
+color:white;
+margin-top:10px;
+}
+
+button{
+padding:12px 25px;
+border:none;
+border-radius:20px;
+background:#00eaff;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+.log{
+background:#081424;
+padding:20px;
+border-radius:10px;
+margin-top:20px;
+white-space:pre-wrap;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA STARTUP GENERATOR
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Crear startup automática</h3>
+
+<input id="idea" placeholder="Idea de negocio">
+
+<textarea id="market" placeholder="Mercado / industria"></textarea>
+
+<button onclick="generate()">GENERAR STARTUP</button>
+
+</div>
+
+<div class="panel">
+
+<h3>Resultado</h3>
+
+<div id="log" class="log">
+Esperando generación
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function generate(){
+
+let idea=document.getElementById("idea").value
+let market=document.getElementById("market").value
+
+let log=document.getElementById("log")
+
+log.innerText=
+
+"Analizando mercado...\n\n"+
+"Generando modelo de negocio...\n\n"+
+"Creando producto...\n\n"+
+"Generando estrategia...\n\n"+
+"Generando marketing...\n\n"+
+"Generando pricing...\n\n"+
+"Startup creada\n\n"+
+"IDEA: "+idea+"\n"+
+"MERCADO: "+market
+
+}
+
+</script>
+
+</body>
+</html>
