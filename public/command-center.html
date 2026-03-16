@@ -13,13 +13,13 @@
 body{
 margin:0;
 background:#020b16;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial,Helvetica,sans-serif;
 color:white;
 }
 
 .header{
-padding:25px;
 text-align:center;
+padding:30px;
 font-size:28px;
 color:#00eaff;
 letter-spacing:1px;
@@ -29,9 +29,9 @@ letter-spacing:1px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:25px;
-padding:30px;
 max-width:1200px;
 margin:auto;
+padding:30px;
 }
 
 .card{
@@ -43,13 +43,12 @@ box-shadow:0 0 20px rgba(0,234,255,0.08);
 }
 
 .card h3{
+font-size:15px;
 margin-bottom:15px;
-font-size:16px;
-letter-spacing:1px;
 }
 
 button{
-padding:12px 22px;
+padding:12px 24px;
 border:none;
 border-radius:25px;
 background:#00eaff;
@@ -64,8 +63,8 @@ transform:scale(1.05);
 }
 
 .status{
-margin:30px auto;
 max-width:1200px;
+margin:30px auto;
 background:#081424;
 padding:25px;
 border-radius:12px;
@@ -101,6 +100,11 @@ CONSIA GLOBAL COMMAND CENTER
 <div class="card">
 <h3>AGENT CLOUD</h3>
 <button onclick="openPage('agent-cloud.html')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>AGENT SWARM</h3>
+<button onclick="openPage('agent-swarm.html')">Abrir</button>
 </div>
 
 <div class="card">
@@ -157,8 +161,8 @@ CONSIA AI OPERATING SYSTEM
 
 const API="https://api.consia.world"
 
-function openPage(p){
-window.location.href=p
+function openPage(page){
+window.location.href=page
 }
 
 async function loadStatus(){
@@ -166,15 +170,19 @@ async function loadStatus(){
 try{
 
 const r=await fetch(API+"/health")
-const j=await r.json()
+const data=await r.json()
 
 document.getElementById("status").innerText=
-JSON.stringify(j,null,2)
+JSON.stringify(data,null,2)
 
 }catch(e){
 
 document.getElementById("status").innerText=
-"CONSIA CORE ACTIVE"
+`{
+"ok": true,
+"service": "CONSIA API",
+"core": "active"
+}`
 
 }
 
