@@ -1,133 +1,168 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
-<title>CONSIA MULTIVERSE ENGINE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL COMMAND CENTER</title>
 
 <style>
 
 body{
 margin:0;
-background:#01030a;
-color:#00eaff;
+background:#061021;
 font-family:Arial;
-overflow:hidden;
+color:white;
 }
 
 header{
-background:#050a14;
-padding:15px;
-border-bottom:1px solid #00eaff33;
+padding:20px;
+background:#0b1d33;
+border-bottom:1px solid #0ff3;
+}
+
+h1{
+margin:0;
+color:#00eaff;
 }
 
 .container{
 display:grid;
 grid-template-columns:260px 1fr;
-height:100vh;
+height:calc(100vh - 70px);
 }
 
 .sidebar{
-background:#060a14;
-border-right:1px solid #00eaff22;
-padding:15px;
+background:#081a2f;
+padding:20px;
+border-right:1px solid #0ff3;
 }
 
 .sidebar button{
-
 width:100%;
-padding:12px;
-margin-bottom:10px;
-background:#0c1424;
-border:1px solid #00eaff33;
-color:#00eaff;
+padding:14px;
+margin-bottom:12px;
+background:#0e2c4c;
+border:none;
+border-radius:6px;
+color:#fff;
 cursor:pointer;
-
+font-size:14px;
 }
 
 .sidebar button:hover{
-background:#132040;
+background:#1c4f7c;
 }
 
 .main{
-position:relative;
+padding:30px;
+overflow:auto;
 }
 
-#panel{
+.card{
+background:#0e223f;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
 
-position:absolute;
-top:15px;
-left:15px;
-background:#060a14;
-border:1px solid #00eaff33;
+.status{
+font-size:18px;
+margin-bottom:10px;
+}
+
+.green{
+color:#00ff9c;
+}
+
+.red{
+color:#ff4d4d;
+}
+
+textarea{
+width:100%;
+height:80px;
+background:#07192f;
+border:none;
+border-radius:6px;
+color:white;
+padding:10px;
+}
+
+button.run{
+margin-top:10px;
+padding:12px 20px;
+background:#2f7cff;
+border:none;
+border-radius:6px;
+color:white;
+cursor:pointer;
+}
+
+pre{
+background:#05101d;
 padding:15px;
-width:340px;
-font-size:12px;
-z-index:10;
-
-}
-
-#avatar{
-
-position:absolute;
-bottom:25px;
-right:25px;
-width:220px;
-height:220px;
-border-radius:50%;
-border:2px solid #00eaff;
-background:radial-gradient(#00eaff55,#02040a);
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-
-}
-
-canvas{
-position:absolute;
-top:0;
-left:0;
+border-radius:8px;
+overflow:auto;
 }
 
 </style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 
 </head>
 
 <body>
 
 <header>
-
-CONSIA MULTIVERSE ENGINE
-
+<h1>CONSIA GLOBAL COMMAND CENTER</h1>
 </header>
 
 <div class="container">
 
 <div class="sidebar">
 
-<button onclick="health()">System Status</button>
-<button onclick="memory()">Memory</button>
-<button onclick="projects()">Projects</button>
-<button onclick="autopilot()">Start Autopilot</button>
-<button onclick="autopilotStatus()">Autopilot Status</button>
-<button onclick="voice()">Voice Command</button>
+<button onclick="loadSystem()">System</button>
+<button onclick="loadBrain()">Global Brain</button>
+<button onclick="loadAgents()">Agent Swarm</button>
+<button onclick="loadAutopilot()">Autopilot</button>
+<button onclick="loadEconomy()">Economy</button>
 
 </div>
 
 <div class="main">
 
-<div id="panel">
+<div class="card">
 
-CONSIA MULTIVERSE READY
+<div class="status">
+CORE: <span id="core" class="red">offline</span>
+</div>
+
+<div class="status">
+API: <span id="api" class="red">offline</span>
+</div>
+
+<div class="status">
+AGENTS: <span id="agents" class="red">offline</span>
+</div>
+
+<div class="status">
+ECONOMY: <span id="economy" class="red">offline</span>
+</div>
 
 </div>
 
-<div id="avatar">
+<div class="card">
 
-CONSIA<br>MULTIVERSE AI
+<h3>CONSIA GLOBAL BRAIN</h3>
+
+<textarea id="objective">crear negocio digital para Real Work</textarea>
+
+<br>
+
+<button class="run" onclick="runBrain()">RUN BRAIN</button>
+
+<pre id="result"></pre>
 
 </div>
 
@@ -139,210 +174,110 @@ CONSIA<br>MULTIVERSE AI
 
 const API="https://api.consia.world"
 
-function show(d){
 
-document.getElementById("panel").innerText=
-JSON.stringify(d,null,2)
+async function loadSystem(){
 
-}
+try{
 
-/* API */
+const r=await fetch(API+"/health")
+const j=await r.json()
 
-async function health(){
+if(j.ok){
 
-const r=await fetch(API+"/v1/health")
-show(await r.json())
+document.getElementById("core").className="green"
+document.getElementById("core").innerText="ACTIVE"
 
-}
-
-async function memory(){
-
-const r=await fetch(API+"/v1/memory/status")
-show(await r.json())
+document.getElementById("api").className="green"
+document.getElementById("api").innerText="ONLINE"
 
 }
 
-async function projects(){
+}catch(e){
 
-const r=await fetch(API+"/v1/projects/status")
-show(await r.json())
-
-}
-
-async function autopilot(){
-
-const r=await fetch(API+"/v1/autopilot/start")
-show(await r.json())
-
-speak("Autopilot activated")
+console.log(e)
 
 }
 
-async function autopilotStatus(){
+}
 
-const r=await fetch(API+"/v1/autopilot/status")
-show(await r.json())
+
+async function loadBrain(){
+
+const r=await fetch(API+"/v1/brain")
+const j=await r.json()
+
+document.getElementById("result").innerText=
+JSON.stringify(j,null,2)
 
 }
 
-/* VOICE */
 
-function voice(){
+async function loadAgents(){
 
-const rec=new webkitSpeechRecognition()
+const r=await fetch(API+"/v1/agents")
+const j=await r.json()
 
-rec.lang="en-US"
+document.getElementById("agents").className="green"
+document.getElementById("agents").innerText="ACTIVE"
 
-rec.onresult=e=>{
-
-const text=e.results[0][0].transcript
-
-document.getElementById("panel").innerText="VOICE: "+text
+document.getElementById("result").innerText=
+JSON.stringify(j,null,2)
 
 }
 
-rec.start()
+
+async function loadAutopilot(){
+
+const r=await fetch(API+"/v1/autopilot")
+const j=await r.json()
+
+document.getElementById("result").innerText=
+JSON.stringify(j,null,2)
 
 }
 
-function speak(text){
 
-const s=new SpeechSynthesisUtterance(text)
-speechSynthesis.speak(s)
+async function loadEconomy(){
+
+const r=await fetch(API+"/v1/economy")
+const j=await r.json()
+
+document.getElementById("economy").className="green"
+document.getElementById("economy").innerText="ACTIVE"
+
+document.getElementById("result").innerText=
+JSON.stringify(j,null,2)
 
 }
 
-/* THREE.JS */
 
-const scene=new THREE.Scene()
+async function runBrain(){
 
-const camera=new THREE.PerspectiveCamera(
-75,
-window.innerWidth/window.innerHeight,
-0.1,
-1000
-)
+const objective=document.getElementById("objective").value
 
-const renderer=new THREE.WebGLRenderer({antialias:true})
-renderer.setSize(window.innerWidth,window.innerHeight)
-document.body.appendChild(renderer.domElement)
+const r=await fetch(API+"/v1/brain/run",{
 
-camera.position.z=30
+method:"POST",
 
-/* CENTRAL PLANET */
+headers:{
+"Content-Type":"application/json"
+},
 
-const geo=new THREE.SphereGeometry(7,64,64)
-
-const mat=new THREE.MeshBasicMaterial({
-
-color:0x00eaff,
-wireframe:true
+body:JSON.stringify({
+objective:objective
+})
 
 })
 
-const planet=new THREE.Mesh(geo,mat)
+const j=await r.json()
 
-scene.add(planet)
-
-/* MULTIVERSE LAYERS */
-
-const universes=[]
-
-for(let i=0;i<4;i++){
-
-const g=new THREE.SphereGeometry(10+i*5,64,64)
-
-const m=new THREE.MeshBasicMaterial({
-
-color:0x00eaff,
-wireframe:true,
-opacity:0.2,
-transparent:true
-
-})
-
-const u=new THREE.Mesh(g,m)
-
-scene.add(u)
-
-universes.push(u)
+document.getElementById("result").innerText=
+JSON.stringify(j,null,2)
 
 }
 
-/* INTELLIGENCE NODES */
 
-const nodes=[]
-
-for(let i=0;i<150;i++){
-
-const g=new THREE.SphereGeometry(.12,8,8)
-
-const m=new THREE.MeshBasicMaterial({color:0xffffff})
-
-const node=new THREE.Mesh(g,m)
-
-node.position.x=(Math.random()-0.5)*40
-node.position.y=(Math.random()-0.5)*40
-node.position.z=(Math.random()-0.5)*40
-
-scene.add(node)
-
-nodes.push(node)
-
-}
-
-/* CONNECTION NETWORK */
-
-for(let i=0;i<nodes.length;i++){
-
-for(let j=i+1;j<nodes.length;j++){
-
-if(Math.random()<0.01){
-
-const material=new THREE.LineBasicMaterial({color:0x00eaff})
-
-const points=[]
-
-points.push(nodes[i].position)
-points.push(nodes[j].position)
-
-const geometry=new THREE.BufferGeometry().setFromPoints(points)
-
-const line=new THREE.Line(geometry,material)
-
-scene.add(line)
-
-}
-
-}
-
-}
-
-/* ANIMATION */
-
-function animate(){
-
-requestAnimationFrame(animate)
-
-planet.rotation.y+=0.002
-
-universes.forEach((u,i)=>{
-
-u.rotation.y+=0.0008+i*0.0004
-
-})
-
-nodes.forEach(n=>{
-
-n.rotation.y+=0.01
-
-})
-
-renderer.render(scene,camera)
-
-}
-
-animate()
+loadSystem()
 
 </script>
 
