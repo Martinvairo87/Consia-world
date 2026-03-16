@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA RAG REAL</title>
+
+<style>
+body{
+  margin:0;
+  background:#020b16;
+  font-family:Arial,Helvetica,sans-serif;
+  color:white;
+}
+.header{
+  text-align:center;
+  padding:30px;
+  font-size:30px;
+  color:#00eaff;
+  letter-spacing:2px;
+}
+.container{
+  max-width:1400px;
+  margin:auto;
+  padding:30px;
+}
+.panel{
+  background:#071426;
+  padding:25px;
+  border-radius:14px;
+  margin-bottom:25px;
+  box-shadow:0 0 20px rgba(0,234,255,0.08);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+.box{
+  background:#081424;
+  padding:18px;
+  border-radius:12px;
+  text-align:center;
+}
+.box h3{
+  margin:0 0 10px 0;
+  font-size:14px;
+  color:#00eaff;
+  letter-spacing:1px;
+}
+.value{
+  font-size:24px;
+  font-weight:bold;
+}
+input,textarea{
+  width:100%;
+  padding:14px;
+  border-radius:20px;
+  border:none;
+  background:#0f223c;
+  color:white;
+  margin-top:10px;
+  box-sizing:border-box;
+}
+textarea{
+  min-height:180px;
+  resize:vertical;
+}
+button{
+  margin-top:15px;
+  padding:12px 24px;
+  border:none;
+  border-radius:25px;
+  background:#00eaff;
+  color:#00151f;
+  font-weight:bold;
+  cursor:pointer;
+  margin-right:10px;
+}
+button:hover{
+  transform:scale(1.04);
+}
+.log, .results{
+  margin-top:20px;
+  background:#081424;
+  padding:20px;
+  border-radius:12px;
+  font-size:13px;
+  white-space:pre-wrap;
+}
+.result-item{
+  border-bottom:1px solid #0f223c;
+  padding:14px 0;
+}
+.result-score{
+  color:#00eaff;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.footer{
+  text-align:center;
+  padding:20px;
+  font-size:12px;
+  color:#3aaec9;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+CONSIA RAG REAL
+</div>
+
+<div class="container">
+
+  <div class="panel">
+    <h2>Ingestar conocimiento</h2>
+
+    <input id="fileName" placeholder="Nombre lógico del documento. Ej: realwork-plan-2026.txt">
+    <textarea id="sourceText" placeholder="Pegá acá el contenido del documento para ingestarlo en RAG..."></textarea>
+
+    <button onclick="ingestText()">INGESTAR TEXTO</button>
+    <button onclick="clearIngest()">LIMPIAR</button>
+
+    <div class="grid">
+      <div class="box">
+        <h3>CHUNKS</h3>
+        <div class="value" id="chunksCount">0</div>
+      </div>
+      <div class="box">
+        <h3>DOCUMENTOS</h3>
+        <div class="value" id="docsCount">0</div>
+      </div>
+      <div class="box">
+        <h3>ESTADO</h3>
+        <div class="value" id="ingestState">READY</div>
+      </div>
+    </div>
+
+    <div class="log" id="ingestLog">Esperando ingestión...</div>
+  </div>
+
+  <div class="panel">
+    <h2>Búsqueda semántica</h2>
+
+    <input id="query" placeholder="Ej: estrategia comercial de Real Work">
+    <button onclick="searchRag()">BUSCAR</button>
+
+    <div class="results" id="searchResults">Esperando consulta...</div>
+  </div>
+
+</div>
+
+<div class="footer">
+CONSIA AI OPERATING SYSTEM — RAG REAL FRONTEND
+</div>
+
+<script>
+const API = "https://api.consia.world";
+
+let ragState = {
+  chunks: 0,
+  docs: 0,
+  status: "READY",
+  log: []
+};
+
+function saveState(){
+  localStorage.setItem("consia_rag_front", JSON.stringify(ragState));
+}
+
+function loadState(){
+  const data = JSON.parse(localStorage.getItem("consia_rag_front") || "null");
+  if(data) ragState = data;
+}
+
+function renderState(){
+  document.getElementById("chunksCount").innerText = ragState.chunks;
+  document.getElementById("docsCount").innerText = ragState.docs;
+  document.getElementById("ingestState").innerText = ragState.status;
+  document.getElementById("ingestLog").innerText = ragState.log.join("\n\n") || "Esperando ingestión...";
+  saveState();
+}
+
+function appendLog(text){
+  ragState.log.unshift(text);
+  ragState.log = ragState.log.slice(0,80);
+}
+
+function splitPreview(text, size = 800, overlap = 120){
+  const out = [];
+  let start = 0;
+  while(start < text.length){
+    const end = Math.min(start + size, text.length);
+    out.push(text.slice(start, end));
+    start += size - overlap;
+  }
+  return out.filter(Boolean);
+}
+
+async function ingestText(){
+  const fileName = document.getElementById("fileName").value.trim() || "document.txt";
+  const text = document.getElementById("sourceText").value.trim();
+
+  if(!text) return;
+
+  ragState.status = "INGESTING";
+  appendLog("Iniciando ingestión: " + fileName);
+  renderState();
+
+  try{
+    const chunks = splitPreview(text);
+
+    const r = await fetch(API + "/v1/rag/ingest", {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({
+        file_name: fileName,
+        text
+      })
+    });
+
+    const data = await r.json();
+
+    if(data.ok){
+      ragState.chunks += Number(data.chunks || chunks.length || 0);
+      ragState.docs += 1;
+      ragState.status = "ACTIVE";
+      appendLog("Documento ingestado correctamente");
+      appendLog("Chunks creados: " + (data.chunks || chunks.length));
+      appendLog("Archivo: " + fileName);
+    }else{
+      ragState.status = "ERROR";
+      appendLog("Error de ingestión: " + (data.error || "unknown_error"));
+    }
+  }catch(e){
+    ragState.status = "ERROR";
+    appendLog("Error de conexión con CONSIA API");
+  }
+
+  renderState();
+}
+
+async function searchRag(){
+  const query = document.getElementById("query").value.trim();
+  const box = document.getElementById("searchResults");
+
+  if(!query) return;
+
+  box.innerText = "Buscando...";
+
+  try{
+    const r = await fetch(API + "/v1/rag/search", {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({
+        query,
+        limit: 5
+      })
+    });
+
+    const data = await r.json();
+
+    if(!data.ok){
+      box.innerText = "Error: " + (data.error || "search_failed");
+      return;
+    }
+
+    const results = data.results || [];
+
+    if(!results.length){
+      box.innerText = "No se encontraron resultados.";
+      return;
+    }
+
+    box.innerHTML = results.map(item => {
+      let meta = {};
+      try{
+        meta = JSON.parse(item.meta || "{}");
+      }catch{}
+
+      return `
+        <div class="result-item">
+          <div class="result-score">score: ${(item.score || 0).toFixed ? item.score.toFixed(4) : item.score}</div>
+          <div><b>archivo:</b> ${meta.file_name || "n/a"}</div>
+          <div><b>chunk:</b> ${meta.chunk_index ?? "n/a"}</div>
+          <div style="margin-top:8px">${escapeHtml(item.text || "")}</div>
+        </div>
+      `;
+    }).join("");
+  }catch(e){
+    box.innerText = "Error de conexión con CONSIA API";
+  }
+}
+
+function clearIngest(){
+  document.getElementById("fileName").value = "";
+  document.getElementById("sourceText").value = "";
+}
+
+function escapeHtml(text){
+  return text
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+loadState();
+renderState();
+</script>
+
+</body>
+</html>
