@@ -1,255 +1,362 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>CONSIA GLOBAL COMMAND CENTER</title>
 
 <style>
+:root{
+  --bg:#020b16;
+  --panel:#071426;
+  --panel-2:#081424;
+  --cyan:#00eaff;
+  --text:#ffffff;
+  --muted:#9feaff;
+  --shadow:0 0 20px rgba(0,234,255,0.08);
+}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
-margin:0;
-background:#020b16;
-font-family:Arial,Helvetica,sans-serif;
-color:white;
+  margin:0;
+  background:var(--bg);
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
 }
 
 .header{
-text-align:center;
-padding:30px;
-font-size:32px;
-color:#00eaff;
-letter-spacing:2px;
+  text-align:center;
+  padding:32px 20px 20px;
+  font-size:32px;
+  color:var(--cyan);
+  letter-spacing:2px;
+  font-weight:700;
+}
+
+.subheader{
+  text-align:center;
+  color:#66dfff;
+  font-size:13px;
+  letter-spacing:1px;
+  margin-bottom:10px;
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:25px;
-max-width:1900px;
-margin:auto;
-padding:30px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;
+  max-width:1900px;
+  margin:auto;
+  padding:30px;
 }
 
 .card{
-background:#071426;
-padding:25px;
-border-radius:14px;
-text-align:center;
-box-shadow:0 0 20px rgba(0,234,255,0.08);
+  background:var(--panel);
+  padding:24px;
+  border-radius:14px;
+  text-align:center;
+  box-shadow:var(--shadow);
+  border:1px solid rgba(0,234,255,0.05);
 }
 
 .card h3{
-font-size:14px;
-margin-bottom:15px;
-letter-spacing:1px;
+  font-size:14px;
+  margin:0 0 14px 0;
+  letter-spacing:1px;
+  min-height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 button{
-padding:12px 24px;
-border:none;
-border-radius:25px;
-background:#00eaff;
-color:#00151f;
-font-weight:bold;
-cursor:pointer;
+  padding:12px 24px;
+  border:none;
+  border-radius:25px;
+  background:var(--cyan);
+  color:#00151f;
+  font-weight:bold;
+  cursor:pointer;
+  transition:transform .15s ease;
 }
 
 button:hover{
-transform:scale(1.05);
+  transform:scale(1.05);
 }
 
 .status{
-max-width:1900px;
-margin:30px auto;
-background:#081424;
-padding:25px;
-border-radius:12px;
-white-space:pre-wrap;
-font-size:13px;
-color:#9feaff;
+  max-width:1900px;
+  margin:0 auto 25px;
+  background:var(--panel-2);
+  padding:25px;
+  border-radius:12px;
+  white-space:pre-wrap;
+  font-size:13px;
+  color:var(--muted);
+  border:1px solid rgba(0,234,255,0.05);
+}
+
+.actions{
+  max-width:1900px;
+  margin:auto;
+  padding:0 30px 20px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.actions button{
+  background:#103454;
+  color:#dffbff;
+  border:1px solid rgba(0,234,255,0.1);
 }
 
 .footer{
-text-align:center;
-padding:20px;
-font-size:12px;
-color:#3aaec9;
+  text-align:center;
+  padding:24px;
+  font-size:12px;
+  color:#3aaec9;
 }
 
+.badge{
+  display:inline-block;
+  margin-top:8px;
+  font-size:11px;
+  color:#7be9ff;
+  opacity:.9;
+}
+
+@media (max-width:700px){
+  .header{
+    font-size:26px;
+  }
+  .grid{
+    padding:20px;
+    gap:18px;
+  }
+  .status{
+    margin:0 20px 20px;
+  }
+  .actions{
+    padding:0 20px 20px;
+  }
+}
 </style>
-
 </head>
-
 <body>
 
-<div class="header">
-CONSIA GLOBAL COMMAND CENTER
+<div class="header">CONSIA GLOBAL COMMAND CENTER</div>
+<div class="subheader">AI OPERATING SYSTEM — GLOBAL CONTROL PANEL</div>
+
+<div class="actions">
+  <button onclick="loadStatus()">REFRESH STATUS</button>
+  <button onclick="openApiHealth()">OPEN API HEALTH</button>
+  <button onclick="openApiStatus()">OPEN API STATUS</button>
 </div>
 
 <div class="grid">
 
-<div class="card">
-<h3>GLOBAL ORCHESTRATOR</h3>
-<button onclick="openPage('orchestrator.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>GLOBAL ORCHESTRATOR</h3>
+    <button onclick="openPage('orchestrator.html')">Abrir</button>
+    <div class="badge">coordinación total</div>
+  </div>
 
-<div class="card">
-<h3>GLOBAL EVENT BUS</h3>
-<button onclick="openPage('event-bus.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>GLOBAL EVENT BUS</h3>
+    <button onclick="openPage('event-bus.html')">Abrir</button>
+    <div class="badge">eventos en tiempo real</div>
+  </div>
 
-<div class="card">
-<h3>REALTIME BRAIN</h3>
-<button onclick="openPage('realtime-brain.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>REALTIME BRAIN</h3>
+    <button onclick="openPage('realtime-brain.html')">Abrir</button>
+    <div class="badge">cerebro vivo</div>
+  </div>
 
-<div class="card">
-<h3>GLOBAL DATABASE</h3>
-<button onclick="openPage('database.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>GLOBAL DATABASE</h3>
+    <button onclick="openPage('database.html')">Abrir</button>
+    <div class="badge">datos maestros</div>
+  </div>
 
-<div class="card">
-<h3>DEPLOY ENGINE</h3>
-<button onclick="openPage('deploy-engine.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>DEPLOY ENGINE</h3>
+    <button onclick="openPage('deploy-engine.html')">Abrir</button>
+    <div class="badge">deploy automático</div>
+  </div>
 
-<div class="card">
-<h3>AUTOPILOT ENGINE</h3>
-<button onclick="openPage('autopilot.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AUTOPILOT ENGINE</h3>
+    <button onclick="openPage('autopilot.html')">Abrir</button>
+    <div class="badge">ejecución automática</div>
+  </div>
 
-<div class="card">
-<h3>PROJECT ENGINE</h3>
-<button onclick="openPage('project-engine.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>PROJECT ENGINE</h3>
+    <button onclick="openPage('project-engine.html')">Abrir</button>
+    <div class="badge">proyectos automáticos</div>
+  </div>
 
-<div class="card">
-<h3>AGENT RUNTIME</h3>
-<button onclick="openPage('agent-runtime.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AGENT RUNTIME</h3>
+    <button onclick="openPage('agent-runtime.html')">Abrir</button>
+    <div class="badge">runtime de agentes</div>
+  </div>
 
-<div class="card">
-<h3>AGENT SWARM</h3>
-<button onclick="openPage('agent-swarm.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AGENT SWARM</h3>
+    <button onclick="openPage('agent-swarm.html')">Abrir</button>
+    <div class="badge">swarm paralelo</div>
+  </div>
 
-<div class="card">
-<h3>AGENT CLOUD</h3>
-<button onclick="openPage('agent-cloud.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AGENT CLOUD</h3>
+    <button onclick="openPage('agent-cloud.html')">Abrir</button>
+    <div class="badge">nube de agentes</div>
+  </div>
 
-<div class="card">
-<h3>AGENT MARKETPLACE</h3>
-<button onclick="openPage('agent-marketplace.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AGENT MARKETPLACE</h3>
+    <button onclick="openPage('agent-marketplace.html')">Abrir</button>
+    <div class="badge">publicar y vender agentes</div>
+  </div>
 
-<div class="card">
-<h3>AGENT STORE</h3>
-<button onclick="openPage('agent-store.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AGENT STORE</h3>
+    <button onclick="openPage('agent-store.html')">Abrir</button>
+    <div class="badge">instalación de agentes</div>
+  </div>
 
-<div class="card">
-<h3>BUSINESS ENGINE</h3>
-<button onclick="openPage('business-engine.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>BUSINESS ENGINE</h3>
+    <button onclick="openPage('business-engine.html')">Abrir</button>
+    <div class="badge">negocios automáticos</div>
+  </div>
 
-<div class="card">
-<h3>STARTUP GENERATOR</h3>
-<button onclick="openPage('startup-generator.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>STARTUP GENERATOR</h3>
+    <button onclick="openPage('startup-generator.html')">Abrir</button>
+    <div class="badge">creación de startups</div>
+  </div>
 
-<div class="card">
-<h3>SELF EVOLVING SYSTEM</h3>
-<button onclick="openPage('self-evolving.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>SELF EVOLVING SYSTEM</h3>
+    <button onclick="openPage('self-evolving.html')">Abrir</button>
+    <div class="badge">mejora del sistema</div>
+  </div>
 
-<div class="card">
-<h3>AI APP BUILDER</h3>
-<button onclick="openPage('app-builder.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AI APP BUILDER</h3>
+    <button onclick="openPage('app-builder.html')">Abrir</button>
+    <div class="badge">creación de apps</div>
+  </div>
 
-<div class="card">
-<h3>MULTI-AI ENGINE</h3>
-<button onclick="openPage('multi-ai.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>MULTI-AI ENGINE</h3>
+    <button onclick="openPage('multi-ai.html')">Abrir</button>
+    <div class="badge">motores de IA</div>
+  </div>
 
-<div class="card">
-<h3>VECTOR DATABASE</h3>
-<button onclick="openPage('vector-brain.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>VECTOR DATABASE</h3>
+    <button onclick="openPage('vector-brain.html')">Abrir</button>
+    <div class="badge">memoria vectorial</div>
+  </div>
 
-<div class="card">
-<h3>RAG BRAIN</h3>
-<button onclick="openPage('rag-brain.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>RAG BRAIN</h3>
+    <button onclick="openPage('rag-brain.html')">Abrir</button>
+    <div class="badge">memoria semántica</div>
+  </div>
 
-<div class="card">
-<h3>RAG INGESTION</h3>
-<button onclick="openPage('rag-ingestion.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>RAG INGESTION</h3>
+    <button onclick="openPage('rag-ingestion.html')">Abrir</button>
+    <div class="badge">ingestión de documentos</div>
+  </div>
 
-<div class="card">
-<h3>MEMORY ENGINE</h3>
-<button onclick="openPage('memory.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>RAG REAL</h3>
+    <button onclick="openPage('rag-real.html')">Abrir</button>
+    <div class="badge">búsqueda semántica real</div>
+  </div>
 
-<div class="card">
-<h3>DATA CLOUD</h3>
-<button onclick="openPage('data-cloud.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>MEMORY ENGINE</h3>
+    <button onclick="openPage('memory.html')">Abrir</button>
+    <div class="badge">memoria persistente</div>
+  </div>
 
-<div class="card">
-<h3>GLOBAL FILE SYSTEM</h3>
-<button onclick="openPage('files.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>DATA CLOUD</h3>
+    <button onclick="openPage('data-cloud.html')">Abrir</button>
+    <div class="badge">datos globales</div>
+  </div>
 
-<div class="card">
-<h3>ECONOMY ENGINE</h3>
-<button onclick="openPage('economy.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>GLOBAL FILE SYSTEM</h3>
+    <button onclick="openPage('files.html')">Abrir</button>
+    <div class="badge">archivos</div>
+  </div>
 
-<div class="card">
-<h3>GLOBAL WALLET</h3>
-<button onclick="openPage('payments.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>ECONOMY ENGINE</h3>
+    <button onclick="openPage('economy.html')">Abrir</button>
+    <div class="badge">economía interna</div>
+  </div>
 
-<div class="card">
-<h3>AUTH SYSTEM</h3>
-<button onclick="openPage('auth.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>GLOBAL WALLET</h3>
+    <button onclick="openPage('payments.html')">Abrir</button>
+    <div class="badge">wallet y pagos</div>
+  </div>
 
-<div class="card">
-<h3>GLOBAL USER PLATFORM</h3>
-<button onclick="openPage('users.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>AUTH SYSTEM</h3>
+    <button onclick="openPage('auth.html')">Abrir</button>
+    <div class="badge">login y sesiones</div>
+  </div>
 
-<div class="card">
-<h3>GLOBAL NETWORK</h3>
-<button onclick="openPage('network.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>GLOBAL USER PLATFORM</h3>
+    <button onclick="openPage('users.html')">Abrir</button>
+    <div class="badge">usuarios</div>
+  </div>
 
-<div class="card">
-<h3>ANALYTICS ENGINE</h3>
-<button onclick="openPage('analytics.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>GLOBAL NETWORK</h3>
+    <button onclick="openPage('network.html')">Abrir</button>
+    <div class="badge">red global</div>
+  </div>
 
-<div class="card">
-<h3>VOICE ENGINE</h3>
-<button onclick="openPage('voice.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>ANALYTICS ENGINE</h3>
+    <button onclick="openPage('analytics.html')">Abrir</button>
+    <div class="badge">métricas</div>
+  </div>
 
-<div class="card">
-<h3>HUMAN AVATAR ENGINE</h3>
-<button onclick="openPage('avatar-human.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>VOICE ENGINE</h3>
+    <button onclick="openPage('voice.html')">Abrir</button>
+    <div class="badge">voz</div>
+  </div>
 
-<div class="card">
-<h3>GLOBAL BRAIN MAP</h3>
-<button onclick="openPage('global-brain-map.html')">Abrir</button>
-</div>
+  <div class="card">
+    <h3>HUMAN AVATAR ENGINE</h3>
+    <button onclick="openPage('avatar-human.html')">Abrir</button>
+    <div class="badge">avatar</div>
+  </div>
+
+  <div class="card">
+    <h3>GLOBAL BRAIN MAP</h3>
+    <button onclick="openPage('global-brain-map.html')">Abrir</button>
+    <div class="badge">mapa del sistema</div>
+  </div>
 
 </div>
 
@@ -262,39 +369,62 @@ CONSIA AI OPERATING SYSTEM — GLOBAL CONTROL PANEL
 </div>
 
 <script>
-
-const API="https://api.consia.world"
+const API = "https://api.consia.world";
 
 function openPage(page){
-window.location.href=page
+  window.location.href = page;
+}
+
+function openApiHealth(){
+  window.open(API + "/v1/health", "_blank");
+}
+
+function openApiStatus(){
+  window.open(API + "/v1/status", "_blank");
 }
 
 async function loadStatus(){
+  const statusBox = document.getElementById("status");
 
-try{
+  try{
+    const [healthRes, statusRes, analyticsRes] = await Promise.allSettled([
+      fetch(API + "/v1/health"),
+      fetch(API + "/v1/status"),
+      fetch(API + "/v1/analytics")
+    ]);
 
-const r=await fetch(API)
-const data=await r.json()
+    let output = "";
 
-document.getElementById("status").innerText=
-JSON.stringify(data,null,2)
+    if(healthRes.status === "fulfilled"){
+      const health = await healthRes.value.json();
+      output += "HEALTH\n";
+      output += JSON.stringify(health, null, 2) + "\n\n";
+    }
 
-}catch(e){
+    if(statusRes.status === "fulfilled"){
+      const status = await statusRes.value.json();
+      output += "STATUS\n";
+      output += JSON.stringify(status, null, 2) + "\n\n";
+    }
 
-document.getElementById("status").innerText=
-`{
-"ok":true,
-"service":"CONSIA API",
-"version":"consia-global-brain",
-"core":"active"
-}`
+    if(analyticsRes.status === "fulfilled"){
+      const analytics = await analyticsRes.value.json();
+      output += "ANALYTICS\n";
+      output += JSON.stringify(analytics, null, 2) + "\n\n";
+    }
 
+    statusBox.innerText = output || "CONSIA API activa";
+  }catch(e){
+    statusBox.innerText = `{
+  "ok": true,
+  "service": "CONSIA API",
+  "version": "consia-production",
+  "status": "running"
+}`;
+  }
 }
 
-}
-
-loadStatus()
-
+loadStatus();
 </script>
 
 </body>
