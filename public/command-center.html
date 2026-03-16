@@ -13,39 +13,39 @@
 body{
 margin:0;
 background:#020b16;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial,Helvetica,sans-serif;
 color:white;
 }
 
 .header{
 text-align:center;
 padding:30px;
-font-size:28px;
+font-size:30px;
 color:#00eaff;
-letter-spacing:1px;
+letter-spacing:2px;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
 gap:25px;
-max-width:1400px;
+max-width:1500px;
 margin:auto;
 padding:30px;
 }
 
 .card{
 background:#071426;
-padding:30px;
+padding:28px;
 border-radius:14px;
 text-align:center;
-box-shadow:0 0 20px rgba(0,234,255,0.08);
+box-shadow:0 0 18px rgba(0,234,255,0.1);
 }
 
 .card h3{
-font-size:15px;
-margin-bottom:15px;
+font-size:14px;
 letter-spacing:1px;
+margin-bottom:15px;
 }
 
 button{
@@ -56,7 +56,6 @@ background:#00eaff;
 color:#00151f;
 font-weight:bold;
 cursor:pointer;
-transition:0.2s;
 }
 
 button:hover{
@@ -64,7 +63,7 @@ transform:scale(1.05);
 }
 
 .status{
-max-width:1400px;
+max-width:1500px;
 margin:30px auto;
 background:#081424;
 padding:25px;
@@ -183,6 +182,21 @@ CONSIA GLOBAL COMMAND CENTER
 <button onclick="openPage('global-brain-map.html')">Abrir</button>
 </div>
 
+<div class="card">
+<h3>AGENT STORE</h3>
+<button onclick="openPage('agent-store.html')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>BUSINESS ENGINE</h3>
+<button onclick="openPage('business-engine.html')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>SELF EVOLVING SYSTEM</h3>
+<button onclick="openPage('self-evolving.html')">Abrir</button>
+</div>
+
 </div>
 
 <div class="status" id="status">
@@ -208,17 +222,17 @@ try{
 const r=await fetch(API)
 const data=await r.json()
 
-document.getElementById("status").innerText =
+document.getElementById("status").innerText=
 JSON.stringify(data,null,2)
 
 }catch(e){
 
-document.getElementById("status").innerText =
+document.getElementById("status").innerText=
 `{
-"ok": true,
-"service": "CONSIA API",
-"version": "consia-global-brain",
-"core": "active"
+"ok":true,
+"service":"CONSIA API",
+"version":"consia-global-brain",
+"core":"active"
 }`
 
 }
