@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL AGENT SWARM</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+text-align:center;
+color:#00eaff;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+margin-top:30px;
+}
+
+input{
+width:100%;
+padding:16px;
+border-radius:25px;
+border:none;
+background:#0f223c;
+color:white;
+}
+
+button{
+margin-top:20px;
+padding:14px 25px;
+border:none;
+border-radius:30px;
+background:#00eaff;
+cursor:pointer;
+font-weight:bold;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-top:30px;
+}
+
+.agent{
+background:#0d1f35;
+padding:15px;
+border-radius:10px;
+text-align:center;
+font-size:13px;
+}
+
+.result{
+margin-top:30px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA GLOBAL AGENT SWARM</h1>
+
+<div class="panel">
+
+<input
+id="goal"
+placeholder="Objetivo para los agentes"
+/>
+
+<button onclick="runSwarm()">
+Ejecutar Agent Swarm
+</button>
+
+<div class="grid" id="agents">
+
+</div>
+
+<div class="result" id="result">
+Esperando ejecución...
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const agents=[
+
+"research_agent",
+"analysis_agent",
+"strategy_agent",
+"execution_agent",
+"marketing_agent",
+"seo_agent",
+"social_media_agent",
+"growth_agent",
+"ads_agent",
+"content_agent",
+
+"design_agent",
+"ui_agent",
+"ux_agent",
+"branding_agent",
+
+"finance_agent",
+"accounting_agent",
+"tax_agent",
+
+"legal_agent",
+"contract_agent",
+
+"product_agent",
+"startup_agent",
+"automation_agent",
+
+"data_agent",
+"analytics_agent",
+
+"sales_agent",
+"crm_agent",
+
+"ai_training_agent",
+"prompt_engineer_agent",
+
+"market_research_agent",
+"competitor_agent",
+
+"innovation_agent",
+"idea_agent",
+
+"workflow_agent",
+"integration_agent",
+
+"api_agent",
+"cloud_agent",
+
+"security_agent",
+"compliance_agent"
+
+]
+
+const container=document.getElementById("agents")
+
+agents.forEach(a=>{
+
+const div=document.createElement("div")
+div.className="agent"
+div.innerText=a
+
+container.appendChild(div)
+
+})
+
+async function runSwarm(){
+
+const goal=document.getElementById("goal").value
+
+const r=await fetch(
+"https://api.consia.world/v1/brain/run",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+objective:goal
+})
+}
+)
+
+const data=await r.json()
+
+document.getElementById("result").innerText=
+JSON.stringify(data,null,2)
+
+}
+
+</script>
+
+</body>
+</html>
