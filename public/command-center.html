@@ -29,7 +29,7 @@ letter-spacing:1px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:25px;
-max-width:1200px;
+max-width:1300px;
 margin:auto;
 padding:30px;
 }
@@ -64,7 +64,7 @@ transform:scale(1.05);
 }
 
 .status{
-max-width:1200px;
+max-width:1300px;
 margin:30px auto;
 background:#081424;
 padding:25px;
@@ -163,6 +163,11 @@ CONSIA GLOBAL COMMAND CENTER
 <button onclick="openPage('users.html')">Abrir</button>
 </div>
 
+<div class="card">
+<h3>PAYMENT SYSTEM</h3>
+<button onclick="openPage('payments.html')">Abrir</button>
+</div>
+
 </div>
 
 <div class="status" id="status">
@@ -185,7 +190,7 @@ async function loadStatus(){
 
 try{
 
-const r=await fetch(API+"/health")
+const r=await fetch(API)
 const data=await r.json()
 
 document.getElementById("status").innerText =
