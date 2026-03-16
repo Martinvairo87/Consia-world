@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA GLOBAL USER SYSTEM</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial, Helvetica, sans-serif;
+color:white;
+}
+
+.header{
+text-align:center;
+padding:30px;
+font-size:28px;
+color:#00eaff;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:30px;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+margin-bottom:30px;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-top:10px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+}
+
+button{
+margin-top:15px;
+padding:12px 24px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.user-list{
+background:#081424;
+padding:20px;
+border-radius:12px;
+}
+
+.user{
+padding:10px;
+border-bottom:1px solid #0f223c;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+CONSIA GLOBAL USER SYSTEM
+</div>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Crear cuenta</h3>
+
+<input id="name" placeholder="Nombre">
+
+<input id="email" placeholder="Email">
+
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="register()">Crear cuenta</button>
+
+</div>
+
+<div class="panel">
+
+<h3>Login</h3>
+
+<input id="loginEmail" placeholder="Email">
+
+<input id="loginPassword" type="password" placeholder="Password">
+
+<button onclick="login()">Ingresar</button>
+
+</div>
+
+<div class="user-list" id="users">
+Usuarios registrados aparecerán aquí
+</div>
+
+</div>
+
+<script>
+
+let users=[]
+
+function register(){
+
+const name=document.getElementById("name").value
+const email=document.getElementById("email").value
+const password=document.getElementById("password").value
+
+if(!name || !email || !password) return
+
+const user={
+name,
+email,
+password
+}
+
+users.push(user)
+
+localStorage.setItem("consia_users",JSON.stringify(users))
+
+loadUsers()
+
+}
+
+function login(){
+
+const email=document.getElementById("loginEmail").value
+const password=document.getElementById("loginPassword").value
+
+const data=JSON.parse(localStorage.getItem("consia_users")) || []
+
+const user=data.find(u=>u.email===email && u.password===password)
+
+if(user){
+
+alert("Bienvenido "+user.name)
+
+}else{
+
+alert("Usuario no encontrado")
+
+}
+
+}
+
+function loadUsers(){
+
+const data=JSON.parse(localStorage.getItem("consia_users")) || []
+
+let html=""
+
+data.forEach(u=>{
+
+html+=`<div class="user">${u.name} - ${u.email}</div>`
+
+})
+
+document.getElementById("users").innerHTML=html
+
+}
+
+loadUsers()
+
+</script>
+
+</body>
+</html>
