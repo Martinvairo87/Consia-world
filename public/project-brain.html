@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA PROJECT BRAIN</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+text-align:center;
+color:#00eaff;
+}
+
+.panel{
+background:#071426;
+border-radius:12px;
+padding:30px;
+margin-top:30px;
+}
+
+input{
+width:100%;
+padding:16px;
+border-radius:20px;
+border:none;
+background:#0f223c;
+color:white;
+}
+
+button{
+margin-top:20px;
+padding:14px 24px;
+border:none;
+border-radius:30px;
+background:#00eaff;
+color:black;
+font-weight:bold;
+cursor:pointer;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:20px;
+margin-top:30px;
+}
+
+.card{
+background:#0d1f35;
+padding:20px;
+border-radius:10px;
+text-align:center;
+}
+
+.result{
+margin-top:30px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+}
+
+.project-list{
+margin-top:30px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+}
+
+.project{
+border-bottom:1px solid #0f223c;
+padding:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CONSIA GLOBAL PROJECT BRAIN</h1>
+
+<div class="panel">
+
+<input
+id="projectGoal"
+placeholder="Crear proyecto: ejemplo 'plataforma inmobiliaria automática'"
+/>
+
+<button onclick="createProject()">
+Crear Proyecto
+</button>
+
+<div class="grid">
+
+<div class="card">
+Brain<br>
+<span id="brainStatus">activo</span>
+</div>
+
+<div class="card">
+Agents<br>
+<span id="agentStatus">listo</span>
+</div>
+
+<div class="card">
+Autopilot<br>
+<span id="autoStatus">activo</span>
+</div>
+
+<div class="card">
+Memory<br>
+<span id="memoryStatus">conectado</span>
+</div>
+
+<div class="card">
+Economy<br>
+<span id="ecoStatus">listo</span>
+</div>
+
+</div>
+
+<div class="result" id="projectPlan">
+Plan del proyecto aparecerá aquí
+</div>
+
+<div class="project-list" id="projectList">
+Proyectos guardados aparecerán aquí
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let projects=[]
+
+const API="https://api.consia.world"
+
+async function createProject(){
+
+const goal=document.getElementById("projectGoal").value
+
+if(!goal)return
+
+const r=await fetch(API+"/v1/brain/run",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+objective:goal
+})
+
+})
+
+const plan=await r.json()
+
+document.getElementById("projectPlan").innerText=
+JSON.stringify(plan,null,2)
+
+const project={
+goal:goal,
+plan:plan,
+date:new Date().toISOString()
+}
+
+projects.push(project)
+
+localStorage.setItem("consia_projects",
+JSON.stringify(projects))
+
+loadProjects()
+
+}
+
+function loadProjects(){
+
+const data=localStorage.getItem("consia_projects")
+
+if(!data)return
+
+projects=JSON.parse(data)
+
+let html=""
+
+projects.forEach(p=>{
+
+html+=
+"<div class='project'>"+
+"<b>"+p.goal+"</b><br>"+
+p.date+
+"</div>"
+
+})
+
+document.getElementById("projectList").innerHTML=html
+
+}
+
+loadProjects()
+
+</script>
+
+</body>
+</html>
