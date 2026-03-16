@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA SELF EVOLVING SYSTEM</title>
+
+<style>
+
+body{
+margin:0;
+background:#020b16;
+font-family:Arial;
+color:white;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
+}
+
+.panel{
+background:#071426;
+padding:30px;
+border-radius:12px;
+}
+
+button{
+margin-top:20px;
+padding:15px 30px;
+border:none;
+border-radius:25px;
+background:#00eaff;
+color:#00151f;
+font-weight:bold;
+cursor:pointer;
+}
+
+.log{
+margin-top:25px;
+background:#081424;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>CONSIA SELF EVOLVING SYSTEM</h2>
+
+<div class="panel">
+
+CONSIA analiza el sistema y mejora módulos automáticamente.
+
+<br>
+
+<button onclick="evolve()">
+Analizar sistema
+</button>
+
+<div class="log" id="log">
+Sistema esperando análisis...
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+async function evolve(){
+
+document.getElementById("log").innerText=
+"CONSIA analizando arquitectura..."
+
+setTimeout(()=>{
+
+document.getElementById("log").innerText=
+`Revisión completada
+
+Módulos activos:
+- Brain
+- Agents
+- Autopilot
+- Network
+- Marketplace
+
+Sugerencias:
+- Optimizar agents
+- Mejorar memoria
+- Expandir marketplace
+`
+
+},2000)
+
+}
+
+</script>
+
+</body>
+</html>
