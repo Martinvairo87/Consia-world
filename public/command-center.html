@@ -29,7 +29,7 @@ letter-spacing:2px;
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:25px;
-max-width:1600px;
+max-width:1700px;
 margin:auto;
 padding:30px;
 }
@@ -63,7 +63,7 @@ transform:scale(1.05);
 }
 
 .status{
-max-width:1600px;
+max-width:1700px;
 margin:30px auto;
 background:#081424;
 padding:25px;
@@ -91,6 +91,11 @@ CONSIA GLOBAL COMMAND CENTER
 </div>
 
 <div class="grid">
+
+<div class="card">
+<h3>REALTIME BRAIN</h3>
+<button onclick="openPage('realtime-brain.html')">Abrir</button>
+</div>
 
 <div class="card">
 <h3>AUTOPILOT ENGINE</h3>
@@ -232,12 +237,12 @@ try{
 const r=await fetch(API)
 const data=await r.json()
 
-document.getElementById("status").innerText=
+document.getElementById("status").innerText =
 JSON.stringify(data,null,2)
 
 }catch(e){
 
-document.getElementById("status").innerText=
+document.getElementById("status").innerText =
 `{
 "ok":true,
 "service":"CONSIA API",
