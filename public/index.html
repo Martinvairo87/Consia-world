@@ -6,68 +6,99 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CONSIA JARVIS COMMAND CENTER</title>
+<title>CONSIA HOLOGRAPHIC COMMAND CENTER</title>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial;
-background:#040f1f;
+background:#020b16;
 color:white;
+overflow:hidden;
 }
 
+/* HOLOGRAPHIC BACKGROUND */
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:0;
+}
+
+/* HEADER */
+
 header{
+position:absolute;
+top:0;
+left:0;
+width:100%;
 padding:20px;
-background:#081a2f;
+background:rgba(5,20,40,0.8);
 border-bottom:1px solid #00eaff33;
+z-index:5;
 }
 
 h1{
 margin:0;
 color:#00eaff;
-font-size:36px;
+font-size:34px;
 }
+
+/* LAYOUT */
 
 .container{
+position:absolute;
+top:80px;
+bottom:0;
+left:0;
+right:0;
 display:grid;
 grid-template-columns:260px 1fr;
-height:calc(100vh - 70px);
+z-index:5;
 }
 
+/* SIDEBAR */
+
 .sidebar{
-background:#07192f;
+background:rgba(5,20,40,0.9);
 padding:20px;
-border-right:1px solid #00eaff22;
+border-right:1px solid #00eaff33;
 }
 
 .sidebar button{
 width:100%;
 padding:14px;
 margin-bottom:12px;
-background:#0d294a;
+background:#0b2b4d;
 border:none;
 border-radius:6px;
 color:white;
 cursor:pointer;
-font-size:15px;
 }
 
 .sidebar button:hover{
-background:#17457a;
+background:#1a4d82;
 }
+
+/* MAIN */
 
 .main{
 padding:30px;
 overflow:auto;
 }
 
+/* CARD */
+
 .card{
-background:#0e223f;
+background:rgba(10,35,60,0.9);
 padding:20px;
 border-radius:10px;
 margin-bottom:20px;
 }
+
+/* STATUS */
 
 .status{
 font-size:18px;
@@ -77,16 +108,19 @@ margin-bottom:10px;
 .green{color:#00ff9c}
 .red{color:#ff4d4d}
 
+/* TEXTAREA */
+
 textarea{
 width:100%;
 height:100px;
-background:#07192f;
+background:#020b16;
 border:none;
 border-radius:6px;
 color:white;
 padding:10px;
-font-size:16px;
 }
+
+/* BUTTON */
 
 button.run{
 margin-top:10px;
@@ -98,40 +132,60 @@ color:white;
 cursor:pointer;
 }
 
+/* RESULT */
+
 pre{
-background:#020b16;
-padding:15px;
-border-radius:8px;
-overflow:auto;
-font-size:14px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
-.agent{
-background:#081a2f;
+background:#01060c;
 padding:15px;
 border-radius:8px;
 }
 
-.agent h4{
-margin:0 0 8px 0;
+/* AVATAR */
+
+.avatar{
+position:absolute;
+right:30px;
+bottom:30px;
+width:160px;
+height:160px;
+border-radius:50%;
+border:2px solid #00eaff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
 color:#00eaff;
+box-shadow:0 0 30px #00eaff;
+z-index:5;
+}
+
+/* VOICE BUTTON */
+
+.voice{
+position:absolute;
+left:50%;
+transform:translateX(-50%);
+bottom:30px;
+padding:16px 24px;
+background:#00eaff;
+color:black;
+border:none;
+border-radius:30px;
+cursor:pointer;
+font-size:16px;
+z-index:5;
 }
 
 </style>
 
 </head>
 
-
 <body>
 
+<canvas id="bg"></canvas>
+
 <header>
-<h1>CONSIA JARVIS COMMAND CENTER</h1>
+<h1>CONSIA HOLOGRAPHIC COMMAND CENTER</h1>
 </header>
 
 <div class="container">
@@ -145,7 +199,6 @@ color:#00eaff;
 <button onclick="loadEconomy()">Economy</button>
 
 </div>
-
 
 <div class="main">
 
@@ -169,12 +222,13 @@ ECONOMY: <span id="economy" class="red">offline</span>
 
 </div>
 
-
 <div class="card">
 
 <h2>CONSIA GLOBAL BRAIN</h2>
 
-<textarea id="objective">crear negocio digital para Real Work</textarea>
+<textarea id="objective">
+crear negocio digital para Real Work
+</textarea>
 
 <br>
 
@@ -184,47 +238,23 @@ ECONOMY: <span id="economy" class="red">offline</span>
 
 </div>
 
-
-<div class="card">
-
-<h2>AGENT SWARM</h2>
-
-<div class="grid">
-
-<div class="agent">
-<h4>Research Agent</h4>
-<div id="agent_research">idle</div>
-</div>
-
-<div class="agent">
-<h4>Analysis Agent</h4>
-<div id="agent_analysis">idle</div>
-</div>
-
-<div class="agent">
-<h4>Strategy Agent</h4>
-<div id="agent_strategy">idle</div>
-</div>
-
-<div class="agent">
-<h4>Execution Agent</h4>
-<div id="agent_execution">idle</div>
 </div>
 
 </div>
 
+<div class="avatar">
+CONSIA
 </div>
 
-
-</div>
-
-</div>
-
+<button class="voice" onclick="startVoice()">
+🎤 Voice Command
+</button>
 
 <script>
 
 const API="https://api.consia.world"
 
+/* SYSTEM */
 
 async function loadSystem(){
 
@@ -247,6 +277,7 @@ document.getElementById("api").innerText="ONLINE"
 
 }
 
+/* AGENTS */
 
 async function loadAgents(){
 
@@ -266,6 +297,7 @@ document.getElementById("agents").innerText="ACTIVE"
 
 }
 
+/* ECONOMY */
 
 async function loadEconomy(){
 
@@ -285,6 +317,7 @@ document.getElementById("economy").innerText="ACTIVE"
 
 }
 
+/* BRAIN */
 
 async function loadBrain(){
 
@@ -296,17 +329,7 @@ JSON.stringify(j,null,2)
 
 }
 
-
-async function loadAutopilot(){
-
-const r=await fetch(API+"/v1/autopilot")
-const j=await r.json()
-
-document.getElementById("result").innerText=
-JSON.stringify(j,null,2)
-
-}
-
+/* RUN BRAIN */
 
 async function runBrain(){
 
@@ -331,13 +354,29 @@ const j=await r.json()
 document.getElementById("result").innerText=
 JSON.stringify(j,null,2)
 
-document.getElementById("agent_research").innerText="completed"
-document.getElementById("agent_analysis").innerText="completed"
-document.getElementById("agent_strategy").innerText="completed"
-document.getElementById("agent_execution").innerText="completed"
+}
+
+/* VOICE CONTROL */
+
+function startVoice(){
+
+const recognition =
+new(window.SpeechRecognition ||
+window.webkitSpeechRecognition)()
+
+recognition.lang="es-ES"
+
+recognition.onresult=function(event){
+
+const text=event.results[0][0].transcript
+
+document.getElementById("objective").value=text
 
 }
 
+recognition.start()
+
+}
 
 /* INIT */
 
@@ -351,8 +390,48 @@ await loadEconomy()
 
 init()
 
-</script>
+/* HOLOGRAPHIC BACKGROUND */
 
+const canvas=document.getElementById("bg")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+const particles=[]
+
+for(let i=0;i<120;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+vx:(Math.random()-0.5)*0.5,
+vy:(Math.random()-0.5)*0.5
+})
+}
+
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+particles.forEach(p=>{
+
+p.x+=p.vx
+p.y+=p.vy
+
+ctx.beginPath()
+ctx.arc(p.x,p.y,2,0,Math.PI*2)
+ctx.fillStyle="#00eaff"
+ctx.fill()
+
+})
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+</script>
 
 </body>
 </html>
