@@ -153,6 +153,11 @@ CONSIA GLOBAL COMMAND CENTER
 <button onclick="openPage('global-brain-map.html')">Abrir</button>
 </div>
 
+<div class="card">
+<h3>AGENT MARKETPLACE</h3>
+<button onclick="openPage('agent-marketplace.html')">Abrir</button>
+</div>
+
 </div>
 
 <div class="status" id="status">
@@ -178,12 +183,12 @@ try{
 const r=await fetch(API+"/health")
 const data=await r.json()
 
-document.getElementById("status").innerText=
+document.getElementById("status").innerText =
 JSON.stringify(data,null,2)
 
 }catch(e){
 
-document.getElementById("status").innerText=
+document.getElementById("status").innerText =
 `{
 "ok": true,
 "service": "CONSIA API",
