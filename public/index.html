@@ -1497,3 +1497,347 @@
   </script>
 </body>
 </html>
+<!-- PASO 7 — REALTIME VOICE + STREAMING + AVATAR PROVIDER -->
+<script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;">
+  <button id="btnVoiceStart">🎙️ VOZ LIVE</button>
+  <button id="btnVoiceStop">⏹️ STOP VOZ</button>
+  <button id="btnAvatarStart">🧠 AVATAR LIVE</button>
+  <button id="btnAvatarStop">⏹️ STOP AVATAR</button>
+  <button id="btnAvatarTest">🗣️ TEST AVATAR</button>
+</div>
+
+<div id="consiaVoiceStatus" style="margin:8px 0;">voice: idle</div>
+<div id="consiaAvatarStatus" style="margin:8px 0;">avatar: idle</div>
+
+<div id="consia-avatar" style="width:100%;max-width:720px;aspect-ratio:16/9;border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;background:#05070b;"></div>
+<div id="consia-avatar-audio"></div>
+
+<script>
+(() => {
+  const API_BASE = window.CONSIA_API_BASE || "https://api.consia.world";
+
+  const $voiceStatus = document.getElementById("consiaVoiceStatus");
+  const $avatarStatus = document.getElementById("consiaAvatarStatus");
+  const $avatarWrap = document.getElementById("consia-avatar");
+  const $avatarAudioWrap = document.getElementById("consia-avatar-audio");
+
+  const state = {
+    pc: null,
+    dc: null,
+    micStream: null,
+    remoteAudio: null,
+    callId: null,
+
+    avatarRoom: null,
+    avatarSessionId: null,
+    avatarSessionToken: null,
+    avatarLivekitUrl: null,
+    avatarLivekitClientToken: null,
+  };
+
+  function setVoiceStatus(text) {
+    $voiceStatus.textContent = `voice: ${text}`;
+  }
+
+  function setAvatarStatus(text) {
+    $avatarStatus.textContent = `avatar: ${text}`;
+  }
+
+  function ensureRemoteAudio() {
+    if (!state.remoteAudio) {
+      const audio = document.createElement("audio");
+      audio.autoplay = true;
+      audio.playsInline = true;
+      audio.style.display = "none";
+      document.body.appendChild(audio);
+      state.remoteAudio = audio;
+    }
+    return state.remoteAudio;
+  }
+
+  async function waitForIce(pc) {
+    if (pc.iceGatheringState === "complete") return;
+    await new Promise((resolve) => {
+      const onChange = () => {
+        if (pc.iceGatheringState === "complete") {
+          pc.removeEventListener("icegatheringstatechange", onChange);
+          resolve();
+        }
+      };
+      pc.addEventListener("icegatheringstatechange", onChange);
+    });
+  }
+
+  function closeVoice() {
+    try {
+      state.dc?.close();
+    } catch {}
+    try {
+      state.pc?.close();
+    } catch {}
+    try {
+      state.micStream?.getTracks()?.forEach((t) => t.stop());
+    } catch {}
+
+    state.dc = null;
+    state.pc = null;
+    state.micStream = null;
+    state.callId = null;
+    setVoiceStatus("idle");
+  }
+
+  function sendRealtimeEvent(event) {
+    if (state.dc && state.dc.readyState === "open") {
+      state.dc.send(JSON.stringify(event));
+    }
+  }
+
+  async function startVoice() {
+    closeVoice();
+    setVoiceStatus("connecting");
+
+    const pc = new RTCPeerConnection();
+    const dc = pc.createDataChannel("oai-events");
+
+    state.pc = pc;
+    state.dc = dc;
+
+    dc.addEventListener("open", () => {
+      setVoiceStatus("live");
+      sendRealtimeEvent({
+        type: "response.create",
+        response: {
+          output_modalities: ["audio"],
+          instructions: "Presentate como CONSIA en una frase breve, premium y ejecutiva.",
+        },
+      });
+    });
+
+    dc.addEventListener("message", (ev) => {
+      try {
+        const data = JSON.parse(ev.data);
+        console.log("CONSIA REALTIME EVENT:", data);
+      } catch {
+        console.log("CONSIA REALTIME RAW:", ev.data);
+      }
+    });
+
+    pc.addEventListener("connectionstatechange", () => {
+      setVoiceStatus(pc.connectionState || "connecting");
+    });
+
+    pc.addEventListener("track", (ev) => {
+      const audio = ensureRemoteAudio();
+      audio.srcObject = ev.streams[0];
+      audio.play().catch(() => {});
+    });
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+      },
+      video: false,
+    });
+
+    state.micStream = stream;
+    stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    await waitForIce(pc);
+
+    const resp = await fetch(`${API_BASE}/v1/realtime/call`, {
+      method: "POST",
+      headers: { "Content-Type": "application/sdp" },
+      body: pc.localDescription.sdp,
+    });
+
+    const answerSdp = await resp.text();
+    if (!resp.ok) {
+      throw new Error(answerSdp || "realtime_call_failed");
+    }
+
+    state.callId = resp.headers.get("X-OpenAI-Call-Id") || null;
+
+    await pc.setRemoteDescription({
+      type: "answer",
+      sdp: answerSdp,
+    });
+  }
+
+  async function stopVoice() {
+    closeVoice();
+  }
+
+  function closeAvatar() {
+    try {
+      state.avatarRoom?.disconnect();
+    } catch {}
+    state.avatarRoom = null;
+    state.avatarSessionId = null;
+    state.avatarSessionToken = null;
+    state.avatarLivekitUrl = null;
+    state.avatarLivekitClientToken = null;
+    $avatarWrap.innerHTML = "";
+    $avatarAudioWrap.innerHTML = "";
+    setAvatarStatus("idle");
+  }
+
+  async function startAvatar() {
+    closeAvatar();
+    setAvatarStatus("creating_session");
+
+    const sessionResp = await fetch(`${API_BASE}/v1/avatar/session`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mode: "FULL",
+        language: "es",
+      }),
+    });
+
+    const sessionData = await sessionResp.json();
+    if (!sessionResp.ok) {
+      throw new Error(sessionData?.message || JSON.stringify(sessionData));
+    }
+
+    state.avatarSessionId = sessionData.session_id;
+    state.avatarSessionToken = sessionData.session_token;
+
+    setAvatarStatus("starting_session");
+
+    const startResp = await fetch(`${API_BASE}/v1/avatar/start`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        session_token: state.avatarSessionToken,
+      }),
+    });
+
+    const startData = await startResp.json();
+    if (!startResp.ok) {
+      throw new Error(startData?.message || JSON.stringify(startData));
+    }
+
+    state.avatarSessionId = startData.session_id || state.avatarSessionId;
+    state.avatarLivekitUrl = startData.livekit_url;
+    state.avatarLivekitClientToken = startData.livekit_client_token;
+
+    const room = new LivekitClient.Room({
+      adaptiveStream: true,
+      dynacast: true,
+    });
+
+    state.avatarRoom = room;
+
+    room.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+      if (publication.kind === LivekitClient.Track.Kind.Video) {
+        const el = track.attach();
+        el.autoplay = true;
+        el.playsInline = true;
+        el.muted = true;
+        el.style.width = "100%";
+        el.style.height = "100%";
+        el.style.objectFit = "cover";
+        $avatarWrap.innerHTML = "";
+        $avatarWrap.appendChild(el);
+      }
+
+      if (publication.kind === LivekitClient.Track.Kind.Audio) {
+        const el = track.attach();
+        el.autoplay = true;
+        el.playsInline = true;
+        $avatarAudioWrap.innerHTML = "";
+        $avatarAudioWrap.appendChild(el);
+      }
+    });
+
+    room.on(LivekitClient.RoomEvent.DataReceived, (payload, participant, kind, topic) => {
+      try {
+        const data = JSON.parse(new TextDecoder().decode(payload));
+        console.log("LIVEAVATAR EVENT:", topic, data);
+      } catch (err) {
+        console.log("LIVEAVATAR RAW:", topic, payload);
+      }
+    });
+
+    await room.connect(state.avatarLivekitUrl, state.avatarLivekitClientToken, {
+      autoSubscribe: true,
+      audio: true,
+      video: true,
+    });
+
+    await room.startAudio();
+    setAvatarStatus("live");
+  }
+
+  async function stopAvatar() {
+    closeAvatar();
+  }
+
+  async function avatarSpeakText(text) {
+    if (!state.avatarRoom || !state.avatarSessionId) return;
+    const payload = new TextEncoder().encode(
+      JSON.stringify({
+        event_type: "avatar.speak_text",
+        session_id: state.avatarSessionId,
+        text,
+      })
+    );
+
+    await state.avatarRoom.localParticipant.publishData(payload, {
+      reliable: true,
+      topic: "agent-control",
+    });
+  }
+
+  document.getElementById("btnVoiceStart").addEventListener("click", async () => {
+    try {
+      await startVoice();
+    } catch (err) {
+      console.error(err);
+      setVoiceStatus(`error: ${err.message || err}`);
+    }
+  });
+
+  document.getElementById("btnVoiceStop").addEventListener("click", async () => {
+    await stopVoice();
+  });
+
+  document.getElementById("btnAvatarStart").addEventListener("click", async () => {
+    try {
+      await startAvatar();
+    } catch (err) {
+      console.error(err);
+      setAvatarStatus(`error: ${err.message || err}`);
+    }
+  });
+
+  document.getElementById("btnAvatarStop").addEventListener("click", async () => {
+    await stopAvatar();
+  });
+
+  document.getElementById("btnAvatarTest").addEventListener("click", async () => {
+    const text = prompt("Texto para probar el avatar:", "Hola, soy CONSIA. Sistema online.");
+    if (!text) return;
+    try {
+      await avatarSpeakText(text);
+    } catch (err) {
+      console.error(err);
+      setAvatarStatus(`error: ${err.message || err}`);
+    }
+  });
+
+  window.CONSIA = {
+    startVoice,
+    stopVoice,
+    startAvatar,
+    stopAvatar,
+    avatarSpeakText,
+  };
+})();
+</script>
