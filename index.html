@@ -1,116 +1,242 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<title>CONSIA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONSIA Command Center</title>
+
 <style>
+
 body{
-  background:#000;
-  color:#fff;
-  font-family:Arial,sans-serif;
-  text-align:center;
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+background:#05070c;
+color:white;
+font-family:Arial,Helvetica,sans-serif;
+margin:0;
+padding:0;
 }
-.wrap{width:100%; max-width:720px; padding:24px;}
-h1{margin-bottom:24px;}
+
+header{
+padding:20px;
+background:#0a0f1f;
+border-bottom:1px solid #1a2b4a;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+h1{
+margin:0;
+font-size:20px;
+letter-spacing:2px;
+}
+
+.container{
+padding:30px;
+max-width:1200px;
+margin:auto;
+}
+
+.card{
+background:#0c1429;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+border:1px solid #1b2b50;
+}
+
 button{
-  padding:20px 28px;
-  font-size:20px;
-  border-radius:12px;
-  border:none;
-  background:#00c3ff;
-  color:#fff;
-  cursor:pointer;
+background:#2a63ff;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer;
 }
-#console{
-  margin-top:28px;
-  font-size:16px;
-  line-height:1.6;
-  opacity:.9;
-  min-height:120px;
+
+button:hover{
+background:#1b4fd1;
 }
-.ok{color:#5CFF95;}
-.err{color:#FF6B6B;}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:10px;
+background:#0b1326;
+border:1px solid #20305c;
+color:white;
+border-radius:6px;
+}
+
+#response{
+white-space:pre-wrap;
+font-family:monospace;
+}
+
+.status{
+font-size:14px;
+margin-top:10px;
+color:#8aa4ff;
+}
+
 </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <h1>CONSIA</h1>
-    <button id="btn" onclick="owner()">Entrar con Face ID</button>
-    <div id="console"></div>
-  </div>
+
+<header>
+
+<h1>CONSIA COMMAND CENTER</h1>
+
+<div id="systemStatus">Checking system...</div>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>System Status</h2>
+
+<button onclick="loadStatus()">Refresh</button>
+
+<pre id="status"></pre>
+
+</div>
+
+
+<div class="card">
+
+<h2>CONSIA AI Chat</h2>
+
+<textarea id="prompt" rows="4" placeholder="Ask CONSIA..."></textarea>
+
+<button onclick="sendChat()">Send</button>
+
+<pre id="response"></pre>
+
+</div>
+
+
+<div class="card">
+
+<h2>Agent Swarm</h2>
+
+<input id="agentTask" placeholder="Task for agents">
+
+<button onclick="runAgents()">Run Agents</button>
+
+<pre id="agentOutput"></pre>
+
+</div>
+
+
+<div class="card">
+
+<h2>Autopilot</h2>
+
+<input id="objective" placeholder="Business objective">
+
+<button onclick="startAutopilot()">Start Autopilot</button>
+
+<pre id="autopilotOutput"></pre>
+
+</div>
+
+</div>
 
 <script>
-function log(msg, cls=""){
-  const el = document.getElementById("console");
-  el.innerHTML += `<div class="${cls}">${msg}</div>`;
+
+const API="https://api.consia.world"
+
+async function loadStatus(){
+
+const r=await fetch(API+"/v1/status")
+
+const data=await r.json()
+
+document.getElementById("status").textContent=
+JSON.stringify(data,null,2)
+
+document.getElementById("systemStatus").textContent=
+data.system+" ONLINE"
+
 }
 
-async function owner(){
-  const btn = document.getElementById("btn");
-  const consoleEl = document.getElementById("console");
-  consoleEl.innerHTML = "";
-  btn.disabled = true;
-  btn.textContent = "Iniciando...";
+async function sendChat(){
 
-  try{
-    log("Iniciando OWNER MODE...");
-    const r = await fetch("https://api.consia.world/owner/one-tap", {
-      method: "GET",
-      headers: { "accept": "application/json" }
-    });
+const prompt=document.getElementById("prompt").value
 
-    if(!r.ok){
-      throw new Error("OWNER_ONE_TAP_ERROR_" + r.status);
-    }
+const r=await fetch(API+"/v1/ai/chat",{
 
-    const j = await r.json();
-    log("OWNER ACTIVE", "ok");
-    log("KEY ROTATION", "ok");
-    log("SESSION CLEAN", "ok");
-    log("CONSIA CORE BOOTING...", "ok");
+method:"POST",
 
-    await boot();
-  }catch(e){
-    log("Error conectando OWNER MODE", "err");
-    log(String(e.message || e), "err");
-    btn.disabled = false;
-    btn.textContent = "Entrar con Face ID";
-  }
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({prompt})
+
+})
+
+const data=await r.json()
+
+document.getElementById("response").textContent=
+JSON.stringify(data,null,2)
+
 }
 
-async function boot(){
-  try{
-    const r = await fetch("https://api.consia.world/status", {
-      method: "GET",
-      headers: { "accept": "application/json" }
-    });
+async function runAgents(){
 
-    if(!r.ok){
-      throw new Error("STATUS_ERROR_" + r.status);
-    }
+const task=document.getElementById("agentTask").value
 
-    const j = await r.json();
+const r=await fetch(API+"/v1/agents/run",{
 
-    log("CONSIA CORE ACTIVE", "ok");
-    log("OWNER MODE READY", "ok");
+method:"POST",
 
-    setTimeout(() => {
-      window.location.href = "https://consia.world/dashboard.html";
-    }, 1200);
+headers:{
+"Content-Type":"application/json"
+},
 
-  }catch(e){
-    log("Error iniciando CORE", "err");
-    log(String(e.message || e), "err");
-    const btn = document.getElementById("btn");
-    btn.disabled = false;
-    btn.textContent = "Entrar con Face ID";
-  }
+body:JSON.stringify({task})
+
+})
+
+const data=await r.json()
+
+document.getElementById("agentOutput").textContent=
+JSON.stringify(data,null,2)
+
 }
+
+async function startAutopilot(){
+
+const objective=document.getElementById("objective").value
+
+const r=await fetch(API+"/v1/autopilot/start",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({objective})
+
+})
+
+const data=await r.json()
+
+document.getElementById("autopilotOutput").textContent=
+JSON.stringify(data,null,2)
+
+}
+
+loadStatus()
+
 </script>
+
 </body>
 </html>
