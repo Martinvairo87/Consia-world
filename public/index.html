@@ -1,80 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CONSIA CONTROL CENTER</title>
-
-<style>
-body {
-  margin:0;
-  background:black;
-  color:#00f0ff;
-  font-family:Arial;
-}
-
-.container {
-  padding:20px;
-}
-
-button {
-  background:#00f0ff;
-  color:black;
-  padding:15px;
-  border:none;
-  margin:5px;
-  width:100%;
-  font-size:16px;
-}
-
-.output {
-  margin-top:20px;
-  background:#111;
-  padding:15px;
-  height:200px;
-  overflow:auto;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA CONTROL</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #000;
+      color: #00e5ff;
+      font-family: Arial, sans-serif;
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: 32px;
+    }
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+    button {
+      width: 100%;
+      padding: 16px;
+      border: 0;
+      cursor: pointer;
+      font-size: 16px;
+      background: #00e5ff;
+      color: #000;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    textarea, input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #222;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+    }
+    pre {
+      background: #111;
+      color: #fff;
+      padding: 16px;
+      border-radius: 10px;
+      overflow: auto;
+      min-height: 220px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 700px) {
+      .row { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <h1>CONSIA CONTROL</h1>
 
-<div class="container">
-  <h1>CONSIA</h1>
+    <div class="grid">
+      <input id="api" value="https://api.consia.world" />
 
-  <button onclick="status()">STATUS</button>
-  <button onclick="activate()">ACTIVAR</button>
-  <button onclick="realtime()">REALTIME</button>
+      <div class="row">
+        <button onclick="getStatus()">STATUS</button>
+        <button onclick="getMemory()">MEMORY</button>
+      </div>
 
-  <div class="output" id="out"></div>
-</div>
+      <textarea id="message" rows="4" placeholder='Escribí algo. Ej: mi nombre es martin'></textarea>
 
-<script>
-const API = "https://api.consia.world";
+      <div class="row">
+        <button onclick="sendChat()">ENVIAR CHAT</button>
+        <button onclick="getRealtime()">REALTIME</button>
+      </div>
 
-async function status(){
-  const r = await fetch(API + "/v1/status");
-  show(await r.text());
-}
+      <pre id="output">CONSIA listo.</pre>
+    </div>
+  </div>
 
-async function activate(){
-  const r = await fetch(API + "/v1/chat", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:"activar consia"})
-  });
-  show(await r.text());
-}
+  <script>
+    function apiBase() {
+      return document.getElementById("api").value.trim();
+    }
 
-async function realtime(){
-  const r = await fetch(API + "/v1/realtime/session");
-  show(await r.text());
-}
+    function show(data) {
+      document.getElementById("output").textContent =
+        typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
 
-function show(t){
-  document.getElementById("out").innerText = t;
-}
-</script>
+    async function getStatus() {
+      const res = await fetch(apiBase() + "/v1/status");
+      show(await res.json());
+    }
 
+    async function getMemory() {
+      const res = await fetch(apiBase() + "/v1/memory");
+      show(await res.json());
+    }
+
+    async function getRealtime() {
+      const res = await fetch(apiBase() + "/v1/realtime/session");
+      show(await res.json());
+    }
+
+    async function sendChat() {
+      const message = document.getElementById("message").value.trim();
+
+      const res = await fetch(apiBase() + "/v1/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      show(await res.json());
+    }
+  </script>
 </body>
 </html>
