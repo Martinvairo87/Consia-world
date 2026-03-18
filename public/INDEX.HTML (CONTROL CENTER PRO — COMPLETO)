@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CONSIA CONTROL CENTER</title>
+
+<style>
+body {
+  margin:0;
+  background:black;
+  color:#00f0ff;
+  font-family:Arial;
+}
+
+.container {
+  padding:20px;
+}
+
+button {
+  background:#00f0ff;
+  color:black;
+  padding:15px;
+  border:none;
+  margin:5px;
+  width:100%;
+  font-size:16px;
+}
+
+.output {
+  margin-top:20px;
+  background:#111;
+  padding:15px;
+  height:200px;
+  overflow:auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>CONSIA</h1>
+
+  <button onclick="status()">STATUS</button>
+  <button onclick="activate()">ACTIVAR</button>
+  <button onclick="realtime()">REALTIME</button>
+
+  <div class="output" id="out"></div>
+</div>
+
+<script>
+const API = "https://api.consia.world";
+
+async function status(){
+  const r = await fetch(API + "/v1/status");
+  show(await r.text());
+}
+
+async function activate(){
+  const r = await fetch(API + "/v1/chat", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:"activar consia"})
+  });
+  show(await r.text());
+}
+
+async function realtime(){
+  const r = await fetch(API + "/v1/realtime/session");
+  show(await r.text());
+}
+
+function show(t){
+  document.getElementById("out").innerText = t;
+}
+</script>
+
+</body>
+</html>
