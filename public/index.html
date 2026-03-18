@@ -1,178 +1,125 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONSIA OS</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #05070d;
-      color: #00e5ff;
-      font-family: Arial, sans-serif;
-    }
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-    h1 {
-      margin: 0 0 20px;
-      font-size: 34px;
-    }
-    .panel {
-      display: grid;
-      gap: 14px;
-    }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .row4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #1d2633;
-      background: #111722;
-      color: #fff;
-      font-size: 15px;
-    }
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      border: 0;
-      border-radius: 12px;
-      background: #00e5ff;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    pre {
-      background: #111722;
-      color: #fff;
-      padding: 16px;
-      border-radius: 12px;
-      min-height: 260px;
-      overflow: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    @media (max-width: 900px) {
-      .row, .row4 { grid-template-columns: 1fr; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA COMMAND CENTER</title>
+
+<style>
+body {
+  margin:0;
+  background:#03060d;
+  color:#00e5ff;
+  font-family:Arial;
+}
+
+.wrap {
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+h1 {
+  font-size:32px;
+}
+
+.grid {
+  display:grid;
+  gap:12px;
+}
+
+.row {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+}
+
+input, textarea {
+  width:100%;
+  padding:12px;
+  background:#111;
+  color:#fff;
+  border:1px solid #222;
+  border-radius:10px;
+}
+
+button {
+  padding:12px;
+  background:#00e5ff;
+  border:0;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+pre {
+  background:#111;
+  padding:14px;
+  border-radius:10px;
+  min-height:250px;
+}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <h1>CONSIA OS</h1>
 
-    <div class="panel">
-      <div class="row">
-        <input id="api" value="https://api.consia.world" />
-        <input id="userId" value="owner" />
-      </div>
+<div class="wrap">
+<h1>CONSIA COMMAND CENTER</h1>
 
-      <textarea id="message" placeholder="Escribí a CONSIA..."></textarea>
+<div class="grid">
 
-      <div class="row4">
-        <button onclick="sendChat()">Enviar chat</button>
-        <button onclick="loadStatus()">Status</button>
-        <button onclick="loadMemory()">Memory</button>
-        <button onclick="loadRealtime()">Realtime</button>
-      </div>
+<input id="api" value="https://api.consia.world">
 
-      <textarea id="objective" placeholder="Objetivo para Autopilot..."></textarea>
+<textarea id="objective" placeholder="Objetivo..."></textarea>
 
-      <div class="row4">
-        <button onclick="runAutopilot()">Autopilot</button>
-        <button onclick="exampleName()">Test nombre</button>
-        <button onclick="exampleBusiness()">Test negocio</button>
-        <button onclick="clearOutput()">Limpiar</button>
-      </div>
+<div class="row">
+<button onclick="runSwarm()">SWARM RUN</button>
+<button onclick="loadExecutions()">EXECUTIONS</button>
+<button onclick="loadDashboard()">DASHBOARD</button>
+</div>
 
-      <pre id="output">CONSIA listo.</pre>
-    </div>
-  </div>
+<pre id="output">CONSIA READY</pre>
 
-  <script>
-    function API() {
-      return document.getElementById("api").value.trim();
-    }
+</div>
+</div>
 
-    function USER() {
-      return document.getElementById("userId").value.trim() || "owner";
-    }
+<script>
 
-    function show(data) {
-      document.getElementById("output").textContent =
-        typeof data === "string" ? data : JSON.stringify(data, null, 2);
-    }
+function API() {
+  return document.getElementById("api").value;
+}
 
-    async function sendChat() {
-      const message = document.getElementById("message").value.trim();
-      if (!message) return;
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, userId: USER() })
-      });
-      show(await res.json());
-    }
+function show(data) {
+  document.getElementById("output").textContent =
+    JSON.stringify(data,null,2);
+}
 
-    async function loadStatus() {
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/status`);
-      show(await res.json());
-    }
+// SWARM
+async function runSwarm() {
+  const objective = document.getElementById("objective").value;
 
-    async function loadMemory() {
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/memory?userId=${encodeURIComponent(USER())}`);
-      show(await res.json());
-    }
+  const res = await fetch(API()+"/v1/swarm/run", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ objective })
+  });
 
-    async function loadRealtime() {
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/realtime/session`);
-      show(await res.json());
-    }
+  show(await res.json());
+}
 
-    async function runAutopilot() {
-      const objective = document.getElementById("objective").value.trim();
-      if (!objective) return;
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/autopilot/run`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objective, userId: USER() })
-      });
-      show(await res.json());
-    }
+// EXECUTIONS
+async function loadExecutions() {
+  const res = await fetch(API()+"/v1/executions");
+  show(await res.json());
+}
 
-    function exampleName() {
-      document.getElementById("message").value = "mi nombre es martin";
-    }
+// DASHBOARD
+async function loadDashboard() {
+  const res = await fetch(API()+"/v1/dashboard/summary");
+  show(await res.json());
+}
 
-    function exampleBusiness() {
-      document.getElementById("objective").value = "crear estrategia comercial para Real Work";
-    }
+</script>
 
-    function clearOutput() {
-      show("CONSIA listo.");
-    }
-  </script>
 </body>
 </html>
