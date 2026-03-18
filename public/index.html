@@ -1,161 +1,171 @@
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    const method = request.method.toUpperCase();
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CONSIA JARVIS</title>
 
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization"
-    };
-
-    if (method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders });
-    }
-
-    const json = (data, status = 200) =>
-      new Response(JSON.stringify(data, null, 2), {
-        status,
-        headers: {
-          "Content-Type": "application/json",
-          ...corsHeaders
-        }
-      });
-
-    try {
-      const didAuth = "Basic " + btoa(env.DID_API_KEY || "");
-
-      if (url.pathname === "/" || url.pathname === "/health") {
-        return json({
-          ok: true,
-          system: "CONSIA",
-          status: "ONLINE",
-          version: "AVATAR-LIVE-FINAL",
-          did: !!env.DID_API_KEY,
-          eleven: !!env.ELEVEN_API_KEY
-        });
-      }
-
-      if (url.pathname === "/v1/avatar/create" && method === "POST") {
-        const body = await request.json().catch(() => ({}));
-        const text = String(body.text || "Hola, soy CONSIA").trim();
-        const avatar =
-          String(body.avatar || "").trim() ||
-          "https://create-images-results.d-id.com/DefaultPresenters/Noelle_female.png";
-
-        const didRes = await fetch("https://api.d-id.com/talks", {
-          method: "POST",
-          headers: {
-            Authorization: didAuth,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            source_url: avatar,
-            script: {
-              type: "text",
-              input: text
-            },
-            config: {
-              stitch: true
-            }
-          })
-        });
-
-        const didData = await didRes.json().catch(() => ({}));
-
-        return json({
-          ok: didRes.ok,
-          endpoint: "/v1/avatar/create",
-          did_status: didRes.status,
-          did_response: didData
-        }, didRes.ok ? 200 : 500);
-      }
-
-      if (url.pathname === "/v1/avatar/status" && method === "GET") {
-        const id = url.searchParams.get("id");
-        if (!id) {
-          return json({ ok: false, error: "missing_id" }, 400);
-        }
-
-        const didRes = await fetch(`https://api.d-id.com/talks/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: didAuth,
-            "Content-Type": "application/json"
-          }
-        });
-
-        const didData = await didRes.json().catch(() => ({}));
-
-        return json({
-          ok: didRes.ok,
-          endpoint: "/v1/avatar/status",
-          did_status: didRes.status,
-          did_response: didData
-        }, didRes.ok ? 200 : 500);
-      }
-
-      if (url.pathname === "/v1/voice" && method === "POST") {
-        const body = await request.json().catch(() => ({}));
-        const text = String(body.text || "Hola Martín, CONSIA está activo").trim();
-
-        const elevenRes = await fetch(
-          "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
-          {
-            method: "POST",
-            headers: {
-              "xi-api-key": env.ELEVEN_API_KEY || "",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              text,
-              model_id: "eleven_multilingual_v2"
-            })
-          }
-        );
-
-        if (!elevenRes.ok) {
-          const errText = await elevenRes.text();
-          return json({
-            ok: false,
-            endpoint: "/v1/voice",
-            eleven_status: elevenRes.status,
-            error: errText
-          }, 500);
-        }
-
-        return new Response(elevenRes.body, {
-          status: 200,
-          headers: {
-            "Content-Type": "audio/mpeg",
-            ...corsHeaders
-          }
-        });
-      }
-
-      return json({
-        ok: false,
-        error: "route_not_found",
-        path: url.pathname,
-        method
-      }, 404);
-
-    } catch (error) {
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          error: String(error?.message || error)
-        }, null, 2),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization"
-          }
-        }
-      );
-    }
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
-};
+
+  body {
+    background: radial-gradient(circle at center, #0a0f1f, #000);
+    color: #00eaff;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  #app {
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+  }
+
+  button {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    background: #00eaff;
+    color: #000;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #00bcd4;
+  }
+
+  #status {
+    margin-top: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+
+  video {
+    margin-top: 20px;
+    width: 100%;
+    border-radius: 12px;
+    display: none;
+  }
+
+  #loader {
+    margin-top: 20px;
+    display: none;
+  }
+
+  .pulse {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #00eaff;
+    animation: pulse 1.5s infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.8); opacity: 0.6; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0.6; }
+  }
+</style>
+</head>
+
+<body>
+
+<div id="app">
+  <h1>CONSIA ACTIVATION</h1>
+
+  <button onclick="startConsia()">Activar CONSIA</button>
+
+  <div id="status">Sistema listo</div>
+
+  <div id="loader">
+    <div class="pulse"></div>
+  </div>
+
+  <video id="video" controls autoplay playsinline></video>
+</div>
+
+<script>
+const API = "https://api.consia.world";
+
+async function startConsia() {
+  document.getElementById("status").innerText = "Creando avatar...";
+  document.getElementById("loader").style.display = "block";
+
+  try {
+    // 1. Crear avatar
+    const create = await fetch(`${API}/v1/avatar/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text: "Hola Martín. CONSIA activado. Sistema operativo listo.",
+        avatar: "https://create-images-results.d-id.com/DefaultPresenters/Noelle_female.png"
+      })
+    });
+
+    const data = await create.json();
+
+    if (!data.id) {
+      throw new Error("No se generó ID");
+    }
+
+    const id = data.id;
+
+    document.getElementById("status").innerText = "Procesando video...";
+
+    // 2. Polling
+    let videoUrl = null;
+
+    for (let i = 0; i < 30; i++) {
+      await new Promise(r => setTimeout(r, 2000));
+
+      const status = await fetch(`${API}/v1/avatar/status?id=${id}`);
+      const statusData = await status.json();
+
+      if (statusData.full && statusData.full.result_url) {
+        videoUrl = statusData.full.result_url;
+        break;
+      }
+    }
+
+    if (!videoUrl) {
+      throw new Error("Timeout video");
+    }
+
+    // 3. Mostrar video
+    const video = document.getElementById("video");
+    video.src = videoUrl;
+    video.style.display = "block";
+
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("status").innerText = "CONSIA ONLINE";
+
+    video.play();
+
+  } catch (err) {
+    document.getElementById("status").innerText = "Error: " + err.message;
+    document.getElementById("loader").style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
