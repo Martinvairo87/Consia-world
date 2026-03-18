@@ -1,424 +1,100 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CONSIA JARVIS</title>
-  <style>
-    * { box-sizing: border-box; }
-    :root{
-      --bg:#03060d;
-      --panel:#0b1220;
-      --panel2:#111722;
-      --line:#16304a;
-      --cyan:#00e5ff;
-      --cyan2:#6ef3ff;
-      --text:#dffcff;
-      --muted:#87b7c0;
-      --ok:#31ff9a;
-      --warn:#ffd166;
-    }
-    body{
-      margin:0;
-      background:radial-gradient(circle at top, #0a1730 0%, #03060d 40%, #02040a 100%);
-      color:var(--text);
-      font-family:Arial, sans-serif;
-    }
-    .wrap{
-      max-width:1400px;
-      margin:auto;
-      padding:18px;
-    }
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-      margin-bottom:18px;
-      padding:14px 18px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:rgba(11,18,32,.75);
-      backdrop-filter: blur(8px);
-      box-shadow:0 0 30px rgba(0,229,255,.08);
-    }
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .brand h1{
-      margin:0;
-      font-size:32px;
-      letter-spacing:.08em;
-      color:var(--cyan);
-    }
-    .brand span{
-      font-size:13px;
-      color:var(--muted);
-    }
-    .live{
-      padding:8px 12px;
-      border:1px solid #184e61;
-      border-radius:999px;
-      color:var(--ok);
-      font-size:13px;
-      background:rgba(0,229,255,.06);
-    }
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:18px;
-    }
-    .left,.right{
-      display:grid;
-      gap:18px;
-    }
-    .card{
-      background:linear-gradient(180deg, rgba(17,23,34,.96), rgba(9,14,24,.96));
-      border:1px solid var(--line);
-      border-radius:20px;
-      padding:18px;
-      box-shadow:0 0 28px rgba(0,229,255,.06);
-    }
-    .card h2{
-      margin:0 0 14px;
-      font-size:18px;
-      color:var(--cyan2);
-    }
-    .stats{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap:12px;
-    }
-    .stat{
-      background:#0b1220;
-      border:1px solid #15324d;
-      border-radius:16px;
-      padding:14px;
-    }
-    .stat .k{
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:6px;
-    }
-    .stat .v{
-      font-size:24px;
-      font-weight:bold;
-      color:var(--cyan);
-    }
-    input, textarea{
-      width:100%;
-      background:var(--panel2);
-      color:#fff;
-      border:1px solid #1e3750;
-      border-radius:14px;
-      padding:14px;
-      font-size:15px;
-      outline:none;
-    }
-    textarea{
-      min-height:110px;
-      resize:vertical;
-    }
-    .row2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-    .row3{
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:12px;
-    }
-    .row4{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:12px;
-    }
-    button{
-      width:100%;
-      border:0;
-      border-radius:14px;
-      padding:14px;
-      font-size:14px;
-      font-weight:bold;
-      cursor:pointer;
-      background:linear-gradient(180deg, var(--cyan), #48d9ea);
-      color:#00141a;
-      box-shadow:0 8px 24px rgba(0,229,255,.18);
-    }
-    button.secondary{
-      background:#0f1a2b;
-      color:var(--cyan2);
-      border:1px solid #19405a;
-      box-shadow:none;
-    }
-    pre{
-      margin:0;
-      min-height:280px;
-      background:#09111d;
-      border:1px solid #15324d;
-      color:#fff;
-      padding:16px;
-      border-radius:16px;
-      white-space:pre-wrap;
-      word-break:break-word;
-      overflow:auto;
-      font-size:13px;
-      line-height:1.45;
-    }
-    .mini{
-      min-height:160px;
-    }
-    .footer-note{
-      margin-top:18px;
-      color:var(--muted);
-      font-size:12px;
-      text-align:center;
-    }
-    @media (max-width: 1100px){
-      .grid{ grid-template-columns:1fr; }
-      .stats{ grid-template-columns:1fr 1fr; }
-    }
-    @media (max-width: 700px){
-      .row2,.row3,.row4{ grid-template-columns:1fr; }
-      .stats{ grid-template-columns:1fr; }
-    }
-  </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CONSIA</title>
+<style>
+body{background:#02050d;color:#00e5ff;font-family:Arial;margin:0;text-align:center}
+button,input,textarea{margin:6px;padding:12px;border-radius:10px;border:0;width:90%}
+button{background:#00e5ff;color:#000;font-weight:bold}
+#avatar{margin:20px auto;display:block}
+pre{background:#111;padding:10px}
+</style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <h1>CONSIA</h1>
-        <span>Jarvis Command Center · Owner Mode</span>
-      </div>
-      <div class="live" id="liveStatus">SYSTEM ONLINE</div>
-    </div>
 
-    <div class="grid">
-      <div class="left">
-        <div class="card">
-          <h2>System Overview</h2>
-          <div class="stats">
-            <div class="stat"><div class="k">Status</div><div class="v" id="statStatus">-</div></div>
-            <div class="stat"><div class="k">Version</div><div class="v" id="statVersion">-</div></div>
-            <div class="stat"><div class="k">Executions</div><div class="v" id="statExecutions">-</div></div>
-            <div class="stat"><div class="k">Autopilots</div><div class="v" id="statAutopilots">-</div></div>
-          </div>
-        </div>
+<h1>CONSIA JARVIS</h1>
 
-        <div class="card">
-          <h2>CONSIA Chat</h2>
-          <div class="row2">
-            <input id="api" value="https://api.consia.world" />
-            <input id="userId" value="owner" />
-          </div>
-          <div style="height:12px"></div>
-          <textarea id="message" placeholder="Escribí a CONSIA..."></textarea>
-          <div style="height:12px"></div>
-          <div class="row4">
-            <button onclick="sendChat()">Enviar chat</button>
-            <button class="secondary" onclick="loadStatus()">Status</button>
-            <button class="secondary" onclick="loadMemory()">Memory</button>
-            <button class="secondary" onclick="loadRealtime()">Realtime</button>
-          </div>
-        </div>
+<canvas id="avatar" width="200" height="200"></canvas>
 
-        <div class="card">
-          <h2>Swarm + Autopilot</h2>
-          <textarea id="objective" placeholder="Objetivo de swarm o autopilot..."></textarea>
-          <div style="height:12px"></div>
-          <div class="row4">
-            <button onclick="runSwarm()">Swarm Run</button>
-            <button onclick="runAutopilot()">Autopilot Run</button>
-            <button onclick="executeAutopilot()">Autopilot Execute</button>
-            <button class="secondary" onclick="loadExecutions()">Executions</button>
-          </div>
-        </div>
+<input id="api" value="https://api.consia.world">
+<textarea id="msg" placeholder="Hablar con CONSIA"></textarea>
 
-        <div class="card">
-          <h2>Console Output</h2>
-          <pre id="output">CONSIA READY</pre>
-        </div>
-      </div>
+<button onclick="chat()">CHAT</button>
+<button onclick="voice()">🎤 VOZ</button>
 
-      <div class="right">
-        <div class="card">
-          <h2>Dashboard Summary</h2>
-          <div class="row3">
-            <button class="secondary" onclick="loadDashboard()">Dashboard</button>
-            <button class="secondary" onclick="refreshAll()">Refresh All</button>
-            <button class="secondary" onclick="clearOutput()">Clear</button>
-          </div>
-          <div style="height:12px"></div>
-          <pre id="dashboard" class="mini">No data yet.</pre>
-        </div>
+<textarea id="obj" placeholder="Objetivo"></textarea>
 
-        <div class="card">
-          <h2>Quick Tests</h2>
-          <div class="row2">
-            <button class="secondary" onclick="exampleName()">Test nombre</button>
-            <button class="secondary" onclick="exampleRealWork()">Test Real Work</button>
-          </div>
-          <div style="height:12px"></div>
-          <div class="row2">
-            <button class="secondary" onclick="exampleManglar()">Test Manglar</button>
-            <button class="secondary" onclick="loadExecutions()">Ver ejecuciones</button>
-          </div>
-        </div>
+<button onclick="swarm()">SWARM</button>
+<button onclick="auto()">AUTO</button>
 
-        <div class="card">
-          <h2>Execution Feed</h2>
-          <pre id="feed" class="mini">Waiting...</pre>
-        </div>
-      </div>
-    </div>
+<pre id="out">READY</pre>
 
-    <div class="footer-note">
-      CONSIA · Jarvis Layer · 97% operativo
-    </div>
-  </div>
+<script>
 
-  <script>
-    function API() {
-      return document.getElementById("api").value.trim();
-    }
+// AVATAR
+const ctx = document.getElementById("avatar").getContext("2d");
+setInterval(()=>{
+ctx.clearRect(0,0,200,200);
+ctx.beginPath();
+ctx.arc(100,100,60,0,Math.PI*2);
+ctx.fillStyle="#00e5ff";
+ctx.fill();
+},500);
 
-    function USER() {
-      return document.getElementById("userId").value.trim() || "owner";
-    }
+// CHAT
+async function chat(){
+const res=await fetch(API()+"/v1/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:val("msg")})});
+const data=await res.json();
+out(data);
+speak(data.response);
+}
 
-    function show(data) {
-      document.getElementById("output").textContent =
-        typeof data === "string" ? data : JSON.stringify(data, null, 2);
-    }
+// VOZ
+function voice(){
+const r=new(window.SpeechRecognition||webkitSpeechRecognition)();
+r.lang="es-AR";
+r.onresult=e=>{
+valSet("msg",e.results[0][0].transcript);
+chat();
+};
+r.start();
+}
 
-    function showDashboard(data) {
-      document.getElementById("dashboard").textContent =
-        typeof data === "string" ? data : JSON.stringify(data, null, 2);
-    }
+// SWARM
+async function swarm(){
+const res=await fetch(API()+"/v1/swarm/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({objective:val("obj")})});
+out(await res.json());
+}
 
-    function showFeed(data) {
-      document.getElementById("feed").textContent =
-        typeof data === "string" ? data : JSON.stringify(data, null, 2);
-    }
+// AUTO
+async function auto(){
+const res=await fetch(API()+"/v1/autopilot/chain",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({objective:val("obj")})});
+out(await res.json());
+}
 
-    async function sendChat() {
-      const message = document.getElementById("message").value.trim();
-      if (!message) return;
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, userId: USER() })
-      });
-      show(await res.json());
-    }
+// SPEAK
+function speak(t){
+const u=new SpeechSynthesisUtterance(t);
+u.lang="es-AR";
+speechSynthesis.speak(u);
+}
 
-    async function loadStatus() {
-      const res = await fetch(`${API()}/v1/status`);
-      const data = await res.json();
-      show(data);
-      document.getElementById("statStatus").textContent = data.status || "-";
-      document.getElementById("statVersion").textContent = data.version || "-";
-      document.getElementById("liveStatus").textContent = data.status === "ONLINE" ? "SYSTEM ONLINE" : "SYSTEM OFFLINE";
-    }
+// UTILS
+function API(){return val("api")}
+function val(id){return document.getElementById(id).value}
+function valSet(id,v){document.getElementById(id).value=v}
+function out(d){document.getElementById("out").textContent=JSON.stringify(d,null,2)}
 
-    async function loadMemory() {
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/memory?userId=${encodeURIComponent(USER())}`);
-      show(await res.json());
-    }
+// REALTIME LOOP
+setInterval(async()=>{
+try{
+const r=await fetch(API()+"/v1/dashboard/summary");
+out(await r.json());
+}catch{}
+},4000);
 
-    async function loadRealtime() {
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/realtime/session`);
-      show(await res.json());
-    }
-
-    async function runSwarm() {
-      const objective = document.getElementById("objective").value.trim();
-      if (!objective) return;
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/swarm/run`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objective })
-      });
-      const data = await res.json();
-      show(data);
-      await loadExecutions();
-      await loadDashboard();
-    }
-
-    async function runAutopilot() {
-      const objective = document.getElementById("objective").value.trim();
-      if (!objective) return;
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/autopilot/run`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objective })
-      });
-      const data = await res.json();
-      show(data);
-      await loadDashboard();
-    }
-
-    async function executeAutopilot() {
-      const objective = document.getElementById("objective").value.trim();
-      if (!objective) return;
-      show("Cargando...");
-      const res = await fetch(`${API()}/v1/autopilot/execute`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objective })
-      });
-      const data = await res.json();
-      show(data);
-      await loadExecutions();
-      await loadDashboard();
-    }
-
-    async function loadExecutions() {
-      const res = await fetch(`${API()}/v1/executions`);
-      const data = await res.json();
-      showFeed(data);
-      document.getElementById("statExecutions").textContent = String(data.total ?? "-");
-    }
-
-    async function loadDashboard() {
-      const res = await fetch(`${API()}/v1/dashboard/summary`);
-      const data = await res.json();
-      showDashboard(data);
-      document.getElementById("statAutopilots").textContent = String(data.autopilots ?? "-");
-    }
-
-    async function refreshAll() {
-      await loadStatus();
-      await loadDashboard();
-      await loadExecutions();
-    }
-
-    function clearOutput() {
-      show("CONSIA READY");
-    }
-
-    function exampleName() {
-      document.getElementById("message").value = "mi nombre es martin";
-    }
-
-    function exampleRealWork() {
-      document.getElementById("objective").value = "crear estrategia inmobiliaria para Real Work";
-    }
-
-    function exampleManglar() {
-      document.getElementById("objective").value = "crear estrategia comercial y de marketing para Manglar Construcciones";
-    }
-
-    refreshAll();
-  </script>
+</script>
 </body>
 </html>
