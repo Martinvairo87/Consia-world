@@ -2,68 +2,49 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>CONSIA AVATAR REAL PROPIO</title>
+<title>CONSIA MARTIN REAL</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { margin:0; background:black; font-family:sans-serif; color:white; }
-#stage { position:relative; width:100%; height:70vh; overflow:hidden; }
-video, canvas {
-  position:absolute; top:0; left:0;
-  width:100%; height:100%;
+body { margin:0; background:black; }
+
+#avatar {
+  width:100%;
+  height:70vh;
   object-fit:cover;
 }
+
 .controls {
-  position:fixed; bottom:20px; width:100%; text-align:center;
+  position:fixed;
+  bottom:20px;
+  width:100%;
+  text-align:center;
 }
-input,button { padding:15px; font-size:18px; }
+
+input,button {
+  padding:15px;
+  font-size:18px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="stage">
-  <!-- Video base humano -->
-  <video id="video" autoplay loop muted playsinline>
-    <source src="https://cdn.pixabay.com/vimeo/458834826/business-47817.mp4?width=1280&hash=1c6b4c7" type="video/mp4">
-  </video>
-
-  <!-- Canvas para boca -->
-  <canvas id="canvas"></canvas>
-</div>
+<video id="avatar" autoplay loop muted playsinline></video>
 
 <div class="controls">
   <input id="text" placeholder="Hablar con CONSIA">
   <button onclick="run()">Hablar</button>
 </div>
 
-<audio id="audio"></audio>
-
 <script>
 const API = "https://consia-api.jbdkb7r94d.workers.dev";
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const audio = document.getElementById("audio");
+const video = document.getElementById("avatar");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight * 0.7;
+// 👉 SUBÍ TU VIDEO A INTERNET (Drive / GitHub / Cloudflare R2)
+// 👉 y pegá el link acá
+video.src = "https://TU-VIDEO.mp4";
 
-// zona boca (ajustable)
-const mouth = {
-  x: canvas.width/2 - 60,
-  y: canvas.height/2 + 40,
-  w: 120,
-  h: 20
-};
-
-function drawMouth(open) {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  ctx.fillStyle = "rgba(0,0,0,0.6)";
-  ctx.fillRect(mouth.x, mouth.y, mouth.w, open);
-}
-
-// 🧠 IA
 async function run() {
   const text = document.getElementById("text").value;
 
@@ -78,22 +59,15 @@ async function run() {
   hablar(data.text);
 }
 
-// 🔊 VOZ LOCAL + LIPSYNC PROPIO
 function hablar(texto) {
   const utter = new SpeechSynthesisUtterance(texto);
 
-  let interval;
-
   utter.onstart = () => {
-    interval = setInterval(()=>{
-      const open = 10 + Math.random()*50;
-      drawMouth(open);
-    }, 70);
+    video.playbackRate = 1.1; // leve animación
   };
 
   utter.onend = () => {
-    clearInterval(interval);
-    drawMouth(10);
+    video.playbackRate = 1;
   };
 
   speechSynthesis.speak(utter);
