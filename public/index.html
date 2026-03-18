@@ -2,32 +2,26 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>CONSIA ULTRA REAL</title>
+<title>CONSIA GOD MODE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { margin:0; background:black; font-family:sans-serif; color:white; text-align:center; }
+body { margin:0; background:black; color:white; font-family:sans-serif; }
 
 #avatar {
   width:100%;
   height:70vh;
   object-fit:cover;
-  filter: brightness(1.05) contrast(1.1);
 }
 
 .controls {
   position:fixed;
   bottom:20px;
   width:100%;
+  text-align:center;
 }
 
-input {
-  padding:15px;
-  font-size:18px;
-  width:60%;
-}
-
-button {
+input,button {
   padding:15px;
   font-size:18px;
 }
@@ -45,39 +39,57 @@ button {
   <button onclick="run()">Hablar</button>
 </div>
 
+<audio id="audio"></audio>
+
 <script>
 const API = "https://consia-api.jbdkb7r94d.workers.dev";
+const audio = document.getElementById("audio");
 
 async function run() {
   const text = document.getElementById("text").value;
 
-  const res = await fetch(API + "/v1/ultra", {
+  // IA
+  const ai = await fetch(API + "/v1/brain", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type":"application/json"},
     body: JSON.stringify({ text })
   });
 
-  const data = await res.json();
+  const data = await ai.json();
 
-  hablar(data.text);
-}
+  // VOZ PRO
+  const tts = await fetch(API + "/v1/tts", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ text: data.text })
+  });
 
-function hablar(texto) {
-  const utter = new SpeechSynthesisUtterance(texto);
+  const blob = await tts.blob();
+  const url = URL.createObjectURL(blob);
 
-  utter.rate = 1;
-  utter.pitch = 1;
+  audio.src = url;
 
-  // efecto lipsync visual (micro zoom video)
-  utter.onstart = () => {
-    document.getElementById("avatar").style.transform = "scale(1.02)";
-  };
+  // lipsync básico por volumen
+  const ctx = new AudioContext();
+  const src = ctx.createMediaElementSource(audio);
+  const analyser = ctx.createAnalyser();
+  src.connect(analyser);
+  analyser.connect(ctx.destination);
 
-  utter.onend = () => {
-    document.getElementById("avatar").style.transform = "scale(1)";
-  };
+  const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-  speechSynthesis.speak(utter);
+  function anim() {
+    analyser.getByteFrequencyData(dataArray);
+    const volume = dataArray.reduce((a,b)=>a+b)/dataArray.length;
+
+    const scale = 1 + volume / 500;
+    document.getElementById("avatar").style.transform = `scale(${scale})`;
+
+    requestAnimationFrame(anim);
+  }
+
+  audio.onplay = () => anim();
+  audio.play();
 }
 </script>
 
