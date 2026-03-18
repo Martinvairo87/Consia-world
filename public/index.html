@@ -3,117 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CONSIA AVATAR REAL</title>
+<title>CONSIA AI OS</title>
 
 <style>
-body {
-  margin:0;
-  background:black;
-  overflow:hidden;
-  font-family: Arial, sans-serif;
-}
-
-#avatar {
-  width:100%;
-  height:100vh;
-  object-fit:cover;
-}
-
-#ui {
-  position:fixed;
-  bottom:20px;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  gap:10px;
-}
-
-input {
-  padding:15px;
-  width:60%;
-  font-size:18px;
-  border-radius:10px;
-  border:none;
-}
-
-button {
-  padding:15px 20px;
-  font-size:18px;
-  border:none;
-  border-radius:10px;
-  background:#00ffcc;
-  cursor:pointer;
-}
-
-#mouth {
-  position:absolute;
-  width:120px;
-  height:80px;
-  bottom:25%;
-  left:50%;
-  transform:translateX(-50%);
-  border-radius:50%;
-  opacity:0;
-  background:rgba(255,0,0,0.15);
-}
+body { margin:0; background:black; color:#00ffcc; font-family:Arial; }
+#chat { height:90vh; overflow:auto; padding:20px; }
+#input { display:flex; }
+input { flex:1; padding:15px; background:black; color:#00ffcc; border:none; }
+button { padding:15px; background:#00ffcc; border:none; font-weight:bold; }
+video { position:fixed; right:20px; bottom:20px; width:200px; }
 </style>
 </head>
 
 <body>
 
-<video id="avatar" autoplay loop muted playsinline></video>
-<div id="mouth"></div>
+<div id="chat"></div>
 
-<div id="ui">
-  <input id="text" placeholder="Hablar con CONSIA">
-  <button onclick="run()">Hablar</button>
+<div id="input">
+  <input id="msg" placeholder="Orden para CONSIA..." />
+  <button onclick="send()">Ejecutar</button>
 </div>
 
+<video autoplay loop muted>
+<source src="https://drive.google.com/uc?export=download&id=1Kg08jNfEQGizofXZrRLjMLfss9A9ikXY">
+</video>
+
 <script>
-const API = "https://consia-api.jbdkb7r94d.workers.dev";
-const video = document.getElementById("avatar");
-const mouth = document.getElementById("mouth");
+const API = "https://api.consia.world/v1/chat";
 
-// 🎥 VIDEO (TUYO)
-video.src = "https://drive.google.com/uc?export=download&id=1Kg08jNfEQGizofXZrRLjMLfss9A9ikXY";
+async function send() {
+  const msg = document.getElementById("msg").value;
 
-async function run() {
-  const text = document.getElementById("text").value;
+  add("🧑", msg);
 
-  const res = await fetch(API + "/v1/brain", {
+  const res = await fetch(API,{
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ text })
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:msg})
   });
 
   const data = await res.json();
 
-  hablar(data.text);
+  add("🤖", data.reply);
 }
 
-function hablar(texto) {
-  const utter = new SpeechSynthesisUtterance(texto);
-  utter.lang = "es-AR";
+// AUTO EJECUCIÓN INICIAL
+window.onload = () => {
+  auto("activar sistema completo");
+};
 
-  let interval;
+async function auto(cmd){
+  const res = await fetch(API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:cmd})
+  });
+  const data = await res.json();
+  add("⚡ AUTO", data.reply);
+}
 
-  utter.onstart = () => {
-    video.playbackRate = 1.05;
-
-    interval = setInterval(()=>{
-      const scale = 1 + Math.random()*0.15;
-      mouth.style.opacity = 1;
-      mouth.style.transform = `translateX(-50%) scale(${scale})`;
-    }, 120);
-  };
-
-  utter.onend = () => {
-    video.playbackRate = 1;
-    clearInterval(interval);
-    mouth.style.opacity = 0;
-  };
-
-  speechSynthesis.speak(utter);
+function add(user,text){
+  const div=document.createElement("div");
+  div.innerHTML="<b>"+user+":</b> "+text;
+  document.getElementById("chat").appendChild(div);
 }
 </script>
 
