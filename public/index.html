@@ -1,50 +1,161 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const method = request.method.toUpperCase();
 
-    const auth = "Basic " + btoa(env.DID_API_KEY);
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    };
 
-    if (url.pathname === "/health") {
-      return new Response(JSON.stringify({ ok: true, system: "CONSIA AVATAR LIVE" }), {
-        headers: { "Content-Type": "application/json" }
-      });
+    if (method === "OPTIONS") {
+      return new Response(null, { headers: corsHeaders });
     }
 
-    if (url.pathname === "/v1/avatar/create") {
-      const body = await request.json();
-
-      const res = await fetch("https://api.d-id.com/talks", {
-        method: "POST",
+    const json = (data, status = 200) =>
+      new Response(JSON.stringify(data, null, 2), {
+        status,
         headers: {
-          "Authorization": auth,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          script: {
-            type: "text",
-            input: body.text || "CONSIA activo"
-          },
-          source_url: body.avatar || "https://create-images-results.d-id.com/DefaultPresenters/Noelle_female.png"
-        })
-      });
-
-      const data = await res.json();
-      return new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });
-    }
-
-    if (url.pathname === "/v1/avatar/status") {
-      const id = url.searchParams.get("id");
-
-      const res = await fetch(`https://api.d-id.com/talks/${id}`, {
-        headers: {
-          "Authorization": auth
+          "Content-Type": "application/json",
+          ...corsHeaders
         }
       });
 
-      const data = await res.json();
-      return new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });
-    }
+    try {
+      const didAuth = "Basic " + btoa(env.DID_API_KEY || "");
 
-    return new Response("CONSIA AVATAR ONLINE");
+      if (url.pathname === "/" || url.pathname === "/health") {
+        return json({
+          ok: true,
+          system: "CONSIA",
+          status: "ONLINE",
+          version: "AVATAR-LIVE-FINAL",
+          did: !!env.DID_API_KEY,
+          eleven: !!env.ELEVEN_API_KEY
+        });
+      }
+
+      if (url.pathname === "/v1/avatar/create" && method === "POST") {
+        const body = await request.json().catch(() => ({}));
+        const text = String(body.text || "Hola, soy CONSIA").trim();
+        const avatar =
+          String(body.avatar || "").trim() ||
+          "https://create-images-results.d-id.com/DefaultPresenters/Noelle_female.png";
+
+        const didRes = await fetch("https://api.d-id.com/talks", {
+          method: "POST",
+          headers: {
+            Authorization: didAuth,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            source_url: avatar,
+            script: {
+              type: "text",
+              input: text
+            },
+            config: {
+              stitch: true
+            }
+          })
+        });
+
+        const didData = await didRes.json().catch(() => ({}));
+
+        return json({
+          ok: didRes.ok,
+          endpoint: "/v1/avatar/create",
+          did_status: didRes.status,
+          did_response: didData
+        }, didRes.ok ? 200 : 500);
+      }
+
+      if (url.pathname === "/v1/avatar/status" && method === "GET") {
+        const id = url.searchParams.get("id");
+        if (!id) {
+          return json({ ok: false, error: "missing_id" }, 400);
+        }
+
+        const didRes = await fetch(`https://api.d-id.com/talks/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: didAuth,
+            "Content-Type": "application/json"
+          }
+        });
+
+        const didData = await didRes.json().catch(() => ({}));
+
+        return json({
+          ok: didRes.ok,
+          endpoint: "/v1/avatar/status",
+          did_status: didRes.status,
+          did_response: didData
+        }, didRes.ok ? 200 : 500);
+      }
+
+      if (url.pathname === "/v1/voice" && method === "POST") {
+        const body = await request.json().catch(() => ({}));
+        const text = String(body.text || "Hola Martín, CONSIA está activo").trim();
+
+        const elevenRes = await fetch(
+          "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+          {
+            method: "POST",
+            headers: {
+              "xi-api-key": env.ELEVEN_API_KEY || "",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              text,
+              model_id: "eleven_multilingual_v2"
+            })
+          }
+        );
+
+        if (!elevenRes.ok) {
+          const errText = await elevenRes.text();
+          return json({
+            ok: false,
+            endpoint: "/v1/voice",
+            eleven_status: elevenRes.status,
+            error: errText
+          }, 500);
+        }
+
+        return new Response(elevenRes.body, {
+          status: 200,
+          headers: {
+            "Content-Type": "audio/mpeg",
+            ...corsHeaders
+          }
+        });
+      }
+
+      return json({
+        ok: false,
+        error: "route_not_found",
+        path: url.pathname,
+        method
+      }, 404);
+
+    } catch (error) {
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: String(error?.message || error)
+        }, null, 2),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+          }
+        }
+      );
+    }
   }
 };
