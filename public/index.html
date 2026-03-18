@@ -1,100 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CONSIA</title>
+<title>CONSIA - GOD MODE</title>
+
 <style>
-body{background:#02050d;color:#00e5ff;font-family:Arial;margin:0;text-align:center}
-button,input,textarea{margin:6px;padding:12px;border-radius:10px;border:0;width:90%}
-button{background:#00e5ff;color:#000;font-weight:bold}
-#avatar{margin:20px auto;display:block}
-pre{background:#111;padding:10px}
+body {
+  margin:0;
+  background:#0a0f1c;
+  color:#00f0ff;
+  font-family:Arial;
+}
+
+.container {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+
+h1 {
+  font-size:28px;
+  margin-bottom:10px;
+}
+
+.status {
+  color:#00ff88;
+  margin-bottom:20px;
+}
+
+.chat {
+  width:90%;
+  max-width:500px;
+  background:#11182b;
+  border-radius:12px;
+  padding:15px;
+  height:300px;
+  overflow:auto;
+  margin-bottom:10px;
+}
+
+.input {
+  display:flex;
+  gap:10px;
+  width:90%;
+  max-width:500px;
+}
+
+input {
+  flex:1;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+}
+
+button {
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#00f0ff;
+  color:black;
+  cursor:pointer;
+}
+
+.voice-btn {
+  margin-top:15px;
+  background:#00ff88;
+}
 </style>
 </head>
 
 <body>
 
-<h1>CONSIA JARVIS</h1>
+<div class="container">
 
-<canvas id="avatar" width="200" height="200"></canvas>
+<h1>CONSIA GOD MODE</h1>
+<div class="status">🟢 SISTEMA ACTIVO</div>
 
-<input id="api" value="https://api.consia.world">
-<textarea id="msg" placeholder="Hablar con CONSIA"></textarea>
+<div class="chat" id="chat"></div>
 
-<button onclick="chat()">CHAT</button>
-<button onclick="voice()">🎤 VOZ</button>
+<div class="input">
+  <input id="text" placeholder="Escribí a CONSIA..." />
+  <button onclick="enviar()">Enviar</button>
+</div>
 
-<textarea id="obj" placeholder="Objetivo"></textarea>
+<button class="voice-btn" onclick="hablar()">🎤 Activar Voz</button>
 
-<button onclick="swarm()">SWARM</button>
-<button onclick="auto()">AUTO</button>
-
-<pre id="out">READY</pre>
+</div>
 
 <script>
 
-// AVATAR
-const ctx = document.getElementById("avatar").getContext("2d");
-setInterval(()=>{
-ctx.clearRect(0,0,200,200);
-ctx.beginPath();
-ctx.arc(100,100,60,0,Math.PI*2);
-ctx.fillStyle="#00e5ff";
-ctx.fill();
-},500);
+const chat = document.getElementById("chat");
 
-// CHAT
-async function chat(){
-const res=await fetch(API()+"/v1/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:val("msg")})});
-const data=await res.json();
-out(data);
-speak(data.response);
+function agregar(msg) {
+  chat.innerHTML += "<div>"+msg+"</div>";
+  chat.scrollTop = chat.scrollHeight;
 }
 
-// VOZ
-function voice(){
-const r=new(window.SpeechRecognition||webkitSpeechRecognition)();
-r.lang="es-AR";
-r.onresult=e=>{
-valSet("msg",e.results[0][0].transcript);
-chat();
-};
-r.start();
+async function enviar() {
+  const text = document.getElementById("text").value;
+
+  agregar("🧑: " + text);
+
+  // RESPUESTA SIMULADA (podés conectar al /v1/chat después)
+  const respuesta = "CONSIA: Procesando → " + text;
+
+  agregar("🤖: " + respuesta);
+
+  // HABLAR AUTOMÁTICO
+  hablarTexto(respuesta);
 }
 
-// SWARM
-async function swarm(){
-const res=await fetch(API()+"/v1/swarm/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({objective:val("obj")})});
-out(await res.json());
+async function hablar() {
+  hablarTexto("Hola Martín, CONSIA está en modo dios");
 }
 
-// AUTO
-async function auto(){
-const res=await fetch(API()+"/v1/autopilot/chain",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({objective:val("obj")})});
-out(await res.json());
+async function hablarTexto(texto) {
+  const res = await fetch("https://api.consia.world/v1/voice", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ text: texto })
+  });
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const audio = new Audio(url);
+  audio.play();
 }
-
-// SPEAK
-function speak(t){
-const u=new SpeechSynthesisUtterance(t);
-u.lang="es-AR";
-speechSynthesis.speak(u);
-}
-
-// UTILS
-function API(){return val("api")}
-function val(id){return document.getElementById(id).value}
-function valSet(id,v){document.getElementById(id).value=v}
-function out(d){document.getElementById("out").textContent=JSON.stringify(d,null,2)}
-
-// REALTIME LOOP
-setInterval(async()=>{
-try{
-const r=await fetch(API()+"/v1/dashboard/summary");
-out(await r.json());
-}catch{}
-},4000);
 
 </script>
+
 </body>
 </html>
