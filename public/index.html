@@ -1,73 +1,383 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CONSIA AI OS</title>
-
-<style>
-body { margin:0; background:black; color:#00ffcc; font-family:Arial; }
-#chat { height:90vh; overflow:auto; padding:20px; }
-#input { display:flex; }
-input { flex:1; padding:15px; background:black; color:#00ffcc; border:none; }
-button { padding:15px; background:#00ffcc; border:none; font-weight:bold; }
-video { position:fixed; right:20px; bottom:20px; width:200px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA • Command Center</title>
+  <style>
+    :root {
+      --bg: #050816;
+      --bg2: #091126;
+      --line: rgba(0, 238, 255, .18);
+      --cyan: #00eaff;
+      --text: #eafcff;
+      --muted: #87b7c1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0c1738 0%, var(--bg) 55%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
+    .card {
+      background: linear-gradient(180deg, rgba(10,20,44,.82), rgba(4,8,20,.92));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 0 30px rgba(0, 234, 255, .08);
+      overflow: hidden;
+    }
+    .header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .title { font-size: 18px; font-weight: 700; letter-spacing: .08em; }
+    .badge {
+      font-size: 12px;
+      color: var(--cyan);
+      border: 1px solid var(--line);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .panel { min-height: 200px; }
+    video {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: #02050f;
+    }
+    .dashboard {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .stat {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+    }
+    .stat .k {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .stat .v {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .chat {
+      display: flex;
+      flex-direction: column;
+      height: 65vh;
+    }
+    .messages {
+      flex: 1;
+      overflow: auto;
+      padding: 16px;
+    }
+    .msg {
+      margin: 0 0 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .user { background: rgba(255,255,255,.06); }
+    .ai {
+      background: rgba(0,234,255,.09);
+      border: 1px solid var(--line);
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      padding: 14px;
+      border-top: 1px solid var(--line);
+    }
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      outline: none;
+    }
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 0 16px;
+      font-weight: 700;
+      background: var(--cyan);
+      color: #02131b;
+      min-width: 54px;
+    }
+    .secondary {
+      background: transparent;
+      color: var(--cyan);
+      border: 1px solid var(--line);
+    }
+    .status {
+      padding: 10px 14px;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+    }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .chat { height: 58vh; }
+      .dashboard { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="title">CONSIA • GLOBAL COMMAND CENTER</div>
+        <div class="badge" id="authState">LOCKED</div>
+      </div>
 
-<div id="chat"></div>
+      <div class="grid">
+        <div class="card panel">
+          <video id="avatar" autoplay muted loop playsinline></video>
+          <div class="status" id="avatarState">Avatar esperando URL</div>
+          <div class="dashboard" id="dashboard">
+            <div class="stat"><div class="k">REAL WORK</div><div class="v">—</div></div>
+            <div class="stat"><div class="k">MANGLAR</div><div class="v">—</div></div>
+            <div class="stat"><div class="k">VIP WORK</div><div class="v">—</div></div>
+            <div class="stat"><div class="k">CONSIA</div><div class="v">—</div></div>
+          </div>
+        </div>
 
-<div id="input">
-  <input id="msg" placeholder="Orden para CONSIA..." />
-  <button onclick="send()">Ejecutar</button>
-</div>
+        <div class="card panel chat">
+          <div class="messages" id="messages"></div>
+          <div class="controls">
+            <input id="input" placeholder="Hablar con CONSIA..." />
+            <button class="secondary" id="micBtn">🎤</button>
+            <button id="sendBtn">Enviar</button>
+          </div>
+          <div class="status" id="status">Listo</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<video autoplay loop muted>
-<source src="https://drive.google.com/uc?export=download&id=1Kg08jNfEQGizofXZrRLjMLfss9A9ikXY">
-</video>
+  <script>
+    const API_BASE =
+      localStorage.getItem("CONSIA_API_BASE") ||
+      "https://api.consia.world";
 
-<script>
-const API = "https://api.consia.world/v1/chat";
+    const ownerKey =
+      localStorage.getItem("CONSIA_OWNER_KEY") ||
+      prompt("Pegá tu OWNER_KEY una sola vez") ||
+      "";
 
-async function send() {
-  const msg = document.getElementById("msg").value;
+    if (ownerKey) localStorage.setItem("CONSIA_OWNER_KEY", ownerKey);
 
-  add("🧑", msg);
+    const authState = document.getElementById("authState");
+    const messages = document.getElementById("messages");
+    const statusEl = document.getElementById("status");
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
+    const micBtn = document.getElementById("micBtn");
 
-  const res = await fetch(API,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:msg})
-  });
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
 
-  const data = await res.json();
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = `msg ${type}`;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+      return div;
+    }
 
-  add("🤖", data.reply);
-}
+    async function localUnlock() {
+      if (!window.PublicKeyCredential) {
+        authState.textContent = ownerKey ? "OWNER" : "LOCKED";
+        return;
+      }
 
-// AUTO EJECUCIÓN INICIAL
-window.onload = () => {
-  auto("activar sistema completo");
-};
+      try {
+        await navigator.credentials.get({
+          publicKey: {
+            challenge: crypto.getRandomValues(new Uint8Array(32)),
+            timeout: 60000,
+            userVerification: "required",
+            allowCredentials: []
+          },
+          mediation: "conditional"
+        }).catch(() => null);
+      } finally {
+        authState.textContent = ownerKey ? "OWNER" : "LOCKED";
+      }
+    }
 
-async function auto(cmd){
-  const res = await fetch(API,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:cmd})
-  });
-  const data = await res.json();
-  add("⚡ AUTO", data.reply);
-}
+    function speak(text) {
+      if (!text || !window.speechSynthesis) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "es-AR";
+      speechSynthesis.speak(u);
+    }
 
-function add(user,text){
-  const div=document.createElement("div");
-  div.innerHTML="<b>"+user+":</b> "+text;
-  document.getElementById("chat").appendChild(div);
-}
-</script>
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
 
+      input.value = "";
+      addMessage(`Vos: ${text}`, "user");
+      const aiBox = addMessage("CONSIA: ", "ai");
+      setStatus("Streaming...");
+
+      const res = await fetch(`${API_BASE}/v1/realtime`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-owner-key": ownerKey
+        },
+        body: JSON.stringify({ message: text })
+      });
+
+      if (!res.ok || !res.body) {
+        aiBox.textContent = "CONSIA: Error de conexión";
+        setStatus("Error");
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let finalText = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const event of events) {
+          const line = event.split("\n").find(l => l.startsWith("data: "));
+          if (!line) continue;
+
+          try {
+            const data = JSON.parse(line.slice(6));
+
+            if (data.delta) {
+              finalText += data.delta;
+              aiBox.textContent = `CONSIA: ${finalText}`;
+            }
+
+            if (data.text) {
+              finalText = data.text;
+              aiBox.textContent = `CONSIA: ${finalText}`;
+            }
+          } catch {}
+        }
+      }
+
+      setStatus("Listo");
+      speak(finalText);
+    }
+
+    async function loadDashboard() {
+      try {
+        const res = await fetch(`${API_BASE}/v1/dashboard`, {
+          headers: { "x-owner-key": ownerKey }
+        });
+
+        if (!res.ok) throw new Error("dashboard");
+
+        const d = await res.json();
+
+        const cards = [
+          ["REAL WORK", `USD ${d.realwork.ingresos}`],
+          ["MANGLAR", `${d.manglar.unidades} unidades`],
+          ["VIP WORK", `${d.vipwork.empleados} empleados`],
+          ["CONSIA", `${d.consia.usuarios} usuarios`],
+        ];
+
+        document.getElementById("dashboard").innerHTML = cards.map(([k, v]) => (
+          `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div></div>`
+        )).join("");
+      } catch {
+        document.getElementById("dashboard").innerHTML = `
+          <div class="stat"><div class="k">ESTADO</div><div class="v">Conectando</div></div>
+          <div class="stat"><div class="k">API</div><div class="v">Revisar OWNER_KEY</div></div>
+          <div class="stat"><div class="k">AVATAR</div><div class="v">Opcional</div></div>
+          <div class="stat"><div class="k">UI</div><div class="v">Lista</div></div>
+        `;
+      }
+    }
+
+    async function loadAvatar() {
+      const video = document.getElementById("avatar");
+      const state = document.getElementById("avatarState");
+
+      try {
+        const res = await fetch(`${API_BASE}/v1/avatar`);
+        const data = await res.json();
+
+        if (data.video) {
+          video.src = data.video;
+          state.textContent = "Avatar activo";
+        } else {
+          state.textContent = "Cargá AVATAR_VIDEO_URL para activar el avatar";
+        }
+      } catch {
+        state.textContent = "No se pudo cargar avatar";
+      }
+    }
+
+    function setupVoiceInput() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SR) {
+        micBtn.disabled = true;
+        return;
+      }
+
+      const rec = new SR();
+      rec.lang = "es-AR";
+
+      rec.onresult = (e) => {
+        input.value = e.results[0][0].transcript;
+        sendMessage();
+      };
+
+      micBtn.addEventListener("click", () => rec.start());
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    localUnlock();
+    setupVoiceInput();
+    loadAvatar();
+    loadDashboard();
+    setInterval(loadDashboard, 30000);
+    addMessage("CONSIA: Sistema listo.", "ai");
+  </script>
 </body>
 </html>
