@@ -2,57 +2,80 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>CONSIA REAL AVATAR</title>
+<title>CONSIA ULTRA REAL</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-body { margin:0; background:black; color:white; font-family:sans-serif; text-align:center; }
-video {
+body { margin:0; background:black; font-family:sans-serif; color:white; text-align:center; }
+
+#avatar {
   width:100%;
   height:70vh;
   object-fit:cover;
+  filter: brightness(1.05) contrast(1.1);
 }
-input,button {
+
+.controls {
+  position:fixed;
+  bottom:20px;
+  width:100%;
+}
+
+input {
   padding:15px;
   font-size:18px;
-  margin:10px;
+  width:60%;
+}
+
+button {
+  padding:15px;
+  font-size:18px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>CONSIA REALTIME AVATAR</h1>
-
 <video id="avatar" autoplay loop muted playsinline>
   <source src="https://cdn.pixabay.com/vimeo/458834826/business-47817.mp4?width=1280&hash=1c6b4c7" type="video/mp4">
 </video>
 
-<input id="text" placeholder="Hablar con CONSIA">
-<br>
-<button onclick="hablar()">Hablar</button>
+<div class="controls">
+  <input id="text" placeholder="Hablar con CONSIA">
+  <button onclick="run()">Hablar</button>
+</div>
 
 <script>
 const API = "https://consia-api.jbdkb7r94d.workers.dev";
 
-async function hablar() {
-  const input = document.getElementById("text").value;
+async function run() {
+  const text = document.getElementById("text").value;
 
-  const res = await fetch(API + "/v1/brain", {
+  const res = await fetch(API + "/v1/ultra", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: input })
+    body: JSON.stringify({ text })
   });
 
   const data = await res.json();
 
-  hablarVoz(data.text);
+  hablar(data.text);
 }
 
-function hablarVoz(texto) {
+function hablar(texto) {
   const utter = new SpeechSynthesisUtterance(texto);
 
   utter.rate = 1;
   utter.pitch = 1;
+
+  // efecto lipsync visual (micro zoom video)
+  utter.onstart = () => {
+    document.getElementById("avatar").style.transform = "scale(1.02)";
+  };
+
+  utter.onend = () => {
+    document.getElementById("avatar").style.transform = "scale(1)";
+  };
 
   speechSynthesis.speak(utter);
 }
