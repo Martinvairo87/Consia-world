@@ -2,103 +2,57 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>CONSIA AVATAR</title>
+<title>CONSIA REAL AVATAR</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { margin:0; background:black; color:#00f0ff; font-family:Arial; text-align:center; }
-#avatar {
+body { margin:0; background:black; color:white; font-family:sans-serif; text-align:center; }
+video {
   width:100%;
   height:70vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  object-fit:cover;
 }
-.face {
-  width:220px;
-  height:220px;
-  border-radius:50%;
-  background:#111;
-  position:relative;
+input,button {
+  padding:15px;
+  font-size:18px;
+  margin:10px;
 }
-.eye {
-  width:30px;
-  height:30px;
-  background:#00f0ff;
-  border-radius:50%;
-  position:absolute;
-  top:70px;
-}
-.eye.left { left:50px; }
-.eye.right { right:50px; }
-.mouth {
-  width:120px;
-  height:20px;
-  background:#00f0ff;
-  position:absolute;
-  bottom:60px;
-  left:50%;
-  transform:translateX(-50%);
-  transition: all 0.1s linear;
-}
-input,button { padding:15px; font-size:18px; margin:10px; }
 </style>
 </head>
 
 <body>
 
-<h1>CONSIA AVATAR REALTIME</h1>
+<h1>CONSIA REALTIME AVATAR</h1>
 
-<div id="avatar">
-  <div class="face">
-    <div class="eye left"></div>
-    <div class="eye right"></div>
-    <div id="mouth" class="mouth"></div>
-  </div>
-</div>
+<video id="avatar" autoplay loop muted playsinline>
+  <source src="https://cdn.pixabay.com/vimeo/458834826/business-47817.mp4?width=1280&hash=1c6b4c7" type="video/mp4">
+</video>
 
-<input id="text" placeholder="Hablá con CONSIA">
+<input id="text" placeholder="Hablar con CONSIA">
 <br>
 <button onclick="hablar()">Hablar</button>
 
 <script>
 const API = "https://consia-api.jbdkb7r94d.workers.dev";
 
-const mouth = document.getElementById("mouth");
-
-function animarBoca() {
-  const random = Math.random() * 40;
-  mouth.style.height = (10 + random) + "px";
-}
-
-function pararBoca() {
-  mouth.style.height = "10px";
-}
-
 async function hablar() {
-  const text = document.getElementById("text").value;
+  const input = document.getElementById("text").value;
 
   const res = await fetch(API + "/v1/brain", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text })
+    body: JSON.stringify({ text: input })
   });
 
   const data = await res.json();
 
-  reproducir(data.text);
+  hablarVoz(data.text);
 }
 
-function reproducir(texto) {
+function hablarVoz(texto) {
   const utter = new SpeechSynthesisUtterance(texto);
 
-  utter.onstart = () => {
-    interval = setInterval(animarBoca, 80);
-  };
-
-  utter.onend = () => {
-    clearInterval(interval);
-    pararBoca();
-  };
+  utter.rate = 1;
+  utter.pitch = 1;
 
   speechSynthesis.speak(utter);
 }
