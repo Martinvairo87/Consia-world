@@ -2,28 +2,59 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>CONSIA MARTIN REAL</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA AVATAR REAL</title>
 
 <style>
-body { margin:0; background:black; }
+body {
+  margin:0;
+  background:black;
+  overflow:hidden;
+  font-family: Arial, sans-serif;
+}
 
 #avatar {
   width:100%;
-  height:70vh;
+  height:100vh;
   object-fit:cover;
 }
 
-.controls {
+#ui {
   position:fixed;
   bottom:20px;
   width:100%;
-  text-align:center;
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
 
-input,button {
+input {
   padding:15px;
+  width:60%;
   font-size:18px;
+  border-radius:10px;
+  border:none;
+}
+
+button {
+  padding:15px 20px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#00ffcc;
+  cursor:pointer;
+}
+
+#mouth {
+  position:absolute;
+  width:120px;
+  height:80px;
+  bottom:25%;
+  left:50%;
+  transform:translateX(-50%);
+  border-radius:50%;
+  opacity:0;
+  background:rgba(255,0,0,0.15);
 }
 </style>
 </head>
@@ -31,8 +62,9 @@ input,button {
 <body>
 
 <video id="avatar" autoplay loop muted playsinline></video>
+<div id="mouth"></div>
 
-<div class="controls">
+<div id="ui">
   <input id="text" placeholder="Hablar con CONSIA">
   <button onclick="run()">Hablar</button>
 </div>
@@ -40,10 +72,10 @@ input,button {
 <script>
 const API = "https://consia-api.jbdkb7r94d.workers.dev";
 const video = document.getElementById("avatar");
+const mouth = document.getElementById("mouth");
 
-// 👉 SUBÍ TU VIDEO A INTERNET (Drive / GitHub / Cloudflare R2)
-// 👉 y pegá el link acá
-video.src = "https://TU-VIDEO.mp4";
+// 🎥 VIDEO (TUYO)
+video.src = "https://drive.google.com/uc?export=download&id=1Kg08jNfEQGizofXZrRLjMLfss9A9ikXY";
 
 async function run() {
   const text = document.getElementById("text").value;
@@ -61,13 +93,24 @@ async function run() {
 
 function hablar(texto) {
   const utter = new SpeechSynthesisUtterance(texto);
+  utter.lang = "es-AR";
+
+  let interval;
 
   utter.onstart = () => {
-    video.playbackRate = 1.1; // leve animación
+    video.playbackRate = 1.05;
+
+    interval = setInterval(()=>{
+      const scale = 1 + Math.random()*0.15;
+      mouth.style.opacity = 1;
+      mouth.style.transform = `translateX(-50%) scale(${scale})`;
+    }, 120);
   };
 
   utter.onend = () => {
     video.playbackRate = 1;
+    clearInterval(interval);
+    mouth.style.opacity = 0;
   };
 
   speechSynthesis.speak(utter);
