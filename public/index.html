@@ -1,29 +1,178 @@
-<script>
-window.CONSIA_API = "https://api.consia.world";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONSIA OS</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #05070d;
+      color: #00e5ff;
+      font-family: Arial, sans-serif;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 20px;
+      font-size: 34px;
+    }
+    .panel {
+      display: grid;
+      gap: 14px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .row4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #1d2633;
+      background: #111722;
+      color: #fff;
+      font-size: 15px;
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: #00e5ff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    pre {
+      background: #111722;
+      color: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      min-height: 260px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    @media (max-width: 900px) {
+      .row, .row4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>CONSIA OS</h1>
 
-async function consiaStatus() {
-  const r = await fetch(`${window.CONSIA_API}/v1/status`);
-  return await r.json();
-}
+    <div class="panel">
+      <div class="row">
+        <input id="api" value="https://api.consia.world" />
+        <input id="userId" value="owner" />
+      </div>
 
-async function consiaChat(message) {
-  const r = await fetch(`${window.CONSIA_API}/v1/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message })
-  });
-  return await r.json();
-}
+      <textarea id="message" placeholder="Escribí a CONSIA..."></textarea>
 
-async function consiaMemory() {
-  const r = await fetch(`${window.CONSIA_API}/v1/memory`);
-  return await r.json();
-}
+      <div class="row4">
+        <button onclick="sendChat()">Enviar chat</button>
+        <button onclick="loadStatus()">Status</button>
+        <button onclick="loadMemory()">Memory</button>
+        <button onclick="loadRealtime()">Realtime</button>
+      </div>
 
-async function consiaRealtime() {
-  const r = await fetch(`${window.CONSIA_API}/v1/realtime/session`);
-  return await r.json();
-}
-</script>
+      <textarea id="objective" placeholder="Objetivo para Autopilot..."></textarea>
+
+      <div class="row4">
+        <button onclick="runAutopilot()">Autopilot</button>
+        <button onclick="exampleName()">Test nombre</button>
+        <button onclick="exampleBusiness()">Test negocio</button>
+        <button onclick="clearOutput()">Limpiar</button>
+      </div>
+
+      <pre id="output">CONSIA listo.</pre>
+    </div>
+  </div>
+
+  <script>
+    function API() {
+      return document.getElementById("api").value.trim();
+    }
+
+    function USER() {
+      return document.getElementById("userId").value.trim() || "owner";
+    }
+
+    function show(data) {
+      document.getElementById("output").textContent =
+        typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    }
+
+    async function sendChat() {
+      const message = document.getElementById("message").value.trim();
+      if (!message) return;
+      show("Cargando...");
+      const res = await fetch(`${API()}/v1/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, userId: USER() })
+      });
+      show(await res.json());
+    }
+
+    async function loadStatus() {
+      show("Cargando...");
+      const res = await fetch(`${API()}/v1/status`);
+      show(await res.json());
+    }
+
+    async function loadMemory() {
+      show("Cargando...");
+      const res = await fetch(`${API()}/v1/memory?userId=${encodeURIComponent(USER())}`);
+      show(await res.json());
+    }
+
+    async function loadRealtime() {
+      show("Cargando...");
+      const res = await fetch(`${API()}/v1/realtime/session`);
+      show(await res.json());
+    }
+
+    async function runAutopilot() {
+      const objective = document.getElementById("objective").value.trim();
+      if (!objective) return;
+      show("Cargando...");
+      const res = await fetch(`${API()}/v1/autopilot/run`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ objective, userId: USER() })
+      });
+      show(await res.json());
+    }
+
+    function exampleName() {
+      document.getElementById("message").value = "mi nombre es martin";
+    }
+
+    function exampleBusiness() {
+      document.getElementById("objective").value = "crear estrategia comercial para Real Work";
+    }
+
+    function clearOutput() {
+      show("CONSIA listo.");
+    }
+  </script>
+</body>
+</html>
