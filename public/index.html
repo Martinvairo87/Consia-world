@@ -1,170 +1,81 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CONSIA JARVIS</title>
-
+<meta charset="UTF-8">
+<title>CONSIA OS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-
-  body {
-    background: radial-gradient(circle at center, #0a0f1f, #000);
-    color: #00eaff;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  #app {
-    text-align: center;
-    width: 100%;
-    max-width: 900px;
-  }
-
-  h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-  }
-
-  button {
-    padding: 15px 30px;
-    border: none;
-    border-radius: 10px;
-    background: #00eaff;
-    color: #000;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-
-  button:hover {
-    background: #00bcd4;
-  }
-
-  #status {
-    margin-top: 20px;
-    font-size: 14px;
-    opacity: 0.7;
-  }
-
-  video {
-    margin-top: 20px;
-    width: 100%;
-    border-radius: 12px;
-    display: none;
-  }
-
-  #loader {
-    margin-top: 20px;
-    display: none;
-  }
-
-  .pulse {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: #00eaff;
-    animation: pulse 1.5s infinite;
-    margin: 0 auto;
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(0.8); opacity: 0.6; }
-    50% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(0.8); opacity: 0.6; }
-  }
+body {
+  margin: 0;
+  background: black;
+  color: #00f0ff;
+  font-family: Arial;
+  text-align: center;
+}
+video {
+  width: 100%;
+  height: 60vh;
+  object-fit: cover;
+}
+button {
+  padding: 15px;
+  margin: 10px;
+  background: #00f0ff;
+  border: none;
+  font-size: 18px;
+}
+input {
+  width: 80%;
+  padding: 15px;
+  font-size: 18px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="app">
-  <h1>CONSIA ACTIVATION</h1>
+<h1>CONSIA AI</h1>
 
-  <button onclick="startConsia()">Activar CONSIA</button>
+<video id="avatar" autoplay loop muted></video>
 
-  <div id="status">Sistema listo</div>
-
-  <div id="loader">
-    <div class="pulse"></div>
-  </div>
-
-  <video id="video" controls autoplay playsinline></video>
-</div>
+<input id="text" placeholder="Decile algo a CONSIA">
+<br>
+<button onclick="hablar()">Hablar</button>
 
 <script>
-const API = "https://api.consia.world";
 
-async function startConsia() {
-  document.getElementById("status").innerText = "Creando avatar...";
-  document.getElementById("loader").style.display = "block";
+const API = "https://TU-WORKER.workers.dev"; // CAMBIAR
 
-  try {
-    // 1. Crear avatar
-    const create = await fetch(`${API}/v1/avatar/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        text: "Hola Martín. CONSIA activado. Sistema operativo listo.",
-        avatar: "https://create-images-results.d-id.com/DefaultPresenters/Noelle_female.png"
-      })
-    });
+async function hablar() {
+  const text = document.getElementById("text").value;
 
-    const data = await create.json();
+  const res = await fetch(API + "/v1/avatar/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  });
 
-    if (!data.id) {
-      throw new Error("No se generó ID");
+  const data = await res.json();
+
+  esperarVideo(data.id);
+}
+
+async function esperarVideo(id) {
+  let ready = false;
+
+  while (!ready) {
+    await new Promise(r => setTimeout(r, 2000));
+
+    const res = await fetch(API + "/v1/avatar/status/" + id);
+    const data = await res.json();
+
+    if (data.result_url) {
+      document.getElementById("avatar").src = data.result_url;
+      ready = true;
     }
-
-    const id = data.id;
-
-    document.getElementById("status").innerText = "Procesando video...";
-
-    // 2. Polling
-    let videoUrl = null;
-
-    for (let i = 0; i < 30; i++) {
-      await new Promise(r => setTimeout(r, 2000));
-
-      const status = await fetch(`${API}/v1/avatar/status?id=${id}`);
-      const statusData = await status.json();
-
-      if (statusData.full && statusData.full.result_url) {
-        videoUrl = statusData.full.result_url;
-        break;
-      }
-    }
-
-    if (!videoUrl) {
-      throw new Error("Timeout video");
-    }
-
-    // 3. Mostrar video
-    const video = document.getElementById("video");
-    video.src = videoUrl;
-    video.style.display = "block";
-
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("status").innerText = "CONSIA ONLINE";
-
-    video.play();
-
-  } catch (err) {
-    document.getElementById("status").innerText = "Error: " + err.message;
-    document.getElementById("loader").style.display = "none";
   }
 }
+
 </script>
 
 </body>
