@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CONSIA - GOD MODE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIA AVATAR GOD MODE</title>
 
 <style>
 body {
@@ -11,46 +11,51 @@ body {
   background:#0a0f1c;
   color:#00f0ff;
   font-family:Arial;
+  text-align:center;
 }
 
 .container {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
+  padding:20px;
 }
 
-h1 {
-  font-size:28px;
-  margin-bottom:10px;
+.avatar {
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  margin:20px auto;
+  background:url("https://i.imgur.com/8Km9tLL.png") center/cover;
+  box-shadow:0 0 30px #00f0ff;
+  animation:idle 3s infinite ease-in-out;
 }
 
-.status {
-  color:#00ff88;
-  margin-bottom:20px;
+@keyframes idle {
+  0% { transform:scale(1); }
+  50% { transform:scale(1.03); }
+  100% { transform:scale(1); }
+}
+
+.talking {
+  animation:talk 0.3s infinite;
+}
+
+@keyframes talk {
+  0% { transform:scale(1); }
+  50% { transform:scale(1.05); }
+  100% { transform:scale(1); }
 }
 
 .chat {
-  width:90%;
   max-width:500px;
+  margin:20px auto;
   background:#11182b;
-  border-radius:12px;
   padding:15px;
-  height:300px;
+  border-radius:10px;
+  height:250px;
   overflow:auto;
-  margin-bottom:10px;
-}
-
-.input {
-  display:flex;
-  gap:10px;
-  width:90%;
-  max-width:500px;
 }
 
 input {
-  flex:1;
+  width:60%;
   padding:10px;
   border-radius:8px;
   border:none;
@@ -61,13 +66,8 @@ button {
   border:none;
   border-radius:8px;
   background:#00f0ff;
-  color:black;
+  margin:5px;
   cursor:pointer;
-}
-
-.voice-btn {
-  margin-top:15px;
-  background:#00ff88;
 }
 </style>
 </head>
@@ -76,49 +76,51 @@ button {
 
 <div class="container">
 
-<h1>CONSIA GOD MODE</h1>
-<div class="status">🟢 SISTEMA ACTIVO</div>
+<h1>CONSIA AVATAR</h1>
+
+<div id="avatar" class="avatar"></div>
 
 <div class="chat" id="chat"></div>
 
-<div class="input">
-  <input id="text" placeholder="Escribí a CONSIA..." />
-  <button onclick="enviar()">Enviar</button>
-</div>
+<input id="text" placeholder="Hablar con CONSIA"/>
+<br>
 
-<button class="voice-btn" onclick="hablar()">🎤 Activar Voz</button>
+<button onclick="enviar()">Enviar</button>
+<button onclick="voz()">🎤 Voz</button>
 
 </div>
 
 <script>
 
 const chat = document.getElementById("chat");
+const avatar = document.getElementById("avatar");
 
-function agregar(msg) {
+function log(msg){
   chat.innerHTML += "<div>"+msg+"</div>";
   chat.scrollTop = chat.scrollHeight;
 }
 
-async function enviar() {
+async function enviar(){
   const text = document.getElementById("text").value;
 
-  agregar("🧑: " + text);
+  log("🧑: "+text);
 
-  // RESPUESTA SIMULADA (podés conectar al /v1/chat después)
-  const respuesta = "CONSIA: Procesando → " + text;
+  const respuesta = "CONSIA: "+text;
 
-  agregar("🤖: " + respuesta);
+  log("🤖: "+respuesta);
 
-  // HABLAR AUTOMÁTICO
-  hablarTexto(respuesta);
+  hablar(respuesta);
 }
 
-async function hablar() {
-  hablarTexto("Hola Martín, CONSIA está en modo dios");
+async function voz(){
+  hablar("Hola Martín, CONSIA está en modo dios con avatar activo");
 }
 
-async function hablarTexto(texto) {
-  const res = await fetch("https://api.consia.world/v1/voice", {
+async function hablar(texto){
+
+  avatar.classList.add("talking");
+
+  const res = await fetch("https://api.consia.world/v1/voice",{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({ text: texto })
@@ -128,6 +130,11 @@ async function hablarTexto(texto) {
   const url = URL.createObjectURL(blob);
 
   const audio = new Audio(url);
+
+  audio.onended = () => {
+    avatar.classList.remove("talking");
+  };
+
   audio.play();
 }
 
