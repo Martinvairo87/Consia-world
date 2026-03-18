@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CONSIA OS</title>
+<title>CONSIA CONTROL CENTER</title>
 
 <style>
 body {
@@ -11,22 +12,26 @@ body {
   color:#00f0ff;
   font-family:Arial;
 }
-.panel {
+
+.container {
   padding:20px;
 }
+
 button {
-  width:100%;
-  padding:18px;
-  margin:6px 0;
-  font-size:16px;
   background:#00f0ff;
   color:black;
+  padding:15px;
   border:none;
+  margin:5px;
+  width:100%;
+  font-size:16px;
 }
-#log {
+
+.output {
+  margin-top:20px;
   background:#111;
-  padding:10px;
-  height:300px;
+  padding:15px;
+  height:200px;
   overflow:auto;
 }
 </style>
@@ -34,53 +39,40 @@ button {
 
 <body>
 
-<div class="panel">
-  <h2>CONSIA CONTROL</h2>
+<div class="container">
+  <h1>CONSIA</h1>
 
-  <button onclick="run('status')">STATUS</button>
-  <button onclick="run('chat')">ACTIVAR</button>
-  <button onclick="run('memory')">MEMORY</button>
-  <button onclick="run('realtime')">REALTIME</button>
-  <button onclick="run('autopilot')">AUTOPILOT</button>
+  <button onclick="status()">STATUS</button>
+  <button onclick="activate()">ACTIVAR</button>
+  <button onclick="realtime()">REALTIME</button>
 
-  <pre id="log"></pre>
+  <div class="output" id="out"></div>
 </div>
 
 <script>
 const API = "https://api.consia.world";
 
-async function run(type){
-  let res;
+async function status(){
+  const r = await fetch(API + "/v1/status");
+  show(await r.text());
+}
 
-  if(type === "status"){
-    res = await fetch(API + "/v1/status");
-  }
+async function activate(){
+  const r = await fetch(API + "/v1/chat", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:"activar consia"})
+  });
+  show(await r.text());
+}
 
-  if(type === "chat"){
-    res = await fetch(API + "/v1/chat", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({message:"activar consia"})
-    });
-  }
+async function realtime(){
+  const r = await fetch(API + "/v1/realtime/session");
+  show(await r.text());
+}
 
-  if(type === "memory"){
-    res = await fetch(API + "/v1/memory");
-  }
-
-  if(type === "realtime"){
-    res = await fetch(API + "/v1/realtime/session");
-  }
-
-  if(type === "autopilot"){
-    res = await fetch(API + "/v1/autopilot/start", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({task:"crear negocio automatico"})
-    });
-  }
-
-  document.getElementById("log").innerText = await res.text();
+function show(t){
+  document.getElementById("out").innerText = t;
 }
 </script>
 
