@@ -1,144 +1,50 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CONSIA AVATAR GOD MODE</title>
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
 
-<style>
-body {
-  margin:0;
-  background:#0a0f1c;
-  color:#00f0ff;
-  font-family:Arial;
-  text-align:center;
-}
+    const auth = "Basic " + btoa(env.DID_API_KEY);
 
-.container {
-  padding:20px;
-}
+    if (url.pathname === "/health") {
+      return new Response(JSON.stringify({ ok: true, system: "CONSIA AVATAR LIVE" }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
 
-.avatar {
-  width:220px;
-  height:220px;
-  border-radius:50%;
-  margin:20px auto;
-  background:url("https://i.imgur.com/8Km9tLL.png") center/cover;
-  box-shadow:0 0 30px #00f0ff;
-  animation:idle 3s infinite ease-in-out;
-}
+    if (url.pathname === "/v1/avatar/create") {
+      const body = await request.json();
 
-@keyframes idle {
-  0% { transform:scale(1); }
-  50% { transform:scale(1.03); }
-  100% { transform:scale(1); }
-}
+      const res = await fetch("https://api.d-id.com/talks", {
+        method: "POST",
+        headers: {
+          "Authorization": auth,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          script: {
+            type: "text",
+            input: body.text || "CONSIA activo"
+          },
+          source_url: body.avatar || "https://create-images-results.d-id.com/DefaultPresenters/Noelle_female.png"
+        })
+      });
 
-.talking {
-  animation:talk 0.3s infinite;
-}
+      const data = await res.json();
+      return new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });
+    }
 
-@keyframes talk {
-  0% { transform:scale(1); }
-  50% { transform:scale(1.05); }
-  100% { transform:scale(1); }
-}
+    if (url.pathname === "/v1/avatar/status") {
+      const id = url.searchParams.get("id");
 
-.chat {
-  max-width:500px;
-  margin:20px auto;
-  background:#11182b;
-  padding:15px;
-  border-radius:10px;
-  height:250px;
-  overflow:auto;
-}
+      const res = await fetch(`https://api.d-id.com/talks/${id}`, {
+        headers: {
+          "Authorization": auth
+        }
+      });
 
-input {
-  width:60%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-}
+      const data = await res.json();
+      return new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });
+    }
 
-button {
-  padding:10px 15px;
-  border:none;
-  border-radius:8px;
-  background:#00f0ff;
-  margin:5px;
-  cursor:pointer;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>CONSIA AVATAR</h1>
-
-<div id="avatar" class="avatar"></div>
-
-<div class="chat" id="chat"></div>
-
-<input id="text" placeholder="Hablar con CONSIA"/>
-<br>
-
-<button onclick="enviar()">Enviar</button>
-<button onclick="voz()">🎤 Voz</button>
-
-</div>
-
-<script>
-
-const chat = document.getElementById("chat");
-const avatar = document.getElementById("avatar");
-
-function log(msg){
-  chat.innerHTML += "<div>"+msg+"</div>";
-  chat.scrollTop = chat.scrollHeight;
-}
-
-async function enviar(){
-  const text = document.getElementById("text").value;
-
-  log("🧑: "+text);
-
-  const respuesta = "CONSIA: "+text;
-
-  log("🤖: "+respuesta);
-
-  hablar(respuesta);
-}
-
-async function voz(){
-  hablar("Hola Martín, CONSIA está en modo dios con avatar activo");
-}
-
-async function hablar(texto){
-
-  avatar.classList.add("talking");
-
-  const res = await fetch("https://api.consia.world/v1/voice",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ text: texto })
-  });
-
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-
-  const audio = new Audio(url);
-
-  audio.onended = () => {
-    avatar.classList.remove("talking");
-  };
-
-  audio.play();
-}
-
-</script>
-
-</body>
-</html>
+    return new Response("CONSIA AVATAR ONLINE");
+  }
+};
