@@ -1,16 +1,19 @@
 export default {
-  async fetch(req) {
+  async fetch(req, env) {
 
-    const responses = [
-      "Hola Martín. CONSIA está activo.",
-      "Todos los sistemas funcionando en tiempo real.",
-      "Preparado para ejecutar operaciones.",
-      "Modo automático activado.",
-      "Listo para escalar globalmente."
-    ];
+    if (req.method === "POST") {
+      const body = await req.text();
 
-    const random = responses[Math.floor(Math.random() * responses.length)];
+      await env.MEMORY.put("vault", body);
 
-    return new Response(random);
+      return new Response("GUARDADO");
+    }
+
+    if (req.method === "GET") {
+      const data = await env.MEMORY.get("vault");
+      return new Response(data || "VACIO");
+    }
+
+    return new Response("CONSIA ACTIVE");
   }
 };
