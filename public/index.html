@@ -1,49 +1,16 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CONSIA AVATAR</title>
+export default {
+  async fetch(req) {
 
-<style>
-body{
-  margin:0;
-  background:#000;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
+    const responses = [
+      "Hola Martín. CONSIA está activo.",
+      "Todos los sistemas funcionando en tiempo real.",
+      "Preparado para ejecutar operaciones.",
+      "Modo automático activado.",
+      "Listo para escalar globalmente."
+    ];
 
-video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-</style>
-</head>
+    const random = responses[Math.floor(Math.random() * responses.length)];
 
-<body>
-
-<video id="avatar" autoplay muted loop playsinline>
-  <source src="https://raw.githubusercontent.com/Martinvairo87/consia-avatar/main/avatar.mp4" type="video/mp4">
-</video>
-
-<script>
-const API = "https://consia-api.jbdkb7r94d.workers.dev";
-
-async function speak() {
-  const res = await fetch(API);
-  const text = await res.text();
-
-  const msg = new SpeechSynthesisUtterance(text);
-  msg.lang = "es-AR";
-  msg.rate = 1;
-  speechSynthesis.speak(msg);
-}
-
-setInterval(speak, 8000);
-</script>
-
-</body>
-</html>
+    return new Response(random);
+  }
+};
