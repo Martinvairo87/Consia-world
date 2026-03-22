@@ -1,82 +1,650 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
   <title>CONSIA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="CONSIA · Asistente ejecutivo inteligente de Manglar"
+  />
   <style>
-    body {
+    :root {
+      --bg: #050505;
+      --panel: #0f0f10;
+      --panel-2: #151517;
+      --line: rgba(255,255,255,0.08);
+      --text: #f5f7fa;
+      --muted: #99a1ab;
+      --accent: #18e7c7;
+      --accent-2: #10bfa5;
+      --danger: #ff6b6b;
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
       margin: 0;
-      font-family: Arial;
-      background: #000;
-      color: #fff;
+      padding: 0;
+      background:
+        radial-gradient(circle at top, rgba(24,231,199,0.14), transparent 28%),
+        linear-gradient(180deg, #040404 0%, #080909 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Arial, sans-serif;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
-    #chat {
+
+    .app {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 5, 5, 0.7);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      margin: 0 -16px;
+      padding: 16px;
+    }
+
+    .topbar-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(24,231,199,0.22), rgba(24,231,199,0.08));
+      border: 1px solid rgba(24,231,199,0.28);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #3bff95;
+      box-shadow: 0 0 18px rgba(59,255,149,0.55);
+      flex: 0 0 auto;
+    }
+
+    .hero {
+      padding: 22px 0 14px;
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .hero-title {
+      margin: 0 0 8px;
+      font-size: 26px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .quick-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(24,231,199,0.32);
+      background: rgba(24,231,199,0.07);
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+      min-height: 0;
+      padding-bottom: 18px;
+    }
+
+    .chat-shell {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 420px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(10,10,11,0.8), rgba(14,14,15,0.96));
+      box-shadow: var(--shadow);
+    }
+
+    .chat-top {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(255,255,255,0.015);
+    }
+
+    .chat-top-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .chat-top-title {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .chat-top-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .clear-btn {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .clear-btn:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .chat {
       flex: 1;
       overflow-y: auto;
-      padding: 20px;
+      padding: 18px 14px 24px;
+      scroll-behavior: smooth;
     }
-    .msg {
-      margin-bottom: 10px;
-    }
-    .user { color: #00ffcc; }
-    .ai { color: #ffffff; }
-    #input {
+
+    .message-row {
       display: flex;
-      border-top: 1px solid #333;
+      margin-bottom: 12px;
     }
-    input {
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .message-row.assistant,
+    .message-row.system {
+      justify-content: flex-start;
+    }
+
+    .bubble {
+      max-width: min(82%, 720px);
+      padding: 14px 15px;
+      border-radius: 18px;
+      line-height: 1.5;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid transparent;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.24);
+    }
+
+    .message-row.user .bubble {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #041210;
+      border-bottom-right-radius: 6px;
+      font-weight: 600;
+    }
+
+    .message-row.assistant .bubble {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-bottom-left-radius: 6px;
+    }
+
+    .message-row.system .bubble {
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      border: 1px dashed rgba(255,255,255,0.12);
+      border-radius: 14px;
+      box-shadow: none;
+    }
+
+    .composer-wrap {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.03));
+      padding: 12px;
+    }
+
+    .composer {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 10px;
+    }
+
+    .composer textarea {
       flex: 1;
-      padding: 15px;
+      resize: none;
+      min-height: 48px;
+      max-height: 180px;
       border: none;
       outline: none;
-      font-size: 16px;
+      background: transparent;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.45;
+      padding: 4px 2px;
+      font-family: inherit;
     }
-    button {
-      padding: 15px;
-      background: #00ffcc;
+
+    .composer textarea::placeholder {
+      color: #7b8590;
+    }
+
+    .send-btn {
+      flex: 0 0 auto;
       border: none;
+      outline: none;
       cursor: pointer;
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #041210;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      transition: 0.18s ease;
+      min-width: 92px;
+    }
+
+    .send-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 10px 8px 0;
+    }
+
+    .typing {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #b7bec7;
+      display: inline-block;
+      animation: blink 1.2s infinite ease-in-out;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.15s; }
+    .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 640px) {
+      .hero-title {
+        font-size: 22px;
+      }
+
+      .bubble {
+        max-width: 90%;
+      }
+
+      .status-pill {
+        display: none;
+      }
+
+      .send-btn {
+        min-width: 78px;
+        padding: 14px 12px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">C</div>
+      <div class="title-wrap">
+        <div class="title">CONSIA</div>
+        <div class="subtitle">Manglar · Asistente ejecutivo inteligente</div>
+      </div>
+      <div class="status-pill">
+        <span class="dot"></span>
+        <span id="statusText">Conectando…</span>
+      </div>
+    </div>
+  </div>
 
-<div id="chat"></div>
+  <main class="app">
+    <section class="hero">
+      <div class="hero-card">
+        <h1 class="hero-title">CONSIA activo</h1>
+        <p class="hero-text">
+          Atención comercial, inmobiliaria, construcción, automatización y seguimiento.
+        </p>
 
-<div id="input">
-  <input id="msg" placeholder="Escribí..." />
-  <button onclick="send()">Enviar</button>
-</div>
+        <div class="quick-actions">
+          <button class="chip" onclick="quickPrompt('Quiero comprar un departamento en Posadas')">Comprar departamento</button>
+          <button class="chip" onclick="quickPrompt('Quiero alquilar una propiedad')">Alquilar propiedad</button>
+          <button class="chip" onclick="quickPrompt('Necesito construir una casa llave en mano')">Construcción llave en mano</button>
+          <button class="chip" onclick="quickPrompt('Busco una oportunidad de inversión inmobiliaria')">Inversión inmobiliaria</button>
+        </div>
+      </div>
+    </section>
 
-<script>
-async function send() {
-  const msg = document.getElementById("msg").value;
-  if (!msg) return;
+    <section class="main">
+      <div class="chat-shell">
+        <div class="chat-top">
+          <div class="chat-top-left">
+            <div class="chat-top-title">Chat comercial</div>
+            <div class="chat-top-subtitle">Respuestas directas · modo empresa Manglar</div>
+          </div>
+          <button class="clear-btn" onclick="clearChat()">Limpiar</button>
+        </div>
 
-  const chat = document.getElementById("chat");
-  chat.innerHTML += `<div class="msg user">Vos: ${msg}</div>`;
+        <div id="chat" class="chat"></div>
 
-  document.getElementById("msg").value = "";
+        <div class="composer-wrap">
+          <div class="composer">
+            <textarea
+              id="msg"
+              placeholder="Escribí tu consulta..."
+              rows="1"
+              oninput="autoResize(this)"
+              onkeydown="handleKey(event)"
+            ></textarea>
+            <button id="sendBtn" class="send-btn" onclick="sendMessage()">Enviar</button>
+          </div>
+          <div class="footer-note">
+            CONSIA puede orientar consultas de propiedades, inversiones y construcción.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-  const res = await fetch("https://api.consia.world/v1/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      message: msg
-    })
-  });
+  <script>
+    const API_BASE = "https://api.consia.world";
+    const CHAT_ENDPOINT = API_BASE + "/v1/chat";
+    const HEALTH_ENDPOINT = API_BASE + "/health";
+    const STORAGE_KEY = "consia_chat_history_v1";
 
-  const data = await res.json();
+    let isSending = false;
+    const chatEl = document.getElementById("chat");
+    const msgEl = document.getElementById("msg");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusText = document.getElementById("statusText");
 
-  chat.innerHTML += `<div class="msg ai">CONSIA: ${data.response}</div>`;
-  chat.scrollTop = chat.scrollHeight;
-}
-</script>
+    const userId = getOrCreateUserId();
 
+    function getOrCreateUserId() {
+      const key = "consia_user_id";
+      let id = localStorage.getItem(key);
+      if (!id) {
+        id = "web_" + Math.random().toString(36).slice(2) + Date.now();
+        localStorage.setItem(key, id);
+      }
+      return id;
+    }
+
+    function autoResize(el) {
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 180) + "px";
+    }
+
+    function handleKey(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function addMessage(role, content) {
+      const row = document.createElement("div");
+      row.className = "message-row " + role;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerHTML = escapeHtml(content);
+
+      row.appendChild(bubble);
+      chatEl.appendChild(row);
+      chatEl.scrollTop = chatEl.scrollHeight;
+
+      persistChat();
+      return row;
+    }
+
+    function addTyping() {
+      const row = document.createElement("div");
+      row.className = "message-row assistant";
+      row.id = "typingRow";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerHTML = `
+        <div class="typing">
+          <span></span><span></span><span></span>
+        </div>
+      `;
+
+      row.appendChild(bubble);
+      chatEl.appendChild(row);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function removeTyping() {
+      const row = document.getElementById("typingRow");
+      if (row) row.remove();
+    }
+
+    function persistChat() {
+      localStorage.setItem(STORAGE_KEY, chatEl.innerHTML);
+    }
+
+    function restoreChat() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        chatEl.innerHTML = saved;
+      } else {
+        addMessage(
+          "system",
+          "Hola. Soy CONSIA. Puedo ayudarte con propiedades, inversiones y construcción."
+        );
+      }
+    }
+
+    function clearChat() {
+      localStorage.removeItem(STORAGE_KEY);
+      chatEl.innerHTML = "";
+      addMessage(
+        "system",
+        "Chat reiniciado. Podés consultarme sobre compra, alquiler, inversión o construcción."
+      );
+    }
+
+    async function checkHealth() {
+      try {
+        const res = await fetch(HEALTH_ENDPOINT, { method: "GET" });
+        if (!res.ok) throw new Error("health_failed");
+        statusText.textContent = "Online";
+      } catch {
+        statusText.textContent = "Sin conexión";
+      }
+    }
+
+    function quickPrompt(text) {
+      msgEl.value = text;
+      autoResize(msgEl);
+      sendMessage();
+    }
+
+    async function sendMessage() {
+      const text = msgEl.value.trim();
+      if (!text || isSending) return;
+
+      isSending = true;
+      sendBtn.disabled = true;
+
+      addMessage("user", text);
+      msgEl.value = "";
+      autoResize(msgEl);
+      addTyping();
+
+      try {
+        const res = await fetch(CHAT_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: text,
+            userId,
+            source: "consia.world"
+          })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        removeTyping();
+
+        if (!res.ok) {
+          addMessage("assistant", "CONSIA activo, pero hubo un error al responder.");
+        } else {
+          addMessage("assistant", data.response || "Sin respuesta.");
+        }
+      } catch (err) {
+        removeTyping();
+        addMessage("assistant", "CONSIA activo, pero no pude conectar con la API.");
+      } finally {
+        isSending = false;
+        sendBtn.disabled = false;
+        msgEl.focus();
+      }
+    }
+
+    restoreChat();
+    checkHealth();
+    msgEl.focus();
+  </script>
 </body>
 </html>
